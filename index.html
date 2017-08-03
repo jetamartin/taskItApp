@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Simple Pure CSS Dropdown Menu</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="tutorial">
+			<ul class="navMenuBar">
+				<li><i class="fa fa-star-half-o" aria-hidden="true"></i></li>
+				<li class="taskListDropdown"><i class="fa fa-home" aria-hidden="true"></i>Task Lists &nbsp <i class="fa fa-angle-down"></i>
+					<ul>
+						<li><i class="fa fa-list-ul" aria-hidden="true"></i>All Lists <span class="overDue"> 18</span><span class="listTotal">44</span></li>
+						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Default <span class="overDue"> 4</span><span class="listTotal">2</span></li>
+						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Personal <span class="overDue"> 2</span><span class="listTotal">6</span></li>
+						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Shopping<span class="overDue"> 1</span><span class="listTotal">8</span></li>
+						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Wishlist<span class="overDue"> 3 </span><span class="listTotal">10</span></li>
+						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Work<span class="overDue"> 8</span><span class="listTotal">18</span></li>
+						<li><i class="fa fa-check-square" aria-hidden="true"></i>Finished<span class="listTotal">72</span></li>
+						<li><i class="fa fa-plus-circle" aria-hidden="true"></i>New List</li>
+					</ul>
+				</li>
+				<li class="sysMenu"><i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+					<ul>
+						<li><i class="fa fa-plus-circle"></i> Add Task List
+						</li>
+						<li><i class="fa fa-tasks" aria-hidden="true"></i>Batch Mode </li>
+						<li><i class="fa fa-ban" aria-hidden="true"></i>Remove Ads</li>
+						<li><i class="fa fa-cog" aria-hidden="true"></i>Settings</li>
+					</ul>
+				</li>
+				<li class="searchIt">
+					<form action="" autocomplete="on">
+						<input id="search" name="search" type="text" placeholder=" Search"><input id="search_submit" type="submit">
+					</form>
+				</li>
+
+			</ul>
+			<div class="slider">
+				<h5 class="taskCategory overDue">Overdue</h5>
+				<div class="card">
+					<div class="card-block">
+						<!--						<input type="checkbox">-->
+						<!--						<h4 class="card-title">Card title</h4>-->
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 1</label>
+						</div>
+						<!--						<h6 class="card-subtitle mb-2 text-muted">Task Item Title 1</h6>-->
+						<!--						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
+						<h6 class="card-text taskDate overDue">Sun, Jul 9, 2017, 5:00 PM</h6>
+						<h6 class="card-text taskItem">Work</h6>
+						<!--
+						<a href="#" class="card-link">Card link</a>
+						<a href="#" class="card-link">Another link</a>
+-->
+					</div>
+				</div>
+				<h5 class="taskCategory">Today</h5>
+				<div class="card">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 2</label>
+						</div>
+						<!--						<h4 class="card-title">Card title</h4>-->
+						<!--						<h6 class="card-subtitle mb-2 text-muted">Task Item Title 2</h6>-->
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+						<!--						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
+						<!--
+						<a href="#" class="card-link">Card link</a>
+						<a href="#" class="card-link">Another link</a>
+-->
+					</div>
+				</div>
+				<h5 class="taskCategory">Tomorrow</h5>
+				<div class="card">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 3</label>
+						</div>
+						<!--						<h4 class="card-title">Card title</h4>-->
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+						<!--						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
+
+						<!--
+						<a href="#" class="card-link">Card link</a>
+						<a href="#" class="card-link">Another link</a>
+-->
+					</div>
+				</div>
+				<h5 class="taskCategory">This Week</h5>
+				<div class="card">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 4</label>
+						</div>
+
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+
+					</div>
+				</div>
+				<h5 class="taskCategory">Next Week</h5>
+				<div class="card">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 5</label>
+						</div>
+
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+
+					</div>
+				</div>
+				<h5 class="taskCategory">Later</h5>
+				<div class="card">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 6</label>
+						</div>
+
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+
+					</div>
+				</div>
+				<h5 class="taskCategory">No Date</h5>
+				<div class="card">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 7</label>
+						</div>
+
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+
+					</div>
+				</div>
+				<div class="floatAddBtn">
+					<i class="fa fa-plus" aria-hidden="true"></i></div>
+
+			</div>
+			<div class="information">
+				<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
+			</div>
+		</div>
+	</div>
+
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>
