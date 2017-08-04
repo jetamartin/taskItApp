@@ -29,7 +29,7 @@
 						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Wishlist<span class="overDue"> 3 </span><span class="listTotal">10</span></li>
 						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Work<span class="overDue"> 8</span><span class="listTotal">18</span></li>
 						<li><i class="fa fa-check-square" aria-hidden="true"></i>Finished<span class="listTotal">72</span></li>
-						<li><i class="fa fa-plus-circle" aria-hidden="true"></i>New List</li>
+						<li><i class="fa fa-plus-circle" aria-hidden="true"></i><a data-toggle="modal" data-target="#myModal">New List</a></li>
 					</ul>
 				</li>
 				<li class="sysMenu"><i class="fa fa-ellipsis-v" aria-hidden="true"></i>
@@ -157,8 +157,41 @@
 					</div>
 				</div>
 				<div class="floatAddBtn">
-					<i class="fa fa-plus" aria-hidden="true"></i></div>
+					<i class="fa fa-plus" aria-hidden="true"></i>
+				</div>
 
+				<!-- Modal -->
+				<div class="modal" id="myModal">
+					<div class="modal-dialog modal-sm" role="document">
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">New List</h4>
+							</div>
+							<div class="modal-body">
+								<form>
+									<div class="form-group">
+										<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
+										<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name">
+									</div>
+									<!--
+									<div class="form-group">
+										<label for="newList" class="control-label">New List:</label>
+										<div>
+											<input type="email" class="form-control input-sm" placeholder="Enter New List" name="newList">
+										</div>
+									</div>
+-->
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
 			</div>
 			<div class="information">
 				<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
