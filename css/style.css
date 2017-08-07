@@ -14,15 +14,30 @@ html {
 	/*	color: #9a9696;*/
 }
 
-.container {
+
+/*****************************************************************/
+
+
+/* NAVIGATION 
+/*****************************************************************/
+
+
+/* NAVIGATION CONTAINER */
+
+.container-fluid {
+	/*	Width and height settings not needed if I use bootstrap*/
+	/*
 	width: 100%;
 	height: 100%;
+*/
 	overflow: auto;
 	overflow-x: hidden;
+	padding: 0;
 }
 
-.tutorial {
-	/*	position: fixed;*/
+nav {
+	position: fixed;
+	z-index: 999;
 	/*	width: 80%;*/
 	width: 100%;
 	/*	margin: 5% auto 0 auto;*/
@@ -44,60 +59,23 @@ html {
 	/*	max-width: 800px;*/
 }
 
-.tutorial .slider {
-	width: 100%;
-	/*	height: 80vh;*/
-	height: 100%;
-	padding-top: 1.5rem;
-	padding-bottom: 2.5rem;
-	/* JM changed was 300px */
-	/*	height: 300px;*/
-	/*
-	background-color: #F03861;
-	background-color: #cbcaca;
-	background-color: #cbcaca;
-	background-color: #5fcee8;
-*/
-	background-color: #f3f3f3;
+
+/* All list carat */
+
+.fa.fa-angle-down {
+	font-size: 1.5rem;
+	font-weight: bold;
 }
 
-.tutorial .information {
-	width: 100%;
-	/*	height: 15vh;*/
-	/* JM - no prior value for height */
-	padding: 20px 50px;
-	margin-bottom: 30px;
-	font-family: "Open Sans", sans-serif;
-}
-
-.tutorial .information h1 {
-	color: #333;
-	font-size: 1.25rem;
-	padding: 0px 10px;
-	border-left: 3px solid #F03861;
-}
-
-.tutorial .information h3 {
-	color: #e0e0e0;
-	font-size: 1rem;
-	font-weight: 300;
-	padding: 0px 10px;
-	border-left: 3px solid #F03861;
-}
-
-.tutorial .information p {
-	padding: 10px 0px;
-}
-
-.tutorial ul {
+nav ul {
 	font-size: 0;
 	list-style-type: none;
 }
 
 
-/* Equivalent to SubMenu Parent */
+/* Navbar Menu headings */
 
-.tutorial ul li {
+nav ul li {
 	font-family: "Open Sans", sans-serif;
 	font-size: 1.25rem;
 	font-weight: 400;
@@ -111,51 +89,62 @@ html {
 	transition: background-color .5s;
 }
 
-.tutorial ul li ul {
-	display: none;
-	opacity: 0;
-}
 
+/* Behavior (color change) when you hover on main Navbar elments */
 
-/* Testit */
-
-.tutorial ul li .fa {
-	color: #fff;
-}
-
-.tutorial ul li:hover {
+nav ul li:hover {
 	cursor: pointer;
-	/*
-	background-color: #f2f2f2;
-	background-color: #44e3ce;
-*/
 	background-color: #2cb5a3;
 	background-color: #2C9893;
 }
 
-.tutorial ul li.taskListDropdown:hover {
+
+/* Make Task list nav bar element same width as it's dropdown list elements */
+
+nav ul li.taskListDropdown:hover {
 	width: 250px;
 }
 
-.tutorial ul li:hover ul {
+
+/* Icons used on nav bar */
+
+nav ul li .fa {
+	color: #fff;
+}
+
+
+/* Hide Nav bar drop down menu until clicked on  */
+
+nav ul li ul {
+	display: none;
+	/*	opacity: 0;*/
+}
+
+
+/* DROPDOWN MENUS */
+
+
+/* Display drop down menu elements on hover */
+
+nav ul li:hover ul {
+	/* Set z-index so dropdown menus appear in front of task items */
 	z-index: 1;
 	display: block;
-	margin-top: 15px;
+	margin-top: -45px;
 	width: 250px;
 	left: 0;
 	position: absolute;
-	opacity: 1;
-	background-color: #44e3ce;
+	/*	opacity: 1;*/
 	-webkit-animation: opacity 700ms ease-in-out normal;
-	animation: opacity 1000ms ease-in-out normal;
+	animation: subMenus 1000ms ease-in-out normal;
 }
 
 
-/**
- * Defines how the animation will look like
+/*
+  Defines animation effect for display of drop down menus.
  */
 
-@-webkit-keyframes opacity {
+@-webkit-keyframes subMenus {
 	from {
 		opacity: 0;
 	}
@@ -164,7 +153,7 @@ html {
 	}
 }
 
-@keyframes opacity {
+@keyframes subMenus {
 	from {
 		opacity: 0;
 	}
@@ -173,31 +162,29 @@ html {
 	}
 }
 
-.tutorial ul li:hover ul li {
+
+/* Styling of subMenu elements on hover */
+
+nav ul li:hover ul li {
 	display: block;
-	/*	background-color: #e7e7e7;*/
-	background-color: #44e3ce;
-	/* Marker */
+	/*	background-color: #44e3ce;*/
 	background-color: #34AFA9;
 }
 
 
 /* Don't darken background of search icon like other menu items cause size is small*/
 
-.tutorial ul li:hover.searchIt {
+nav ul li:hover.searchIt {
 	display: block;
 	background-color: #f9f9f9;
 }
 
-.tutorial ul li:hover ul li span.overDue {
+
+/* Place and style task overdue counts on task list submenu */
+
+nav ul li:hover ul li span.overDue {
 	float: right;
 	color: #f9f9f9;
-	/*
-	background-color: #F03861;
-	background-color: #b52020;
-	background-color: #ec9393;
-	background-color: #e05252;
-*/
 	background-color: #e46767;
 	padding: 5px 5px;
 	text-align: center;
@@ -205,25 +192,33 @@ html {
 	border-radius: 30%;
 }
 
-.tutorial ul li:hover ul li span.overDue::before {
+
+/* Auto Place "+" sign before overdue task total */
+
+nav ul li:hover ul li span.overDue::before {
 	font-family: "FontAwesome";
 	color: #fff;
 	font-weight: 100;
-	/*	margin-left: 10px; */
+	margin-left: 10px;
 	content: "\f067";
 }
 
-.tutorial ul li:hover ul li span.listTotal {
+
+/* Place & Style non-overdue task totals */
+
+nav ul li:hover ul li span.listTotal {
 	float: right;
 	color: #f9f9f9;
-	/*	background-color: #F03861;*/
 	padding: 1px 5px;
 	text-align: center;
 	font-size: 1.2rem;
 	border-radius: 3px;
 }
 
-.tutorial ul li:hover ul li span.listTotal:after {
+
+/* Add space after task totals to sep from overdue counts */
+
+nav ul li:hover ul li span.listTotal:after {
 	content: "\00a0"
 }
 
@@ -234,32 +229,32 @@ html {
 }
 */
 
-.tutorial ul li:hover ul li:hover {
-	background-color: #e0e0e0;
-	/*	background-color: #44e3ce;*/
-	background-color: #2cb5a3;
-	/* TEST */
+
+/* Chg background color of drop down menu elements on hover */
+
+nav ul li:hover li:hover {
 	background-color: #2C9893;
 }
 
-.tutorial ul li:hover ul li:hover span {
-	/*	background-color: #ee204e;*/
+
+/* Set margin bottom */
+
+.navBar ul {
+	margin-bottom: 0;
 }
 
-.tutorial ul li:hover ul li:hover span.fa-stack {
-	background-color: #2cb5a3;
-}
 
-.tutorial ul li:hover ul li:hover span.fa-stack i {
-	background-color: #2cb5a3;
-}
+/* Place System menu nav bar element*/
 
 .sysMenu {
-	margin-right: 0 20px;
+	margin-right: 0;
 	float: right;
 }
 
-.tutorial ul .sysMenu:hover ul {
+
+/* Control display of System menu submenu */
+
+.sysMenu:over ul {
 	display: block;
 	margin-top: 12px;
 	width: 220px;
@@ -267,49 +262,40 @@ html {
 	position: absolute;
 	opacity: 1;
 	-webkit-animation: opacity 700ms ease-in-out normal;
-	animation: opacity 1000ms ease-in-out normal;
+	animation: subMenus 1000ms ease-in-out normal;
 }
 
-.sysMenu i {
-	/*	padding: 0 15px;*/
-	font-size: 1.5rem;
-	color: #9a9696;
-}
 
-.tutorial .searchIt {
-	/*	margin: 50px 100px;*/
+/* Placement and style of search Nav element */
+
+nav .searchIt {
 	display: inline-block;
 	position: relative;
 	height: 30px;
 	float: right;
 	padding: 0;
 	position: relative;
-	background-color: #44e3ce;
-}
-
-.searchIt input#search:hover {
-	/*	background-color: #f2f2f2;*/
-	/*
-	background-color: #44e3ce;
-	background-color: #34AFA9;
-*/
+	top: 5px;
 }
 
 .searchIt input::-webkit-input-placeholder {
 	color: white;
+	font-size: 1.5rem;
 }
 
 .searchIt input:-ms-input-placeholder {
 	color: white;
+	font-size: 1.5rem;
 }
 
 .searchIt input::placeholder {
 	color: white;
+	font-size: 1.5rem;
 }
 
 .searchIt input[type="text"] {
 	height: 50px;
-	font-size: 20px;
+	font-size: 1.5rem;
 	display: inline-block;
 	font-family: "Lato";
 	font-weight: 100;
@@ -339,7 +325,6 @@ html {
 	/*	width: 500px;*/
 	width: 50vw;
 	z-index: 1;
-	border-bottom: 1px solid #BBB;
 	cursor: text;
 }
 
@@ -348,9 +333,9 @@ html {
 	width: 48px;
 	display: inline-block;
 	float: left;
-	/*	background: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDQ3NS4wODQgNDc1LjA4NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDc1LjA4NCA0NzUuMDg0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggZD0iTTQ2NC41MjQsNDEyLjg0NmwtOTcuOTI5LTk3LjkyNWMyMy42LTM0LjA2OCwzNS40MDYtNzIuMDQ3LDM1LjQwNi0xMTMuOTE3YzAtMjcuMjE4LTUuMjg0LTUzLjI0OS0xNS44NTItNzguMDg3ICAgYy0xMC41NjEtMjQuODQyLTI0LjgzOC00Ni4yNTQtNDIuODI1LTY0LjI0MWMtMTcuOTg3LTE3Ljk4Ny0zOS4zOTYtMzIuMjY0LTY0LjIzMy00Mi44MjYgICBDMjU0LjI0Niw1LjI4NSwyMjguMjE3LDAuMDAzLDIwMC45OTksMC4wMDNjLTI3LjIxNiwwLTUzLjI0Nyw1LjI4Mi03OC4wODUsMTUuODQ3Qzk4LjA3MiwyNi40MTIsNzYuNjYsNDAuNjg5LDU4LjY3Myw1OC42NzYgICBjLTE3Ljk4OSwxNy45ODctMzIuMjY0LDM5LjQwMy00Mi44MjcsNjQuMjQxQzUuMjgyLDE0Ny43NTgsMCwxNzMuNzg2LDAsMjAxLjAwNGMwLDI3LjIxNiw1LjI4Miw1My4yMzgsMTUuODQ2LDc4LjA4MyAgIGMxMC41NjIsMjQuODM4LDI0LjgzOCw0Ni4yNDcsNDIuODI3LDY0LjIzNGMxNy45ODcsMTcuOTkzLDM5LjQwMywzMi4yNjQsNjQuMjQxLDQyLjgzMmMyNC44NDEsMTAuNTYzLDUwLjg2OSwxNS44NDQsNzguMDg1LDE1Ljg0NCAgIGM0MS44NzksMCw3OS44NTItMTEuODA3LDExMy45MjItMzUuNDA1bDk3LjkyOSw5Ny42NDFjNi44NTIsNy4yMzEsMTUuNDA2LDEwLjg0OSwyNS42OTMsMTAuODQ5ICAgYzkuODk3LDAsMTguNDY3LTMuNjE3LDI1LjY5NC0xMC44NDljNy4yMy03LjIzLDEwLjg0OC0xNS43OTYsMTAuODQ4LTI1LjY5M0M0NzUuMDg4LDQyOC40NTgsNDcxLjU2Nyw0MTkuODg5LDQ2NC41MjQsNDEyLjg0NnogICAgTTI5MS4zNjMsMjkxLjM1OGMtMjUuMDI5LDI1LjAzMy01NS4xNDgsMzcuNTQ5LTkwLjM2NCwzNy41NDljLTM1LjIxLDAtNjUuMzI5LTEyLjUxOS05MC4zNi0zNy41NDkgICBjLTI1LjAzMS0yNS4wMjktMzcuNTQ2LTU1LjE0NC0zNy41NDYtOTAuMzZjMC0zNS4yMSwxMi41MTgtNjUuMzM0LDM3LjU0Ni05MC4zNmMyNS4wMjYtMjUuMDMyLDU1LjE1LTM3LjU0Niw5MC4zNi0zNy41NDYgICBjMzUuMjEyLDAsNjUuMzMxLDEyLjUxOSw5MC4zNjQsMzcuNTQ2YzI1LjAzMywyNS4wMjYsMzcuNTQ4LDU1LjE1LDM3LjU0OCw5MC4zNkMzMjguOTExLDIzNi4yMTQsMzE2LjM5MiwyNjYuMzI5LDI5MS4zNjMsMjkxLjM1OHogICAiIGZpbGw9IiNGRkZGRkYiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K) center center no-repeat;*/
 	/*	https://www.flaticon.com/free-icon/magnifying-glass_25313*/
 	background: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDQ3NS4wODQgNDc1LjA4NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDc1LjA4NCA0NzUuMDg0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggZD0iTTQ2NC41MjQsNDEyLjg0NmwtOTcuOTI5LTk3LjkyNWMyMy42LTM0LjA2OCwzNS40MDYtNzIuMDQ3LDM1LjQwNi0xMTMuOTE3YzAtMjcuMjE4LTUuMjg0LTUzLjI0OS0xNS44NTItNzguMDg3ICAgYy0xMC41NjEtMjQuODQyLTI0LjgzOC00Ni4yNTQtNDIuODI1LTY0LjI0MWMtMTcuOTg3LTE3Ljk4Ny0zOS4zOTYtMzIuMjY0LTY0LjIzMy00Mi44MjYgICBDMjU0LjI0Niw1LjI4NSwyMjguMjE3LDAuMDAzLDIwMC45OTksMC4wMDNjLTI3LjIxNiwwLTUzLjI0Nyw1LjI4Mi03OC4wODUsMTUuODQ3Qzk4LjA3MiwyNi40MTIsNzYuNjYsNDAuNjg5LDU4LjY3Myw1OC42NzYgICBjLTE3Ljk4OSwxNy45ODctMzIuMjY0LDM5LjQwMy00Mi44MjcsNjQuMjQxQzUuMjgyLDE0Ny43NTgsMCwxNzMuNzg2LDAsMjAxLjAwNGMwLDI3LjIxNiw1LjI4Miw1My4yMzgsMTUuODQ2LDc4LjA4MyAgIGMxMC41NjIsMjQuODM4LDI0LjgzOCw0Ni4yNDcsNDIuODI3LDY0LjIzNGMxNy45ODcsMTcuOTkzLDM5LjQwMywzMi4yNjQsNjQuMjQxLDQyLjgzMmMyNC44NDEsMTAuNTYzLDUwLjg2OSwxNS44NDQsNzguMDg1LDE1Ljg0NCAgIGM0MS44NzksMCw3OS44NTItMTEuODA3LDExMy45MjItMzUuNDA1bDk3LjkyOSw5Ny42NDFjNi44NTIsNy4yMzEsMTUuNDA2LDEwLjg0OSwyNS42OTMsMTAuODQ5ICAgYzkuODk3LDAsMTguNDY3LTMuNjE3LDI1LjY5NC0xMC44NDljNy4yMy03LjIzLDEwLjg0OC0xNS43OTYsMTAuODQ4LTI1LjY5M0M0NzUuMDg4LDQyOC40NTgsNDcxLjU2Nyw0MTkuODg5LDQ2NC41MjQsNDEyLjg0NnogICAgTTI5MS4zNjMsMjkxLjM1OGMtMjUuMDI5LDI1LjAzMy01NS4xNDgsMzcuNTQ5LTkwLjM2NCwzNy41NDljLTM1LjIxLDAtNjUuMzI5LTEyLjUxOS05MC4zNi0zNy41NDkgICBjLTI1LjAzMS0yNS4wMjktMzcuNTQ2LTU1LjE0NC0zNy41NDYtOTAuMzZjMC0zNS4yMSwxMi41MTgtNjUuMzM0LDM3LjU0Ni05MC4zNmMyNS4wMjYtMjUuMDMyLDU1LjE1LTM3LjU0Niw5MC4zNi0zNy41NDYgICBjMzUuMjEyLDAsNjUuMzMxLDEyLjUxOSw5MC4zNjQsMzcuNTQ2YzI1LjAzMywyNS4wMjYsMzcuNTQ4LDU1LjE1LDM3LjU0OCw5MC4zNkMzMjguOTExLDIzNi4yMTQsMzE2LjM5MiwyNjYuMzI5LDI5MS4zNjMsMjkxLjM1OHogICAiIGZpbGw9IiNGRkZGRkYiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K) center center no-repeat;
+	/* Hide submit button */
 	text-indent: -1000px;
 	border: none;
 	position: absolute;
@@ -359,21 +344,9 @@ html {
 	z-index: 2;
 	cursor: pointer;
 	opacity: 1;
-	cursor: pointer;
 	color: white;
 	-webkit-transition: opacity .4s ease;
 	transition: opacity .4s ease;
-}
-
-
-/*
-input[type="submit"]:hover {
-	opacity: 0.8;
-}
-*/
-
-.fa {
-	color: #9a9696;
 }
 
 
@@ -384,15 +357,31 @@ input[type="submit"]:hover {
 }
 
 
-/*
-.fa-plus-circle {
-	font-size: .75rem!Important;
-	margin-left: -15px;
-	background-color: #fff;
-	background-color: none;
-	padding-top: 3px;
-}
+/*****************************************************************/
+
+
+/* MAIN CONTENT AREA */
+
+
+/*****************************************************************/
+
+.slider {
+	width: 100%;
+	/*	height: 80vh;*/
+	height: 100%;
+	margin-top: 10%;
+	padding-top: 1.5rem;
+	padding-bottom: 2.5rem;
+	/* JM changed was 300px */
+	/*	height: 300px;*/
+	/*
+	background-color: #F03861;
+	background-color: #cbcaca;
+	background-color: #cbcaca;
+	background-color: #5fcee8;
 */
+	/*	background-color: #f3f3f3;*/
+}
 
 .card {
 	width: 90%;
@@ -406,10 +395,6 @@ input[type="submit"]:hover {
 .card:hover {
 	-webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1), 0 2px 20px 0 rgba(0, 0, 0, 0.05);
 	box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1), 0 5px 20px 0 rgba(0, 0, 0, 0.10);
-}
-
-ul.navMenuBar {
-	margin-bottom: 0;
 }
 
 .card-subtitle {
@@ -451,12 +436,7 @@ input[type="checkbox"] {
 	color: #e46767;
 }
 
-.fa.fa-angle-down {
-	font-size: 1.5rem;
-	font-weight: bold;
-}
-
-.slider .floatAddBtn {
+.floatAddBtn {
 	width: 3rem;
 	height: 3rem;
 	color: #fff;
@@ -483,7 +463,7 @@ input[type="checkbox"] {
 	margin-left: .5rem;
 }
 
-.slider .floatAddBtn:hover {
+.floatAddBtn:hover {
 	-webkit-box-shadow: 0 0 12px rgba(0, 0, 0, 0.12), 0 12px 12px rgba(0, 0, 0, 0.24);
 	box-shadow: 0 0 12px rgba(0, 0, 0, 0.12), 0 12px 12px rgba(0, 0, 0, 0.24);
 }
@@ -506,4 +486,14 @@ a:active {
 	background-color: #2C9893;
 	font-weight: bold;
 	color: #fff;
+}
+
+footer {
+	padding: 5% 5%;
+	background-color: #34AFA9;
+	font-family: "Open Sans", sans-serif;
+}
+
+footer p {
+	padding: 10px 0px;
 }

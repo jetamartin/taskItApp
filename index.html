@@ -16,11 +16,11 @@
 
 <body>
 
-	<div class="container">
-		<div class="tutorial">
-			<ul class="navMenuBar">
+	<div class="container-fluid">
+		<nav class="navBar">
+			<ul>
 				<li><i class="fa fa-star-half-o" aria-hidden="true"></i></li>
-				<li class="taskListDropdown"><i class="fa fa-home" aria-hidden="true"></i>Task Lists &nbsp <i class="fa fa-angle-down"></i>
+				<li class="taskListDropdown"><i class="fa fa-home" aria-hidden="true"></i>All Lists &nbsp <i class="fa fa-angle-down"></i>
 					<ul>
 						<li><i class="fa fa-list-ul" aria-hidden="true"></i>All Lists <span class="overDue"> 18</span><span class="listTotal">44</span></li>
 						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Default <span class="overDue"> 4</span><span class="listTotal">2</span></li>
@@ -48,7 +48,9 @@
 				</li>
 
 			</ul>
-			<div class="slider">
+		</nav>
+		<div class="container">
+			<div class="mainContent">
 				<h5 class="taskCategory overDue">Overdue</h5>
 				<div class="card">
 					<div class="card-block">
@@ -184,6 +186,7 @@
 -->
 								</form>
 							</div>
+							<!-- Modal widow for creating new list							-->
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 								<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
@@ -193,10 +196,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="information">
-				<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
-			</div>
 		</div>
+		<!--Container for slider -->
+		<footer>
+			<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
+		</footer>
 	</div>
 
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
