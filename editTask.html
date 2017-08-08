@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Simple Pure CSS Dropdown Menu</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+	<div class="container-fluid">
+		<nav class="navBar">
+			<ul>
+				<li><a href="index.html"><i class="fa fa-arrow-left"></i></a></li>
+				<li class="sysMenu"><i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+					<ul>
+						<li><i class="fa fa-plus-circle"></i> Add Task List
+						</li>
+						<li><i class="fa fa-tasks" aria-hidden="true"></i>Batch Mode </li>
+						<li><i class="fa fa-ban" aria-hidden="true"></i>Remove Ads</li>
+						<li><i class="fa fa-cog" aria-hidden="true"></i>Settings</li>
+					</ul>
+				</li>
+
+			</ul>
+		</nav>
+		<section class="container">
+			<article>
+
+			</article>
+			<div class="floatAddBtn">
+				<i class="fa fa-plus" aria-hidden="true"></i>
+			</div>
+
+			<!-- Modal -->
+			<div class="modal" id="myModal">
+				<div class="modal-dialog modal-sm" role="document">
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">New List</h4>
+						</div>
+						<div class="modal-body">
+							<form>
+								<div class="form-group">
+									<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
+									<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name">
+								</div>
+								<!--
+									<div class="form-group">
+										<label for="newList" class="control-label">New List:</label>
+										<div>
+											<input type="email" class="form-control input-sm" placeholder="Enter New List" name="newList">
+										</div>
+									</div>
+-->
+							</form>
+						</div>
+						<!-- Modal widow for creating new list							-->
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</section>
+		<!--Container for slider -->
+		<footer>
+			<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
+		</footer>
+	</div>
+
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

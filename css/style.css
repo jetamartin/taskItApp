@@ -18,7 +18,9 @@ html {
 /*****************************************************************/
 
 
-/* NAVIGATION 
+/* NAVIGATION */
+
+
 /*****************************************************************/
 
 
@@ -42,15 +44,18 @@ nav {
 	width: 100%;
 	/*	margin: 5% auto 0 auto;*/
 	margin: 0% auto;
+	padding: 0 1%;
 	-webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	/*
 	background-color: #f9f9f9;
 	background-color: #33fbe1;
 	background-color: #44e3ce;
 	background-color: #43E0D9;
 	background-color: #3FD6CF;
+*/
 	/* great color bluer slightly less green */
-	background-color: #38BBB5;
+	/*	background-color: #38BBB5;*/
 	/* like above but darker */
 	background-color: #34AFA9;
 	/* accent color to above */
@@ -171,6 +176,14 @@ nav ul li:hover ul li {
 	background-color: #34AFA9;
 }
 
+nav a:link,
+a:visited,
+a:hover,
+a:active {
+	text-decoration: none;
+	color: #fff;
+}
+
 
 /* Don't darken background of search icon like other menu items cause size is small*/
 
@@ -254,11 +267,12 @@ nav ul li:hover li:hover {
 
 /* Control display of System menu submenu */
 
-.sysMenu:over ul {
+.sysMenu:hover ul {
 	display: block;
 	margin-top: 12px;
 	width: 220px;
-	left: -178px;
+	/*	left: -178px;*/
+	left: -165px;
 	position: absolute;
 	opacity: 1;
 	-webkit-animation: opacity 700ms ease-in-out normal;
@@ -357,21 +371,23 @@ nav .searchIt {
 }
 
 
-/*****************************************************************/
+/******************************************************/
 
 
 /* MAIN CONTENT AREA */
 
 
-/*****************************************************************/
+/******************************************************/
 
-.slider {
-	width: 100%;
+.mainContent {
+	/*	width: 100%;*/
 	/*	height: 80vh;*/
+	/*
 	height: 100%;
 	margin-top: 10%;
 	padding-top: 1.5rem;
 	padding-bottom: 2.5rem;
+*/
 	/* JM changed was 300px */
 	/*	height: 300px;*/
 	/*
@@ -382,6 +398,28 @@ nav .searchIt {
 */
 	/*	background-color: #f3f3f3;*/
 }
+
+
+/* Main content section for app */
+
+section {
+	/*	margin-top: 5%;*/
+	padding-top: 5rem;
+	padding-bottom: 2.5rem;
+}
+
+
+/* Tasks are grouped and displayed based on timeframe they are due */
+
+
+/* the group of task along with the group's title is wrapped in article */
+
+article {
+	margin-bottom: 5rem;
+}
+
+
+/* Task items are defined within bootstrap cards */
 
 .card {
 	width: 90%;
@@ -468,12 +506,12 @@ input[type="checkbox"] {
 	box-shadow: 0 0 12px rgba(0, 0, 0, 0.12), 0 12px 12px rgba(0, 0, 0, 0.24);
 }
 
-a:link,
-a:visited,
-a:hover,
-a:active {
+article a:link,
+article a:visited,
+article a:hover,
+article a:active {
 	text-decoration: none;
-	color: #fff;
+	color: #34AFA9;
 }
 
 .takeActionBtn {

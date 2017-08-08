@@ -16,7 +16,7 @@
 
 <body>
 
-	<div class="container-fluid">
+	<header class="container-fluid">
 		<nav class="navBar">
 			<ul>
 				<li><i class="fa fa-star-half-o" aria-hidden="true"></i></li>
@@ -49,159 +49,278 @@
 
 			</ul>
 		</nav>
-		<div class="container">
-			<div class="mainContent">
-				<h5 class="taskCategory overDue">Overdue</h5>
-				<div class="card">
+	</header>
+	<section class="container">
+		<!--	Overdue		-->
+		<article>
+			<h5 class="taskCategory overDue">Overdue</h5>
+			<div class="card">
+				<a href="editTask.html">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 1</label>
+						</div>
+						<h6 class="card-text taskDate overDue">Sun, Jul 9, 2017, 5:00 PM</h6>
+						<h6 class="card-text taskItem">Work</h6>
+					</div>
+				</a>
+			</div>
+
+
+			<div class="card">
+				<a href="editTask.html">
 					<div class="card-block">
 						<!--						<input type="checkbox">-->
 						<!--						<h4 class="card-title">Card title</h4>-->
 						<div>
 							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 1</label>
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 1.2</label>
 						</div>
-						<!--						<h6 class="card-subtitle mb-2 text-muted">Task Item Title 1</h6>-->
-						<!--						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
 						<h6 class="card-text taskDate overDue">Sun, Jul 9, 2017, 5:00 PM</h6>
 						<h6 class="card-text taskItem">Work</h6>
-						<!--
-						<a href="#" class="card-link">Card link</a>
-						<a href="#" class="card-link">Another link</a>
--->
 					</div>
-				</div>
-				<h5 class="taskCategory">Today</h5>
-				<div class="card">
+				</a>
+			</div>
+
+		</article>
+
+		<!--	Today		-->
+		<article>
+			<h5 class="taskCategory">Today</h5>
+
+			<div class="card">
+				<a href="editTask.html">
 					<div class="card-block">
 						<div>
 							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
 							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 2</label>
 						</div>
-						<!--						<h4 class="card-title">Card title</h4>-->
-						<!--						<h6 class="card-subtitle mb-2 text-muted">Task Item Title 2</h6>-->
 						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
 						<h6 class="card-text taskItem">Personal</h6>
-						<!--						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-						<!--
-						<a href="#" class="card-link">Card link</a>
-						<a href="#" class="card-link">Another link</a>
--->
 					</div>
-				</div>
-				<h5 class="taskCategory">Tomorrow</h5>
-				<div class="card">
+				</a>
+			</div>
+
+
+			<div class="card">
+				<a href="editTask.html">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 2.1</label>
+						</div>
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+					</div>
+				</a>
+			</div>
+
+
+
+			<div class="card">
+				<a href="editTask.html">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 2.2</label>
+						</div>
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+					</div>
+				</a>
+			</div>
+
+		</article>
+
+		<!--	Tommorrow		-->
+		<article>
+			<h5 class="taskCategory">Tomorrow</h5>
+			<div class="card">
+				<a href="editTask.html">
 					<div class="card-block">
 						<div>
 							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
 							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 3</label>
 						</div>
-						<!--						<h4 class="card-title">Card title</h4>-->
 						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
 						<h6 class="card-text taskItem">Personal</h6>
-						<!--						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-
-						<!--
-						<a href="#" class="card-link">Card link</a>
-						<a href="#" class="card-link">Another link</a>
--->
 					</div>
-				</div>
-				<h5 class="taskCategory">This Week</h5>
-				<div class="card">
+				</a>
+			</div>
+
+			<div class="card">
+				<a href="editTask.html">
+
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 3.1</label>
+						</div>
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+					</div>
+				</a>
+
+			</div>
+		</article>
+
+		<!--	This Week		-->
+		<article>
+			<h5 class="taskCategory">This Week</h5>
+			<div class="card">
+				<a href="editTask.html">
 					<div class="card-block">
 						<div>
 							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
 							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 4</label>
 						</div>
-
 						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
 						<h6 class="card-text taskItem">Personal</h6>
-
 					</div>
-				</div>
-				<h5 class="taskCategory">Next Week</h5>
-				<div class="card">
+				</a>
+			</div>
+
+			<div class="card">
+				<a href="editTask.html">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 4.1</label>
+						</div>
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+					</div>
+				</a>
+			</div>
+		</article>
+
+		<!--	Next Week		-->
+		<article>
+			<h5 class="taskCategory">Next Week</h5>
+			<div class="card">
+				<a href="editTask.html">
 					<div class="card-block">
 						<div>
 							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
 							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 5</label>
 						</div>
-
 						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
 						<h6 class="card-text taskItem">Personal</h6>
-
 					</div>
-				</div>
-				<h5 class="taskCategory">Later</h5>
-				<div class="card">
+				</a>
+			</div>
+
+			<div class="card">
+				<a href="editTask.html">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 5.1</label>
+						</div>
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+					</div>
+				</a>
+			</div>
+
+		</article>
+
+		<!--	Later		-->
+		<article>
+			<h5 class="taskCategory">Later</h5>
+			<div class="card">
+				<a href="editTask.html">
 					<div class="card-block">
 						<div>
 							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
 							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 6</label>
 						</div>
+						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
+						<h6 class="card-text taskItem">Personal</h6>
+					</div>
+				</a>
+			</div>
+			<div class="card">
+				<a href="editTask.html">
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 6.1</label>
+						</div>
 
 						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
 						<h6 class="card-text taskItem">Personal</h6>
-
 					</div>
-				</div>
-				<h5 class="taskCategory">No Date</h5>
-				<div class="card">
+				</a>
+			</div>
+		</article>
+
+		<!--	No Date		-->
+		<article>
+			<h5 class="taskCategory">No Date</h5>
+
+
+			<div class="card">
+				<a href="editTask.html">
 					<div class="card-block">
 						<div>
 							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
 							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 7</label>
 						</div>
-
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
 						<h6 class="card-text taskItem">Personal</h6>
-
 					</div>
-				</div>
-				<div class="floatAddBtn">
-					<i class="fa fa-plus" aria-hidden="true"></i>
-				</div>
+				</a>
+			</div>
 
-				<!-- Modal -->
-				<div class="modal" id="myModal">
-					<div class="modal-dialog modal-sm" role="document">
-						<!-- Modal content-->
-						<div class="modal-content">
-							<div class="modal-header">
-								<h4 class="modal-title">New List</h4>
-							</div>
-							<div class="modal-body">
-								<form>
-									<div class="form-group">
-										<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
-										<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name">
-									</div>
-									<!--
-									<div class="form-group">
-										<label for="newList" class="control-label">New List:</label>
-										<div>
-											<input type="email" class="form-control input-sm" placeholder="Enter New List" name="newList">
-										</div>
-									</div>
--->
-								</form>
-							</div>
-							<!-- Modal widow for creating new list							-->
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-								<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
-							</div>
+			<div class="card">
+				<a href="editTask.html">
+
+					<div class="card-block">
+						<div>
+							<input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
+							<label class="card-subtitle mb-2 text-muted" for="">Task Item Title 7.1</label>
 						</div>
+					</div>
+				</a>
+			</div>
+		</article>
 
+		<!--	Floating Add Button		-->
+		<div class="floatAddBtn">
+			<i class="fa fa-plus" aria-hidden="true"></i>
+		</div>
+
+		<!-- Add List Modal -->
+		<div class="modal" id="myModal">
+			<div class="modal-dialog modal-sm" role="document">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">New List</h4>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
+								<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name">
+							</div>
+						</form>
+					</div>
+					<!-- Modal widow for creating new list							-->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
 					</div>
 				</div>
+
 			</div>
 		</div>
-		<!--Container for slider -->
-		<footer>
-			<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
-		</footer>
-	</div>
+	</section>
+	<!--Container for slider -->
+	<footer>
+		<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
+	</footer>
 
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
