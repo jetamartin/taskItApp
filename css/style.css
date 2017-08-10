@@ -176,6 +176,17 @@ nav ul li:hover ul li {
 	background-color: #34AFA9;
 }
 
+nav ul li:hover ul li:last-child {
+	border-top: solid 1px #44e3ce;
+}
+
+
+/* Reduce space between stacked icons on NewList and words "New List" to be more consistent */
+
+nav ul li:hover ul a li:last-of-type span {
+	width: 1.6rem;
+}
+
 nav a:link,
 a:visited,
 a:hover,
@@ -184,14 +195,22 @@ a:active {
 	color: #fff;
 }
 
+nav .fa-stack-1x,
+nav .fa-stack-2x {
+	position: absolute;
+	left: 0;
+	width: 0%;
+	height: 90%;
+	text-align: center;
+}
+
 nav i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
 	position: relative;
-	font-size: 1.2rem;
+	font-size: .9em;
 	top: 10px;
-	left: 8px;
+	left: 14px;
 	border-radius: 100%;
-	/*	background-color: #34AFA9;*/
-	background-color: transparent;
+	background-color: #f5f2f2;
 }
 
 
@@ -347,7 +366,7 @@ nav .searchIt {
 
 .searchIt input[type="text"]:focus {
 	/*	width: 500px;*/
-	width: 50vw;
+	width: 40vw;
 	z-index: 1;
 	cursor: text;
 }
@@ -376,8 +395,8 @@ nav .searchIt {
 
 /* Inserts blank after each font awesome icon */
 
-.fa::after {
-	content: "\00a0";
+nav .fa::after {
+	content: "\00a0 \00a0";
 }
 
 
@@ -495,7 +514,6 @@ input[type="checkbox"] {
 
 .floatAddBtn i.fa {
 	color: white;
-	margin-left: .5rem;
 }
 
 .floatAddBtn:hover {
