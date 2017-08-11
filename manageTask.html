@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Simple Pure CSS Dropdown Menu</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+	<header class="container-fluid manageTasksPage">
+		<nav class="navBar">
+			<ul>
+				<li><a href="index.html"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Back</a></li>
+				<li class="screenTitle">Manage Lists</li>
+				<a data-toggle="modal" data-target="#myModal">
+					<li class="floatRight">
+						<span class="newList fa-stack">
+							<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
+							<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
+							</span>
+					</li>
+				</a>
+
+			</ul>
+		</nav>
+	</header>
+	<section class="container">
+
+		<!--	Default List	-->
+		<article>
+			<div class="card">
+				<a href="#">
+					<div class="card-block">
+						<div>
+							<p class="card-taskList-subtitle mb-2 text-muted">Default</p>
+						</div>
+						<p class="card-taskList-text">Tasks:<span>&nbsp;2&nbsp;</span><span class="overDue">(4 overdue)</span></p>
+
+					</div>
+				</a>
+			</div>
+
+			<!--	Personal List	-->
+			<div class="card">
+				<a href="#">
+					<div class="card-block">
+						<div>
+							<p class="card-taskList-subtitle mb-2 text-muted">Personal</p>
+						</div>
+						<p class="card-taskList-text">Tasks:<span>&nbsp;6&nbsp;</span><span class="overDue">(2 overdue)</span></p>
+
+					</div>
+				</a>
+			</div>
+
+			<!--	Shopping List	-->
+			<div class="card">
+				<a href="#">
+					<div class="card-block">
+						<div>
+							<p class="card-taskList-subtitle mb-2 text-muted">Shopping</p>
+						</div>
+						<p class="card-taskList-text">Tasks:<span>&nbsp;8&nbsp;</span><span class="overDue">(1 overdue)</span></p>
+
+					</div>
+				</a>
+			</div>
+
+			<!--	Wish List	-->
+			<div class="card">
+				<a href="#">
+					<div class="card-block">
+						<div>
+							<p class="card-taskList-subtitle mb-2 text-muted">Wishlist</p>
+						</div>
+						<p class="card-taskList-text">Tasks:<span>&nbsp;10&nbsp;</span><span class="overDue">(1 overdue)</span></p>
+
+					</div>
+				</a>
+			</div>
+			<!--	Work List	-->
+			<div class="card">
+				<a href="#">
+					<div class="card-block">
+						<div>
+							<p class="card-taskList-subtitle mb-2 text-muted">Work</p>
+						</div>
+						<p class="card-taskList-text">Tasks:<span>&nbsp;18&nbsp;</span><span class="overDue">(8 overdue)</span></p>
+
+					</div>
+				</a>
+			</div>
+		</article>
+
+		<!-- Floating Add Button	-->
+		<!--
+		<a href="editTask.html">
+			<div class="floatAddBtn">
+				<i class="fa fa-plus" aria-hidden="true"></i>
+			</div>
+		</a>
+-->
+		<!-- Add List Modal -->
+		<div class="modal" id="myModal">
+			<div class="modal-dialog modal-sm" role="document">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">New List</h4>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
+								<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name">
+							</div>
+						</form>
+					</div>
+					<!-- Modal widow for creating new list							-->
+					<div class="modal-footer button-group">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</section>
+	<!--Container for slider -->
+	<footer>
+		<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
+	</footer>
+
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

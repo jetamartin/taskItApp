@@ -176,6 +176,9 @@ nav ul li:hover ul li {
 	background-color: #34AFA9;
 }
 
+
+/* Create separation line between last submenu element and other elements */
+
 nav ul li:hover ul li:last-child {
 	border-top: solid 1px #44e3ce;
 }
@@ -574,7 +577,7 @@ footer p {
 /*****************************************************************/
 
 
-/* Edit Task List Item */
+/* Edit Task List Page */
 
 
 /*****************************************************************/
@@ -586,6 +589,30 @@ footer p {
 	margin-bottom: 5rem;
 }
 
+
+/* Nav bar styling */
+
+nav .floatRight {
+	float: right;
+}
+
+nav .screenTitle {
+	position: absolute;
+	left: 50%;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+	font-weight: bold;
+	font-size: 1.5rem;
+}
+
+nav .screenTitle {
+	pointer-events: none;
+	cursor: default;
+}
+
+
+/* Make form controls appear in a row rather than as a column */
+
 .input-group .form-control,
 .input-group-addon,
 .input-group-btn {
@@ -593,10 +620,6 @@ footer p {
 	-webkit-box-direction: normal;
 	-ms-flex-direction: row;
 	flex-direction: row;
-}
-
-nav .floatRight {
-	float: right;
 }
 
 .editTaskPage header h1 {
@@ -629,4 +652,30 @@ i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
 
 .col-11 {
 	max-width: 95%;
+}
+
+
+/*****************************************************************/
+
+
+/* Manage Tasks Page */
+
+
+/*****************************************************************/
+
+.card-taskList-subtitle {
+	font-size: 1.5rem;
+	/* margin-left: 1rem; */
+}
+
+.card-taskList-text {
+	/*	margin-bottom: -.375rem;*/
+}
+
+
+/* Reduce margin for new task list icon so navbar height remains same size between screens */
+
+.manageTasksPage nav .newList {
+	margin-bottom: -.8rem;
+	margin-top: -.8rem;
 }
