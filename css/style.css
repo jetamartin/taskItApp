@@ -592,7 +592,7 @@ footer p {
 
 /* Nav bar styling */
 
-nav .floatRight {
+.floatRight {
 	float: right;
 }
 
@@ -678,4 +678,19 @@ i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
 .manageTasksPage nav .newList {
 	margin-bottom: -.8rem;
 	margin-top: -.8rem;
+}
+
+.manageListIcon {
+	display: inline-block;
+	float: right;
+	font-size: 2rem;
+	margin-top: -2rem;
+	margin-right: 2rem;
+	z-index: 99;
+}
+
+.manageListIcon span {
+	padding: 1rem;
+	cursor: pointer;
+	color: #34AFA9;
 }
