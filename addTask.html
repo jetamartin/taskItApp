@@ -16,52 +16,32 @@
 <body>
 	<div class="container-fluid">
 		<nav class="navBar">
-			<!--			<div><span>Edit Task</span></div>-->
-
 			<ul>
 				<li><a href="index.html"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Back</a></li>
-				<li class="screenTitle">Edit Task</li>
-				<!--
-<li class="sysMenu"><i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-	<ul>
-		<li><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Manage Lists
-		</li>
-		<li><i class="fa fa-tasks" aria-hidden="true"></i>Batch Mode </li>
-		<li><i class="fa fa-ban" aria-hidden="true"></i>Remove Ads</li>
-		<li><i class="fa fa-cog" aria-hidden="true"></i>Settings</li>
-	</ul>
-</li>
--->
-
-
+				<li class="screenTitle">New Task</li>
 				<li class="floatRight">Save&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i></li>
 
 			</ul>
 		</nav>
 		<section class="container editTaskPage">
 			<article class="">
-				<!--
-				<header>
-					<h1>Edit Task</h1>
-				</header>
--->
 
 				<form>
+
+					<!--	Enter Task Name				-->
 					<div class="form-group">
 						<label for="taskName" class="form-control-label">Task Name:</label>
 						<div class="row col-12">
-							<input type="text" class="form-control" id="Taskame" value="Task Item Title 1">
+							<input type="text" id="taskName" class="form-control" placeholder="Enter task name here">
 						</div>
 					</div>
-					<div class="form-group">
-						<input class="checkbox" type="checkbox" id="finished" name="taskTitle" value="taskTitle">
-						<label class="form-control-label" for="finished">Task Finished?</label>
-					</div>
+
+					<!--	Enter Due Date				-->
 					<div>
 						<div class="form-group">
-							<label for="dueDate" class="form-control-label">Due Date:</label>
+							<label for="dueDate" class="control-label">Due Date:</label>
 							<div class="row col-12">
-								<input type="date" value="2017-07-09" class="form-control input-sm" name="dueDate">
+								<input type="date" class="form-control input-sm" placeholder="Enter Due Date" name="dueDate">
 								<!-- Calendar button at end of line-->
 								<!--
 								<span class="input-group-addon">
@@ -82,20 +62,23 @@
 							</div>
 						</div>
 -->
-
 					</div>
+
+					<!--	Enter Time Due				-->
 					<div class="form-group">
 						<label for="time-input" class="control-label">Time:</label>
 						<div class="row col-12">
-							<input class="form-control" type="time" value="17:00" id="time-input">
+							<input class="form-control" type="time" value="12:00:00" id="time-input">
 						</div>
-
 					</div>
+
+					<!--	Select Repeat			-->
 					<div class="form-group">
 						<label for="exampleSelect1">Repeat:</label>
 						<div class="row col-12">
 							<select class="form-control" id="exampleSelect1">
-							<option selected="selected">No repeat</option>
+							<option>No repeat</option>
+							<option>Once a Day</option>
 							<option>Once a Day</option>
 							<option>Once a Week</option>
 							<option>Once a Month</option>
@@ -103,20 +86,23 @@
 						</select>
 						</div>
 					</div>
+
+					<!--	Select Repeat			-->
+
 					<div class="form-group">
-						<label for="listName" class="form-control-label">List:</label>
+						<label for="listName">List:</label>
 						<div class="row col-10">
 							<select class="form-control" id="listName">
 							<option>Default</option>
 							<option>Personal</option>
 							<option>Shopping</option>
 							<option>Wishlist</option>
-							<option selected="selected">Work</option>
+							<option>Work</option>
 							</select>
 						</div>
 
 
-						<a data-toggle="modal" data-target="#myModal">
+						<a data-toggle="modal" data-target="#addListModal">
 							<span class="newList fa-stack">
 							<i class="fa fa-list-ul fa-stack-2x" aria-hidden="true"></i>
 							<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
@@ -131,7 +117,7 @@
 					</div>
 				</form>
 				<!-- Add List Modal -->
-				<div class="modal" id="myModal">
+				<div class="modal" id="addListModal">
 					<div class="modal-dialog modal-sm" role="document">
 						<!-- Modal content-->
 						<div class="modal-content">
