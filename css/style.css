@@ -384,21 +384,41 @@
 	
 	.card-subtitle {
 		font-size: 1.5rem;
-		margin-left: 1rem;
 	}
+	/* TaskItem and date text color to dark grey (but not dates for overdue items)	*/
 	
-	.taskItem {
+	.taskItem,
+	.card h6:not(.overDue) {
 		color: #adaaaa;
+	}
+	/* Completed label */
+	
+	.card a label {
+		color: #2cb5a3;
+	}
+	/* Completed label*/
+	
+	.card a label:hover {
+		color: #2C9893;
 	}
 	
 	input[type="checkbox"] {
 		height: 1.5rem;
 		width: 1.5rem;
+		margin-left: .5rem;
+		float: right;
 	}
 	
+	.checkBoxLabel {
+		float: right;
+		margin-top: .5rem;
+		cursor: pointer;
+	}
+	/*
 	.card-text {
 		margin-left: 3rem;
 	}
+*/
 	
 	.taskDate::after {
 		font-family: "FontAwesome";
