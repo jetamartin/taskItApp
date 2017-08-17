@@ -21,14 +21,16 @@
 			<ul>
 				<li><i class="fa fa-star-half-o" aria-hidden="true"></i></li>
 				<li class="taskListDropdown"><i class="fa fa-home" aria-hidden="true"></i>All Lists &nbsp <i class="fa fa-angle-down"></i>
-					<ul>
+					<ul class="subMenuElements">
 						<li><i class="fa fa-list-ul" aria-hidden="true"></i>All Lists <span class="overDue"> 18</span><span class="listTotal">44</span></li>
 						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Default <span class="overDue"> 4</span><span class="listTotal">2</span></li>
-						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Personal <span class="overDue"> 2</span><span class="listTotal">6</span></li>
-						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Shopping<span class="overDue"> 1</span><span class="listTotal">8</span></li>
-						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Wishlist<span class="overDue"> 3 </span><span class="listTotal">10</span></li>
-						<li><i class="fa fa-list-ul" aria-hidden="true"></i>Work<span class="overDue"> 8</span><span class="listTotal">18</span></li>
-						<li><i class="fa fa-check-square" aria-hidden="true"></i>Finished<span class="listTotal">72</span></li>
+						<!--
+<li><i class="fa fa-list-ul" aria-hidden="true"></i>Personal <span class="overDue"> 2</span><span class="listTotal">6</span></li>
+<li><i class="fa fa-list-ul" aria-hidden="true"></i>Shopping<span class="overDue"> 1</span><span class="listTotal">8</span></li>
+<li><i class="fa fa-list-ul" aria-hidden="true"></i>Wishlist<span class="overDue"> 3 </span><span class="listTotal">10</span></li>
+<li><i class="fa fa-list-ul" aria-hidden="true"></i>Work<span class="overDue"> 8</span><span class="listTotal">18</span></li>
+-->
+						<li class="finishedLists"><i class="fa fa-check-square" aria-hidden="true"></i>Finished<span class="listTotal">72</span></li>
 						<a data-toggle="modal" data-target="#addNewListModal">
 							<li>
 								<span class="newList fa-stack">
@@ -314,6 +316,8 @@
 				<i class="fa fa-plus" aria-hidden="true"></i>
 			</div>
 		</a>
+
+
 		<!-- Add List Modal -->
 		<div class="modal" id="addNewListModal">
 			<div class="modal-dialog modal-sm" role="document">
@@ -358,18 +362,17 @@
 						<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Completed</button>
 					</div>
 				</div>
-
 			</div>
 		</div>
 
 	</section>
-	<!--Container for slider -->
 	<footer>
 		<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
 	</footer>
 
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<script src="js/script.js"></script>
 
 
 </body>

@@ -206,7 +206,6 @@
 		font-family: "FontAwesome";
 		color: #fff;
 		font-weight: 100;
-		margin-left: 10px;
 		content: "\f067";
 	}
 	/* Place & Style non-overdue task totals */
@@ -220,10 +219,24 @@
 		border-radius: 3px;
 	}
 	/* Add space after task totals to sep from overdue counts */
+	/*	Test adding plus after listtotal */
 	
 	nav ul li:hover ul li span.listTotal:after {
-		content: "\00a0"
+		font-family: "FontAwesome";
+		font-weight: 100;
+		font-size: .75rem;
+		content: "\00a0 \00a0 \f067 \00a0";
+		content: "\00a0";
 	}
+	
+	.hideIt {
+		display: none;
+	}
+	/*
+	nav ul li:hover ul li span.listTotal:after:not(.finishedLists) {
+		content: "\00a0";
+	}
+*/
 	/*
 .tutorial ul li:hover ul li:hover span.fa-stack i {
 	background-color: #2cb5a3;
@@ -407,6 +420,7 @@
 		width: 1.5rem;
 		margin-left: .5rem;
 		float: right;
+		cursor: pointer;
 	}
 	
 	.checkBoxLabel {
