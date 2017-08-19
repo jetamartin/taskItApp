@@ -6,6 +6,28 @@
 //	}
 //}
 
+var previouslySelectedList;
+var parentElem;
+
+function toggleClass(element, className){
+    if (!element || !className){
+        return;
+    }
+
+    var classString = element.className, nameIndex = classString.indexOf(className);
+    if (nameIndex == -1) {
+        classString += ' ' + className;
+    }
+    else {
+        classString = classString.substr(0, nameIndex) + classString.substr(nameIndex+className.length);
+    }
+    element.className = classString;
+}
+
+//document.getElementById('YOUR-BUTTON').addEventListener('click', function() {
+//    toggleClass(document.getElementById('ELEMENT TO BE CHANGED'), 'YOUR-CLASS');
+//});
+
 
 // There is no standard method for inserting elements after another element so this function does this  
 function insertAfter(newNode, referenceNode) {
@@ -102,6 +124,67 @@ for (var i = 0; i < userDefinedTaskListName.length; i++) {
 
 }
 
+//*********************************************************************
+//
+// User clicks on submenu element to make it current list in Navbar
+//
+//*********************************************************************
+// Hardcoding childNode #'s is a brittle solution because simple changes to HTML can break this code.
+// Need to find an alternative solution 
+
+var handleSubMenuClick = function (event) {
+	// Get name of submenu list selected
+	var listNameSelected = event.target.childNodes[1].textContent;
+	
+	console.log("Event.target = ", event.target);
+	// Get handle for current List Menu 
+	var listMenuElement = document.getElementById('taskListDropdown');
+	
+	// Get location of List menu title 
+	var listMenuTitle = listMenuElement.childNodes[2];
+	
+	console.log(listMenuElement.childNodes);
+	
+	// Make the List menu title equal to submenu name selected
+	listMenuTitle.nodeValue = listNameSelected;
+	
+	// Toggle previously selected list item to remove "selected" class & remove the darkended backgroun
+	toggleClass(previouslySelectedList,'selected');
+	
+	// The selected list name will have the "selected" class added to darken background so when 
+	// user hovers and gets the submenu to display the previously selected list will be distinguishable 
+	toggleClass(event.target, 'selected');
+	
+	// Save the selected list element in previouslySelectedList variable 
+	previouslySelectedList = event.target;
+	
+	// *****************************************************************************************
+	// Code below was attempt to hide submenu once user click on one of the list in the submenu
+	//******************************************************************************************	
+	// Get the parent of submenu so that I can hide it
+	parentElem = event.target.parentElement;	
+	//  Add hideIt class so that 	
+	//	toggleClass(parentElem,"hideIt"); 
+};
+
+var handleSearchClick = function (event) {
+/* .searchIt input[type="text"]:focus	*/
+	if (event.target === document.activeElement) {
+		console.log("Search is active element");
+	};
+};
+
+//*********************************************************************
+//
+//* SET UP EVENTLISTENERS
+//
+//*********************************************************************
+
+// EventListener for List Submenu 
+document.querySelector(".subMenuElements").addEventListener('click', handleSubMenuClick);
+
+// Event Listener for Search 
+document.querySelector(".searchIt").addEventListener('click', handleSearchClick);
 
 
 //$('#datepicker').datepicker();

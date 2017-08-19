@@ -61,6 +61,11 @@
 		font-size: 1.5rem;
 		font-weight: bold;
 	}
+	/*
+	li .fa.fa-angle-down:before {
+		content: "\00a0";
+	}
+*/
 	
 	nav ul {
 		font-size: 0;
@@ -90,7 +95,7 @@
 	}
 	/* Make Task list nav bar element same width as it's dropdown list elements */
 	
-	nav ul li.taskListDropdown:hover {
+	nav ul li#taskListDropdown:hover {
 		width: 250px;
 	}
 	/* Icons used on nav bar */
@@ -146,6 +151,27 @@
 		display: block;
 		/*	background-color: #44e3ce;*/
 		background-color: #34AFA9;
+	}
+	/* Test99999*/
+	/*
+	nav ul li ul.hideIt li {
+		display: none;
+	}
+*/
+	/* Darken background of submenu element when selected	*/
+	/* selected class is added and removed via JS */
+	
+	nav ul li:hover ul li.selected {
+		display: block;
+		/*	background-color: #44e3ce;*/
+		background-color: #34AFA9;
+		background-color: #2C9893;
+		background-color: #44e3ce;
+		background-color: #1d635f;
+		/*
+		border-top: white solid 2px;
+		border-bottom: white solid 2px;
+*/
 	}
 	/* Create separation line between last submenu element and other elements */
 	
