@@ -255,8 +255,12 @@
 		content: "\00a0";
 	}
 	
-	.hideIt {
+	nav .hideIt {
 		display: none;
+	}
+	
+	nav .invisible {
+		visibility: hidden;
 	}
 	/*
 	nav ul li:hover ul li span.listTotal:after:not(.finishedLists) {
@@ -354,7 +358,7 @@
 	
 	.searchIt input[type="text"]:focus {
 		/*	width: 500px;*/
-		width: 40vw;
+		width: 50vw;
 		z-index: 1;
 		cursor: text;
 	}
@@ -378,6 +382,12 @@
 		color: white;
 		-webkit-transition: opacity .4s ease;
 		transition: opacity .4s ease;
+	}
+	
+	.clearSearchBox {
+		margin-right: 0;
+		margin-left: 20px;
+		float: right;
 	}
 	/* Inserts blank after each font awesome icon */
 	
