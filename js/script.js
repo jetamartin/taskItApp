@@ -1,3 +1,23 @@
+//*****************************************
+//
+//  GLOBAL VARIABLE DECLARATION
+//
+//  Note: As part of refactor I need to consolidate all of these
+//
+//*****************************************
+
+
+var previouslySelectedList;
+var parentElem;
+var initialInput = true;
+var clearSearchClicked = false;
+
+var listMenuElement = document.getElementById('taskListDropdown');
+var sysMenuElement = document.querySelector('.sysMenu');
+var clearSearchIcon = document.querySelector(".clearSearchIcon");
+var searchInput = document.getElementById("search");
+
+
 //function localStorageSupported() {
 //	try {
 //		return "localStorage" in window && window["localStorage"] !== null;
@@ -22,47 +42,41 @@ function toggleClass(element, className) {
 }
 
 function isEmpty(idValue) {
-	//	console.log("Search length value: ", document.getElementById(idValue).value.length);
 	if (document.getElementById(idValue).value.length === 0) {
 		return true;
 	} else {
 		return false;
 	}
-	//	console.log("Search Form length: ", document.forms["searchForm"].search.length);
-	//	if (document.forms["searchForm"].search.length === 0) {
-	//		console.log("Search value: ", document.forms["searchForm"].search.value);
-	//		return true;
-	//	} else {
-	//		return false;
-	//	}
 }
 
-//*****************************************
-//
-//  GLOBAL VARIABLE DECLARATION
-//
-//*****************************************
+
+// Clear the contents of the Search input area
+function clearSearchContents() {
+	searchInput.value = null;
+}
 
 
-var previouslySelectedList;
-var parentElem;
-var initialInput = true;
-var clearSearchClicked = false;
+function removeClearSearchIcon() {
+	clearSearchIcon.style.display = "none";
+}
 
-var listMenuElement = document.getElementById('taskListDropdown');
-var sysMenuElement = document.querySelector('.sysMenu');
-var clearSearchBox = document.querySelector('.clearSearchBox');
-var searchInput = document.getElementById("search");
+function hideClearSearchIcon() {
+	clearSearchIcon.style.visibility = "hidden";
+}
 
-toggleClass(clearSearchBox, "hideIt");
+function addClearSearchIcon() {
+	clearSearchIcon.style.display = "inline-block";
+}
 
+function showClearSearchIcon() {
+	clearSearchIcon.style.visibility = "visible";
+}
 
-//document.getElementById('YOUR-BUTTON').addEventListener('click', function() {
-//    toggleClass(document.getElementById('ELEMENT TO BE CHANGED'), 'YOUR-CLASS');
-//});
+removeClearSearchIcon();
 
 
 // There is no standard method for inserting elements after another element so this function does this  
+
 function insertAfter(newNode, referenceNode) {
 	referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
@@ -200,87 +214,121 @@ var handleSubMenuClick = function (event) {
 	//	toggleClass(parentElem,"hideIt"); 
 };
 
-function whereDidYouGo() {
-	return document.activeElement;
-}
+
+//*********************************************************************
+//
+// HANDLE SEARCH FOCUS:
+// This function is called when the SearchIcon is clicked and Search input receives focus
+//
+//*********************************************************************
 
 var handleSearchFocus = function (event) {
 	console.log("In handleSearchFocus function");
-	//	console.log("Event.target: ", event.target, event.target.tagName);
-	//	console.log("RelatedTarget: ", event.relatedTarget);
-	//	console.log("Active Element: ", document.activeElement);
-	//	console.log("Results-Where did you go: ", whereDidYouGo());
+
+	// Show original Nav bar settings if user clicked somewhere other than clearSearchIcon
+	// Note: if the user clicked the clear search icon then you want the original Navbar elements to remain hidden (hence no else condition)
 	if (!clearSearchClicked) {
+
+		// Hide (via display:none) other elements of Navbar so Search is focus 
 		toggleClass(listMenuElement, "hideIt");
 		toggleClass(sysMenuElement, "hideIt");
-		toggleClass(clearSearchBox, "invisible");
-		toggleClass(clearSearchBox, "hideIt");
+
+		// Add the clearSearch icon to the navbar but hide it until user enters data in search bar
+		addClearSearchIcon();
+		hideClearSearchIcon();
+
+		// Each time submit button (searchIcon) is clicked it will clear any previously
+		searchInput.value = null;
 	}
 };
 
+
+//*********************************************************************
+//
+// HANDLE SEARCH BLUR:
+// This function is called when user clicks on area outside of search input area
+//
+//*********************************************************************
+
+
 var handleSearchBlur = function (event) {
+
+	// Assume that click was not on clearSearchIcon 
 	clearSearchClicked = false;
 
 	console.log("In handleSearchBlur function");
-	//	console.log("Results-Where did you go: ", whereDidYouGo());
 
 	console.log("Event: ", event);
+
+	// NOTE: Unfortunately when focus is lost the blur method obscures the click event that  
+	// caused it to lose focus (i.e., event.target). 
+	// So to workaround this behavior a setTimeoutfunction is used. This allows the blur method
+	// to complete and then the event handler for the click to run so that the event.target can
+	// be captured/"noted" (via flags) and logic for handling the event can be added to the timeOut 
+	// function. This was the only solution I couldfind on StackOverflow for this "well-known" //problem. 
+
 	setTimeout(function () {
 		console.log("----->EVENT THAT FIRED", document.activeElement);
+		// If the user click on something other than the clearSearch icon you want to restore orig navBar elements.
 		if (!clearSearchClicked) {
+			// 2 toggles will cause the listMenu & sysMenu elements to reappear
 			toggleClass(listMenuElement, "hideIt");
 			toggleClass(sysMenuElement, "hideIt");
-			toggleClass(clearSearchBox, "hideIt");
-		} else {
+			// This will remove the clearSearch icon (display: none)
+			removeClearSearchIcon();
+		} else { // User wants to clear Search area and enter diff search criteria. So maintain focus on Search area.
 			searchInput.focus();
 		}
 	}, 0);
-
-	// After input field is in focus and you click out of it (click on "x") you want to clear input field
-	//	document.getElementById("search").value = null;
-
-	// Put Search input field back into focus so users can enter another search criteria
-	//	searchInput.focus();
-
-	// Re-hide clear search box icon 
-	//	toggleClass(clearSearchBox, "invisible");
-
-
-
 };
+
+//*********************************************************************
+//
+// DETECT SEARCH INPUT
+// Called on "keyUp" event...so it's called after something has been entered in the search box
+//
+//*********************************************************************
 
 var detectSearchInput = function (event) {
-	console.log(document.getElementById("search").value.length);
-	console.log("InitialInput value: ", initialInput);
-	if (initialInput) {
-		toggleClass(clearSearchBox, "invisible");
-		initialInput = false;
+
+	// At this point at least one keystroke has been entered..if there is only one keystroke
+	// then you know it was previously empty and this is the first character entered and thus
+	// the clearSearchIcon should be displayed
+
+
+	if (searchInput.value.length === 1) {
+		addClearSearchIcon();
+		showClearSearchIcon();
+
+	}
+	if (isEmpty("search")) {
+		hideClearSearchIcon();
 	}
 
-	if (isEmpty("search")) {
-		initialInput = true;
-		toggleClass(clearSearchBox, "invisible");
-	}
 };
 
+//*********************************************************************
+//
+// CLEAR SEARCH FIELD 
+// Called on "keyUp" event...so it's called after something has been entered in the search box
+//
+//*********************************************************************
+
+
 var clearSearchField = function (event) {
-	initialInput = true;
+	// Set flag so we know that clearSearchIcon was clicked
 	clearSearchClicked = true;
-	console.log("ClearSearchField");
+
+	console.log("In ClearSearchField method");
 	console.log("ClearSearchField target === ", event.target);
 
 
-	// After input field is in focus and you click out of it (click on "x") you want to clear input field
-	document.getElementById("search").value = null;
+	// Clear the contents of the search area if user clicks clear search icon
+	clearSearchContents();
 
+	// Re-hide clear search box icon
+	hideClearSearchIcon();
 
-	// Re-hide clear search box icon 
-	toggleClass(clearSearchBox, "invisible");
-
-	// Put Search input field back into focus so users can enter another search criteria
-	//	searchInput.focus();
-	//	document.getElementById("search").value = "";
-	//	toggleClass(clearSearchBox, "invisible");
 };
 //*********************************************************************
 //
@@ -292,10 +340,10 @@ var clearSearchField = function (event) {
 document.querySelector(".subMenuElements").addEventListener('click', handleSubMenuClick);
 
 // Event Listener for Search onFocus and OnBlur
-document.querySelector("#search").addEventListener("focus", handleSearchFocus);
-document.querySelector("#search").addEventListener("blur", handleSearchBlur);
-document.querySelector("#search").addEventListener("keyup", detectSearchInput);
-document.querySelector(".clearSearchBox").addEventListener("click", clearSearchField);
+searchInput.addEventListener("focus", handleSearchFocus);
+searchInput.addEventListener("blur", handleSearchBlur);
+searchInput.addEventListener("keyup", detectSearchInput);
+clearSearchIcon.addEventListener("click", clearSearchField);
 
 
 //$('#datepicker').datepicker();

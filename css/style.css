@@ -309,9 +309,29 @@
 		height: 30px;
 		float: right;
 		padding: 0;
-		position: relative;
+		positionß: relative;
 		top: 5px;
 	}
+	/*------------------- TEST SEARCHIT ICON */
+	
+	#searchIcon:after {
+		font-family: "FontAwesome";
+		content: "\f002";
+		background-color: transparent;
+		/*		padding-right: 53vw;*/
+	}
+	
+	#searchIcon:hover {
+		/*		padding-right: 53vw;*/
+		background-color: transparent;
+	}
+	/*
+	#searches input[type="text"]:focus::before {
+		font-family: "FontAwesome";
+		color: white;
+		content: "\f002";
+	}
+*/
 	
 	.searchIt input[type="text"]::-webkit-input-placeholder {
 		color: white;
@@ -384,7 +404,7 @@
 		transition: opacity .4s ease;
 	}
 	
-	.clearSearchBox {
+	.clearSearchIcon {
 		margin-right: 0;
 		margin-left: 20px;
 		float: right;
