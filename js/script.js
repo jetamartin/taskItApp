@@ -16,7 +16,11 @@ var listMenuElement = document.getElementById('taskListDropdown');
 var sysMenuElement = document.querySelector('.sysMenu');
 var clearSearchIcon = document.querySelector(".clearSearchIcon");
 var searchInput = document.getElementById("search");
-
+var searchIt = document.querySelector(".searchIt");
+var searchForm = document.querySelector("#searches");
+var searchSubmit = document.getElementById("search_submit");
+var searchString = null;
+var userInput = null;
 
 //function localStorageSupported() {
 //	try {
@@ -25,6 +29,13 @@ var searchInput = document.getElementById("search");
 //		return false;
 //	}
 //}
+
+
+function searchForMatchingTask(searchString, userInput) {
+
+
+}
+
 
 function toggleClass(element, className) {
 	if (!element || !className) {
@@ -52,7 +63,7 @@ function isEmpty(idValue) {
 
 // Clear the contents of the Search input area
 function clearSearchContents() {
-	searchInput.value = null;
+	searchInput.value = "";
 }
 
 
@@ -223,7 +234,7 @@ var handleSubMenuClick = function (event) {
 //*********************************************************************
 
 var handleSearchFocus = function (event) {
-	console.log("In handleSearchFocus function");
+	console.log("----->In handleSearchFocus function");
 
 	// Show original Nav bar settings if user clicked somewhere other than clearSearchIcon
 	// Note: if the user clicked the clear search icon then you want the original Navbar elements to remain hidden (hence no else condition)
@@ -240,6 +251,7 @@ var handleSearchFocus = function (event) {
 		// Each time submit button (searchIcon) is clicked it will clear any previously
 		searchInput.value = null;
 	}
+
 };
 
 
@@ -256,7 +268,7 @@ var handleSearchBlur = function (event) {
 	// Assume that click was not on clearSearchIcon 
 	clearSearchClicked = false;
 
-	console.log("In handleSearchBlur function");
+	console.log("-----> In handleSearchBlur function");
 
 	console.log("Event: ", event);
 
@@ -268,7 +280,8 @@ var handleSearchBlur = function (event) {
 	// function. This was the only solution I couldfind on StackOverflow for this "well-known" //problem. 
 
 	setTimeout(function () {
-		console.log("----->EVENT THAT FIRED", document.activeElement);
+		console.log("----->SetTimeout function", document.activeElement);
+		console.log("clearSearchClicked value: ", clearSearchClicked);
 		// If the user click on something other than the clearSearch icon you want to restore orig navBar elements.
 		if (!clearSearchClicked) {
 			// 2 toggles will cause the listMenu & sysMenu elements to reappear
@@ -276,10 +289,8 @@ var handleSearchBlur = function (event) {
 			toggleClass(sysMenuElement, "hideIt");
 			// This will remove the clearSearch icon (display: none)
 			removeClearSearchIcon();
-		} else { // User wants to clear Search area and enter diff search criteria. So maintain focus on Search area.
-			searchInput.focus();
 		}
-	}, 0);
+	}, 200);
 };
 
 //*********************************************************************
@@ -290,6 +301,7 @@ var handleSearchBlur = function (event) {
 //*********************************************************************
 
 var detectSearchInput = function (event) {
+	console.log("----->In DetectSearchInput function");
 
 	// At this point at least one keystroke has been entered..if there is only one keystroke
 	// then you know it was previously empty and this is the first character entered and thus
@@ -300,10 +312,17 @@ var detectSearchInput = function (event) {
 		addClearSearchIcon();
 		showClearSearchIcon();
 
-	}
-	if (isEmpty("search")) {
+		// Reset searchString
+		searchString = "";
+		userInput = searchInput.value;
+
+	} else if (isEmpty("search")) {
 		hideClearSearchIcon();
+
 	}
+
+
+	//	searchForMatchingTask(searchString, userInput)
 
 };
 
@@ -328,6 +347,8 @@ var clearSearchField = function (event) {
 
 	// Re-hide clear search box icon
 	hideClearSearchIcon();
+
+	searchInput.focus();
 
 };
 //*********************************************************************
