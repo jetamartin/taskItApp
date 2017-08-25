@@ -259,6 +259,10 @@
 		display: none;
 	}
 	
+	.hideIt {
+		display: none;
+	}
+	
 	nav .invisible {
 		visibility: hidden;
 	}

@@ -19,8 +19,8 @@ var searchInput = document.getElementById("search");
 var searchIt = document.querySelector(".searchIt");
 var searchForm = document.querySelector("#searches");
 var searchSubmit = document.getElementById("search_submit");
-var searchString = null;
-var userInput = null;
+var searchString;
+var userInput;
 
 //function localStorageSupported() {
 //	try {
@@ -30,9 +30,40 @@ var userInput = null;
 //	}
 //}
 
+function getAllTasks() {
+	return document.querySelectorAll(".card");
+}
 
-function searchForMatchingTask(searchString, userInput) {
+function getVisibleTasks() {
+	var visibleTasks = [];
+	var allTasks = getAllTasks();
+	allTasks.forEach(function (node) {
+		if (window.getComputedStyle(node).display !== "none") {
+			visibleTasks.push(node);
+		}
+	});
+	return visibleTasks;
+}
 
+function getTaskName(task) {
+	return task.childNodes[2].childNodes[1].childNodes[2].nextSibling.innerHTML.toLowerCase();
+}
+
+function searchForMatchingTask(userInput) {
+	console.log("----->In searchForMatching");
+	console.log("userInput: ", userInput);
+	userInput = userInput.toLowerCase();
+	var taskName;
+	var visibleTasks = getVisibleTasks();
+	console.log("Visible Tasks: ", visibleTasks);
+	visibleTasks.forEach(function (task) {
+		taskName = getTaskName(task);
+		console.log("TaskName: ", taskName);
+		console.log("UserInput", userInput);
+		if (taskName.indexOf(userInput) === -1) {
+			task.style.display = "none";
+		}
+	});
 
 }
 
@@ -321,8 +352,7 @@ var detectSearchInput = function (event) {
 
 	}
 
-
-	//	searchForMatchingTask(searchString, userInput)
+	searchForMatchingTask(searchInput.value);
 
 };
 
