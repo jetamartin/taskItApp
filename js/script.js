@@ -19,6 +19,7 @@ var searchInput = document.getElementById("search");
 var searchIt = document.querySelector(".searchIt");
 var searchForm = document.querySelector("#searches");
 var searchSubmit = document.getElementById("search_submit");
+var taskCategoryHeader = document.querySelectorAll(".taskCategory");
 var searchString;
 var userInput;
 
@@ -30,10 +31,38 @@ var userInput;
 //	}
 //}
 
+//***********************************************************
+//
+//
+// METHODS FOR IMPLEMENTING SEARCH FILTERING FEATURE
+//
+//
+//***********************************************************
+
+//***********************************************************
+// Retrieve all task 
+//***********************************************************
 function getAllTasks() {
 	return document.querySelectorAll(".card");
 }
 
+//***********************************************************
+// Unhide task items that have been hidden
+//***********************************************************
+function unhideTasks() {
+	console.log("----->In unhideTasks method");
+	var allTasks = getAllTasks();
+	allTasks.forEach(function (node) {
+		if (window.getComputedStyle(node).display === "none") {
+			node.style.display = "flex";
+			//			console.log("Nodenode.style.display", node.style.display);
+		}
+	});
+}
+
+//***********************************************************
+// Get and return all task that are not hidden (display: none)
+//***********************************************************
 function getVisibleTasks() {
 	var visibleTasks = [];
 	var allTasks = getAllTasks();
@@ -44,22 +73,29 @@ function getVisibleTasks() {
 	});
 	return visibleTasks;
 }
-
+//***********************************************************
+// Traverse current DOM node to get task and return task name
+// Note: technique is very fragile need to look for more 
+//***********************************************************
 function getTaskName(task) {
 	return task.childNodes[2].childNodes[1].childNodes[2].nextSibling.innerHTML.toLowerCase();
 }
 
+//**************************************************************************************
+// Search for a task that match the user search criteria (userInput)
+// If search criteria can't be found in the task name simply hide that task
+//**************************************************************************************
+
 function searchForMatchingTask(userInput) {
 	console.log("----->In searchForMatching");
-	console.log("userInput: ", userInput);
 	userInput = userInput.toLowerCase();
 	var taskName;
 	var visibleTasks = getVisibleTasks();
-	console.log("Visible Tasks: ", visibleTasks);
+	//	console.log("Visible Tasks: ", visibleTasks);
 	visibleTasks.forEach(function (task) {
 		taskName = getTaskName(task);
-		console.log("TaskName: ", taskName);
-		console.log("UserInput", userInput);
+		//		console.log("TaskName: ", taskName);
+		//		console.log("UserInput", userInput);
 		if (taskName.indexOf(userInput) === -1) {
 			task.style.display = "none";
 		}
@@ -312,7 +348,7 @@ var handleSearchBlur = function (event) {
 
 	setTimeout(function () {
 		console.log("----->SetTimeout function", document.activeElement);
-		console.log("clearSearchClicked value: ", clearSearchClicked);
+		//		console.log("clearSearchClicked value: ", clearSearchClicked);
 		// If the user click on something other than the clearSearch icon you want to restore orig navBar elements.
 		if (!clearSearchClicked) {
 			// 2 toggles will cause the listMenu & sysMenu elements to reappear
@@ -331,6 +367,31 @@ var handleSearchBlur = function (event) {
 //
 //*********************************************************************
 
+
+function deleteKey(event) {
+	console.log("----->In deleteKey function")
+	var key = event.keyCode || event.charCode;
+	if (key == 8 || key == 46)
+		return true;
+	else {
+		return false;
+	}
+}
+
+function hideCategoryNames() {
+	console.log("----->In hideCategoryNames function");
+	taskCategoryHeader.forEach(function (categoryHeader) {
+		categoryHeader.style.display = "none";
+	});
+}
+
+function unhideCategoryNames() {
+	console.log("----->In UnhideCategoryNames function");
+	taskCategoryHeader.forEach(function (categoryHeader) {
+		categoryHeader.style.display = "inline-block";
+	});
+}
+
 var detectSearchInput = function (event) {
 	console.log("----->In DetectSearchInput function");
 
@@ -344,15 +405,26 @@ var detectSearchInput = function (event) {
 		showClearSearchIcon();
 
 		// Reset searchString
-		searchString = "";
-		userInput = searchInput.value;
+		//		searchString = "";
+		//		userInput = searchInput.value;
+		hideCategoryNames();
+		if (deleteKey(event)) {
+			unhideTasks();
+		}
+		searchForMatchingTask(searchInput.value);
 
 	} else if (isEmpty("search")) {
 		hideClearSearchIcon();
+		unhideTasks();
+		unhideCategoryNames();
 
+	} else { // Not first character and not empty
+		// if keystroke is delete key need to reset task that may have been previously hidden
+		if (deleteKey(event)) {
+			unhideTasks();
+		}
+		searchForMatchingTask(searchInput.value);
 	}
-
-	searchForMatchingTask(searchInput.value);
 
 };
 
@@ -378,6 +450,7 @@ var clearSearchField = function (event) {
 	// Re-hide clear search box icon
 	hideClearSearchIcon();
 
+	unhideTasks();
 	searchInput.focus();
 
 };
