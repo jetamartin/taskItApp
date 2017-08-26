@@ -1,10 +1,10 @@
-//*****************************************
+//**************************************************************************************
 //
 //  GLOBAL VARIABLE DECLARATION
 //
 //  Note: As part of refactor I need to consolidate all of these
 //
-//*****************************************
+//**************************************************************************************
 
 
 var previouslySelectedList;
@@ -20,6 +20,7 @@ var searchIt = document.querySelector(".searchIt");
 var searchForm = document.querySelector("#searches");
 var searchSubmit = document.getElementById("search_submit");
 var taskCategoryHeader = document.querySelectorAll(".taskCategory");
+var floatAddBtn = document.querySelector(".floatAddBtn");
 var searchString;
 var userInput;
 
@@ -31,24 +32,24 @@ var userInput;
 //	}
 //}
 
-//***********************************************************
+//**************************************************************************************
 //
 //
 // METHODS FOR IMPLEMENTING SEARCH FILTERING FEATURE
 //
 //
-//***********************************************************
+//**************************************************************************************
 
-//***********************************************************
+//**************************************************************************************
 // Retrieve all task 
-//***********************************************************
+//**************************************************************************************
 function getAllTasks() {
 	return document.querySelectorAll(".card");
 }
 
-//***********************************************************
+//**************************************************************************************
 // Unhide task items that have been hidden
-//***********************************************************
+//**************************************************************************************
 function unhideTasks() {
 	console.log("----->In unhideTasks method");
 	var allTasks = getAllTasks();
@@ -60,9 +61,9 @@ function unhideTasks() {
 	});
 }
 
-//***********************************************************
+//**************************************************************************************
 // Get and return all task that are not hidden (display: none)
-//***********************************************************
+//**************************************************************************************
 function getVisibleTasks() {
 	var visibleTasks = [];
 	var allTasks = getAllTasks();
@@ -73,10 +74,10 @@ function getVisibleTasks() {
 	});
 	return visibleTasks;
 }
-//***********************************************************
+//**************************************************************************************
 // Traverse current DOM node to get task and return task name
 // Note: technique is very fragile need to look for more 
-//***********************************************************
+//**************************************************************************************
 function getTaskName(task) {
 	return task.childNodes[2].childNodes[1].childNodes[2].nextSibling.innerHTML.toLowerCase();
 }
@@ -150,6 +151,14 @@ function showClearSearchIcon() {
 	clearSearchIcon.style.visibility = "visible";
 }
 
+function removeFloatAddBtn() {
+	floatAddBtn.style.display = "none";
+}
+
+function showFloatAddBtn() {
+	floatAddBtn.style.display = "inline-block";
+}
+
 removeClearSearchIcon();
 
 
@@ -164,11 +173,11 @@ function insertAfter(newNode, referenceNode) {
 //	this.count = dueCount;
 //	this.overDueCount = overDueCount;
 //};
-//*****************************************
+//**************************************************************************************
 //
 //  DATA ELEMENTS & LOAD INTO LOCAL STORAGE
 //
-//*****************************************
+//**************************************************************************************
 // Array containing all predfinded list - Not using this right now.
 var defaultTaskListNames = ["All Lists", "Default", "Finished", "New List"];
 
@@ -184,12 +193,12 @@ for (var i = 0; i < userDefinedTaskListName.length; i++) {
 	localStorage.setItem("overDue" + i, overDueCount[i]);
 }
 
-//**************************
+//**************************************************************************************
 //
 // First two List elements are predefied in app. User defined list inserted after those two lists
 // Code below identifies starting point where user defined list will start
 //
-//**************************
+//**************************************************************************************
 
 // Parent Element <ul> of list submenu
 var parentElement =
@@ -208,11 +217,11 @@ var blankSubMenuElement, specificSubMenuElement, newNode;
 // Generic HTML for subMenu elements with placeholders for data
 var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="overDue">&nbsp%overDueCount%</span><span class="listTotal">&nbsp%dueCount%</span></li>';
 
-//***********************************************************
+//**************************************************************************************
 //
 // Create submenu elements and add them to drop down menu
 //
-//***********************************************************
+//**************************************************************************************
 for (var i = 0; i < userDefinedTaskListName.length; i++) {
 
 	// Insert the list name
@@ -249,11 +258,11 @@ for (var i = 0; i < userDefinedTaskListName.length; i++) {
 
 }
 
-//*********************************************************************
+//**************************************************************************************
 //
 // User clicks on submenu element to make it current list in Navbar
 //
-//*********************************************************************
+//**************************************************************************************
 // Hardcoding childNode #'s is a brittle solution because simple changes to HTML can break this code.
 // Need to find an alternative solution 
 
@@ -293,12 +302,12 @@ var handleSubMenuClick = function (event) {
 };
 
 
-//*********************************************************************
+//**************************************************************************************
 //
 // HANDLE SEARCH FOCUS:
 // This function is called when the SearchIcon is clicked and Search input receives focus
 //
-//*********************************************************************
+//**************************************************************************************
 
 var handleSearchFocus = function (event) {
 	console.log("----->In handleSearchFocus function");
@@ -315,6 +324,9 @@ var handleSearchFocus = function (event) {
 		addClearSearchIcon();
 		hideClearSearchIcon();
 
+		// Hide the floating add button
+		removeFloatAddBtn();
+
 		// Each time submit button (searchIcon) is clicked it will clear any previously
 		searchInput.value = null;
 	}
@@ -322,22 +334,27 @@ var handleSearchFocus = function (event) {
 };
 
 
-//*********************************************************************
+//**************************************************************************************
 //
 // HANDLE SEARCH BLUR:
 // This function is called when user clicks on area outside of search input area
 //
-//*********************************************************************
+//**************************************************************************************
 
 
 var handleSearchBlur = function (event) {
 
+	console.log("-----> In handleSearchBlur function");
+
 	// Assume that click was not on clearSearchIcon 
 	clearSearchClicked = false;
 
-	console.log("-----> In handleSearchBlur function");
+	// User clicks Search icon or outside of input area you must restore tasks & categories
+	unhideTasks();
+	unhideCategoryNames();
+	showFloatAddBtn();
 
-	console.log("Event: ", event);
+	//	console.log("Event: ", event);
 
 	// NOTE: Unfortunately when focus is lost the blur method obscures the click event that  
 	// caused it to lose focus (i.e., event.target). 
@@ -345,6 +362,7 @@ var handleSearchBlur = function (event) {
 	// to complete and then the event handler for the click to run so that the event.target can
 	// be captured/"noted" (via flags) and logic for handling the event can be added to the timeOut 
 	// function. This was the only solution I couldfind on StackOverflow for this "well-known" //problem. 
+
 
 	setTimeout(function () {
 		console.log("----->SetTimeout function", document.activeElement);
@@ -360,12 +378,12 @@ var handleSearchBlur = function (event) {
 	}, 200);
 };
 
-//*********************************************************************
+//**************************************************************************************
 //
 // DETECT SEARCH INPUT
 // Called on "keyUp" event...so it's called after something has been entered in the search box
 //
-//*********************************************************************
+//**************************************************************************************
 
 
 function deleteKey(event) {
@@ -428,12 +446,12 @@ var detectSearchInput = function (event) {
 
 };
 
-//*********************************************************************
+//**************************************************************************************
 //
 // CLEAR SEARCH FIELD 
 // Called on "keyUp" event...so it's called after something has been entered in the search box
 //
-//*********************************************************************
+//**************************************************************************************
 
 
 var clearSearchField = function (event) {
@@ -451,19 +469,22 @@ var clearSearchField = function (event) {
 	hideClearSearchIcon();
 
 	unhideTasks();
+	unhideCategoryNames();
+	showFloatAddBtn();
+
 	searchInput.focus();
 
 };
-//*********************************************************************
+//**************************************************************************************
 //
 //* SET UP EVENTLISTENERS
 //
-//*********************************************************************
+//**************************************************************************************
 
 // EventListener for List Submenu 
 document.querySelector(".subMenuElements").addEventListener('click', handleSubMenuClick);
 
-// Event Listener for Search onFocus and OnBlur
+// Event Listeners for Search 
 searchInput.addEventListener("focus", handleSearchFocus);
 searchInput.addEventListener("blur", handleSearchBlur);
 searchInput.addEventListener("keyup", detectSearchInput);
@@ -475,22 +496,22 @@ clearSearchIcon.addEventListener("click", clearSearchField);
 // Note: that the taskItController & uiControllers are designed to be independent.
 // This is done so that for example you can expand the capabilities of the
 // taskItController without affecting the UI.
-//*********************************************************************
+//**************************************************************************************
 //
 // TASKIT CONTROLLER 
 //
-//*********************************************************************
+//**************************************************************************************
 
 var taskItModel = (function () {
 
 })();
 
 
-//*********************************************************************
+//**************************************************************************************
 //
 // UI CONTROLLER
 //
-//*********************************************************************
+//**************************************************************************************
 
 var uiController = (function () {
 	var DOMstrings = {
@@ -506,11 +527,11 @@ var uiController = (function () {
 // creates more independence and separation of control. Also note that 
 // taskIt and ui controller param names are slightly diff than names of these controllers
 
-//*********************************************************************
+//**************************************************************************************
 //
 // GENERAL APP CONTROLLER
 //
-//*********************************************************************
+//**************************************************************************************
 
 var appController = (function (taskItMdl, UICtrl) {
 	var setupEventListeners = function () {

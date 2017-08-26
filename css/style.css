@@ -429,11 +429,11 @@
 		padding-top: 5rem;
 		padding-bottom: 2.5rem;
 	}
-	/* Tasks are grouped and displayed based on timeframe they are due */
-	/* the group of task along with the group's title is wrapped in article */
+	/* Spacing between category names */
 	
-	article {
-		margin-bottom: 5rem;
+	.taskCategory {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
 	}
 	/* Task items are defined within bootstrap cards */
 	
