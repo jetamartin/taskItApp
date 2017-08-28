@@ -176,6 +176,20 @@ function showFloatAddBtn() {
 	floatAddBtn.style.display = "inline-block";
 }
 
+function blockUserClicks(elem) {
+	console.log("**> IgnoreClicks");
+	elem.style.pointerEvents = "none";
+}
+
+function unblockUserClicks(elem) {
+	console.log("**> IgnoreClicks");
+	elem.style.pointerEvents = "auto";
+
+
+
+}
+
+
 // Resets the UI including navbar to original state
 function resetUI2InitialState() {
 	unhideTasks();
@@ -186,7 +200,7 @@ function resetUI2InitialState() {
 	addElement(homeIcon);
 	removeElement(backArrowSearch);
 	removeClearSearchIcon();
-	searchInput.value = null;
+	searchInput.value = "";
 
 }
 
@@ -360,7 +374,13 @@ var handleSearchFocus = function (event) {
 		// Each time submit button (searchIcon) is clicked it will clear any previously
 		// Commented out line below so if user clicks search icon it will retain searchInput value
 		// and user can continue entering more search criteria. 
-		//		searchInput.value = null;
+		searchInput.value = null;
+
+		// Test XXX
+		searchInput.focus();
+		blockUserClicks(searchSubmit);
+		//		toggleClass(searchSubmit, "noPointerEvents");
+
 	}
 
 	if (searchInput.value !== "") {
@@ -405,6 +425,8 @@ var handleSearchBlur = function (event) {
 
 			// Reset UI to initiat state
 			resetUI2InitialState();
+			//			toggleClass(searchSubmit, "noPointerEvents");
+			unblockUserClicks(searchSubmit);
 
 		} else {
 			// Clicked outside input area but didn't click searchExitIcon. Need to make sure 
@@ -412,11 +434,12 @@ var handleSearchBlur = function (event) {
 			hideClearSearchIcon();
 
 			// TEST to see if I can make focus stay on input area
+			//			toggleClass(searchSubmit, "noPointerEvents");
 			//			setTimeout(function () {
 			//				searchInput.focus();
-			//			}, 0);
+			//			}, 10);
 		}
-	}, 150);
+	}, 200);
 };
 
 //**************************************************************************************
@@ -518,8 +541,7 @@ var exitSearch = function (event) {
 	console.log("----->In Search Exit function")
 	searchExitClicked = true;
 
-	searchExitClicked = false;
-
+	//	searchExitClicked = false;
 	// Reset Navbar to original state
 	resetUI2InitialState();
 };
@@ -527,7 +549,11 @@ var exitSearch = function (event) {
 //TEST
 var disableSearchSubmit = function (event) {
 	console.log("----->DisableSearchSubmit");
-	return false;
+	blockUserClicks(searchSubmit);
+	//		toggleClass(searchSubmit, "noPointerEvents");
+	//			setTimeout(function () {
+	//				searchInput.focus();
+	//			}, 12);
 };
 
 //**************************************************************************************
@@ -547,7 +573,7 @@ clearSearchIcon.addEventListener("click", clearSearchField);
 backArrowSearch.addEventListener("click", exitSearch);
 
 // TEST
-searchSubmit.addEventListener("onmousedown", disableSearchSubmit);
+searchSubmit.addEventListener("mousedown", disableSearchSubmit);
 
 
 //$('#datepicker').datepicker();

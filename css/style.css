@@ -313,7 +313,7 @@
 		height: 30px;
 		float: right;
 		padding: 0;
-		positionß: relative;
+		position: relative;
 		top: 5px;
 	}
 	/*------------------- TEST SEARCHIT ICON */
@@ -339,7 +339,7 @@
 	
 	.searchIt input[type="text"]::-webkit-input-placeholder {
 		color: white;
-		font-size: 1.5rem;
+		font-size: 1.2rem;
 	}
 	
 	.searchIt input[type="text"]:-ms-input-placeholder {
@@ -377,15 +377,23 @@
 	
 	.searchIt input[type="text"]:focus:hover {
 		/*	border-bottom: 1px solid #BBB;*/
-		border-bottom: 2px solid #fff;
+		border-bottom: 1px solid #fff;
 	}
 	
 	.searchIt input[type="text"]:focus {
-		/*	width: 500px;*/
 		width: 50vw;
 		z-index: 1;
 		cursor: text;
 	}
+	/****************************************/
+	/* Following blocks transition of search input */
+	/****************************************/
+	/*
+	.searchIt input[type="text"] {
+		-webkit-transition: none !important;
+		transition: none !important;
+	}
+*/
 	
 	.searchIt input[type="submit"] {
 		height: 48px;
@@ -407,12 +415,23 @@
 		-webkit-transition: opacity .4s ease;
 		transition: opacity .4s ease;
 	}
+	/* Overwrite transition */
+	/*
+	.searchIt input[type="submit"] {
+		-webkit-transition: none !important;
+		transition: none !important;
+	}
+*/
 	
 	.clearSearchIcon {
 		margin-right: 0;
 		margin-left: 20px;
-		font-size: 1.5rem;
+		font-size: 1rem;
 		float: right;
+	}
+	
+	.noPointerEvents {
+		pointer-events: none;
 	}
 	/* Inserts blank after each font awesome icon */
 	
