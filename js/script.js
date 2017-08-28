@@ -11,7 +11,11 @@ var previouslySelectedList;
 var parentElem;
 var initialInput = true;
 var clearSearchClicked = false;
+var searchExitClicked = false;
+var searchIconClicked = false;
 
+var homeIcon = document.getElementById('homeIcon');
+var backArrowSearch = document.getElementById('backArrowSearch');
 var listMenuElement = document.getElementById('taskListDropdown');
 var sysMenuElement = document.querySelector('.sysMenu');
 var clearSearchIcon = document.querySelector(".clearSearchIcon");
@@ -101,9 +105,7 @@ function searchForMatchingTask(userInput) {
 			task.style.display = "none";
 		}
 	});
-
 }
-
 
 function toggleClass(element, className) {
 	if (!element || !className) {
@@ -128,39 +130,68 @@ function isEmpty(idValue) {
 	}
 }
 
-
 // Clear the contents of the Search input area
 function clearSearchContents() {
+	console.log("**> ClearSearchContents");
 	searchInput.value = "";
 }
 
+function removeElement(elem) {
+	console.log("**> RemoveElement", elem);
+	elem.style.display = "none";
+}
+
+function addElement(elem) {
+	console.log("**> AddElement", elem);
+	elem.style.display = "inline-block";
+}
 
 function removeClearSearchIcon() {
+	console.log("**> RemoveClearSearchIcon");
 	clearSearchIcon.style.display = "none";
 }
 
 function hideClearSearchIcon() {
+	console.log("**> HideClearSearchIcon");
 	clearSearchIcon.style.visibility = "hidden";
 }
 
 function addClearSearchIcon() {
+	console.log("**> AddClearSearchIcon");
 	clearSearchIcon.style.display = "inline-block";
 }
 
 function showClearSearchIcon() {
+	console.log("**> ShowClearSearchIcon");
 	clearSearchIcon.style.visibility = "visible";
 }
 
 function removeFloatAddBtn() {
+	console.log("**> RemoveFloatAddBtn");
 	floatAddBtn.style.display = "none";
 }
 
 function showFloatAddBtn() {
+	console.log("**> ShowFloatAddBtn");
 	floatAddBtn.style.display = "inline-block";
 }
 
-removeClearSearchIcon();
+// Resets the UI including navbar to original state
+function resetUI2InitialState() {
+	unhideTasks();
+	unhideCategoryNames();
+	showFloatAddBtn();
+	addElement(listMenuElement);
+	addElement(sysMenuElement);
+	addElement(homeIcon);
+	removeElement(backArrowSearch);
+	removeClearSearchIcon();
+	searchInput.value = null;
 
+}
+
+// CSS has clear search icon present so we must remove it until it is needed
+removeClearSearchIcon();
 
 // There is no standard method for inserting elements after another element so this function does this  
 
@@ -255,7 +286,6 @@ for (var i = 0; i < userDefinedTaskListName.length; i++) {
 
 	// Now make the node we just inserted the nextNode
 	nextNode = nextNode.nextElementSibling;
-
 }
 
 //**************************************************************************************
@@ -270,14 +300,8 @@ var handleSubMenuClick = function (event) {
 	// Get name of submenu list selected
 	var listNameSelected = event.target.childNodes[1].textContent;
 
-	//	console.log("Event.target = ", event.target);
-	// Get handle for current List Menu 
-
-
 	// Get location of List menu title 
 	var listMenuTitle = listMenuElement.childNodes[2];
-
-	//	console.log(listMenuElement.childNodes);
 
 	// Make the List menu title equal to submenu name selected
 	listMenuTitle.nodeValue = listNameSelected;
@@ -311,14 +335,20 @@ var handleSubMenuClick = function (event) {
 
 var handleSearchFocus = function (event) {
 	console.log("----->In handleSearchFocus function");
+	console.log("==> event.target", event.target);
+
+	//	searchSubmit.onmousedown = new function ("return false");
+	searchIconClicked = true;
 
 	// Show original Nav bar settings if user clicked somewhere other than clearSearchIcon
 	// Note: if the user clicked the clear search icon then you want the original Navbar elements to remain hidden (hence no else condition)
 	if (!clearSearchClicked) {
 
 		// Hide (via display:none) other elements of Navbar so Search is focus 
-		toggleClass(listMenuElement, "hideIt");
-		toggleClass(sysMenuElement, "hideIt");
+		removeElement(listMenuElement);
+		removeElement(sysMenuElement);
+		removeElement(homeIcon);
+		addElement(backArrowSearch);
 
 		// Add the clearSearch icon to the navbar but hide it until user enters data in search bar
 		addClearSearchIcon();
@@ -328,7 +358,13 @@ var handleSearchFocus = function (event) {
 		removeFloatAddBtn();
 
 		// Each time submit button (searchIcon) is clicked it will clear any previously
-		searchInput.value = null;
+		// Commented out line below so if user clicks search icon it will retain searchInput value
+		// and user can continue entering more search criteria. 
+		//		searchInput.value = null;
+	}
+
+	if (searchInput.value !== "") {
+		showClearSearchIcon();
 	}
 
 };
@@ -349,13 +385,6 @@ var handleSearchBlur = function (event) {
 	// Assume that click was not on clearSearchIcon 
 	clearSearchClicked = false;
 
-	// User clicks Search icon or outside of input area you must restore tasks & categories
-	unhideTasks();
-	unhideCategoryNames();
-	showFloatAddBtn();
-
-	//	console.log("Event: ", event);
-
 	// NOTE: Unfortunately when focus is lost the blur method obscures the click event that  
 	// caused it to lose focus (i.e., event.target). 
 	// So to workaround this behavior a setTimeoutfunction is used. This allows the blur method
@@ -365,17 +394,29 @@ var handleSearchBlur = function (event) {
 
 
 	setTimeout(function () {
+
 		console.log("----->SetTimeout function", document.activeElement);
+		console.log("SearchExitClicked value: ", searchExitClicked);
 		//		console.log("clearSearchClicked value: ", clearSearchClicked);
 		// If the user click on something other than the clearSearch icon you want to restore orig navBar elements.
-		if (!clearSearchClicked) {
-			// 2 toggles will cause the listMenu & sysMenu elements to reappear
-			toggleClass(listMenuElement, "hideIt");
-			toggleClass(sysMenuElement, "hideIt");
-			// This will remove the clearSearch icon (display: none)
-			removeClearSearchIcon();
+		if (searchExitClicked) {
+
+			searchExitClicked = false;
+
+			// Reset UI to initiat state
+			resetUI2InitialState();
+
+		} else {
+			// Clicked outside input area but didn't click searchExitIcon. Need to make sure 
+			// that you hide clearSearchIcon if user started entering search criteria
+			hideClearSearchIcon();
+
+			// TEST to see if I can make focus stay on input area
+			//			setTimeout(function () {
+			//				searchInput.focus();
+			//			}, 0);
 		}
-	}, 200);
+	}, 150);
 };
 
 //**************************************************************************************
@@ -422,9 +463,6 @@ var detectSearchInput = function (event) {
 		addClearSearchIcon();
 		showClearSearchIcon();
 
-		// Reset searchString
-		//		searchString = "";
-		//		userInput = searchInput.value;
 		hideCategoryNames();
 		if (deleteKey(event)) {
 			unhideTasks();
@@ -458,7 +496,7 @@ var clearSearchField = function (event) {
 	// Set flag so we know that clearSearchIcon was clicked
 	clearSearchClicked = true;
 
-	console.log("In ClearSearchField method");
+	console.log("---> In ClearSearchField method");
 	console.log("ClearSearchField target === ", event.target);
 
 
@@ -475,6 +513,23 @@ var clearSearchField = function (event) {
 	searchInput.focus();
 
 };
+
+var exitSearch = function (event) {
+	console.log("----->In Search Exit function")
+	searchExitClicked = true;
+
+	searchExitClicked = false;
+
+	// Reset Navbar to original state
+	resetUI2InitialState();
+};
+
+//TEST
+var disableSearchSubmit = function (event) {
+	console.log("----->DisableSearchSubmit");
+	return false;
+};
+
 //**************************************************************************************
 //
 //* SET UP EVENTLISTENERS
@@ -489,6 +544,10 @@ searchInput.addEventListener("focus", handleSearchFocus);
 searchInput.addEventListener("blur", handleSearchBlur);
 searchInput.addEventListener("keyup", detectSearchInput);
 clearSearchIcon.addEventListener("click", clearSearchField);
+backArrowSearch.addEventListener("click", exitSearch);
+
+// TEST
+searchSubmit.addEventListener("onmousedown", disableSearchSubmit);
 
 
 //$('#datepicker').datepicker();
