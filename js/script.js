@@ -13,6 +13,9 @@ var initialInput = true;
 var clearSearchClicked = false;
 var searchExitClicked = false;
 var searchIconClicked = false;
+var mainPageClick = false;
+var navBarClick = false;
+var searchSubmitClick = false;
 
 var homeIcon = document.getElementById('homeIcon');
 var backArrowSearch = document.getElementById('backArrowSearch');
@@ -25,6 +28,8 @@ var searchForm = document.querySelector("#searches");
 var searchSubmit = document.getElementById("search_submit");
 var taskCategoryHeader = document.querySelectorAll(".taskCategory");
 var floatAddBtn = document.querySelector(".floatAddBtn");
+var mainPage = document.querySelector(".mainPage");
+var navBar = document.querySelector(".navBar");
 var searchString;
 var userInput;
 
@@ -177,12 +182,12 @@ function showFloatAddBtn() {
 }
 
 function blockUserClicks(elem) {
-	console.log("**> IgnoreClicks");
+	console.log("**> BlockUserClicks");
 	elem.style.pointerEvents = "none";
 }
 
 function unblockUserClicks(elem) {
-	console.log("**> IgnoreClicks");
+	console.log("**> unblockUserClicks");
 	elem.style.pointerEvents = "auto";
 
 
@@ -417,6 +422,9 @@ var handleSearchBlur = function (event) {
 
 		console.log("----->SetTimeout function", document.activeElement);
 		console.log("SearchExitClicked value: ", searchExitClicked);
+		console.log("clearSearchClicked: ", clearSearchClicked);
+		console.log("mainPageClicked: ", mainPageClick);
+		console.log("navBarClicked: ", navBarClick);
 		//		console.log("clearSearchClicked value: ", clearSearchClicked);
 		// If the user click on something other than the clearSearch icon you want to restore orig navBar elements.
 		if (searchExitClicked) {
@@ -428,16 +436,32 @@ var handleSearchBlur = function (event) {
 			//			toggleClass(searchSubmit, "noPointerEvents");
 			unblockUserClicks(searchSubmit);
 
-		} else {
+		} else if (clearSearchClicked) {
+			clearSearchClicked = false;
+
 			// Clicked outside input area but didn't click searchExitIcon. Need to make sure 
 			// that you hide clearSearchIcon if user started entering search criteria
 			hideClearSearchIcon();
-
+			//			searchInput.focus();
+		} else if (searchSubmit) {
+			searchSubmitClick = false;
+			blockUserClicks(searchSubmit);
+//			searchInput.focus();
+		} else if (navBarClick) {
+			navBarClick = false;
+			blockUserClicks(navBar);
+//						searchInput.focus();
+		} else if (mainPageClick) {
+			mainPageClick = false;
+			//			searchInput.focus();
+		} else {
+			//			blockUserClicks(searchSubmit);
 			// TEST to see if I can make focus stay on input area
 			//			toggleClass(searchSubmit, "noPointerEvents");
 			//			setTimeout(function () {
 			//				searchInput.focus();
 			//			}, 10);
+
 		}
 	}, 200);
 };
@@ -549,13 +573,25 @@ var exitSearch = function (event) {
 //TEST
 var disableSearchSubmit = function (event) {
 	console.log("----->DisableSearchSubmit");
-	blockUserClicks(searchSubmit);
+	//	blockUserClicks(searchSubmit);
 	//		toggleClass(searchSubmit, "noPointerEvents");
 	//			setTimeout(function () {
 	//				searchInput.focus();
 	//			}, 12);
 };
 
+
+var handleMainPageClicks = function (event) {
+	console.log("------>HandleMainPageClicks");
+	mainPageClick = true;
+};
+
+var handleNavBarClicks = function (event) {
+	console.log("------>HandleNavBarClicks");
+//	blockUserClicks(navBar);
+	navBarClick = true;
+
+};
 //**************************************************************************************
 //
 //* SET UP EVENTLISTENERS
@@ -571,6 +607,9 @@ searchInput.addEventListener("blur", handleSearchBlur);
 searchInput.addEventListener("keyup", detectSearchInput);
 clearSearchIcon.addEventListener("click", clearSearchField);
 backArrowSearch.addEventListener("click", exitSearch);
+mainPage.addEventListener("click", handleMainPageClicks);
+navBar.addEventListener("click", handleNavBarClicks);
+
 
 // TEST
 searchSubmit.addEventListener("mousedown", disableSearchSubmit);
