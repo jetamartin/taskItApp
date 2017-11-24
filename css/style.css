@@ -466,7 +466,7 @@
 	}
 	/* Make sure there is enough space between last tasks and footer */
 	
-	.mainPage article:last-of-type {
+	#mainPage article:last-of-type {
 		margin-bottom: 15rem;
 	}
 	
@@ -480,10 +480,11 @@
 	}
 	/* TaskItem and date text color to dark grey (but not dates for overdue items)	*/
 	
-	.taskItem,
 	.card h6:not(.overDue) {
 		color: #adaaaa;
 	}
+
+
 	/* Completed label */
 	
 	.card a label {
@@ -514,15 +515,47 @@
 	}
 */
 	
+/*
 	.taskDate::after {
 		font-family: "FontAwesome";
-		/*	color: rgb(132, 226, 239);*/
+			color: rgb(132, 226, 239);
 		color: #9a9696;
 		font-weight: 100;
 		margin-left: 10px;
 		content: " \f01e";
 	}
-	
+*/
+/* Add if task is repeating */
+/*
+	.fa-repeat {
+		display: inline-block;
+		margin-left: 10px;
+		color: #34AFA9;
+		float: right;
+	}
+*/
+.taskDetails {
+	margin-right: .5rem;
+	color: #adaaaa;
+}
+.taskDue {
+	margin-right: .5rem;
+	color: #adaaaa;
+}
+.taskListName {
+	text-transform: uppercase;
+	letter-spacing: .09rem;
+}
+
+.floatLeft {
+	float: left;
+}
+.clearBoth {
+	clear: both;
+}
+
+/********************************/
+
 	.taskCategory {
 		/*	margin-top: 2rem;*/
 		padding-left: 3rem;

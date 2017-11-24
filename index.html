@@ -24,16 +24,16 @@
 				<li class="hideIt" id="backArrowSearch"><i class="fa fa-arrow-left" aria-hidden="true"></i></li>
 				<li id="taskListDropdown">
 					<i class="fa fa-angle-down"></i> All Lists
-					<ul class="subMenuElements">
-						<li class="listName"><i class="fa fa-list-ul" aria-hidden="true"></i>All Lists<span class="overDue">18</span><span class="listTotal">44</span></li>
-						<li class="listName"><i class="fa fa-list-ul" aria-hidden="true"></i>Default<span class="overDue">4</span><span class="listTotal">2</span></li>
-						<!--
-<li><i class="fa fa-list-ul" aria-hidden="true"></i>Personal <span class="overDue"> 2</span><span class="listTotal">6</span></li>
-<li><i class="fa fa-list-ul" aria-hidden="true"></i>Shopping<span class="overDue"> 1</span><span class="listTotal">8</span></li>
-<li><i class="fa fa-list-ul" aria-hidden="true"></i>Wishlist<span class="overDue"> 3 </span><span class="listTotal">10</span></li>
-<li><i class="fa fa-list-ul" aria-hidden="true"></i>Work<span class="overDue"> 8</span><span class="listTotal">18</span></li>
--->
-						<li class="finishedLists listName"><i class="fa fa-check-square" aria-hidden="true"></i>Finished<span class="listTotal">72</span></li>
+					<ul class="taskListsSubMenu">
+						<li><i class="fa fa-list-ul" aria-hidden="true"></i>
+						   All Lists<span class="overDue">22</span><span class="listTotal">74</span>
+					  	</li>	
+						<li id="listInsertPoint"><i class="fa fa-list-ul" aria-hidden="true"></i>
+						   Default<span class="overDue">2</span><span class="listTotal">12</span>
+					  	</li>
+						<li><i class="fa fa-list-ul" aria-hidden="true"></i>
+						   Completed<span class="overDue">3</span><span class="listTotal">22</span>
+					  	</li>	
 						<a data-toggle="modal" data-target="#addNewListModal">
 							<li>
 								<span class="newList fa-stack">
@@ -66,254 +66,7 @@
 			</ul>
 		</nav>
 	</header>
-	<section class="container mainPage">
-		<!--	Overdue		-->
-		<article>
-			<h5 class="taskCategory overDue">Overdue</h5>
-			<div class="card hideIt">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 1</span>
-						</div>
-						<h6 class="card-text taskDate overDue">Sun, Jul 9, 2017, 5:00 PM</h6>
-						<h6 class="card-text taskItem">Work</h6>
-					</div>
-				</a>
-			</div>
-
-
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<!--						<input type="checkbox">-->
-						<!--						<h4 class="card-title">Card title</h4>-->
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 1.2</span>
-						</div>
-						<h6 class="card-text taskDate overDue">Sun, Jul 9, 2017, 5:00 PM</h6>
-						<h6 class="card-text taskItem">Work</h6>
-					</div>
-				</a>
-			</div>
-
-		</article>
-
-		<!--	Today		-->
-		<article>
-			<h5 class="taskCategory">Today</h5>
-
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 2</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-
-
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 2.1</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-
-
-
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 2.2</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-
-		</article>
-
-		<!--	Tommorrow		-->
-		<article>
-			<h5 class="taskCategory">Tomorrow</h5>
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 3</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-
-			<div class="card">
-				<a href="editTask.html">
-
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 3.1</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-
-			</div>
-		</article>
-
-		<!--	This Week		-->
-		<article>
-			<h5 class="taskCategory">This Week</h5>
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 4</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 4.1</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-		</article>
-
-		<!--	Next Week		-->
-		<article>
-			<h5 class="taskCategory">Next Week</h5>
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 5</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 5.1</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-
-		</article>
-
-		<!--	Later		-->
-		<article>
-			<h5 class="taskCategory">Later</h5>
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 6</span>
-						</div>
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 6.1</span>
-						</div>
-
-						<h6 class="card-text taskDate">Wed, Jul 12, 2017, 10:00 AM</h6>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-		</article>
-
-		<!--	No Date		-->
-		<article>
-			<h5 class="taskCategory">No Date</h5>
-			<div class="card">
-				<a href="editTask.html">
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 7</span>
-						</div>
-						<h6 class="card-text taskItem">Personal</h6>
-					</div>
-				</a>
-			</div>
-
-			<div class="card">
-				<a href="editTask.html">
-
-					<div class="card-block">
-						<div>
-							<a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">
-								Completed?</label></a>
-							<span class="card-subtitle mb-2 text-muted" for="">Task Item Title 7.1</span>
-						</div>
-					</div>
-				</a>
-			</div>
-		</article>
+	<section class="container" id="mainPage">
 
 		<!--	Floating Add Button		-->
 		<a href="addTask.html">
@@ -376,7 +129,9 @@
 	</footer>
 
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
-	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<!--	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">-->
+<!--    <script src="js/setUpScript.js"></script>-->
 	<script src="js/script.js"></script>
 
 
