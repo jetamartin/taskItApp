@@ -76,7 +76,7 @@ function updateTaskListDisplayed (taskListId) {
 }
 
 /* 
-	Collect all tasks in the  
+	Collect all task items of list the user selected  
 */
 function setListItemsToCategorize (taskList_id) {
 	console.log("In setListItemsToCategorize");
