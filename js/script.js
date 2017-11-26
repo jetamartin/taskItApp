@@ -36,6 +36,48 @@ var listItemsToCategorize;
 
 
 
+/* Removes all taskItems on screen */
+
+function clearoutTaskItemsDisplayed () {
+	console.log("In clearOutCurrentTaskList");
+	
+	
+	var children = mainPage.children; // Returns nodeList..not an array;
+	// Convert nodeList (children) to true array so I can use .forEach()
+	var childrenArray = Array.prototype.slice.call(children);
+	childrenArray.forEach(function(item){
+    	if (item.nodeName === "ARTICLE") {
+			/* Two ways to delete nodes: Directly via .remove() or via it's parent;
+				Directly is more intutive but it may have browser support limitations
+				Via the parent is less intuitive but more widely supported
+		 	*/
+			// Delete Via parent
+			//	item.parentNode.removeChild(item)
+
+			// Delete directly via .remove()
+			item.remove();
+		}
+	});
+}
+
+/* 
+	Manages steps to display a new set of task items (e.g, user choses to display a diff task list). 
+*/
+function updateTaskListDisplayed (taskListId) {
+	
+	// Clear the screen of any task previously displayed
+	clearoutTaskItemsDisplayed();
+	
+	// Gather all taskItems related to the user selected list
+	var taskList2Display = setListItemsToCategorize (taskListId); 
+	
+	// Group and display all tasks items and their Group header (e.g, overdue, tomorrow, etc)
+	appUIController.groupAndDisplayTaskItems(taskList2Display);	
+}
+
+/* 
+	Collect all tasks in the  
+*/
 function setListItemsToCategorize (taskList_id) {
 	console.log("In setListItemsToCategorize");
 
@@ -298,6 +340,7 @@ function resetUI2InitialState() {
 removeClearSearchIcon();
 
 
+
 //**************************************************************************************
 //
 // User clicks on submenu element to make it current list in Navbar
@@ -307,10 +350,19 @@ removeClearSearchIcon();
 // Need to find an alternative solution 
 
 var handleSubMenuClick = function (event) {
-	// Get name of submenu list selected
-	var listNameSelected = event.target.childNodes[1].textContent;
 	
-	// Look up name in 
+	// Get name of submenu list selected
+	var listNameSelected = event.target.childNodes[1].textContent.trim();
+	
+	function getListId(taskList) {
+		//			console.log(taskListTable)
+		return taskList.taskList_name === listNameSelected;
+	}
+	// Look up listNameSelected in taskListTable and get it's taskList_id so that we can display all tasks that with that matching id
+	console.log("******** List Name:  " + listNameSelected);
+	console.log("******** List Id: " + taskListId);
+	var taskListId = appModelController.getTaskListTable().find(getListId).taskList_id;
+
 	
 	// Get location of List menu title 
 	var listMenuTitle = listMenuElement.childNodes[2];
@@ -333,8 +385,16 @@ var handleSubMenuClick = function (event) {
 	//******************************************************************************************	
 	// Get the parent of submenu so that I can hide it
 	parentElem = event.target.parentElement;
-	//  Add hideIt class so that 	
-	//	toggleClass(parentElem,"hideIt"); 
+//	//  Add hideIt class so that 	
+//	toggleClass(parentElem, "hideIt"); 
+//	toggleClass(taskListsSubMenuContainer, "hideIt");
+//	taskListsSubMenuContainer.setAttribute("style", "display: none;");
+	
+	
+	clearoutTaskItemsDisplayed();
+	updateTaskListDisplayed (taskListId);
+
+
 };
 
 
@@ -665,7 +725,7 @@ var appModelController = (function () {
 		{
 			"taskList_id" : "1",
 			"user_id" : "1",
-			"taskList_name" :	"All List",
+			"taskList_name" :	"All Lists",
 			"taskList_totalCount" : 44,
 			"taskList_overDueCount" : 18, 
 			"taskList_createTime": "",
@@ -683,7 +743,7 @@ var appModelController = (function () {
 		{
 			"taskList_id" : "3",
 			"user_id" : "1",
-			"taskList_name" :	"Personal",
+			"taskList_name" :	"School",
 			"taskList_totalCount" : 2,
 			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
@@ -719,7 +779,7 @@ var appModelController = (function () {
 		{
 			"taskList_id" : "7",
 			"user_id" : "",
-			"taskList_name" :	"Finished",
+			"taskList_name" :	"Completed",
 			"taskList_totalCount" : 72,
 			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
@@ -1250,7 +1310,8 @@ var appController = (function (appModelCtrl, appUICtrl) {
 
 
 		// EventListener for List Submenu 
-		document.querySelector(".taskListsSubMenu").addEventListener('click', handleSubMenuClick);
+		var taskList_id = document.querySelector(".taskListsSubMenu").addEventListener('click', handleSubMenuClick);
+		
 
 		// Event Listeners for Search 
 		searchInput.addEventListener("focus", handleSearchFocus);
@@ -1300,7 +1361,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 			appUIController.addListInfoToMenu(appModelController.getUserDefinedTaskListInfo(), listInsertPoint);
 				
 			// 2. Load task items
-			var taskList_id = "6";
+			var taskList_id = "1";
 			var taskList2Display = setListItemsToCategorize (taskList_id); 
 			appUIController.groupAndDisplayTaskItems(taskList2Display);
 			setupEventListeners();

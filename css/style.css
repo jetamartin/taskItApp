@@ -116,7 +116,7 @@
 		/* Set z-index so dropdown menus appear in front of task items */
 		z-index: 1;
 		display: block;
-		margin-top: -45px;
+/*		margin-top: -45px;*/
 		width: 250px;
 		left: 0;
 		position: absolute;
@@ -256,11 +256,11 @@
 	}
 	
 	nav .hideIt {
-		display: none;
+		display: none !important;
 	}
 	
 	.hideIt {
-		display: none;
+		display: none !important;
 	}
 	
 	nav .invisible {
