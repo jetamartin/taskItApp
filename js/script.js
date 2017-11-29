@@ -419,8 +419,6 @@ var handleSubMenuClick = function (event) {
 	// user hovers and gets the submenu to display the previously selected list will be distinguishable 
 	toggleClass(event.target, 'selected');
 
-	// Clear the prior taskItems associates with previous "active" task list
-//	clearoutTaskItemsDisplayed();
 	
 	// Now display the taskItems associates with the new "active" task list
 	updateTaskListDisplayed (taskListId);
@@ -516,6 +514,7 @@ var handleSearchBlur = function (event) {
 
 			// Reset UI to initiat state
 			resetUI2InitialState();
+			
 			//			toggleClass(searchSubmit, "noPointerEvents");
 			unblockUserClicks(searchSubmit);
 
@@ -596,8 +595,17 @@ var detectSearchInput = function (event) {
 	// the clearSearchIcon should be displayed
 
 	if (isEmpty("search")) {
-		// Clear screen
-		// Restore active list
+		
+		// Set visibility of clearSearchIcon to hidden		
+		hideClearSearchIcon();
+		
+		// Find the listId of the "active" list
+		var taskListId = getListIdForActiveTaskList();
+	
+		// Use taskId to gather and display all task with that ID
+		updateTaskListDisplayed (taskListId);
+		
+		
 	} else {
 		if (searchInput.value.length === 1 ) {
 			addClearSearchIcon();
@@ -612,27 +620,6 @@ var detectSearchInput = function (event) {
 	// Display matching task items. 
 	appUIController.displayTaskItems("mainPage", matchingTaskItems)
 	}
-	
-//	if (searchInput.value.length === 1) {
-//		addClearSearchIcon();
-//		showClearSearchIcon();
-//
-//		matchingTaskItems = searchForMatchingTask(searchInput.value);
-//
-//	} else if (isEmpty("search")) {
-//		hideClearSearchIcon();
-//		// Re-display last list
-//
-//	} else { // Not first character and not empty
-//
-//		matchingTaskItems = searchForMatchingTask(searchInput.value);
-//	}
-//	
-//	// Clear any existing task that are currently displayed
-//	clearoutTaskItemsDisplayed ();
-//	
-//	// Display matching task items. 
-//	appUIController.displayTaskItems("mainPage", matchingTaskItems)
 
 };
 
@@ -657,12 +644,10 @@ var clearSearchField = function (event) {
 
 	// Re-hide clear search box icon
 	hideClearSearchIcon();
-
-//	unhideTasks();
-//	unhideCategoryNames();
 	
 	// Find the listId of the "active" list
 	var taskListId = getListIdForActiveTaskList();
+	
 	// Use taskId to gather and display all task with that ID
 	updateTaskListDisplayed (taskListId);
 
@@ -699,7 +684,6 @@ var handleMainPageClicks = function (event) {
 
 var handleNavBarClicks = function (event) {
 	console.log("------>HandleNavBarClicks");
-//	blockUserClicks(navBar);
 	navBarClick = true;
 
 };
@@ -1235,16 +1219,8 @@ var appUIController = (function () {
 				//* Convert completed HTML string into DOM node so it can be inserted
 				newNode = document.createRange().createContextualFragment(specificTaskItemHtml);
 
-
-			//		if(tasksArea.childElementCount !== 0)  {
-			//			// Insert new node into taskListsubmenu
-			//			insertAfter(newNode, nextNode);
-			//		} else {
-			//			var nextNode = tasksArea.appendChild(newNode);
-			//		}
 				insertNodeLocation.appendChild(newNode);
-				// Now make the node we just inserted the nextNode so that other nodes will be inserted after it
-			//		nextNode = nextNode.nextElementSibling;
+
 			}
 
 		}, //END displayTaskItems()
@@ -1388,10 +1364,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 
 		// TEST  -- Need to figure out if this is still needed
 		searchSubmit.addEventListener("mousedown", disableSearchSubmit);
-		
-		
-		// Event Listener for Adding a Task 
-		//**		var newTaskForm = document.querySelector("#formSaveNewTask").addEventListener('submit', function(event) { appUICtrl.getNewTaskInputData(event);});
+
 
 	}
 	
