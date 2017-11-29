@@ -256,11 +256,11 @@
 	}
 	
 	nav .hideIt {
-		display: none !important;
+		display: none; 
 	}
 	
 	.hideIt {
-		display: none !important;
+		display: none; 
 	}
 	
 	nav .invisible {

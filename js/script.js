@@ -6,8 +6,8 @@
 //
 //**************************************************************************************
 
-
-var previouslySelectedList;
+// Holds the node of the previously selected list item. If value is null then previous list is "All List" 
+var previouslySelectedList = null;
 var parentElem;
 var initialInput = true;
 var clearSearchClicked = false;
@@ -16,6 +16,11 @@ var searchIconClicked = false;
 var mainPageClick = false;
 var navBarClick = false;
 var searchSubmitClick = false;
+
+// Needed to restore active/"selected" list after completing search alternative would 
+// be to get this value by search list DOM (class="selected") or saving value permanently
+// in listTable and doing a lookup to get the active list. 
+var activeListId = null; 
 
 var homeIcon = document.getElementById('homeIcon');
 var backArrowSearch = document.getElementById('backArrowSearch');
@@ -46,7 +51,7 @@ function clearoutTaskItemsDisplayed () {
 	// Convert nodeList (children) to true array so I can use .forEach()
 	var childrenArray = Array.prototype.slice.call(children);
 	childrenArray.forEach(function(item){
-    	if (item.nodeName === "ARTICLE") {
+    	if (item.nodeName === "ARTICLE" || item.className === "card") {
 			/* Two ways to delete nodes: Directly via .remove() or via it's parent;
 				Directly is more intutive but it may have browser support limitations
 				Via the parent is less intuitive but more widely supported
@@ -180,7 +185,9 @@ function setListItemsToCategorize (taskList_id) {
 // Retrieve all task 
 //**************************************************************************************
 function getAllTasks() {
-	return document.querySelectorAll(".card");
+// Get all taskItems 
+	return setListItemsToCategorize ("1");
+//	return document.querySelectorAll(".card");
 }
 
 //**************************************************************************************
@@ -215,26 +222,27 @@ function getVisibleTasks() {
 // Note: technique is very fragile need to look for more 
 //**************************************************************************************
 function getTaskName(task) {
-	return task.childNodes[2].childNodes[1].childNodes[2].nextSibling.innerHTML.toLowerCase();
+//	return task.childNodes[2].childNodes[1].childNodes[2].nextSibling.innerHTML.toLowerCase();
+	return task.taskItem_title;
 }
 
 //**************************************************************************************
 // Search for a task that match the user search criteria (userInput)
-// If search criteria can't be found in the task name simply hide that task
+// 
 //**************************************************************************************
 
 function searchForMatchingTask(userInput) {
 	console.log("----->In searchForMatching");
 	userInput = userInput.toLowerCase();
 	var taskName;
-	var visibleTasks = getVisibleTasks();
-	//	console.log("Visible Tasks: ", visibleTasks);
-	visibleTasks.forEach(function (task) {
-		taskName = getTaskName(task);
-		//		console.log("TaskName: ", taskName);
-		//		console.log("UserInput", userInput);
-		if (taskName.indexOf(userInput) === -1) {
-			task.style.display = "none";
+	var matchingTaskItems = [];
+
+	var allActiveTasks = getAllTasks();
+	// Return all task items where the task Title contains the search input character
+	return matchingTaskItems = allActiveTasks.filter(function (taskItem) {
+		taskName = getTaskName(taskItem);
+		if (taskName.indexOf(userInput) !== -1) {
+			return taskItem;
 		}
 	});
 }
@@ -317,15 +325,20 @@ function unblockUserClicks(elem) {
 	console.log("**> unblockUserClicks");
 	elem.style.pointerEvents = "auto";
 
-
-
 }
 
 
 // Resets the UI including navbar to original state
 function resetUI2InitialState() {
-	unhideTasks();
-	unhideCategoryNames();
+
+	// Find the listId of the "active" list
+	var taskListId = getListIdForActiveTaskList();
+	
+	// Use taskId to gather and display all task with that ID
+	updateTaskListDisplayed (taskListId);
+	
+//	unhideTasks();
+//	unhideCategoryNames();
 	showFloatAddBtn();
 	addElement(listMenuElement);
 	addElement(sysMenuElement);
@@ -341,6 +354,33 @@ removeClearSearchIcon();
 
 
 
+/**************************************************************************
+	Get the list_id of the "active" task list selection.
+	Once you have the listId you can then user other methods to <h1 class="display-1">Display 1</h1>
+	the taskItems for that list.
+    
+****************************************************************************/
+function getListIdForActiveTaskList() {
+	
+	var activeTaskNode = getActiveTaskList();
+	listName = activeTaskNode.childNodes[1].textContent.trim();
+	var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
+		 return listItem.taskList_name === listName;
+	 });
+	return matchingListRecord[0].taskList_id;
+	
+}
+
+/***************************************************************************
+
+	Get the current "active" task list (i.e., class="selected) 
+	returns it's DOM node (<li>)  
+
+****************************************************************************/
+function getActiveTaskList() {
+	return activeTaskNode = document.querySelector(".selected");
+}
+
 //**************************************************************************************
 //
 // User clicks on submenu element to make it current list in Navbar
@@ -351,49 +391,39 @@ removeClearSearchIcon();
 
 var handleSubMenuClick = function (event) {
 	
+	// Get the current "active" task list 
+	var currActiveList = getActiveTaskList();	
+	// Deactive the current active list by removing 'selected' class 
+	toggleClass(currActiveList, 'selected');
+		
 	// Get name of submenu list selected
 	var listNameSelected = event.target.childNodes[1].textContent.trim();
 	
-	function getListId(taskList) {
-		//			console.log(taskListTable)
+	function getListId(taskList) {		
+		console.log(taskList)
 		return taskList.taskList_name === listNameSelected;
 	}
+
 	// Look up listNameSelected in taskListTable and get it's taskList_id so that we can display all tasks that with that matching id
 	console.log("******** List Name:  " + listNameSelected);
 	console.log("******** List Id: " + taskListId);
 	var taskListId = appModelController.getTaskListTable().find(getListId).taskList_id;
 
-	
 	// Get location of List menu title 
 	var listMenuTitle = listMenuElement.childNodes[2];
 
 	// Make the List menu title equal to submenu name selected
 	listMenuTitle.nodeValue = listNameSelected;
 
-	// Toggle previously selected list item to remove "selected" class & remove the darkended background
-	toggleClass(previouslySelectedList, 'selected');
-
 	// The selected list name will have the "selected" class added to darken background so when 
 	// user hovers and gets the submenu to display the previously selected list will be distinguishable 
 	toggleClass(event.target, 'selected');
 
-	// Save the selected list element in previouslySelectedList variable 
-	previouslySelectedList = event.target;
-
-	// *****************************************************************************************
-	// Code below was attempt to hide submenu once user click on one of the list in the submenu
-	//******************************************************************************************	
-	// Get the parent of submenu so that I can hide it
-	parentElem = event.target.parentElement;
-//	//  Add hideIt class so that 	
-//	toggleClass(parentElem, "hideIt"); 
-//	toggleClass(taskListsSubMenuContainer, "hideIt");
-//	taskListsSubMenuContainer.setAttribute("style", "display: none;");
+	// Clear the prior taskItems associates with previous "active" task list
+//	clearoutTaskItemsDisplayed();
 	
-	
-	clearoutTaskItemsDisplayed();
+	// Now display the taskItems associates with the new "active" task list
 	updateTaskListDisplayed (taskListId);
-
 
 };
 
@@ -551,36 +581,58 @@ function unhideCategoryNames() {
 	});
 }
 
+//**************************************************************************************
+//  Detect Search Input 
+//	Find and display tasks that match the searh criteria
+//**************************************************************************************
+
 var detectSearchInput = function (event) {
 	console.log("----->In DetectSearchInput function");
 
+	var matchingTaskItems = [];
+	clearoutTaskItemsDisplayed();
 	// At this point at least one keystroke has been entered..if there is only one keystroke
 	// then you know it was previously empty and this is the first character entered and thus
 	// the clearSearchIcon should be displayed
 
-
-	if (searchInput.value.length === 1) {
-		addClearSearchIcon();
-		showClearSearchIcon();
-
-		hideCategoryNames();
-		if (deleteKey(event)) {
-			unhideTasks();
-		}
-		searchForMatchingTask(searchInput.value);
-
-	} else if (isEmpty("search")) {
-		hideClearSearchIcon();
-		unhideTasks();
-		unhideCategoryNames();
-
-	} else { // Not first character and not empty
-		// if keystroke is delete key need to reset task that may have been previously hidden
-		if (deleteKey(event)) {
-			unhideTasks();
-		}
-		searchForMatchingTask(searchInput.value);
+	if (isEmpty("search")) {
+		// Clear screen
+		// Restore active list
+	} else {
+		if (searchInput.value.length === 1 ) {
+			addClearSearchIcon();
+			showClearSearchIcon();
+		} 
+		
+	matchingTaskItems = searchForMatchingTask(searchInput.value);	
+		
+	// Clear any existing task that are currently displayed
+	clearoutTaskItemsDisplayed ();
+	
+	// Display matching task items. 
+	appUIController.displayTaskItems("mainPage", matchingTaskItems)
 	}
+	
+//	if (searchInput.value.length === 1) {
+//		addClearSearchIcon();
+//		showClearSearchIcon();
+//
+//		matchingTaskItems = searchForMatchingTask(searchInput.value);
+//
+//	} else if (isEmpty("search")) {
+//		hideClearSearchIcon();
+//		// Re-display last list
+//
+//	} else { // Not first character and not empty
+//
+//		matchingTaskItems = searchForMatchingTask(searchInput.value);
+//	}
+//	
+//	// Clear any existing task that are currently displayed
+//	clearoutTaskItemsDisplayed ();
+//	
+//	// Display matching task items. 
+//	appUIController.displayTaskItems("mainPage", matchingTaskItems)
 
 };
 
@@ -606,8 +658,14 @@ var clearSearchField = function (event) {
 	// Re-hide clear search box icon
 	hideClearSearchIcon();
 
-	unhideTasks();
-	unhideCategoryNames();
+//	unhideTasks();
+//	unhideCategoryNames();
+	
+	// Find the listId of the "active" list
+	var taskListId = getListIdForActiveTaskList();
+	// Use taskId to gather and display all task with that ID
+	updateTaskListDisplayed (taskListId);
+
 	showFloatAddBtn();
 
 	searchInput.focus();
@@ -1126,14 +1184,19 @@ var appUIController = (function () {
 			}
 		
 		}, // END addListInfoToMenu
-		displayTaskItems: function (key, taskItemList) {
+		
+		
+		buildTaskItemsToDisplay: function (taskItemList) {
+			
+		}, 
+		displayTaskItems: function (idOfInsertLocation, taskItemList) {
 			/*******************************************************************************
 			 Build Tasks to display on screen
 			*********************************************************************************/
 
 			// Global variable whose value is set in for loop below
 			var taskListId;
-			var taskGroup = document.getElementById(key);
+			var insertNodeLocation = document.getElementById(idOfInsertLocation);
 			var specificTaskItemHtml, newNode;
 
 
@@ -1179,7 +1242,7 @@ var appUIController = (function () {
 			//		} else {
 			//			var nextNode = tasksArea.appendChild(newNode);
 			//		}
-				taskGroup.appendChild(newNode);
+				insertNodeLocation.appendChild(newNode);
 				// Now make the node we just inserted the nextNode so that other nodes will be inserted after it
 			//		nextNode = nextNode.nextElementSibling;
 			}
