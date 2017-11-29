@@ -598,6 +598,7 @@ var detectSearchInput = function (event) {
 		
 		// Set visibility of clearSearchIcon to hidden		
 		hideClearSearchIcon();
+//		removeClearSearchIcon();
 		
 		// Find the listId of the "active" list
 		var taskListId = getListIdForActiveTaskList();
