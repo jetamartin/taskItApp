@@ -6,7 +6,8 @@
 //
 //**************************************************************************************
 
-// Holds the node of the previously selected list item. If value is null then previous list is "All List" 
+// Holds the node of the previously selected list item. If value is null then previous list is "All List"
+var taskListId;
 var previouslySelectedList = null;
 var parentElem;
 var initialInput = true;
@@ -35,11 +36,18 @@ var taskCategoryHeader = document.querySelectorAll(".taskCategory");
 var floatAddBtn = document.querySelector(".floatAddBtn");
 var mainPage = document.querySelector("#mainPage");
 var navBar = document.querySelector(".navBar");
+var addEditTaskBackArrow = document.querySelector(".addEditTaskBackArrow"); 
 var searchString;
 var userInput;
 var listItemsToCategorize;
 
 
+
+
+function addEditTaskBackArrow() {
+	console.log("**********************addEditTaskBackArrow");
+	
+}
 
 /* Removes all taskItems on screen */
 
@@ -350,7 +358,7 @@ function resetUI2InitialState() {
 }
 
 // CSS has clear search icon present so we must remove it until it is needed
-removeClearSearchIcon();
+//removeClearSearchIcon();
 
 
 
@@ -405,8 +413,8 @@ var handleSubMenuClick = function (event) {
 	}
 
 	// Look up listNameSelected in taskListTable and get it's taskList_id so that we can display all tasks that with that matching id
-	console.log("******** List Name:  " + listNameSelected);
-	console.log("******** List Id: " + taskListId);
+//	console.log("******** List Name:  " + listNameSelected);
+//	console.log("******** List Id: " + taskListId);
 	var taskListId = appModelController.getTaskListTable().find(getListId).taskList_id;
 
 	// Get location of List menu title 
@@ -1266,14 +1274,14 @@ var appUIController = (function () {
 				if (taskItem.taskItem_due_date !== "") {
 					// Convert the taskItem_due_date into Date object so that it can be compared to date for grouping criteria
 					taskDueDate = new Date(taskItem.taskItem_due_date);
-					console.log("Task Due Date: " + taskDueDate);
+//					console.log("Task Due Date: " + taskDueDate);
 					taskDueDateYMD = new Date (taskDueDate.getFullYear(), 
 										   taskDueDate.getMonth(),
 										   taskDueDate.getDate());
 				} else {
 					taskDueDateYMD = "";
-					console.log("Due Date is empty");
-					console.log(taskItem.taskItem_title,  taskItem.taskItem_due_date);
+//					console.log("Due Date is empty");
+//					console.log(taskItem.taskItem_title,  taskItem.taskItem_due_date);
 				} 	
 				/* Using JSON.stringify to easly see if objects are equal without having to do "deep" comparison of all properties. This technique works on simple objects (e.g., no methods)
 				*/
@@ -1314,8 +1322,8 @@ var appUIController = (function () {
 		**********************************************************************************************/	
 		groupAndDisplayTaskItems: function (listItemsToCategorize) {
 			for ( key in dueDateCategories ) {
-				console.log(key);
-				console.log(dueDateCategories[key]);
+//				console.log(key);
+//				console.log(dueDateCategories[key]);
 				appUIController.groupTaskByDueDate(key, listItemsToCategorize);
 				if (aTaskInGroup) {
 					// Build grouping a header i.e.,<article><h5></h5>
@@ -1361,10 +1369,12 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		backArrowSearch.addEventListener("click", exitSearch);
 		mainPage.addEventListener("click", handleMainPageClicks);
 		navBar.addEventListener("click", handleNavBarClicks);
+		
+		addEditTaskBackArrow.addEventListener("click", addEditTaskBackArrow);
 
 
 		// TEST  -- Need to figure out if this is still needed
-		searchSubmit.addEventListener("mousedown", disableSearchSubmit);
+//		searchSubmit.addEventListener("mousedown", disableSearchSubmit);
 
 
 	}
@@ -1398,7 +1408,13 @@ var appController = (function (appModelCtrl, appUICtrl) {
 			appUIController.addListInfoToMenu(appModelController.getUserDefinedTaskListInfo(), listInsertPoint);
 				
 			// 2. Load task items
-			var taskList_id = "1";
+			
+			// Find the listId of the "active" list
+			var taskListId = getListIdForActiveTaskList();
+	
+			// Use taskId to gather and display all task with that ID
+			var taskList_id = updateTaskListDisplayed (taskListId);
+	
 			var taskList2Display = setListItemsToCategorize (taskList_id); 
 			appUIController.groupAndDisplayTaskItems(taskList2Display);
 			setupEventListeners();
