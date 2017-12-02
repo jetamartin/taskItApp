@@ -715,7 +715,10 @@
 		font-size: 2rem;
 	}
 	
-	.editTaskPage span.newList {
+	.editTaskPage span.newList,
+	.newTaskPage span.newList
+
+	{
 		position: relative;
 		float: right;
 		margin-top: -2.2rem;

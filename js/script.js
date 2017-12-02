@@ -36,18 +36,59 @@ var taskCategoryHeader = document.querySelectorAll(".taskCategory");
 var floatAddBtn = document.querySelector(".floatAddBtn");
 var mainPage = document.querySelector("#mainPage");
 var navBar = document.querySelector(".navBar");
-var addEditTaskBackArrow = document.querySelector(".addEditTaskBackArrow"); 
+
+var homePage = document.querySelector("#homePage");
+var addNewTaskBtn = document.querySelector(".addNewTaskButton");
+var addNewTaskPage = document.querySelector("#newTaskPage"); 
+var newTaskBackArrow = document.querySelector(".newTaskBackArrow");
+
+var addNewTaskPage = document.querySelector("#editTaskPage"); 
+var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
+
+var addTaskSaveButton = document.querySelector("#addTaskSaveButton"); 
+
 var searchString;
 var userInput;
 var listItemsToCategorize;
 
+function addNewTask () {
+	console.log("************** addNewTask");
+	toggleClass(homePage, "hideIt");
+	toggleClass(newTaskPage, "hideIt");
+}
 
 
+function exitNewTaskPage() {
+	console.log("********************** exitNewTaskPage");
+	toggleClass(homePage, "hideIt");
+	toggleClass(newTaskPage, "hideIt")
+}
 
-function addEditTaskBackArrow() {
-	console.log("**********************addEditTaskBackArrow");
+function editNewTask () {
+	console.log("************** editNewTask");
+	toggleClass(homePage, "hideIt");
+	toggleClass(editTaskPage, "hideIt");
+}
+
+
+function exitEditTaskPage() {
+	console.log("********************** exitEditTaskPage()");
+	toggleClass(homePage, "hideIt");
+	toggleClass(editTaskPage, "hideIt")
+}
+
+
+//************************
+//	fnSaveNewTask()
+//************************
+function fnSaveNewTask(event) {
+	console.log("****************** fnSaveNewTask()");
+	event.preventDefault(); 
 	
 }
+
+
+
 
 /* Removes all taskItems on screen */
 
@@ -696,18 +737,6 @@ var handleNavBarClicks = function (event) {
 	navBarClick = true;
 
 };
-
-
-
-//************************
-//	fnSaveNewTask()
-//************************
-function fnSaveNewTask(event) {
-	event.preventDefault(); 
-	
-}
-
-
 
 
 //$('#datepicker').datepicker();
@@ -1369,8 +1398,10 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		backArrowSearch.addEventListener("click", exitSearch);
 		mainPage.addEventListener("click", handleMainPageClicks);
 		navBar.addEventListener("click", handleNavBarClicks);
-		
-		addEditTaskBackArrow.addEventListener("click", addEditTaskBackArrow);
+		floatAddBtn.addEventListener("click", addNewTask); 
+		newTaskBackArrow.addEventListener("click", exitNewTaskPage);	
+		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
+		addTaskSaveButton.addEventListener("click", fnSaveNewTask);
 
 
 		// TEST  -- Need to figure out if this is still needed
