@@ -681,22 +681,63 @@
 	input[type="text"]::-webkit-input-placeholder,
 	input[type="date"]::-webkit-input-placeholder,
 	.form-control {
-		color: #34AFA9;
+		color: 	 #76d6d1;
+		font-style: italic;
 	}
 	
 	input:-ms-input-placeholder,
 	input[type="text"]:-ms-input-placeholder,
 	input[type="date"]:-ms-input-placeholder,
 	.form-control {
-		color: #34AFA9;
+		color: #76d6d1;
+		font-style: italic;
 	}
 	
 	input::placeholder,
 	input[type="text"]::placeholder,
 	input[type="date"]::placeholder,
 	.form-control {
-		color: #34AFA9;
+		color: #76d6d1;
+		font-style: italic;
 	}
+
+	/* form calendar icon styling */
+
+
+.form_datetime {
+    border-radius: .25rem .1rem .1rem .25rem;
+    border: solid 1px #ced4da;
+    padding: 6px 12px;
+	background-color: white;
+}
+.fa-calendar:before {
+    content: "\f271";
+    margin-left: 4.1rem;
+    padding: .59rem;
+    padding-right: .5rem;
+    padding-left: .75rem;
+    padding-bottom: .7rem;
+    /* padding-bottom: 5px; */
+    font-size: 1.25rem;
+    color: #34AFA9;
+    background-color: #f2f2f2;
+    border: 1px solid #ced4da;
+}
+
+
+.fa-remove:before, .fa-close:before, .fa-times:before {
+    content: "\f00d";
+    font-size: 1.25rem;
+    padding: .59rem;
+    padding-right: .75rem;
+    padding-left: .75rem;
+    padding-bottom: .7rem;
+    color: #34AFA9;
+    margin-left: 2.75rem;
+    background-color: #f2f2f2;
+    border: 1px solid #ced4da;
+}
+
 	/* Make form controls appear in a row rather than as a column */
 	
 	.input-group .form-control,
@@ -745,7 +786,9 @@
 	/*****************************************************************/
 	/* Manage Tasks Page */
 	/*****************************************************************/
-	
+	.card {
+		padding: 1.5rem;	
+	}
 	.card-taskList-subtitle {
 		font-size: 1.5rem;
 		/* margin-left: 1rem; */

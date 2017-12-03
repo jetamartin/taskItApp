@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-	<meta charset="UTF-8">
+<head>	
+
+	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>TaskIt v1.0</title>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-<!--	<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>-->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
+		
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
+	<link rel="stylesheet" href="css/datetimepicker.css">
 	<link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -128,7 +130,7 @@
 	
 	
 <!--	NEW TASK SECTION   -->
-	
+<!-- $$$$	-->
 	
 	<div class="container-fluid hideIt" id="newTaskPage" >
 		<nav class="navBar subPage">
@@ -158,45 +160,33 @@
 					</div>
 
 					<!--	Enter Due Date				-->
-					<div>
-						<div class="form-group">
-							<label for="inTaskDueDate" class="control-label">Due Date:</label>
-							<div class="row col-12">
-								<input type="date" class="form-control input-sm" id="inTaskDueDate" placeholder="Enter Due Date (Optional)" name="dueDate">
-								<!-- Calendar button at end of line-->
-								<!--
-								<span class="input-group-addon">
-							<i class="fa fa-calendar"></i>
+<!--					<div>-->
+					<div class="form-group">
+						<label for="inTaskDueDate" class="form-control-label">Due Date:</label>
+						<div class="row col-10">
+							<div class="input-append date form_datetime" id="datetimepicker" data-date-format="2012-12-21T15:25:00Z">
+								<input size="32" type="text" value="" readonly>	
+								<span class="add-on">
+									<i class="fa fa-times" aria-hidden="true"></i>
 								</span>
--->
+								<span class="add-on">
+									<i class="fa fa-calendar" aria-hidden="true"></i>
+								</span> 
+								
 							</div>
 						</div>
-						<div class="input-append date form_datetime" data-date="2012-12-21T15:25:00Z">
-							<input size="16" type="text" value="" readonly>
-							<span class="add-on"><i class="icon-remove"></i></span>
-							<span class="add-on"><i class="icon-th"></i></span>
-						</div>
-						<!--
-						<div class="form-group row">
-							<label for="dueDate" class="control-label">Due Date:</label>
-							<div onclick="showCalendar()" class="input-group date">
-								<input type="text" id="datepicker1">
 
-								<span class="input-group-addon" id="calendar2">
-								<i class="fa fa-calendar"></i>
-								</span>
-							</div>
-						</div>
--->
 					</div>
 
 					<!--	Enter Time Due				-->
+<!--
 					<div class="form-group">
 						<label for="inTaskTimeDue" class="control-label">Time Due:</label>
 						<div class="row col-12">
 							<input class="form-control" type="time" value="12:00:00" id="inTaskTimeDue">
 						</div>
 					</div>
+-->
 
 					<!--	Select Repeat			-->
 					<div class="form-group">
@@ -416,17 +406,33 @@
 		<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
 	</footer>
 
-	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
-	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+	
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+	
+	<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+	
+	<script src="js/bootstrap-datetimepicker.js"></script>
+	<script src="js/script.js"></script>
+	<script>
+		$('.datetimepicker').datetimepicker();
+	</script>
+	
 	<script type="text/javascript">
     	$(".form_datetime").datetimepicker({
-        format: "dd MM yyyy - HH:ii P",
+        format: "mm/dd/yyyy - H:ii P",
         showMeridian: true,
         autoclose: true,
-        todayBtn: true
-    });
-</script> 
-	<script src="js/script.js"></script>
+        todayBtn: true,
+		pickerPosition: "bottom-left"
+    	});
+	</script> 
+
+	
 
 
 </body>
