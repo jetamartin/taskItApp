@@ -200,6 +200,8 @@
 		height: 90%;
 		text-align: center;
 	}
+
+
 	
 	nav i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
 		position: relative;
@@ -569,6 +571,7 @@
 	}
 	
 	.floatAddBtn {
+		opacity: .6;
 		width: 3rem;
 		height: 3rem;
 		color: #fff;
@@ -701,6 +704,14 @@
 		font-style: italic;
 	}
 
+	input:not([type=range]), label, select, summary, textarea {
+		-ms-touch-action: manipulation;
+		touch-action: manipulation;
+		border: none;
+	}
+
+
+
 	/* form calendar icon styling */
 
 
@@ -713,25 +724,26 @@
 .fa-calendar:before {
     content: "\f271";
     margin-left: 4.1rem;
-    padding: .59rem;
+    padding: .425rem;
     padding-right: .5rem;
     padding-left: .75rem;
-    padding-bottom: .7rem;
+    padding-bottom: .575rem;
     /* padding-bottom: 5px; */
     font-size: 1.25rem;
     color: #34AFA9;
     background-color: #f2f2f2;
     border: 1px solid #ced4da;
+	border-radius: 0 .25rem .25rem 0;
 }
 
 
 .fa-remove:before, .fa-close:before, .fa-times:before {
     content: "\f00d";
     font-size: 1.25rem;
-    padding: .59rem;
+    padding: .425rem;
     padding-right: .75rem;
     padding-left: .75rem;
-    padding-bottom: .7rem;
+    padding-bottom: .575rem;
     color: #34AFA9;
     margin-left: 2.75rem;
     background-color: #f2f2f2;
@@ -764,22 +776,63 @@
 		float: right;
 		margin-top: -2.2rem;
 		color: #34AFA9;
-		left: -2.5rem;
-		/*
-	top: .5rem;
-	right: 15rem;
-*/
+		left: -3.5rem;
+	}
+
+/* &&&&&&&& New entry of above &&&&&&&*/
+	.editTaskPage span.newList, .newTaskPage span.newList {
+		position: relative;
+		float: right;
+		margin-top: -2.2rem;
+		color: #34AFA9;
+		left: -3.5rem;
+		margin-top: -2.5rem;
 	}
 	
 	i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
 		position: relative;
 		font-size: 1.3rem;
-		top: 9px;
-		left: 17px;
+		top: .5rem;
+		left: .8rem;
 		border-radius: 100%;
 		background-color: #f5f2f2;
 	}
 	
+/* &&&&&&&& New entry of above &&&&&&&*/
+	i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
+		position: relative;
+		font-size: 1rem;
+/*		top: -1.95rem;*/
+		border-radius: 100%;
+		background-color: transparent; 
+		border: none;
+	}
+
+
+
+
+.fa-stack {
+    position: relative;
+    display: inline-block;
+    /* width: 2em; */
+    /* height: 2em; */
+    line-height: 2em;
+    /* vertical-align: middle; */
+    font-size: 1.25rem;
+}
+
+/* &&&&&&&& New entry of above &&&&&&&*/
+.fa-stack {
+    position: relative;
+    display: inline-block;
+    /* width: 2em; */
+    /* height: 2em; */
+    line-height: 2em;
+    /* vertical-align: middle; */
+    font-size: 1.25rem;
+}
+
+
 	.col-11 {
 		max-width: 95%;
 	}
