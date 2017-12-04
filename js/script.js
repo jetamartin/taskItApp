@@ -46,6 +46,10 @@ var addNewTaskPage = document.querySelector("#editTaskPage");
 var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
 
 var addTaskSaveButton = document.querySelector("#addTaskSaveButton"); 
+var formSaveNewTask = document.querySelector("#formSaveNewTask"); 
+var inputNewTaskTitle = document.getElementById("newTaskTitle"); 
+var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
+var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");var inputNewTaskList = document.querySelector("#newListNameSelection");
 
 var searchString;
 var userInput;
@@ -83,8 +87,15 @@ function exitEditTaskPage() {
 //************************
 function fnSaveNewTask(event) {
 	console.log("****************** fnSaveNewTask()");
-	event.preventDefault(); 
-	
+	console.log(event);
+	var newTaskTitle = inputNewTaskTitle.value;
+	console.log("Title Task: " + newTaskTitle);
+	var newTaskDateTime = inputNewTaskDateTime.value;
+	console.log("Date & Time: " + newTaskDateTime);
+	var newTaskRepeatOptionTxt = inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text;
+	console.log("Repeat option: " + newTaskRepeatOptionTxt);
+	var newTaskListOptionTxt = inputNewTaskList.options[inputNewTaskList.selectedIndex].text;
+		
 }
 
 
@@ -1402,7 +1413,8 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		newTaskBackArrow.addEventListener("click", exitNewTaskPage);	
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
 		addTaskSaveButton.addEventListener("click", fnSaveNewTask);
-
+		
+//		formSaveNewTask.addEventListener("submit",function (event) { fnSaveNewTask(event) });
 
 		// TEST  -- Need to figure out if this is still needed
 //		searchSubmit.addEventListener("mousedown", disableSearchSubmit);

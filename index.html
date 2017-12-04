@@ -153,19 +153,19 @@
 
 					<!--	Enter Task Name				-->
 					<div class="form-group">
-						<label for="inTaskTitle" class="form-control-label">Task Title:</label>
+						<label for="newTaskTitle" class="form-control-label">Task Title:</label>
 						<div class="row col-12">
-							<input type="text" id="inTaskTitle" class="form-control" placeholder="Enter NEW task title here" autofocus required>
+							<input type="text" id="newTaskTitle" class="form-control" placeholder="Enter NEW task title here" autofocus required>
 						</div>
 					</div>
-
+					<div class="formErrorMsg"></div>
 					<!--	Enter Due Date				-->
 <!--					<div>-->
 					<div class="form-group">
-						<label for="inTaskDueDate" class="form-control-label">Due Date:</label>
+						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
 						<div class="row col-10">
 							<div class="input-append date form_datetime" id="datetimepicker" data-date-format="2012-12-21T15:25:00Z">
-								<input size="32" type="text" value="" readonly placeholder="Click to set date/time">	
+								<input size="32" id="newTaskDateTime" type="text" value="" readonly placeholder="Click to set date/time">	
 								<span class="add-on">
 									<i class="fa fa-times" aria-hidden="true"></i>
 								</span>
@@ -192,12 +192,12 @@
 					<div class="form-group">
 						<label for="inRepeatOption">Repeat:</label>
 						<div class="row col-12">
-							<select class="form-control" id="inRepeatOption">
-							<option>None</option>
-							<option>Daily</option>
-							<option>Weekly</option>
-							<option>Monthly</option>
-							<option>Yearly</option>
+							<select class="form-control" id="newTaskRepeatOption">
+							<option value="1">None</option>
+							<option value="2">Daily</option>
+							<option value="3">Weekly</option>
+							<option value="4">Monthly</option>
+							<option value="5">Yearly</option>
 						</select>
 						</div>
 					</div>
@@ -208,12 +208,12 @@
 						<label for="inListNameSelection">List:</label>
 						<div class="row col-10">
 							<!--	Will need to build list dynamically based on user input						-->
-							<select class="form-control" id="inListNameSelection">
-							<option>Default</option>
-							<option>Personal</option>
-							<option>Shopping</option>
-							<option>Wishlist</option>
-							<option>Work</option>
+							<select class="form-control" id="newListNameSelection">
+							<option value="1">Default</option>
+							<option value="2">Personal</option>
+							<option value="3">Shopping</option>
+							<option value="4">Wishlist</option>
+							<option value="5">Work</option>
 							</select>
 						</div>
 
@@ -228,10 +228,16 @@
 
 					</div>
 					<div class="button-group">
+<!--
+						<input type="submit" value="Submit">
+						<input type="reset">
+-->
 						<button type="submit" class="btn btn-default takeActionBtn" id="addTaskSaveButton">Save</button>
 						<button type="Cancel" class="btn btn-default">Cancel</button>
 					</div>
 				</form>
+				
+				
 				<!-- Add List Modal -->
 				<div class="modal" id="addListModal">
 					<div class="modal-dialog modal-sm" role="document">
@@ -303,27 +309,8 @@
 							<label for="dueDate" class="form-control-label">Due Date:</label>
 							<div class="row col-12">
 								<input type="date" value="2017-07-09" class="form-control input-sm" name="dueDate">
-								<!-- Calendar button at end of line-->
-								<!--
-								<span class="input-group-addon">
-							<i class="fa fa-calendar"></i>
-								</span>
--->
 							</div>
 						</div>
-						<!--
-						<div class="form-group row">
-							<label for="dueDate" class="control-label">Due Date:</label>
-							<div onclick="showCalendar()" class="input-group date">
-								<input type="text" id="datepicker1">
-
-								<span class="input-group-addon" id="calendar2">
-								<i class="fa fa-calendar"></i>
-								</span>
-							</div>
-						</div>
--->
-
 					</div>
 					<div class="form-group">
 						<label for="time-input" class="control-label">Time:</label>
