@@ -2,11 +2,14 @@
 //
 //  GLOBAL VARIABLE DECLARATION
 //
-//  Note: As part of refactor I need to consolidate all of these
+//  Note: As part of refactor I need to elimnate as many of these as possible
 //
 //**************************************************************************************
 
 // Holds the node of the previously selected list item. If value is null then previous list is "All List"
+
+var appInitialized = false;
+var formError = false; 
 var taskListId;
 var previouslySelectedList = null;
 var parentElem;
@@ -42,19 +45,30 @@ var addNewTaskBtn = document.querySelector(".addNewTaskButton");
 var addNewTaskPage = document.querySelector("#newTaskPage"); 
 var newTaskBackArrow = document.querySelector(".newTaskBackArrow");
 
-var addNewTaskPage = document.querySelector("#editTaskPage"); 
+var editNewTaskPage = document.querySelector("#editTaskPage"); 
 var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
 
 var addTaskSaveButton = document.querySelector("#addTaskSaveButton"); 
 var formSaveNewTask = document.querySelector("#formSaveNewTask"); 
-var inputNewTaskTitle = document.getElementById("newTaskTitle"); 
+var inputNewTaskTitle = document.getElementById("newTaskTitle");
+
+
+//var inputNewTaskTitle = document.querySelector("#validationCustom01");
+
+
+
 var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
 var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");var inputNewTaskList = document.querySelector("#newListNameSelection");
+var newTaskFormErrorMsg = document.querySelector(".newTaskFormErrorMsg");
 
 var searchString;
 var userInput;
 var listItemsToCategorize;
 
+
+function isEmpty(str){
+    return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+}
 function addNewTask () {
 	console.log("************** addNewTask");
 	toggleClass(homePage, "hideIt");
@@ -87,15 +101,35 @@ function exitEditTaskPage() {
 //************************
 function fnSaveNewTask(event) {
 	console.log("****************** fnSaveNewTask()");
-	console.log(event);
+	
+	if (formError) {
+		newTaskFormErrorMsg.innerHTML = "";
+		toggleClass(inputNewTaskTitle, "formErrors");
+		formError = false;
+	}
+
+
+	console.log(event);	
 	var newTaskTitle = inputNewTaskTitle.value;
+	var newTaskTitle = inputNewTaskTitle.value.trim();
+
+	if (isEmpty(newTaskTitle)) {
+		toggleClass(inputNewTaskTitle, "validField");
+		console.log("Empty or blank title");
+		newTaskFormErrorMsg.innerHTML = "Task Title is required/Cannot be blank";
+		toggleClass(inputNewTaskTitle, "formErrors"); 
+		inputNewTaskTitle.focus();
+		inputNewTaskTitle.setSelectionRange(0,0);
+		formError = true;
+	} 
+	
 	console.log("Title Task: " + newTaskTitle);
 	var newTaskDateTime = inputNewTaskDateTime.value;
 	console.log("Date & Time: " + newTaskDateTime);
 	var newTaskRepeatOptionTxt = inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text;
 	console.log("Repeat option: " + newTaskRepeatOptionTxt);
 	var newTaskListOptionTxt = inputNewTaskList.options[inputNewTaskList.selectedIndex].text;
-		
+	
 }
 
 
@@ -322,13 +356,13 @@ function toggleClass(element, className) {
 	element.className = classString;
 }
 
-function isEmpty(idValue) {
-	if (document.getElementById(idValue).value.length === 0) {
-		return true;
-	} else {
-		return false;
-	}
-}
+//function isEmpty(idValue) {
+//	if (document.getElementById(idValue).value.length === 0) {
+//		return true;
+//	} else {
+//		return false;
+//	}
+//}
 
 // Clear the contents of the Search input area
 function clearSearchContents() {
@@ -654,8 +688,10 @@ var detectSearchInput = function (event) {
 	// then you know it was previously empty and this is the first character entered and thus
 	// the clearSearchIcon should be displayed
 
-	if (isEmpty("search")) {
+	if (isEmpty(searchInput.value)) {
 		
+		console.log("Search input is empty");
+
 		// Set visibility of clearSearchIcon to hidden		
 		hideClearSearchIcon();
 //		removeClearSearchIcon();
@@ -1412,10 +1448,49 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		floatAddBtn.addEventListener("click", addNewTask); 
 		newTaskBackArrow.addEventListener("click", exitNewTaskPage);	
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
-		addTaskSaveButton.addEventListener("click", fnSaveNewTask);
 		
-//		formSaveNewTask.addEventListener("submit",function (event) { fnSaveNewTask(event) });
+		
+//		addTaskSaveButton.addEventListener("click", fnSaveNewTask);
+		
+//		formSaveNewTask.addEventListener("submit",function (event) {
+//			fnSaveNewTask(event) });
+		
+		formSaveNewTask.addEventListener("submit",function (event) {
+				event.preventDefault();
+				event.stopPropagation();
+				fnSaveNewTask(event);
+		}, false);
+ 
+		formSaveNewTask.addEventListener("blur", function (event) {
+			event.target.classList.remove("filled");
+			if (event.target.value !== "") {
+				event.target.classList.add("filled");
+			}
+			
+		}, true);
+		
+		inputNewTaskTitle.addEventListener("keydown", function() {
+			console.log(inputNewTaskTitle.value);
+			if (formError) {
+				toggleClass(inputNewTaskTitle, "formErrors");
+				if (isEmpty(inputNewTaskTitle.value)) {
+					inputNewTaskTitle.value = "";
+				}
 
+				newTaskFormErrorMsg.innerHTML = "";
+				formError = false;
+			}
+     }, false);
+		
+//		inputNewTaskTitle.addEventListener("blur", function() {
+//			inputNewTaskTitle.classList.remove("filled");
+////			toggleClass(inputNewTaskTitle, "filled");
+//			if (inputNewTaskTitle.value !== "") {
+//				inputNewTaskTitle.classList.add("filled");
+////				toggleClass(inputNewTaskTitle, "filled");
+//			}
+//			
+//		}, true);
 		// TEST  -- Need to figure out if this is still needed
 //		searchSubmit.addEventListener("mousedown", disableSearchSubmit);
 
@@ -1429,41 +1504,47 @@ var appController = (function (appModelCtrl, appUICtrl) {
 //	console.log(newTaskInput);
 	return {
 		// Initialize data objects and set up all event listeners
-		init: function () {
-			console.log('Application has started');
-			// Load data into app
-			// 1. Load task list
-			/********************************************************************************************************************************
-				*	First load "Pre-set" task lists into taskSubMenu. "New Tasks" already in taskSubMenu as it is already hard coded in html 
-				*	so it will occupy .childNodes[0] position initially. "Pre-set" lists will be added before "New task" item.	 
-			********************************************************************************************************************************/
-//			appUIController.addListInfoToMenu(appModelController.getPresetTaskListInfo(), taskListsSubMenuContainer.childNodes[0]);
-			
-			/********************************************************************************************************************************	
-			 Now we will add "Pre-configured"/"UserDefined" task lists that were previously saved by user (now retrieved from DB)  
-			 These items will be inserted/sandwiched between "Pre-set" lists. 1) "All Lists" 2) "Default" ...insert here... n) "Completed
-			 Specifically they are added after the "Default" task list item, which is now .childNodes[2] node.
-			********************************************************************************************************************************/
-
-			// Get the 2nd default list element ("Default List") position so that we can start adding user defined list after it
-			
-			var listInsertPoint = document.getElementById("listInsertPoint");
-			appUIController.addListInfoToMenu(appModelController.getUserDefinedTaskListInfo(), listInsertPoint);
+		init: function () { 
+			if (!appInitialized) {
 				
-			// 2. Load task items
-			
-			// Find the listId of the "active" list
-			var taskListId = getListIdForActiveTaskList();
-	
-			// Use taskId to gather and display all task with that ID
-			var taskList_id = updateTaskListDisplayed (taskListId);
-	
-			var taskList2Display = setListItemsToCategorize (taskList_id); 
-			appUIController.groupAndDisplayTaskItems(taskList2Display);
-			setupEventListeners();
+				appInitialized = true;
+				console.log('Application has started');
+				// Load data into app
+				// 1. Load task list
+				/********************************************************************************************************************************
+					*	First load "Pre-set" task lists into taskSubMenu. "New Tasks" already in taskSubMenu as it is already hard coded in html 
+					*	so it will occupy .childNodes[0] position initially. "Pre-set" lists will be added before "New task" item.	 
+				********************************************************************************************************************************/
+	//			appUIController.addListInfoToMenu(appModelController.getPresetTaskListInfo(), taskListsSubMenuContainer.childNodes[0]);
+
+				/********************************************************************************************************************************	
+				 Now we will add "Pre-configured"/"UserDefined" task lists that were previously saved by user (now retrieved from DB)  
+				 These items will be inserted/sandwiched between "Pre-set" lists. 1) "All Lists" 2) "Default" ...insert here... n) "Completed
+				 Specifically they are added after the "Default" task list item, which is now .childNodes[2] node.
+				********************************************************************************************************************************/
+
+				// Get the 2nd default list element ("Default List") position so that we can start adding user defined list after it
+
+				var listInsertPoint = document.getElementById("listInsertPoint");
+				appUIController.addListInfoToMenu(appModelController.getUserDefinedTaskListInfo(), listInsertPoint);
+
+				// 2. Load task items
+
+				// Find the listId of the "active" list
+				var taskListId = getListIdForActiveTaskList();
+
+				// Use taskId to gather and display all task with that ID
+				var taskList_id = updateTaskListDisplayed (taskListId);
+
+				var taskList2Display = setListItemsToCategorize (taskList_id); 
+				appUIController.groupAndDisplayTaskItems(taskList2Display);
+				setupEventListeners();
+			}
 		}
-	};
-})(appModelController, appUIController);
+	}
+	})(appModelController, appUIController);
+
+
 
 // Main App flow
 appController.init();

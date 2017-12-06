@@ -679,7 +679,23 @@
 		pointer-events: none;
 		cursor: default;
 	}
+
+/*
+	.newTaskPage #formSaveNewTask input[type="text"].validField  {
+		border-color: #28a745 !important;
+	}
+*/
+
 	
+	/* Class applied once user has entered text in input field of form */
+	#formSaveNewTask input[type="text"].filled,
+	#formSaveNewTask select.filled
+	{
+		color: #636c72;
+    	font-style: normal;
+    	font-size: 1.25rem;
+	}
+
 	input::-webkit-input-placeholder,
 	input[type="text"]::-webkit-input-placeholder,
 	input[type="date"]::-webkit-input-placeholder,
@@ -691,6 +707,14 @@
 	input:-ms-input-placeholder,
 	input[type="text"]:-ms-input-placeholder,
 	input[type="date"]:-ms-input-placeholder,
+	.form-control {
+		color: #76d6d1;
+		font-style: italic;
+	}
+	
+	input::-webkit-input-placeholder,
+	input[type="text"]::-webkit-input-placeholder,
+	input[type="date"]::-webkit-input-placeholder,
 	.form-control {
 		color: #76d6d1;
 		font-style: italic;
@@ -713,7 +737,12 @@
 
 
 	/* form calendar icon styling */
-
+.errorMsg {
+	color: red !important;
+}
+.formErrors {
+	border: solid 1px red !important;
+}
 
 .form_datetime {
     border-radius: .25rem .1rem .1rem .25rem;

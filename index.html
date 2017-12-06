@@ -149,22 +149,22 @@
 		<section class="container newTaskPage">
 			<article class="">
 
-				<form id="formSaveNewTask">
-
+				<form id="formSaveNewTask" novalidate>
 					<!--	Enter Task Name				-->
 					<div class="form-group">
 						<label for="newTaskTitle" class="form-control-label">Task Title:</label>
 						<div class="row col-12">
 							<input type="text" id="newTaskTitle" class="form-control" placeholder="Enter NEW task title here" autofocus required>
 						</div>
+						<div class="errorMsg newTaskFormErrorMsg"></div>
 					</div>
-					<div class="formErrorMsg"></div>
+
 					<!--	Enter Due Date				-->
 <!--					<div>-->
 					<div class="form-group">
 						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
 						<div class="row col-10">
-							<div class="input-append date form_datetime" id="datetimepicker" data-date-format="2012-12-21T15:25:00Z">
+							<div class="input-append date form_datetime" id="datetimepicker" class="form-control-label" data-date-format="2012-12-21T15:25:00Z">
 								<input size="32" id="newTaskDateTime" type="text" value="" readonly placeholder="Click to set date/time">	
 								<span class="add-on">
 									<i class="fa fa-times" aria-hidden="true"></i>
@@ -175,18 +175,8 @@
 								
 							</div>
 						</div>
-
 					</div>
 
-					<!--	Enter Time Due				-->
-<!--
-					<div class="form-group">
-						<label for="inTaskTimeDue" class="control-label">Time Due:</label>
-						<div class="row col-12">
-							<input class="form-control" type="time" value="12:00:00" id="inTaskTimeDue">
-						</div>
-					</div>
--->
 
 					<!--	Select Repeat			-->
 					<div class="form-group">
@@ -293,11 +283,11 @@
 				</header>
 -->
 
-				<form id="formSaveNewTask">
+				<form id="formEditNewTask">
 					<div class="form-group">
 						<label for="taskName" class="form-control-label">Task Name:</label>
 						<div class="row col-12">
-							<input type="text" class="form-control" id="Taskame" value="Task Item Title 1">
+							<input type="text" class="form-control" id="taskName" value="Task Item Title 1">
 						</div>
 					</div>
 					<div class="form-group">
