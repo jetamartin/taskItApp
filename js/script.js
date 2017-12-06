@@ -51,6 +51,7 @@ var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
 var addTaskSaveButton = document.querySelector("#addTaskSaveButton"); 
 var formSaveNewTask = document.querySelector("#formSaveNewTask"); 
 var inputNewTaskTitle = document.getElementById("newTaskTitle");
+var inputListName = document.getElementById("newListNameSelection");
 
 
 //var inputNewTaskTitle = document.querySelector("#validationCustom01");
@@ -69,10 +70,35 @@ var listItemsToCategorize;
 function isEmpty(str){
     return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
 }
+
+/* Gets the Active List Task Name */
+function getActiveTaskListName() {
+	return getActiveTaskList().childNodes[1].textContent.trim();	
+}
+
+function setTaskListSelect() {
+	
+	var activeTaskListName = getActiveTaskListName();
+	console.log("===========ACTIVE LIST NAME: " + activeTaskListName );
+	
+	if (activeTaskListName === "All List") {
+		inputNewTaskList.value = "Default"
+
+	} else {
+		inputNewTaskList.value = activeTaskListName;
+		console.log("=============TASK LIST VALUE: " + inputNewTaskList.value);
+	}
+
+}
+
 function addNewTask () {
 	console.log("************** addNewTask");
 	toggleClass(homePage, "hideIt");
 	toggleClass(newTaskPage, "hideIt");
+	
+	// Need to set newTask Form list dropdown to match the "active" task list
+	setTaskListSelect();
+
 }
 
 
@@ -117,13 +143,15 @@ function fnSaveNewTask(event) {
 		toggleClass(inputNewTaskTitle, "validField");
 		console.log("Empty or blank title");
 		newTaskFormErrorMsg.innerHTML = "Task Title is required/Cannot be blank";
-		toggleClass(inputNewTaskTitle, "formErrors"); 
+		toggleClass(inputNewTaskTitle, "formErrors");
+		
+		// If non-valid entry detected put cursor inside and at beginning of input field so user can make needed changes.
 		inputNewTaskTitle.focus();
 		inputNewTaskTitle.setSelectionRange(0,0);
+		// Set error flag to true
 		formError = true;
 	} 
 	
-	console.log("Title Task: " + newTaskTitle);
 	var newTaskDateTime = inputNewTaskDateTime.value;
 	console.log("Date & Time: " + newTaskDateTime);
 	var newTaskRepeatOptionTxt = inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text;
@@ -486,7 +514,7 @@ function getActiveTaskList() {
 var handleSubMenuClick = function (event) {
 	
 	// Get the current "active" task list 
-	var currActiveList = getActiveTaskList();	
+	var currActiveList = getActiveTaskList();
 	// Deactive the current active list by removing 'selected' class 
 	toggleClass(currActiveList, 'selected');
 		
@@ -1140,6 +1168,16 @@ var appModelController = (function () {
 			"taskItem_createTime": ""	
 		}
 	];
+	
+	var taskListNames = [
+		{
+			"Default"	: "Default",
+			"Personal"  : "Personal",
+			"Shopping"	: "Shopping",
+			"Wishlist"	: "Wishlist",
+			"Work"		: "Work"
+		}
+	]
 	return {
 		getPresetTaskListInfo: function() {
 			return presetTaskListsInfo;
@@ -1153,6 +1191,14 @@ var appModelController = (function () {
 		},
 		getTaskListTable: function() {
 			return taskListTable;
+		},
+		
+		getTaskListNames: function () {			
+			var listNamesArray = taskListTable.reduce(function(namesList, listObj) {
+				namesList.push(listObj.taskList_name);
+				return namesList;
+			}, []);
+			return listNamesArray;	
 		}
 	}
 })();
@@ -1502,13 +1548,45 @@ var appController = (function (appModelCtrl, appUICtrl) {
 	
 	
 //	console.log(newTaskInput);
+	/******************************************************************
+	Populates addNewTaskFrom List Drop down with list names (TaskListTable).
+	
+	Note: TaskListTable contains "All List" and "Completed". Don't want to 
+	include those two list names (which happen to be first and last list name)
+	so the for loop params have been modified (loop starts at 2 and ends at length-1) to eliminate those two list names. 
+	Note 2: Need to determine if I want to create a sepearate global list 
+	for just user defined list names and use that instead of TaskListTable
+	that is inclusive of system defined lists (e.g., "All List", "Default" and "Completed) 
+	******************************************************************/
+	function populateNewTaskFormWithListNames () {
+		var taskListNames = appModelCtrl.getTaskListNames();
+
+		// Optional: Clear all existing options first:
+//		inputListName.innerHTML = "";
+		// Populate list with options:
+		for (var i = 2; i < taskListNames.length-1; i++) {
+			var opt = taskListNames[i];
+			inputListName.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
+		}
+		
+	}
+	
+	
 	return {
 		// Initialize data objects and set up all event listeners
+		
+		
+		
+		
 		init: function () { 
 			if (!appInitialized) {
 				
 				appInitialized = true;
 				console.log('Application has started');
+				
+				var taskListNamesArray = appModelCtrl.getTaskListNames();
+				console.log("TASK LIST NAMES: " + taskListNamesArray);
+				populateNewTaskFormWithListNames ();
 				// Load data into app
 				// 1. Load task list
 				/********************************************************************************************************************************
@@ -1525,6 +1603,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 
 				// Get the 2nd default list element ("Default List") position so that we can start adding user defined list after it
 
+				
 				var listInsertPoint = document.getElementById("listInsertPoint");
 				appUIController.addListInfoToMenu(appModelController.getUserDefinedTaskListInfo(), listInsertPoint);
 
@@ -1574,3 +1653,9 @@ var uniqueId = Math.random().toString(36).substring(2)
                + (new Date()).getTime().toString(36);
 
 */
+// Return List names as an Array 
+//  var listNamesArray = taskListTable.reduce(function(namesList, listObj) {
+//    namesList.push(listObj.taskList_name);
+//    return namesList;
+//    
+//  }, [])
