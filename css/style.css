@@ -680,12 +680,6 @@
 		cursor: default;
 	}
 
-/*
-	.newTaskPage #formSaveNewTask input[type="text"].validField  {
-		border-color: #28a745 !important;
-	}
-*/
-
 	
 	/* Class applied once user has entered text in input field of form */
 	#formSaveNewTask input[type="text"].filled,
@@ -733,7 +727,6 @@
 		touch-action: manipulation;
 		border: none;
 	}
-
 
 
 	/* form calendar icon styling */

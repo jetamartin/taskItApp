@@ -127,25 +127,39 @@
 
 	</section>
 	</div>
-	
-	
-<!--	NEW TASK SECTION   -->
-<!-- $$$$	-->
+
+
+<!--*******************************************************-->
+		
+<!--				NEW TASK PAGE	  					   -->
+
+<!--*******************************************************-->
+
 	
 	<div class="container-fluid hideIt" id="newTaskPage" >
+		
+		<!--********************************************-->
+		<!--		NAVIGATION AREA						-->
+		<!--********************************************-->
+		
 		<nav class="navBar subPage">
 			<ul>
 				<li class="newTaskBackArrow">
-<!--					<a href="index.html">-->
 						<i class="fa fa-arrow-left"></i>
 						&nbsp;&nbsp;Back
-<!--				   	</a>-->
 			   	</li>
 				<li class="screenTitle">New Task</li>
-				<li class="floatRight">Save&nbsp;&nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i></li>
+				<li class="floatRight" id="addTaskMenuSaveButton">Save&nbsp;&nbsp;
+					<i class="fa fa-floppy-o" aria-hidden="true"></i>
+				</li>
 
 			</ul>
 		</nav>
+		
+		<!--********************************************-->
+		<!--	NEW TASK FORM	-->
+		<!--********************************************-->
+
 		<section class="container newTaskPage">
 			<article class="">
 
@@ -180,9 +194,10 @@
 
 					<!--	Select Repeat			-->
 					<div class="form-group">
-						<label for="inRepeatOption">Repeat:</label>
+						<label for="inRepeatOption" class="form-control-label">Repeat:</label>
 						<div class="row col-12">
-							<select class="form-control" id="newTaskRepeatOption">
+							<select class="form-control " id="newTaskRepeatOption" >
+							<option class="placeholder" value="0" disabled selected>Select your option</option>
 							<option value="1">None</option>
 							<option value="2">Daily</option>
 							<option value="3">Weekly</option>
@@ -200,12 +215,7 @@
 							<!--	Will need to build list dynamically based on user input						-->
 							<select class="form-control" id="newListNameSelection">
 							<option value="Default">Default</option>
-<!--
-							<option value="Personal">Personal</option>
-							<option value="Shopping">Shopping</option>
-							<option value="Wishlist">Wishlist</option>
-							<option value="Work">Work</option>
--->
+							// Adtl option values populated dynamically via JS
 							</select>
 						</div>
 
@@ -225,7 +235,8 @@
 						<input type="reset">
 -->
 						<button type="submit" class="btn btn-default takeActionBtn" id="addTaskSaveButton">Save</button>
-						<button type="Cancel" class="btn btn-default">Cancel</button>
+						
+						<button type="reset" class="btn btn-default" id="addTaskResetButton">Reset</button>
 					</div>
 				</form>
 				
@@ -248,7 +259,7 @@
 							</div>
 							<!-- Modal widow for creating new list							-->
 							<div class="modal-footer button-group">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal" >Cance</button>
 								<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
 							</div>
 						</div>
@@ -259,10 +270,11 @@
 		</section>
 		<!--Container for slider -->
 	</div>
-	
-<!--	END NEW TASK SECTION-->
-	
-<!--	EDIT TASK SECTION   -->
+<!--*******************************************************-->
+		
+<!--				EDIT TASK PAGE	  					   -->
+
+<!--*******************************************************-->
 	
 	<div class="container-fluid hideIt" id="editTaskPage">
 		<nav class="navBar">

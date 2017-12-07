@@ -48,13 +48,15 @@ var newTaskBackArrow = document.querySelector(".newTaskBackArrow");
 var editNewTaskPage = document.querySelector("#editTaskPage"); 
 var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
 
-var addTaskSaveButton = document.querySelector("#addTaskSaveButton"); 
+
 var formSaveNewTask = document.querySelector("#formSaveNewTask"); 
 var inputNewTaskTitle = document.getElementById("newTaskTitle");
 var inputListName = document.getElementById("newListNameSelection");
+var addTaskSaveMenuButton = document.querySelector("#addTaskMenuSaveButton");
 
+var addTaskSaveButton = document.querySelector("#addTaskSaveButton");
+var addTaskResetButton = document.querySelector("#addTaskResetButton");
 
-//var inputNewTaskTitle = document.querySelector("#validationCustom01");
 
 
 
@@ -81,7 +83,7 @@ function setTaskListSelect() {
 	var activeTaskListName = getActiveTaskListName();
 	console.log("===========ACTIVE LIST NAME: " + activeTaskListName );
 	
-	if (activeTaskListName === "All List") {
+	if (activeTaskListName === "All Lists") {
 		inputNewTaskList.value = "Default"
 
 	} else {
@@ -122,34 +124,47 @@ function exitEditTaskPage() {
 }
 
 
+function resetFormError() {
+	newTaskFormErrorMsg.innerHTML = "";
+	toggleClass(inputNewTaskTitle, "formErrors");
+	formError = false;
+}
+
+function setFormError() {
+	//Set Form error information
+
+	// Set error message
+	newTaskFormErrorMsg.innerHTML = "Task Title is required/Cannot be blank";
+	// Format field to highlight error
+	toggleClass(inputNewTaskTitle, "formErrors");
+
+	// If non-valid entry detected put cursor inside and at beginning of input field so user can make needed changes.
+	inputNewTaskTitle.focus();
+	inputNewTaskTitle.setSelectionRange(0,0);
+
+	// Set error flag to true
+	formError = true;
+	
+}
+
 //************************
 //	fnSaveNewTask()
 //************************
-function fnSaveNewTask(event) {
+function fnSaveNewTask() {
 	console.log("****************** fnSaveNewTask()");
 	
+	// If errors had been set on prior save attempt then need to reset them before
+	// checking for errors on this save attempt
 	if (formError) {
-		newTaskFormErrorMsg.innerHTML = "";
-		toggleClass(inputNewTaskTitle, "formErrors");
-		formError = false;
+		resetFormError();
 	}
 
-
-	console.log(event);	
 	var newTaskTitle = inputNewTaskTitle.value;
 	var newTaskTitle = inputNewTaskTitle.value.trim();
 
 	if (isEmpty(newTaskTitle)) {
-		toggleClass(inputNewTaskTitle, "validField");
-		console.log("Empty or blank title");
-		newTaskFormErrorMsg.innerHTML = "Task Title is required/Cannot be blank";
-		toggleClass(inputNewTaskTitle, "formErrors");
-		
-		// If non-valid entry detected put cursor inside and at beginning of input field so user can make needed changes.
-		inputNewTaskTitle.focus();
-		inputNewTaskTitle.setSelectionRange(0,0);
-		// Set error flag to true
-		formError = true;
+		// Setup and apply error formatting/messaging on form
+		setFormError();	
 	} 
 	
 	var newTaskDateTime = inputNewTaskDateTime.value;
@@ -157,9 +172,24 @@ function fnSaveNewTask(event) {
 	var newTaskRepeatOptionTxt = inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text;
 	console.log("Repeat option: " + newTaskRepeatOptionTxt);
 	var newTaskListOptionTxt = inputNewTaskList.options[inputNewTaskList.selectedIndex].text;
-	
+	console.log("List option: " + newTaskListOptionTxt);
 }
 
+function resetNewTaskPage () {
+	console.log("in resetNewTaskPage()");
+	
+	// Reset Form Error
+	if (formError) {
+		resetFormError();
+	}
+	// Need to remove special formatting (defined by css "filled" class) if any has been applied
+	inputNewTaskTitle.classList.remove("filled");
+	inputNewTaskRepeat.classList.remove("filled");
+	inputNewTaskList.classList.remove("filled");
+	
+//	inputNewTaskRepeat.selectedIndex = 0;
+	
+}
 
 
 
@@ -1494,20 +1524,20 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		floatAddBtn.addEventListener("click", addNewTask); 
 		newTaskBackArrow.addEventListener("click", exitNewTaskPage);	
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
+		addTaskResetButton.addEventListener("click", resetNewTaskPage);
 		
-		
-//		addTaskSaveButton.addEventListener("click", fnSaveNewTask);
-		
-//		formSaveNewTask.addEventListener("submit",function (event) {
-//			fnSaveNewTask(event) });
+		addTaskSaveMenuButton.addEventListener("click", fnSaveNewTask);
+
 		
 		formSaveNewTask.addEventListener("submit",function (event) {
 				event.preventDefault();
 				event.stopPropagation();
-				fnSaveNewTask(event);
+				fnSaveNewTask();
 		}, false);
  
 		formSaveNewTask.addEventListener("blur", function (event) {
+			console.log("Blur event for FormSaveNewTask");
+			console.log("Event Target: " + event.target.tagName);
 			event.target.classList.remove("filled");
 			if (event.target.value !== "") {
 				event.target.classList.add("filled");
@@ -1517,14 +1547,13 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		
 		inputNewTaskTitle.addEventListener("keydown", function() {
 			console.log(inputNewTaskTitle.value);
+			
+			// Reset Form Error
 			if (formError) {
-				toggleClass(inputNewTaskTitle, "formErrors");
-				if (isEmpty(inputNewTaskTitle.value)) {
+				resetFormError();
+			}
+			if (isEmpty(inputNewTaskTitle.value)) {
 					inputNewTaskTitle.value = "";
-				}
-
-				newTaskFormErrorMsg.innerHTML = "";
-				formError = false;
 			}
      }, false);
 		
