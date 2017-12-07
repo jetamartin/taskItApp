@@ -191,8 +191,6 @@ function resetNewTaskPage () {
 	
 }
 
-
-
 /* Removes all taskItems on screen */
 
 function clearoutTaskItemsDisplayed () {
