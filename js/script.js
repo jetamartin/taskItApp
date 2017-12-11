@@ -255,11 +255,7 @@ function setListItemsToCategorize (taskList_id) {
 	var todayMonth = today.getMonth();
 	var todayDate = today.getDate();
 	var todayYMD = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-	
-	var groupedTasks;  // Task items that match grouping criteria
-	var listItemsLeftToCategorize = [] 
-	
-	
+			
 
 	var yesterday = new Date(todayYear, todayMonth, todayDate - 1);
 	var today = new Date(todayYear, todayMonth, todayDate);
@@ -310,7 +306,7 @@ function setListItemsToCategorize (taskList_id) {
             "categoryLabel": "No due date"
         }
     }
-	var aTaskInGroup = false;
+//	var aTaskInGroup = false;
 
 	// Get DOM "handle" of Navbar Submenu container (<ul>) for task list
     var taskListsSubMenuContainer = document.querySelector(".taskListsSubMenu");
@@ -343,30 +339,30 @@ function getAllTasks() {
 //**************************************************************************************
 // Unhide task items that have been hidden
 //**************************************************************************************
-function unhideTasks() {
-	console.log("----->In unhideTasks method");
-	var allTasks = getAllTasks();
-	allTasks.forEach(function (node) {
-		if (window.getComputedStyle(node).display === "none") {
-			node.style.display = "flex";
-			//			console.log("Nodenode.style.display", node.style.display);
-		}
-	});
-}
+//function unhideTasks() {
+//	console.log("----->In unhideTasks method");
+//	var allTasks = getAllTasks();
+//	allTasks.forEach(function (node) {
+//		if (window.getComputedStyle(node).display === "none") {
+//			node.style.display = "flex";
+//			//			console.log("Nodenode.style.display", node.style.display);
+//		}
+//	});
+//}
 
 //**************************************************************************************
 // Get and return all task that are not hidden (display: none)
 //**************************************************************************************
-function getVisibleTasks() {
-	var visibleTasks = [];
-	var allTasks = getAllTasks();
-	allTasks.forEach(function (node) {
-		if (window.getComputedStyle(node).display !== "none") {
-			visibleTasks.push(node);
-		}
-	});
-	return visibleTasks;
-}
+//function getVisibleTasks() {
+//	var visibleTasks = [];
+//	var allTasks = getAllTasks();
+//	allTasks.forEach(function (node) {
+//		if (window.getComputedStyle(node).display !== "none") {
+//			visibleTasks.push(node);
+//		}
+//	});
+//	return visibleTasks;
+//}
 //**************************************************************************************
 // Traverse current DOM node to get task and return task name
 // Note: technique is very fragile need to look for more 
@@ -1234,7 +1230,7 @@ var appModelController = (function () {
 
 //**************************************************************************************
 //
-// TASKIT UI CONTROLLER
+// CONTROLLER: TASKIT APP UI CONTROLLER
 //
 //**************************************************************************************
 // Examples of tasks:
@@ -1246,12 +1242,28 @@ var appUIController = (function () {
 
 	};
 	
-	// There is no pre-defined method for inserting a node after another node...so this does it. 
+	/* While grouping taskItems by due date category, this array holds the list of taskItems that have not yet been grouped into their appropriate Due Date Category 
+	*/
+	var listItemsLeftToCategorize = [];
+	
+	/* aTaskInGroup - flag used when displaying a user selected task list to facilitate display of that list into "Due Date Groups". It's a flag (initially set to false) that is set to true if at least one taskItem in a user selected task is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header (e.g., "Over Due") and closing tag need to be generated for that Due Date Group.  This flag is reset to false each time the controller is invoked it is invoked because each invocation means that 	you have a new key/category. 
+	*/
+	var aTaskInGroup = false;
+	
+	/********************************************************************************
+		METHOD:  insertAfter()
+		There is no pre-defined method for inserting a node after another node...so this does it. 
+	*********************************************************************************/
+	
 	function insertAfter(newNode, referenceNode) {
 		referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-	}
+	} // END insertAter()
 
-	
+	/********************************************************************************
+		METHOD:  containsObject()
+		Determines whether object is found in an array. 
+		Returns TRUE if a match was found
+	*********************************************************************************/
 	function containsObject(obj, list) {
 		var i;
 		for (i = 0; i < list.length; i++) {
@@ -1262,8 +1274,15 @@ var appUIController = (function () {
 
 		return false;
 	} // END containsObject()
-	
+	/********************************************************************/
+	/* 					APP UI CONTROLLER METHODS						*/	
+	/********************************************************************/
 	return {
+		
+		/********************************************************************************
+			METHOD:  getNewTaskInputData()
+
+		********************************************************************************/
 		getNewTaskInputData: function (event) {
 			console.log("The Event is: " + event);
 			event.preventDefault();
@@ -1276,6 +1295,18 @@ var appUIController = (function () {
 				document.querySelector('#inTaskRepeatOption').value
 			}
 		},
+		
+		/********************************************************************************
+			METHOD:  addListInfoToMenu()
+			
+			Builds the Nav Task List Submenu and inserts it into Navigation area;
+			ARGUMENTS:
+			- subMenuTaskList - table containing user defined task list (userDefinedTaskListsInfo);
+			- nextNode: is specific DOM location within subMenuTaskList where these user defined taskList need to be inserted. Note: Specifically userDefined list names need to be inserted starting after the system defined List name: Default. 
+			(i.e., "All List, "Default", <- userDefinedTaskListInfo, "Completed ->)
+			
+		********************************************************************************/
+		
 		addListInfoToMenu: function (subMenuTaskList, nextNode) {
 			// Template to create ListName elements for nav's listSubmenu
 			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="overDue">&nbsp%overDueCount%</span><span class="listTotal">&nbsp%dueCount%</span></li>';
@@ -1328,7 +1359,15 @@ var appUIController = (function () {
 		
 		}, // END addListInfoToMenu
 		
-		
+		/********************************************************************************
+			METHOD:  buildTaskItemsToDisplay()
+			
+			Builds the html to display the taskList that is passed as input parameter
+			
+			ARGUMENTS:
+			- taskItemList - the list for which you want to build the html for display
+			
+		********************************************************************************/
 		buildTaskItemsToDisplay: function (taskItemList) {
 			
 		}, 
@@ -1383,6 +1422,7 @@ var appUIController = (function () {
 			}
 
 		}, //END displayTaskItems()
+		
 		buildTaskDueDateHeader: function (key) {
 			var genericTaskDueDateHeader ='<article id="%key%"><h5 class="taskCategory %overDueAttr%">%taskDueDateCategory%</h5>';
 			var specificDueDateHeader;
@@ -1406,39 +1446,55 @@ var appUIController = (function () {
 			mainPage.appendChild(newNode);
 		}, // END addClosingTagToList
 		
+		
+		
 		/******************************************************************************** 
-			METHOD: groupTaskByDueDate()
-			Determines whether any of the task items in a list matches a grouping category 
-			(e.g, "overdue"). If so then it saves those in "groupedTasks"
-			Note: "groupedTasks" & "listItemsLeftToCategorize" are both global variables
+			METHOD: groupTaskByDueDate():
+			
+			Determines whether any of the task items in listItems "pool" matches the current key (e.g, "overdue, dueIn1Week, etc") timeframe criteria . If so it returns all the matching taskItems for that key. Note: any taskItems that are matched must be removed from the listItem pool so that we don't continue to search through already matched task. More IMPORTANTLY the algorithm 
+			used RELIES on the fact that these matching items are removed from the pool at the time of match (only checks if date is less than key's date)...otherwise previously taskItems will be inappropriately displayed multiple times under the wrong categories.
+
+				
+			 VARIABLES: 
+			- "listItemsLeftToCategorize" - see definition at top of module
+			- aTaskInGroup - Used when displaying a user selected task list. It's a flag (initially set to false) that is set to true if at least one taskItem is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header and closing tags need to be generated for that Due Date Group. . This will flag the caller that a Category header (e.g., "Over Due") needs to be generated. This flag is reset to false each time it is invoked because each invocation means that 	you have a new key/category.  
 		**********************************************************************************/	
 		groupTaskByDueDate: function (key, listItems){
+
 			// Identify all taskItems in list that match grouping dueDate
 			// All matching task are saved in groupedTasks
 			aTaskInGroup = false;
-			groupedTasks = listItems.filter(function(taskItem){
-				if (key === "later") { 
-					console.log(taskItem);
-					var x = 1;
-				}
+			
+			/* Task that fall within the dates for a given key (e.g., 'DueWithIn1Week') will be returned in groupedTask using filter method
+			*/
+			return listItems.filter(function(taskItem){
+				
+				/* If user specified due date we must convert task date string
+					to a Date object so that it can be compared to Date objects
+					for grouping criteira
+				*/
 				if (taskItem.taskItem_due_date !== "") {
 					// Convert the taskItem_due_date into Date object so that it can be compared to date for grouping criteria
 					taskDueDate = new Date(taskItem.taskItem_due_date);
-//					console.log("Task Due Date: " + taskDueDate);
 					taskDueDateYMD = new Date (taskDueDate.getFullYear(), 
 										   taskDueDate.getMonth(),
 										   taskDueDate.getDate());
-				} else {
+				} else {  // User didn't specify a due date so just set to ""
 					taskDueDateYMD = "";
-//					console.log("Due Date is empty");
-//					console.log(taskItem.taskItem_title,  taskItem.taskItem_due_date);
-				} 	
-				/* Using JSON.stringify to easly see if objects are equal without having to do "deep" comparison of all properties. This technique works on simple objects (e.g., no methods)
+				} 
+				
+				/* 
+				Determines whether task due date falls within timeframe of category group dates specified via current key value (e.g., 'overDue', dueWithin1Week, etc) 
+				
+				Since we are comparing Date objects we use JSON.stringify to see if date objects are equal without having to do "deep" comparison of all properties. This technique works on simple objects (e.g., no methods)
+				
+				Note: Task matches if no due date specified on task and the category(ie., key) = "noDate.
+				Also when checking 
 				*/
 
 				if (((taskDueDateYMD === "" ) && (key === "noDate"))
 				|| ((taskDueDateYMD !== "") &&  (JSON.stringify(taskDueDateYMD) <= JSON.stringify(dueDateCategories[key].dueDate))) )	{
-
+					
 					aTaskInGroup = true;
 					/* If the current taskItem matches the grouping criteria (date) then check to see if the task is in list of items left to categorize ("listItemsLeftToCategorize")..if so then remove it from that list (by filtering it) so we don't continue to check for matches 
 					*/
@@ -1466,15 +1522,29 @@ var appUIController = (function () {
 		
 		
 		/**********************************************************************************************
-			METHOD: groupAndDsiplayTaskItems()
-			Once you've filtered the taskItems by category (e.g., Work taskItems) you will then want
-			group and display the taskItems based on their due date. An appropriate group heading (e.g., "Overdue", "Tomorrow", ) will need to be added in the HTML if there is at least one taskItem that falls into that grouping/category. Care must be take to not
+			METHOD: groupAndDisplayTaskItems()
+			Once you've filtered the taskItems down to the list the user selected (e.g., Work taskItems), this method will for each key (due date period) loop through the list of taskItems that match the task list selected by the User (e.g., "Work", "Shopping", etc) and:
+			
+			1) Call a method to search and "collect" any taskItems that match the key's due date  (e.g. OverDue, dueIn1Week, etc) timeframe;
+			
+			2) Call a method to build and insert the html "due date label" (e.g., "Due within 14 Days") if at least one taskItems exist for the due date group. If no taskItems match the due date group then the the header/content/closing tag will not be generated for that due date group/key; 
+			
+			3) Call a method to display the taskItems that were "collected" for a given due date period;
+			
+			4) Call a method to insert the closing tag for a given due date label  
+			
+			APPUICONTROLLER GLOBAL VARIABLES: 
+			
+			- "listItemsLeftToCategorize" - contains ONLY taskItems that have NOT been matched yet to a Due Date category.
+			
+			- aTaskInGroup - a flag that is set to true if a taskItem is found to match
+				a key(grouping) category. A value of true means that at least one "matching" taskItem was found thus telling the caller that a header for that key/category (e.g., OverDue) should be generated. This flag is reset with each new category/key (i.e., each time the function is called). 
 		**********************************************************************************************/	
 		groupAndDisplayTaskItems: function (listItemsToCategorize) {
+			var groupedTasks;
 			for ( key in dueDateCategories ) {
-//				console.log(key);
-//				console.log(dueDateCategories[key]);
-				appUIController.groupTaskByDueDate(key, listItemsToCategorize);
+
+				groupedTasks = appUIController.groupTaskByDueDate(key, listItemsToCategorize);
 				if (aTaskInGroup) {
 					// Build grouping a header i.e.,<article><h5></h5>
 					appUIController.buildTaskDueDateHeader(key); 
