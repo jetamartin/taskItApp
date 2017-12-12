@@ -1360,18 +1360,17 @@ var appUIController = (function () {
 		}, // END addListInfoToMenu
 		
 		/********************************************************************************
-			METHOD:  buildTaskItemsToDisplay()
+			METHOD:  buildAndDiplayTaskItemsToDisplay()
 			
-			Builds the html to display the taskList that is passed as input parameter
+			Builds the html to display the taskList that is passed as an input parameter
 			
 			ARGUMENTS:
-			- taskItemList - the list for which you want to build the html for display
+			- taskItemList - the tasks for which you want to build the html for display
 			
 		********************************************************************************/
-		buildTaskItemsToDisplay: function (taskItemList) {
+ 
+		buildAndDisplayTaskItems: function (idOfInsertLocation, taskItemList) {
 			
-		}, 
-		displayTaskItems: function (idOfInsertLocation, taskItemList) {
 			/*******************************************************************************
 			 Build Tasks to display on screen
 			*********************************************************************************/
@@ -1384,8 +1383,8 @@ var appUIController = (function () {
 
 			// Callback function for .find(). Returns the taskListTable object with matching taskListId 
 			// Similar to example provided MDN webdocs https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+			
 			function getListName(taskList) {
-	//			console.log(taskListTable)
 				return taskList.taskList_id === taskListId;
 			}
 
@@ -1395,23 +1394,25 @@ var appUIController = (function () {
 			var genericTaskItemHtml = '<div class="card"><a href="editTask.html"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span class="card-subtitle mb-2 text-muted" for="">%taskTitle%</span></div><h6 class="card-text taskDue floatLeft">%date%</h6>%repeatSymbol%<h6 class="taskListName clearBoth">%listName%</h6></div></a></div>'
 
 			for (var i = 0; i < taskItemList.length; i++) {
+				
 				// Insert the list name in HTML
 				specificTaskItemHtml = genericTaskItemHtml.replace('%taskTitle%', taskItemList[i].taskItem_title);
 
 				specificTaskItemHtml = specificTaskItemHtml.replace('%date%', taskItemList[i].taskItem_due_date);
 				specificTaskItemHtml = specificTaskItemHtml.replace('%time%', taskItemList[i].taskItem_due_time);
 
-
+				// Insert the repeat option selected
 				if (taskItemList[i].taskItem_repeat === "none" || taskItemList[i].taskItem_repeat  === "") {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', "");
 				} else {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', repeatSymbol);
 				}
 
-				// Save the taskListId from the current taskItem..Will use this in find() callback function
+				/* A taskItem object doesn't include it's list's Name but instead it contains the id for the it's list name (taskList_id). But with the taskList_id you can look up the List Name in the taskListTable.  
+				*/
 				taskListId = taskItemList[i].taskList_id;
 
-				// Get the name of task list by doing lookup of task_id in taskListTable 
+				// Look up the taskList Name in taskListTable and insert in in the html.  
 				specificTaskItemHtml = specificTaskItemHtml.replace('%listName%', appModelController.getTaskListTable().find(getListName).taskList_name);
 
 				//* Convert completed HTML string into DOM node so it can be inserted
@@ -1421,12 +1422,23 @@ var appUIController = (function () {
 
 			}
 
-		}, //END displayTaskItems()
+		}, //END buildAndDisplayTaskItems()
+		
+		
+		/******************************************************************************** 
+			METHOD: buildTaskDateHeader():
+			
+			Creates and inserts the appropriate Due Date Header for taskItems to be displayed
+	
+			 VARIABLES: 
+		**********************************************************************************/	
 		
 		buildTaskDueDateHeader: function (key) {
+			
 			var genericTaskDueDateHeader ='<article id="%key%"><h5 class="taskCategory %overDueAttr%">%taskDueDateCategory%</h5>';
 			var specificDueDateHeader;
 			var newNode;
+			
 			specificDueDateHeader = genericTaskDueDateHeader.replace("%key%",key);
 			if (key === "overDue") {
 				specificDueDateHeader = specificDueDateHeader.replace("%overDueAttr%", "overDue");
@@ -1434,12 +1446,22 @@ var appUIController = (function () {
 				specificDueDateHeader = specificDueDateHeader.replace("%overDueAttr%", "");
 			}
 			specificDueDateHeader = specificDueDateHeader.replace('%taskDueDateCategory%', dueDateCategories[key].categoryLabel);
+			
 			//* Convert completed HTML string into DOM node so it can be inserted
 			newNode = document.createRange().createContextualFragment(specificDueDateHeader);
-
+			
+			// Add the header to the DOM 
 			mainPage.appendChild(newNode);
 
 		},	// End buildTaskDueDateHeader
+		
+		/******************************************************************************** 
+			METHOD: addClosingTagToList():
+			
+			Builds the appropriate Due Date Header for taskItems to be displayed
+	
+			 VARIABLES: 
+		**********************************************************************************/	
 		addClosingTagToList: function () {
 			var newNode; 
 			newNode = document.createRange().createContextualFragment("</article>");
@@ -1456,9 +1478,13 @@ var appUIController = (function () {
 
 				
 			 VARIABLES: 
-			- "listItemsLeftToCategorize" - see definition at top of module
-			- aTaskInGroup - Used when displaying a user selected task list. It's a flag (initially set to false) that is set to true if at least one taskItem is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header and closing tags need to be generated for that Due Date Group. . This will flag the caller that a Category header (e.g., "Over Due") needs to be generated. This flag is reset to false each time it is invoked because each invocation means that 	you have a new key/category.  
+			 
+			- "listItemsLeftToCategorize" - contains ONLY taskItems that have NOT been matched yet to a Due Date category.
+			
+			- aTaskInGroup - a flag that is set to true if at least one taskItem is found that falls within the due date period for the current key. This flag is reset with each new category/key (i.e., each time the function is called).
+ 
 		**********************************************************************************/	
+		
 		groupTaskByDueDate: function (key, listItems){
 
 			// Identify all taskItems in list that match grouping dueDate
@@ -1523,13 +1549,14 @@ var appUIController = (function () {
 		
 		/**********************************************************************************************
 			METHOD: groupAndDisplayTaskItems()
-			Once you've filtered the taskItems down to the list the user selected (e.g., Work taskItems), this method will for each key (due date period) loop through the list of taskItems that match the task list selected by the User (e.g., "Work", "Shopping", etc) and:
 			
-			1) Call a method to search and "collect" any taskItems that match the key's due date  (e.g. OverDue, dueIn1Week, etc) timeframe;
+			Once you've filtered the taskItems down to the list that the user selected (e.g., Work taskItems), this method will loop through the taskItems once for each key (due date period) and collect any taskItems that fit the due date period for that key.
 			
-			2) Call a method to build and insert the html "due date label" (e.g., "Due within 14 Days") if at least one taskItems exist for the due date group. If no taskItems match the due date group then the the header/content/closing tag will not be generated for that due date group/key; 
+			1) Call a method to search and "collect" any taskItems that fall within the key's due date period (e.g. OverDue, dueIn1Week, etc) timeframe;
 			
-			3) Call a method to display the taskItems that were "collected" for a given due date period;
+			2) Call a method to build and insert the html "due date label" (e.g., "Due within 14 Days") if at least one taskItems exists for the due date group. If no taskItems match the due date group then the the header/content/closing tag will not be generated for that due date group/key; 
+			
+			3) Call a method to build and display the taskItems that were "collected" for a given due date period;
 			
 			4) Call a method to insert the closing tag for a given due date label  
 			
@@ -1537,19 +1564,23 @@ var appUIController = (function () {
 			
 			- "listItemsLeftToCategorize" - contains ONLY taskItems that have NOT been matched yet to a Due Date category.
 			
-			- aTaskInGroup - a flag that is set to true if a taskItem is found to match
-				a key(grouping) category. A value of true means that at least one "matching" taskItem was found thus telling the caller that a header for that key/category (e.g., OverDue) should be generated. This flag is reset with each new category/key (i.e., each time the function is called). 
+			- aTaskInGroup - a flag that is set to true if at least one taskItem is found that falls within the due date period for the current key. This flag is reset with each new category/key (i.e., each time the function is called). 
 		**********************************************************************************************/	
+		
 		groupAndDisplayTaskItems: function (listItemsToCategorize) {
 			var groupedTasks;
 			for ( key in dueDateCategories ) {
-
+				// Group the taskListItems into groups based on due date
 				groupedTasks = appUIController.groupTaskByDueDate(key, listItemsToCategorize);
+				
+				// If there is at least one taskItem that falls within a "due date" period then we will need to build a html header for it
 				if (aTaskInGroup) {
 					// Build grouping a header i.e.,<article><h5></h5>
 					appUIController.buildTaskDueDateHeader(key); 
 				}
-				appUIController.displayTaskItems(key,groupedTasks);
+				// Now display the taskItems in this due date period 
+				appUIController.buildAndDisplayTaskItems(key,groupedTasks);
+				
 				// Insert closing article tag
 				appUIController.addClosingTagToList();
 
