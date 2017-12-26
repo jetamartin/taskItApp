@@ -1350,12 +1350,20 @@ var appUIController = (function () {
 			}
 		}, 
 		
+		
+		/********************************************************************************
+			METHOD:  exitTaskPage()  -- Primary method 
+		********************************************************************************/
 		exitNewTaskPage: function() {
 			console.log("********************** exitNewTaskPage");
+			
+			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
+			resetUI2InitialState()
+			
 			toggleClass(homePage, "hideIt");
 			toggleClass(newTaskPage, "hideIt");
-			
-			// Remove any user input styling
+		
+			// Remove any user input styling from form
 			removeNewTaskFormInputStyle();
 			
 			// Reset all values in form
@@ -1433,11 +1441,13 @@ var appUIController = (function () {
 			// Need to remove special formatting (defined by css "filled" class) if any has been applied previously
 			removeNewTaskFormInputStyle();
 			
-			// Reset values on form
-			inputNewTaskTitle.value = "";
-			inputNewTaskDateTime.value = "";
-			inputNewTaskRepeat.value = "1";
-			inputNewTaskList.value = "Default"; 
+			formSaveNewTask.reset();
+			
+			// Thought I needed the lines below but just resetting the form via prior line looks like it is sufficient
+//			inputNewTaskTitle.value = "";
+//			inputNewTaskDateTime.value = "";
+//			inputNewTaskRepeat.value = "1";
+//			inputNewTaskList.value = "Default"; 
 			
 
 			// Focus the cursor on the New Task Title form
@@ -1862,7 +1872,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 			
 			// Reset 
 			appUIController.resetNewTaskForm();
-			
+
 			
 			
 			
