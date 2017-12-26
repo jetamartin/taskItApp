@@ -60,7 +60,7 @@
 				<li class="clearSearchIcon hideIt"><i class="fa fa-times-circle" aria-hidden="true"></i></li>
 				<li class="searchIt">
 					<form id="searches" name="search" action="" autocomplete="">
-						<input id="search" name="search" type="text" placeholder=" Search">
+						<input id="search" name="search" type="text" placeholder=" Search All Tasks">
 						<input id="search_submit" type="submit">
 					</form>
 				</li>
@@ -162,6 +162,8 @@
 
 		<section class="container newTaskPage">
 			<article class="">
+				<!--	Div where success message is stored			-->
+				<div id="taskSaveMessage"></div>
 
 				<form id="formSaveNewTask" novalidate>
 					<!--	Enter Task Name				-->
@@ -197,7 +199,7 @@
 						<label for="inRepeatOption" class="form-control-label">Repeat:</label>
 						<div class="row col-12">
 							<select class="form-control " id="newTaskRepeatOption" >
-							<option class="placeholder" value="0" disabled selected>Select your option</option>
+<!--							<option class="placeholder" value="0" disabled selected>Select your option</option>-->
 							<option value="1">None</option>
 							<option value="2">Daily</option>
 							<option value="3">Weekly</option>
@@ -415,7 +417,7 @@
 	
 	<script type="text/javascript">
     	$(".form_datetime").datetimepicker({
-        format: "mm/dd/yyyy - H:ii P",
+        format: "mm/dd/yyyy  H:ii P",
         showMeridian: true,
         autoclose: true,
         todayBtn: true,

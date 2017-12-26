@@ -9,7 +9,7 @@
 // Holds the node of the previously selected list item. If value is null then previous list is "All List"
 
 var appInitialized = false;
-var formError = false; 
+//var formError = false; 
 var taskListId;
 var previouslySelectedList = null;
 var parentElem;
@@ -17,9 +17,7 @@ var initialInput = true;
 var clearSearchClicked = false;
 var searchExitClicked = false;
 var searchIconClicked = false;
-var mainPageClick = false;
-var navBarClick = false;
-var searchSubmitClick = false;
+//var searchSubmitClick = false;
 
 // Needed to restore active/"selected" list after completing search alternative would 
 // be to get this value by search list DOM (class="selected") or saving value permanently
@@ -34,7 +32,7 @@ var clearSearchIcon = document.querySelector(".clearSearchIcon");
 var searchInput = document.getElementById("search");
 var searchIt = document.querySelector(".searchIt");
 var searchForm = document.querySelector("#searches");
-var searchSubmit = document.getElementById("search_submit");
+//var searchSubmit = document.getElementById("search_submit");
 var taskCategoryHeader = document.querySelectorAll(".taskCategory");
 var floatAddBtn = document.querySelector(".floatAddBtn");
 var mainPage = document.querySelector("#mainPage");
@@ -50,19 +48,12 @@ var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
 
 
 var formSaveNewTask = document.querySelector("#formSaveNewTask"); 
-var inputNewTaskTitle = document.getElementById("newTaskTitle");
+//var inputNewTaskTitle = document.getElementById("newTaskTitle");
 var inputListName = document.getElementById("newListNameSelection");
 var addTaskSaveMenuButton = document.querySelector("#addTaskMenuSaveButton");
 
 var addTaskSaveButton = document.querySelector("#addTaskSaveButton");
 var addTaskResetButton = document.querySelector("#addTaskResetButton");
-
-
-
-
-var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
-var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");var inputNewTaskList = document.querySelector("#newListNameSelection");
-var newTaskFormErrorMsg = document.querySelector(".newTaskFormErrorMsg");
 
 var searchString;
 var userInput;
@@ -73,123 +64,31 @@ function isEmpty(str){
     return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
 }
 
-/* Gets the Active List Task Name */
-function getActiveTaskListName() {
-	return getActiveTaskList().childNodes[1].textContent.trim();	
-}
-
-function setTaskListSelect() {
-	
-	var activeTaskListName = getActiveTaskListName();
-	console.log("===========ACTIVE LIST NAME: " + activeTaskListName );
-	
-	if (activeTaskListName === "All Lists") {
-		inputNewTaskList.value = "Default"
-
-	} else {
-		inputNewTaskList.value = activeTaskListName;
-		console.log("=============TASK LIST VALUE: " + inputNewTaskList.value);
-	}
-
-}
-
-function addNewTask () {
-	console.log("************** addNewTask");
-	toggleClass(homePage, "hideIt");
-	toggleClass(newTaskPage, "hideIt");
-	
-	// Need to set newTask Form list dropdown to match the "active" task list
-	setTaskListSelect();
-
-}
 
 
-function exitNewTaskPage() {
-	console.log("********************** exitNewTaskPage");
-	toggleClass(homePage, "hideIt");
-	toggleClass(newTaskPage, "hideIt")
-}
+//function exitNewTaskPage() {
+//	console.log("********************** exitNewTaskPage");
+//	toggleClass(homePage, "hideIt");
+//	toggleClass(newTaskPage, "hideIt");
+//	// Reset all values in form
+//	formSaveNewTask.reset()
+//}
 
 function editNewTask () {
 	console.log("************** editNewTask");
 	toggleClass(homePage, "hideIt");
 	toggleClass(editTaskPage, "hideIt");
+	
 }
 
 
 function exitEditTaskPage() {
 	console.log("********************** exitEditTaskPage()");
 	toggleClass(homePage, "hideIt");
-	toggleClass(editTaskPage, "hideIt")
+	toggleClass(editTaskPage, "hideIt");
+	removeNewTaskFormInputStyle();
 }
 
-
-function resetFormError() {
-	newTaskFormErrorMsg.innerHTML = "";
-	toggleClass(inputNewTaskTitle, "formErrors");
-	formError = false;
-}
-
-function setFormError() {
-	//Set Form error information
-
-	// Set error message
-	newTaskFormErrorMsg.innerHTML = "Task Title is required/Cannot be blank";
-	// Format field to highlight error
-	toggleClass(inputNewTaskTitle, "formErrors");
-
-	// If non-valid entry detected put cursor inside and at beginning of input field so user can make needed changes.
-	inputNewTaskTitle.focus();
-	inputNewTaskTitle.setSelectionRange(0,0);
-
-	// Set error flag to true
-	formError = true;
-	
-}
-
-//************************
-//	fnSaveNewTask()
-//************************
-function fnSaveNewTask() {
-	console.log("****************** fnSaveNewTask()");
-	
-	// If errors had been set on prior save attempt then need to reset them before
-	// checking for errors on this save attempt
-	if (formError) {
-		resetFormError();
-	}
-
-	var newTaskTitle = inputNewTaskTitle.value;
-	var newTaskTitle = inputNewTaskTitle.value.trim();
-
-	if (isEmpty(newTaskTitle)) {
-		// Setup and apply error formatting/messaging on form
-		setFormError();	
-	} 
-	
-	var newTaskDateTime = inputNewTaskDateTime.value;
-	console.log("Date & Time: " + newTaskDateTime);
-	var newTaskRepeatOptionTxt = inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text;
-	console.log("Repeat option: " + newTaskRepeatOptionTxt);
-	var newTaskListOptionTxt = inputNewTaskList.options[inputNewTaskList.selectedIndex].text;
-	console.log("List option: " + newTaskListOptionTxt);
-}
-
-function resetNewTaskPage () {
-	console.log("in resetNewTaskPage()");
-	
-	// Reset Form Error
-	if (formError) {
-		resetFormError();
-	}
-	// Need to remove special formatting (defined by css "filled" class) if any has been applied
-	inputNewTaskTitle.classList.remove("filled");
-	inputNewTaskRepeat.classList.remove("filled");
-	inputNewTaskList.classList.remove("filled");
-	
-//	inputNewTaskRepeat.selectedIndex = 0;
-	
-}
 
 /* Removes all taskItems on screen */
 
@@ -244,7 +143,9 @@ function setListItemsToCategorize (taskList_id) {
 		}
 	});
 
-	console.log("Returned listItemsToCategorize: " + listItemsToCategorize );
+	console.log("Returned listItemsToCategorize: ")
+	console.log( listItemsToCategorize );
+	console.log("number of taskItems: " + listItemsToCategorize.length);
 	return listItemsToCategorize;
 }
 
@@ -336,33 +237,7 @@ function getAllTasks() {
 //	return document.querySelectorAll(".card");
 }
 
-//**************************************************************************************
-// Unhide task items that have been hidden
-//**************************************************************************************
-//function unhideTasks() {
-//	console.log("----->In unhideTasks method");
-//	var allTasks = getAllTasks();
-//	allTasks.forEach(function (node) {
-//		if (window.getComputedStyle(node).display === "none") {
-//			node.style.display = "flex";
-//			//			console.log("Nodenode.style.display", node.style.display);
-//		}
-//	});
-//}
 
-//**************************************************************************************
-// Get and return all task that are not hidden (display: none)
-//**************************************************************************************
-//function getVisibleTasks() {
-//	var visibleTasks = [];
-//	var allTasks = getAllTasks();
-//	allTasks.forEach(function (node) {
-//		if (window.getComputedStyle(node).display !== "none") {
-//			visibleTasks.push(node);
-//		}
-//	});
-//	return visibleTasks;
-//}
 //**************************************************************************************
 // Traverse current DOM node to get task and return task name
 // Note: technique is very fragile need to look for more 
@@ -387,7 +262,7 @@ function searchForMatchingTask(userInput) {
 	// Return all task items where the task Title contains the search input character
 	return matchingTaskItems = allActiveTasks.filter(function (taskItem) {
 		taskName = getTaskName(taskItem);
-		if (taskName.indexOf(userInput) !== -1) {
+		if (taskName.toLowerCase().indexOf(userInput) !== -1) {
 			return taskItem;
 		}
 	});
@@ -408,13 +283,6 @@ function toggleClass(element, className) {
 	element.className = classString;
 }
 
-//function isEmpty(idValue) {
-//	if (document.getElementById(idValue).value.length === 0) {
-//		return true;
-//	} else {
-//		return false;
-//	}
-//}
 
 // Clear the contents of the Search input area
 function clearSearchContents() {
@@ -463,7 +331,8 @@ function showFloatAddBtn() {
 }
 
 function blockUserClicks(elem) {
-	console.log("**> BlockUserClicks");
+	console.log("Block User Clicks");
+	console.log(elem);
 	elem.style.pointerEvents = "none";
 }
 
@@ -492,6 +361,9 @@ function resetUI2InitialState() {
 	removeElement(backArrowSearch);
 	removeClearSearchIcon();
 	searchInput.value = "";
+	
+	//Search bar should be out of focus ("closed") on any screen other than "search screen".  
+	searchInput.blur();
 
 }
 
@@ -502,7 +374,8 @@ function resetUI2InitialState() {
 
 /**************************************************************************
 	Get the list_id of the "active" task list selection.
-	Once you have the listId you can then user other methods to <h1 class="display-1">Display 1</h1>
+	Once you have the listId you can then user other methods to get
+	
 	the taskItems for that list.
     
 ****************************************************************************/
@@ -572,18 +445,29 @@ var handleSubMenuClick = function (event) {
 };
 
 
-//**************************************************************************************
+//******************************************************************************************************
 //
 // HANDLE SEARCH FOCUS:
-// This function is called when the SearchIcon is clicked and Search input receives focus
+// This function is called when the SearchIcon is clicked and Search input receives focus.
+// When the user clicks on the searchIcon a search field opens up (with placeholder txt)
+// 
 //
-//**************************************************************************************
+//
+//	Global variables: (Line# where defined)
+//		- searchInput
+//		- searchIconClicked  (2)
+//		- clearSearchClicked (10)
+//		- homeIcon
+//		- backArowSearch
+//		- sysMenuElement
+//		- listMenuElement
+//
+//*******************************************************************************************************
 
 var handleSearchFocus = function (event) {
 	console.log("----->In handleSearchFocus function");
 	console.log("==> event.target", event.target);
 
-	//	searchSubmit.onmousedown = new function ("return false");
 	searchIconClicked = true;
 
 	// Show original Nav bar settings if user clicked somewhere other than clearSearchIcon
@@ -610,8 +494,8 @@ var handleSearchFocus = function (event) {
 
 		// Test XXX
 		searchInput.focus();
-		blockUserClicks(searchSubmit);
-		//		toggleClass(searchSubmit, "noPointerEvents");
+// Test if following line is needed &&& -- doesn't look like it is needed will delete in future
+//		blockUserClicks(searchSubmit);
 
 	}
 
@@ -626,6 +510,12 @@ var handleSearchFocus = function (event) {
 //
 // HANDLE SEARCH BLUR:
 // This function is called when user clicks on area outside of search input area
+// 
+//
+//	Global Variables:
+//	- clearSearchClicked 
+//  - searchExitClicked
+//  
 //
 //**************************************************************************************
 
@@ -642,7 +532,7 @@ var handleSearchBlur = function (event) {
 	// So to workaround this behavior a setTimeoutfunction is used. This allows the blur method
 	// to complete and then the event handler for the click to run so that the event.target can
 	// be captured/"noted" (via flags) and logic for handling the event can be added to the timeOut 
-	// function. This was the only solution I couldfind on StackOverflow for this "well-known" //problem. 
+	// function. This was the only solution I couldfind on StackOverflow for this "well-known" problem. 
 
 
 	setTimeout(function () {
@@ -650,9 +540,8 @@ var handleSearchBlur = function (event) {
 		console.log("----->SetTimeout function", document.activeElement);
 		console.log("SearchExitClicked value: ", searchExitClicked);
 		console.log("clearSearchClicked: ", clearSearchClicked);
-		console.log("mainPageClicked: ", mainPageClick);
-		console.log("navBarClicked: ", navBarClick);
 		//		console.log("clearSearchClicked value: ", clearSearchClicked);
+		
 		// If the user click on something other than the clearSearch icon you want to restore orig navBar elements.
 		if (searchExitClicked) {
 
@@ -661,75 +550,72 @@ var handleSearchBlur = function (event) {
 			// Reset UI to initiat state
 			resetUI2InitialState();
 			
-			//			toggleClass(searchSubmit, "noPointerEvents");
-			unblockUserClicks(searchSubmit);
+// Test if still needed	- Doesn't seemed to be so will delete following line in near future once absolutely sure.		
+//			unblockUserClicks(searchSubmit);
+			
 
 		} else if (clearSearchClicked) {
+			
+			// reset clearSearchClicked flag
 			clearSearchClicked = false;
 
 			// Clicked outside input area but didn't click searchExitIcon. Need to make sure 
 			// that you hide clearSearchIcon if user started entering search criteria
 			hideClearSearchIcon();
 			//			searchInput.focus();
-		} else if (searchSubmit) {
-			searchSubmitClick = false;
-			blockUserClicks(searchSubmit);
-//			searchInput.focus();
-		} else if (navBarClick) {
-			navBarClick = false;
-			blockUserClicks(navBar);
-//						searchInput.focus();
-		} else if (mainPageClick) {
-			mainPageClick = false;
-			//			searchInput.focus();
-		} else {
-			//			blockUserClicks(searchSubmit);
-			// TEST to see if I can make focus stay on input area
-			//			toggleClass(searchSubmit, "noPointerEvents");
-			//			setTimeout(function () {
-			//				searchInput.focus();
-			//			}, 10);
-
+			
+			// Hide the floating add button
+			removeFloatAddBtn();	
+		} 
+		else {
+// Test if still needed	- Doesn't seemed to be so will delete following line in near future once absolutely sure.		
+//			blockUserClicks(searchSubmit);
+			searchInput.focus();
+//			blockUserClicks(mainPage);
+			
 		}
-	}, 200);
+
+	}, 2);
+
 };
 
-//**************************************************************************************
+
+//*************************************************************************************************
+//  Detect Search Input - called whenever user enters key ('keyup' event) while in search area
+//	Find and display tasks that match the search criteria
 //
-// DETECT SEARCH INPUT
-// Called on "keyUp" event...so it's called after something has been entered in the search box
+//  DETAILS:
+//	- First clear out any taskItems currently displayed
+//  * IF searchInput area is now empty (user deleted all prior search criteria) 
+//	--> Hide the "clearSearchIcon" (icon that deletes all search criteria entered by user )
+//  --> And redisplay taskItems that were displayed before user entered search criteria ("active" task list) 
+//	--> To do this we must determine "active" task list (getListIdForActiveTaskList())
+//  --> And redisplay the "active" task list items ()
+//  * ELSE (searchInput area is NOT empty...it contains )
+//	 	 ** if only one character in searchInput area then Add the clearSearchIcon (addClearSearchIcon) to screen and make it	
+//			visible (showClearSearchIcon) 
+//		** ENDIF
+//	* ENDIF
+//	- Search for any taskItems that match the entered search criteria (searchForMatchingTask(searchInput.value))
+//	- Clear out any taskItems that were previously displayed (clearoutTaskItemsDisplayed)
+//	- And display the new matches (appUIController.displayTaskItems)
 //
-//**************************************************************************************
+//	GLOBAL VARIABLES:
+//	- searchInput - this is the text are where user enters their search criteria ()
+//	- clearSearchIcon - icon allows user to clear/delete all previously entered search criteria in searchInput 
+//		NOTE 1: clearSearchIcon is only made visible when there is at least one character currently in searchInput area 
+//		otherwise it is hidden. 
+//		NOTE 2: Displaying clearSearchIcon is done in two separate steps (i.e., add to screen and then make visible on screen)
+//				to avoid causing the searchIcon (magnifying glass -- located on the left of clearSearchIcon) from shifting
+//				the searchIcon left and right as the clearSearchIcon is added (when search criteria exist) and removed (if user
+//				deletes search criteria). Two steps are: 
+//
+//					1) addClearSearchIcon (style display: inline-block)
+//					2) showClearSearchIcon () style visibility: visible)
+//				
+//
+//*************************************************************************************************
 
-
-function deleteKey(event) {
-	console.log("----->In deleteKey function")
-	var key = event.keyCode || event.charCode;
-	if (key == 8 || key == 46)
-		return true;
-	else {
-		return false;
-	}
-}
-
-function hideCategoryNames() {
-	console.log("----->In hideCategoryNames function");
-	taskCategoryHeader.forEach(function (categoryHeader) {
-		categoryHeader.style.display = "none";
-	});
-}
-
-function unhideCategoryNames() {
-	console.log("----->In UnhideCategoryNames function");
-	taskCategoryHeader.forEach(function (categoryHeader) {
-		categoryHeader.style.display = "inline-block";
-	});
-}
-
-//**************************************************************************************
-//  Detect Search Input 
-//	Find and display tasks that match the searh criteria
-//**************************************************************************************
 
 var detectSearchInput = function (event) {
 	console.log("----->In DetectSearchInput function");
@@ -746,20 +632,20 @@ var detectSearchInput = function (event) {
 
 		// Set visibility of clearSearchIcon to hidden		
 		hideClearSearchIcon();
-//		removeClearSearchIcon();
 		
 		// Find the listId of the "active" list
-		var taskListId = getListIdForActiveTaskList();
+		var activeTaskListId = getListIdForActiveTaskList();
 	
 		// Use taskId to gather and display all task with that ID
-		updateTaskListDisplayed (taskListId);
+		updateTaskListDisplayed (activeTaskListId);
 		
 		
 	} else {
 		if (searchInput.value.length === 1 ) {
 			addClearSearchIcon();
 			showClearSearchIcon();
-		} 
+		} // ENDIF
+	// ENDIF
 		
 	matchingTaskItems = searchForMatchingTask(searchInput.value);	
 		
@@ -767,7 +653,7 @@ var detectSearchInput = function (event) {
 	clearoutTaskItemsDisplayed ();
 	
 	// Display matching task items. 
-	appUIController.displayTaskItems("mainPage", matchingTaskItems)
+	appUIController.buildAndDisplayTaskItems("mainPage", matchingTaskItems);
 	}
 
 };
@@ -816,26 +702,15 @@ var exitSearch = function (event) {
 };
 
 //TEST
-var disableSearchSubmit = function (event) {
-	console.log("----->DisableSearchSubmit");
+//var disableSearchSubmit = function (event) {
+//	console.log("----->DisableSearchSubmit");
 	//	blockUserClicks(searchSubmit);
 	//		toggleClass(searchSubmit, "noPointerEvents");
 	//			setTimeout(function () {
 	//				searchInput.focus();
 	//			}, 12);
-};
+//};
 
-
-var handleMainPageClicks = function (event) {
-	console.log("------>HandleMainPageClicks");
-	mainPageClick = true;
-};
-
-var handleNavBarClicks = function (event) {
-	console.log("------>HandleNavBarClicks");
-	navBarClick = true;
-
-};
 
 
 //$('#datepicker').datepicker();
@@ -843,32 +718,88 @@ var handleNavBarClicks = function (event) {
 // Note: that the taskItController & uiControllers are designed to be independent.
 // This is done so that for example you can expand the capabilities of the
 // taskItController without affecting the UI.
-//**************************************************************************************
+//**************************************************************************************************************************
 //
-// TASKIT DATA MODEL CONTROLLER 
+//                                                TASKIT DATA MODEL CONTROLLER 
 //
-//**************************************************************************************
+//**************************************************************************************************************************
 
 var appModelController = (function () {
+	var userDefinedTaskListInfo1 = []; 
+	var userTable1 = [];		
+	var taskListTable1 = [];
+	var taskItemsTable1 = [];
+	
+	var TaskList = function(listName) {
+		this.taskList_name = listName;
+		
+//			"taskList_id" : "1",
+//			"user_id" : "1",
+//			"taskList_name" :	"All Lists",
+//			"taskList_totalCount" : 44,
+//			"taskList_overDueCount" : 18, 
+//			"taskList_createTime": "",
+//			"taskList_isArchived": ""
+	}
+	
+	var TaskItem = function(id, listId, title, dueDate, repeat, createTime) {
+		this.taskItem_id = id;
+		this.taskList_id = listId;
+		this.taskItem_title = title;
+		this.taskItem_due_date = dueDate;
+		this.taskItem_repeat = repeat; 
+		this.taskItem_createTime = createTime;
+	}
+	/******************************************************************************************************************************
+		getUniqueId():  Used to generate unique ID's for various objects (e.g., taskItems)
+		
+		Got this method from StackOverFlow (https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript)
+		Per stackOverflow contributor's comments here are the characteristics/uniqueness of IDs generated with this algorithm:
+		- If ID's are generated more than 1 milliseconds apart, they are 100% unique.
+		- If two ID's are generated at shorter intervals, and assuming that the random method is truly random, this would generate
+			ID's that are 99.99999999999999% likely to be globally unique.
+		You can increase this number by adding more digits, but to generate 100% unique ID's you will need to use a global counter.
+	*******************************************************************************************************************************/
+	getUniqueId = function() {
+		return uniqueId = Math.random().toString(36).substring(2) 
+               + (new Date()).getTime().toString(36);
+	}
+	
+	/******************************************************************************************************************************
+		lookUpTaskListId(listName) - Provided a taskListName it will lookUp it's corresponding taskListId
+	*******************************************************************************************************************************/
+	lookUpTaskListId = function(listName) {
+		var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
+		 return listItem.taskList_name === listName;
+	 	});
+		return matchingListRecord[0].taskList_id;
+	
+	}
+	
+	getTimeStamp = function (){
+		return Date.now();
+	}
+
 	
 
-	var presetTaskListsInfo = [
-		{
-			"listName" : "All List",
-			"overDue"  : 22, 
-			"totalTasks": 74			
-		},
-		{
-			"listName" : "Default",
-			"overDue"  : 2, 
-			"totalTasks": 12			
-		},
-		{
-			"listName" : "Completed",
-			"overDue"  : 3, 
-			"totalTasks": 22			
-		}
-	];
+
+//	var presetTaskListsInfo = [
+//		{
+//			"listName" : "All List",
+//			"overDue"  : 22, 
+//			"totalTasks": 74			
+//		},
+//		{
+//			"listName" : "Default",
+//			"overDue"  : 2, 
+//			"totalTasks": 12			
+//		},
+//		{
+//			"listName" : "Completed",
+//			"overDue"  : 3, 
+//			"totalTasks": 22			
+//		}
+//	];
 		var userDefinedTaskListsInfo = [
 		{
 			"listName" : "Shopping",
@@ -898,7 +829,7 @@ var appModelController = (function () {
 			"user_name" : "Jet Martin",
 			"user_password": "123"
 		}
-	];
+	];	
 	
 	var taskListTable = [
 		{
@@ -1193,19 +1124,22 @@ var appModelController = (function () {
 		}
 	];
 	
-	var taskListNames = [
-		{
-			"Default"	: "Default",
-			"Personal"  : "Personal",
-			"Shopping"	: "Shopping",
-			"Wishlist"	: "Wishlist",
-			"Work"		: "Work"
-		}
-	]
+//	var taskListNames = [
+//		{
+//			"Default"	: "Default",
+//			"Personal"  : "Personal",
+//			"Shopping"	: "Shopping",
+//			"Wishlist"	: "Wishlist",
+//			"Work"		: "Work"
+//		}
+	
+//	]
+	
+	
 	return {
-		getPresetTaskListInfo: function() {
-			return presetTaskListsInfo;
-		},
+//		getPresetTaskListInfo: function() {
+//			return presetTaskListsInfo;
+//		},
 		getUserDefinedTaskListInfo: function() {
 			return userDefinedTaskListsInfo
 		},
@@ -1223,6 +1157,40 @@ var appModelController = (function () {
 				return namesList;
 			}, []);
 			return listNamesArray;	
+		},
+		
+		//{newTaskTitle: "1234", newTaskDateTime: "12/22/2017 - 10:14 AM", newTaskRepeateOptionTxt: "None", newTaskListOptionTxt: "Default"}
+		createNewTaskItem: function (taskItemInput ) {
+			console.log("*************** createNewTaskItem()");
+			console.log("TaskItemInput", taskItemInput);
+
+			
+			// 1. Generate taskItem_Id and assign
+			var taskItemId = getUniqueId();
+			console.log("TaskItem ID: ", taskItemId);
+				
+			// 2. Look up taskListId based on taskListName
+			 var taskListId = lookUpTaskListId(taskItemInput.newTaskListOptionTxt);
+			
+			// 3. Generate createTime
+			var createTime = getTimeStamp();
+				
+			
+			return newTaskItem = new TaskItem(
+				taskItemId, 
+				taskListId,
+				taskItemInput.newTaskTitle,
+				taskItemInput.newTaskDueDate,
+				taskItemInput.newTaskRepeateOptionTxt,
+				createTime
+			) 
+			
+
+//			
+//			// Return the new taskItem
+//			
+//			return newTaskItem; 
+		
 		}
 	}
 })();
@@ -1245,11 +1213,75 @@ var appUIController = (function () {
 	/* While grouping taskItems by due date category, this array holds the list of taskItems that have not yet been grouped into their appropriate Due Date Category 
 	*/
 	var listItemsLeftToCategorize = [];
+	var inputNewTaskTitle = document.getElementById("newTaskTitle");
+	var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
+	var inputNewTaskList = document.querySelector("#newListNameSelection");
+	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
+	var newTaskFormErrorMsg = document.querySelector(".newTaskFormErrorMsg");
+	var taskSaveMessage = document.querySelector("#taskSaveMessage"); 
 	
 	/* aTaskInGroup - flag used when displaying a user selected task list to facilitate display of that list into "Due Date Groups". It's a flag (initially set to false) that is set to true if at least one taskItem in a user selected task is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header (e.g., "Over Due") and closing tag need to be generated for that Due Date Group.  This flag is reset to false each time the controller is invoked it is invoked because each invocation means that 	you have a new key/category. 
 	*/
 	var aTaskInGroup = false;
 	
+	// NewTask form flag, not to be confused with "formErrors" CSS class
+	var formError = false; 
+	
+	
+	function isEmpty(str){
+    	return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+	}
+	
+	function resetFormError() {
+		newTaskFormErrorMsg.innerHTML = "";
+		toggleClass(inputNewTaskTitle, "formErrors");
+		formError = false;
+	}
+
+	function setFormError() {
+		//Set Form error information
+
+		// Set error message
+		newTaskFormErrorMsg.innerHTML = "Task Title is required/Cannot be blank";
+		// Format field to highlight error
+		toggleClass(inputNewTaskTitle, "formErrors");
+
+		// If non-valid entry detected put cursor inside and at beginning of input field so user can make needed changes.
+		inputNewTaskTitle.focus();
+		inputNewTaskTitle.setSelectionRange(0,0);
+
+		// Set error flag to true
+		formError = true;
+
+	}
+	
+	function removeNewTaskFormInputStyle() {
+		inputNewTaskTitle.classList.remove("filled");
+		inputNewTaskRepeat.classList.remove("filled");
+		inputNewTaskList.classList.remove("filled");
+	}
+	
+	/* Gets the Active List Task Name */
+	function getActiveTaskListName() {
+		return getActiveTaskList().childNodes[1].textContent.trim();	
+	}
+
+	function setTaskListSelect() {
+
+		var activeTaskListName = getActiveTaskListName();
+		console.log("===========ACTIVE LIST NAME: " + activeTaskListName );
+
+		if (activeTaskListName === "All Lists") {
+			inputNewTaskList.value = "Default"
+
+		} else {
+			inputNewTaskList.value = activeTaskListName;
+			console.log("=============TASK LIST VALUE: " + inputNewTaskList.value);
+		}
+
+	}
+	
+
 	/********************************************************************************
 		METHOD:  insertAfter()
 		There is no pre-defined method for inserting a node after another node...so this does it. 
@@ -1274,27 +1306,145 @@ var appUIController = (function () {
 
 		return false;
 	} // END containsObject()
-	/********************************************************************/
-	/* 					APP UI CONTROLLER METHODS						*/	
-	/********************************************************************/
+	/****************************************************************************************************************/
+	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
+	/****************************************************************************************************************/
 	return {
-		
-		/********************************************************************************
-			METHOD:  getNewTaskInputData()
+		displaySaveMessage: function(msg) {
+			console.log("************** displaySaveMessage method");
+			if (msg.type === "success") {
+				taskSaveMessage.innerHTML = msg.text;
+				taskSaveMessage.classList.add("success-message");
+			
+				// After fadeout animation ends we need to reset message so animation will work on subsequent saves
+				setTimeout(function () {
+					// Must remove the success-message class otherwise it will not appear on future saves
+					taskSaveMessage.classList.remove("success-message");
+					// Also must clear out the message otherwise the message will reappear after fadeout animation ends
+					taskSaveMessage.innerHTML = "";
+				}, 5000);
 
+			} else { // msg.type = "error"
+				taskSaveMessage.innerHTML = msg.text;
+				taskSaveMessage.classList.add("error-message");
+				
+				// After fadeout animation ends we need to reset message so animation will work on subsequent saves
+				setTimeout(function () {
+					// Must remove the success-message class otherwise it will not appear on future saves
+					taskSaveMessage.classList.remove("error-message");
+					// Also must clear out the message otherwise the message will reappear after fadeout animation ends
+					taskSaveMessage.innerHTML = "";
+				}, 5000);
+			}
+
+		},
+		/*
+			If previous submit was unsuccessful because user didn't enter task title or entered all blanks then the error
+			formating (formError = true) for the task title field would still be present. We want to clear that error formatting when the user starts to enter a new task title. (Note: The new title will be re-validated when the user attempts to save the the form).  You only need to clear the error formatting if error formatting is currently applied (formError = true).
+			
+		*/
+		clearTaskItemError: function () {
+//			if (formError && inputNewTaskTitle.value.length >= 0 ) {
+			if (formError ) {
+				resetFormError();
+			}
+		}, 
+		
+		exitNewTaskPage: function() {
+			console.log("********************** exitNewTaskPage");
+			toggleClass(homePage, "hideIt");
+			toggleClass(newTaskPage, "hideIt");
+			
+			// Remove any user input styling
+			removeNewTaskFormInputStyle();
+			
+			// Reset all values in form
+			formSaveNewTask.reset();
+		},
+		displayAddNewTaskForm: function () {
+			console.log("************** appUIController.displayAddNewTaskForm()");
+			toggleClass(homePage, "hideIt");
+			toggleClass(newTaskPage, "hideIt");
+			taskSaveMessage.classList.remove("success-message");
+			taskSaveMessage.innerHTML = "";
+	
+			// Need to set newTask Form list dropdown to match the "active" task list
+			setTaskListSelect();
+
+		}, 	
+		
+		
+		styleUserFormInput: function(event) {
+			console.log("Blur event for FormSaveNewTask");
+			console.log("Event Target: " + event.target.tagName);
+			event.target.classList.remove("filled");
+			if (event.target.value !== "") {
+				event.target.classList.add("filled");
+			}
+			
+		},
+
+	
+		/********************************************************************************
+			METHOD:  getNewTaskInputData()  -- Primary method 
 		********************************************************************************/
-		getNewTaskInputData: function (event) {
-			console.log("The Event is: " + event);
+		getNewTaskInput: function (event) {			
 			event.preventDefault();
-			return {
-				taskTitle: document.querySelector('#inTaskTitle').value,
-				taskDueDate: document.querySelector('#inTaskDueDate').value,
-				taskDueTime: document.querySelector('#inTaskTimeDue').value,
-				// Option values: None, Daily, Weekly, Monthly, Yearly 
-				taskRepeatOption:
-				document.querySelector('#inTaskRepeatOption').value
+			event.stopPropagation();
+			console.log("-----------> appUIController.getNewTaskInput()");
+			console.log("Event: " + event);
+
+			/*  If errors had been set on prior save attempt then need to reset them before checking for errors on this save attempt */
+			if (formError) {
+				resetFormError();
+			}
+
+			var newTaskTitle = inputNewTaskTitle.value.trim();
+
+			if (isEmpty(newTaskTitle)) {
+				// Setup and apply error formatting/messaging on form
+				setFormError();
+				return null;
+			} else {
+				return {
+					newTaskTitle: inputNewTaskTitle.value.trim(),
+					newTaskDueDate: inputNewTaskDateTime.value,
+					newTaskRepeateOptionTxt: inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text,
+					newTaskListOptionTxt: inputNewTaskList.options[inputNewTaskList.selectedIndex].text
+				}			
 			}
 		},
+		
+		/********************************************************************************
+			METHOD:  resetNewTaskForm()  - called when user hits the reset button on new task form
+			- Removes all error formating and resets formatError flag
+			- Removes special user input formatting that might have been applied previously (via 'filled'CSS class)
+			- Resets value of all form fields
+		********************************************************************************/
+		resetNewTaskForm: function () {
+		
+//			function resetNewTaskPage () {
+			console.log("------------> appUIController.resetNewTaskPage()");
+
+			// Reset Form Error
+			if (formError) {
+				resetFormError();
+			}
+			// Need to remove special formatting (defined by css "filled" class) if any has been applied previously
+			removeNewTaskFormInputStyle();
+			
+			// Reset values on form
+			inputNewTaskTitle.value = "";
+			inputNewTaskDateTime.value = "";
+			inputNewTaskRepeat.value = "1";
+			inputNewTaskList.value = "Default"; 
+			
+
+			// Focus the cursor on the New Task Title form
+			inputNewTaskTitle.focus();
+		
+		},
+		
 		
 		/********************************************************************************
 			METHOD:  addListInfoToMenu()
@@ -1618,66 +1768,113 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		searchInput.addEventListener("keyup", detectSearchInput);
 		clearSearchIcon.addEventListener("click", clearSearchField);
 		backArrowSearch.addEventListener("click", exitSearch);
-		mainPage.addEventListener("click", handleMainPageClicks);
-		navBar.addEventListener("click", handleNavBarClicks);
-		floatAddBtn.addEventListener("click", addNewTask); 
-		newTaskBackArrow.addEventListener("click", exitNewTaskPage);	
+		floatAddBtn.addEventListener("click", appUIController.displayAddNewTaskForm); 
+		newTaskBackArrow.addEventListener("click", appUIController.exitNewTaskPage);	
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
-		addTaskResetButton.addEventListener("click", resetNewTaskPage);
+		addTaskResetButton.addEventListener("click", appUIController.resetNewTaskForm);
 		
-		addTaskSaveMenuButton.addEventListener("click", fnSaveNewTask);
+		
+		/* Event Listener for Save button in Nav Menu bar. Note pressing 
+			this Nav save button should yield the same exact results as pressing
+			the Save button at the bottom of the New Task Form
+		*/
+		addTaskSaveMenuButton.addEventListener("click", appUIController.getNewTaskInput);
 
+		// Event Listener for Save button at bottom of form
+//		formSaveNewTask.addEventListener("submit",function (event) {
+//				event.preventDefault();
+//				event.stopPropagation();
+//				appUIController.getNewTaskInput();
+//		}, false);
 		
-		formSaveNewTask.addEventListener("submit",function (event) {
-				event.preventDefault();
-				event.stopPropagation();
-				fnSaveNewTask();
-		}, false);
+//		formSaveNewTask.addEventListener("submit",function (event) { appUIController.getNewTaskInput(event)}, false);
+		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddItem(event)}, true);
+
  
-		formSaveNewTask.addEventListener("blur", function (event) {
-			console.log("Blur event for FormSaveNewTask");
-			console.log("Event Target: " + event.target.tagName);
-			event.target.classList.remove("filled");
-			if (event.target.value !== "") {
-				event.target.classList.add("filled");
-			}
-			
-		}, true);
+		/* Detects when the user exits form input field (blur event) and if user has entered/selected data then it adds the "filled" class so that any user
+		data entered/or selection made by user will immediately be styled differently (and hence distinguishable) from the placeholder/default data on form. 
+		-- styleNewTaskUserInput*/
 		
-		inputNewTaskTitle.addEventListener("keydown", function() {
-			console.log(inputNewTaskTitle.value);
-			
-			// Reset Form Error
-			if (formError) {
-				resetFormError();
-			}
-			if (isEmpty(inputNewTaskTitle.value)) {
-					inputNewTaskTitle.value = "";
-			}
-     }, false);
 		
-//		inputNewTaskTitle.addEventListener("blur", function() {
-//			inputNewTaskTitle.classList.remove("filled");
-////			toggleClass(inputNewTaskTitle, "filled");
-//			if (inputNewTaskTitle.value !== "") {
-//				inputNewTaskTitle.classList.add("filled");
-////				toggleClass(inputNewTaskTitle, "filled");
-//			}
-//			
-//		}, true);
-		// TEST  -- Need to figure out if this is still needed
-//		searchSubmit.addEventListener("mousedown", disableSearchSubmit);
-
+		formSaveNewTask.addEventListener("blur", function(event) { appUIController.styleUserFormInput(event) }, true);
+		
+		/* 
+			If the NewTask Title field was has "error styling" you want to remove
+			that form's error styling once the user starts entering in a new value (keydown) in that field.   
+		*/
+		
+		document.getElementById("newTaskTitle").addEventListener("keydown", appUIController.clearTaskItemError);
 
 	}
 	
-	// Save new task list input
-//	var newTaskInput = appUICtrl.getNewTaskInputData(event);
+	/***********************************************************************************
+		FUNCTION ctrlAddItem - manages process of adding a new taskItem to the app
+		
+		Trigger: User hits submit button on New Task Form
+		
+		Summary: 
+			Validate user data and styles form as needed 
+			Create new task record
+			Add it to newTask table
+			Generate "new taskItem added" success message or failure message
+			Display success/failure message
+			
+		UI Behavior: 
+			User will remain on new task form until they explicitly navigate off of this page. This approach allows the
+			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
+
+	***********************************************************************************/
+	var ctrlAddItem = function(event) {
+		var saveWasSuccessful = true;
+		var msg = new Object(); 
+		console.log("++++++++++++ ctrlAddItem()");
+		var newTaskItemInput, newTaskItemObject
+		
+		//	Validate New Task Data
+		newTaskItemInput = appUIController.getNewTaskInput(event);
+		if (newTaskItemInput != null ) {
+			console.log(newTaskItemInput);
+
+			// Create New Task Object  (create required fields for object e.g., unique taskItemId, assign taskListId, etc)
+			newTaskItemObject = appModelController.createNewTaskItem(newTaskItemInput);
+			
+			
+			// Add New task object to New TaskItem table
+			appModelController.getTaskItemsTable().push(newTaskItemObject);
+			
+			
+			// Save task object to local/Storage/DB
+			
+			
+			
+			// Create appropriate save message (success or failure)
+			if (saveWasSuccessful) {
+				msg.type = "success";
+				msg.text = "Your Task Item was successfully saved!";
+			} else {
+				msg.type = "error";
+				msg.text = "ERROR! The Task Item was NOT saved";
+			}
+			
+			// DisplaySaveMessage 
+			appUIController.displaySaveMessage(msg);
+			// Create log entry if failure
+			
+			// Reset 
+			appUIController.resetNewTaskForm();
+			
+			
+			
+			
+		} else {  // newTaskItemInput = null
+			console.log(newTaskItemInput);
+		}
+		
+
+	}
 	
-	
-//	console.log(newTaskInput);
 	/******************************************************************
-	Populates addNewTaskFrom List Drop down with list names (TaskListTable).
+	Populates add New Task From List Drop down with list names (TaskListTable).
 	
 	Note: TaskListTable contains "All List" and "Completed". Don't want to 
 	include those two list names (which happen to be first and last list name)
