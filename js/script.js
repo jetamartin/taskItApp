@@ -1442,12 +1442,7 @@ var appUIController = (function () {
 			removeNewTaskFormInputStyle();
 			
 			formSaveNewTask.reset();
-			
-			// Thought I needed the lines below but just resetting the form via prior line looks like it is sufficient
-//			inputNewTaskTitle.value = "";
-//			inputNewTaskDateTime.value = "";
-//			inputNewTaskRepeat.value = "1";
-//			inputNewTaskList.value = "Default"; 
+	
 			
 
 			// Focus the cursor on the New Task Title form
