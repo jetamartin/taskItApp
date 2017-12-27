@@ -1137,9 +1137,7 @@ var appModelController = (function () {
 	
 	
 	return {
-//		getPresetTaskListInfo: function() {
-//			return presetTaskListsInfo;
-//		},
+
 		getUserDefinedTaskListInfo: function() {
 			return userDefinedTaskListsInfo
 		},
@@ -1265,6 +1263,27 @@ var appUIController = (function () {
 	function getActiveTaskListName() {
 		return getActiveTaskList().childNodes[1].textContent.trim();	
 	}
+	
+	/******************************************************************
+	Populates add New Task From List Drop down with list names (TaskListTable).
+	
+	Note: TaskListTable contains "All List" and "Completed". Don't want to 
+	include those two list names (which happen to be first and last list name)
+	so the for loop params have been modified (loop starts at 2 and ends at length-1) to eliminate those two list names. 
+	Note 2: Need to determine if I want to create a sepearate global list 
+	for just user defined list names and use that instead of TaskListTable
+	that is inclusive of system defined lists (e.g., "All List", "Default" and "Completed) 
+	******************************************************************/
+	
+	function populateFormWithListNames (taskListNames) {
+		// Populate list with TaskList Namesoptions:
+		for (var i = 2; i < taskListNames.length-1; i++) {
+			var opt = taskListNames[i];
+			inputListName.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
+		}			
+	}
+	
+
 
 	function setTaskListSelect() {
 
@@ -1369,13 +1388,13 @@ var appUIController = (function () {
 			// Reset all values in form
 			formSaveNewTask.reset();
 		},
-		displayAddNewTaskForm: function () {
+		displayAddNewTaskForm: function (taskListNames) {
 			console.log("************** appUIController.displayAddNewTaskForm()");
 			toggleClass(homePage, "hideIt");
 			toggleClass(newTaskPage, "hideIt");
 			taskSaveMessage.classList.remove("success-message");
 			taskSaveMessage.innerHTML = "";
-	
+			populateFormWithListNames (taskListNames);
 			// Need to set newTask Form list dropdown to match the "active" task list
 			setTaskListSelect();
 
@@ -1641,10 +1660,13 @@ var appUIController = (function () {
 		**********************************************************************************/	
 		
 		groupTaskByDueDate: function (key, listItems){
+			
+			
 
 			// Identify all taskItems in list that match grouping dueDate
 			// All matching task are saved in groupedTasks
 			aTaskInGroup = false;
+			
 			
 			/* Task that fall within the dates for a given key (e.g., 'DueWithIn1Week') will be returned in groupedTask using filter method
 			*/
@@ -1673,9 +1695,9 @@ var appUIController = (function () {
 				Also when checking 
 				*/
 
-				if (((taskDueDateYMD === "" ) && (key === "noDate"))
+				if (((taskDueDateYMD === "" ) && (key === "noDate"))  
 				|| ((taskDueDateYMD !== "") &&  (JSON.stringify(taskDueDateYMD) <= JSON.stringify(dueDateCategories[key].dueDate))) )	{
-					
+				
 					aTaskInGroup = true;
 					/* If the current taskItem matches the grouping criteria (date) then check to see if the task is in list of items left to categorize ("listItemsLeftToCategorize")..if so then remove it from that list (by filtering it) so we don't continue to check for matches 
 					*/
@@ -1685,6 +1707,7 @@ var appUIController = (function () {
 							return el.taskItem_id != taskItem.taskItem_id; }); 
 					}
 
+					
 					return taskItem; 
 
 
@@ -1713,7 +1736,8 @@ var appUIController = (function () {
 			
 			3) Call a method to build and display the taskItems that were "collected" for a given due date period;
 			
-			4) Call a method to insert the closing tag for a given due date label  
+			4) Call a method to insert the closing tag for a given due date label 
+		
 			
 			APPUICONTROLLER GLOBAL VARIABLES: 
 			
@@ -1724,9 +1748,10 @@ var appUIController = (function () {
 		
 		groupAndDisplayTaskItems: function (listItemsToCategorize) {
 			var groupedTasks;
+
 			for ( key in dueDateCategories ) {
 				// Group the taskListItems into groups based on due date
-				groupedTasks = appUIController.groupTaskByDueDate(key, listItemsToCategorize);
+				groupedTasks = appUIController.groupTaskByDueDate(key, listItemsToCategorize);				
 				
 				// If there is at least one taskItem that falls within a "due date" period then we will need to build a html header for it
 				if (aTaskInGroup) {
@@ -1773,7 +1798,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		searchInput.addEventListener("keyup", detectSearchInput);
 		clearSearchIcon.addEventListener("click", clearSearchField);
 		backArrowSearch.addEventListener("click", exitSearch);
-		floatAddBtn.addEventListener("click", appUIController.displayAddNewTaskForm); 
+		floatAddBtn.addEventListener("click", buildAndDisplayTaskItemForm); 
 		newTaskBackArrow.addEventListener("click", appUIController.exitNewTaskPage);	
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
 		addTaskResetButton.addEventListener("click", appUIController.resetNewTaskForm);
@@ -1878,29 +1903,26 @@ var appController = (function (appModelCtrl, appUICtrl) {
 
 	}
 	
-	/******************************************************************
-	Populates add New Task From List Drop down with list names (TaskListTable).
-	
-	Note: TaskListTable contains "All List" and "Completed". Don't want to 
-	include those two list names (which happen to be first and last list name)
-	so the for loop params have been modified (loop starts at 2 and ends at length-1) to eliminate those two list names. 
-	Note 2: Need to determine if I want to create a sepearate global list 
-	for just user defined list names and use that instead of TaskListTable
-	that is inclusive of system defined lists (e.g., "All List", "Default" and "Completed) 
-	******************************************************************/
-	function populateNewTaskFormWithListNames () {
-		var taskListNames = appModelCtrl.getTaskListNames();
+	/***********************************************************************************
+		FUNCTION buildAndDisplayTaskItemForm - builds the new task item form and displays it
+		
+		Trigger: User clicks the Floating PLUS symbol on main page
+		
+		Summary: 
 
-		// Optional: Clear all existing options first:
-//		inputListName.innerHTML = "";
-		// Populate list with options:
-		for (var i = 2; i < taskListNames.length-1; i++) {
-			var opt = taskListNames[i];
-			inputListName.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
-		}
+			
+		UI Behavior: 
+
+	***********************************************************************************/
+	var buildAndDisplayTaskItemForm = function () {
+		
+		// Create an array containing all of the TaskList Names
+		var taskListNames = appModelCtrl.getTaskListNames();
+		
+		// Build and Display 
+		appUICtrl.displayAddNewTaskForm(taskListNames); 
 		
 	}
-	
 	
 	return {
 		// Initialize data objects and set up all event listeners
@@ -1916,7 +1938,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 				
 				var taskListNamesArray = appModelCtrl.getTaskListNames();
 				console.log("TASK LIST NAMES: " + taskListNamesArray);
-				populateNewTaskFormWithListNames ();
+//				populateNewTaskFormWithListNames ();
 				// Load data into app
 				// 1. Load task list
 				/********************************************************************************************************************************
