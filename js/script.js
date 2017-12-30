@@ -123,7 +123,7 @@ function updateTaskListDisplayed (taskListId) {
 	clearoutTaskItemsDisplayed();
 	
 	// Gather all taskItems related to the user selected list
-	var taskList2Display = setListItemsToCategorize (taskListId); 
+	var taskList2Display = getMatchingTaskItemsWithID (taskListId); 
 	
 	// Group and display all tasks items and their Group header (e.g, overdue, tomorrow, etc)
 	appUIController.groupAndDisplayTaskItems(taskList2Display);	
@@ -132,8 +132,8 @@ function updateTaskListDisplayed (taskListId) {
 /* 
 	Collect all task items of list the user selected  
 */
-function setListItemsToCategorize (taskList_id) {
-	console.log("In setListItemsToCategorize");
+function getMatchingTaskItemsWithID (taskList_id) {
+	console.log("In getMatchingTaskItemsWithID");
 
 	var listItemsToCategorize = appModelController.getTaskItemsTable().filter(function(taskItem){
 		if (taskList_id === "1") {
@@ -233,7 +233,7 @@ function setListItemsToCategorize (taskList_id) {
 //**************************************************************************************
 function getAllTasks() {
 // Get all taskItems 
-	return setListItemsToCategorize ("1");
+	return getMatchingTaskItemsWithID ("1");
 //	return document.querySelectorAll(".card");
 }
 
@@ -375,7 +375,6 @@ function resetUI2InitialState() {
 /**************************************************************************
 	Get the list_id of the "active" task list selection.
 	Once you have the listId you can then user other methods to get
-	
 	the taskItems for that list.
     
 ****************************************************************************/
@@ -760,7 +759,8 @@ var appModelController = (function () {
 			ID's that are 99.99999999999999% likely to be globally unique.
 		You can increase this number by adding more digits, but to generate 100% unique ID's you will need to use a global counter.
 	*******************************************************************************************************************************/
-	getUniqueId = function() {
+	var getUniqueId = function() {
+		var uniqueId;
 		return uniqueId = Math.random().toString(36).substring(2) 
                + (new Date()).getTime().toString(36);
 	}
@@ -768,15 +768,15 @@ var appModelController = (function () {
 	/******************************************************************************************************************************
 		lookUpTaskListId(listName) - Provided a taskListName it will lookUp it's corresponding taskListId
 	*******************************************************************************************************************************/
-	lookUpTaskListId = function(listName) {
+	var lookUpTaskListId = function(listName) {
 		var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
-		 return listItem.taskList_name === listName;
-	 	});
+			return listItem.taskList_name === listName;
+		});
 		return matchingListRecord[0].taskList_id;
 	
 	}
 	
-	getTimeStamp = function (){
+	var getTimeStamp = function (){
 		return Date.now();
 	}
 
@@ -802,20 +802,39 @@ var appModelController = (function () {
 //	];
 		var userDefinedTaskListsInfo = [
 		{
+			"taskList_id" : "4",
 			"listName" : "Shopping",
+			"taskList_name" : "Shopping", 
+			"taskList_totalCount" : 0,
+			"taskList_overDueCount" : 0, 
 			"overDue"  : 5, 
 			"totalTasks": 8		
 		},
 		{
+			"taskList_id" : "6",
 			"listName" : "Work",
+			"taskList_name" : "Work",
+			"taskList_totalCount" : 0,
+			"taskList_overDueCount" : 0, 
 			"overDue"  : 2, 
 			"totalTasks": 19			
 		},
 		{
+			"taskList_id" : "3",
 			"listName" : "School",
+			"taskList_name" : "School",
+			"taskList_totalCount" : 0,
+			"taskList_overDueCount" : 0, 
 			"overDue"  : 3, 
 			"totalTasks": 6			
 		},
+		{
+			"taskList_id" : "5",
+			"user_id" : "1",
+			"taskList_name" :	"Wish List",
+			"taskList_totalCount" : 0,
+			"taskList_overDueCount" : 0, 
+		}
 //		{
 //			"listName" : "Home Projects",
 //			"overDue"  : 3, 
@@ -836,8 +855,8 @@ var appModelController = (function () {
 			"taskList_id" : "1",
 			"user_id" : "1",
 			"taskList_name" :	"All Lists",
-			"taskList_totalCount" : 44,
-			"taskList_overDueCount" : 18, 
+			"taskList_totalCount" : 0,
+			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		},
@@ -845,8 +864,8 @@ var appModelController = (function () {
 			"taskList_id" : "2",
 			"user_id" : "1",
 			"taskList_name" :	"Default",
-			"taskList_totalCount" : 4,
-			"taskList_overDueCount" : 2, 
+			"taskList_totalCount" : 0,
+			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		},
@@ -854,7 +873,7 @@ var appModelController = (function () {
 			"taskList_id" : "3",
 			"user_id" : "1",
 			"taskList_name" :	"School",
-			"taskList_totalCount" : 2,
+			"taskList_totalCount" : 0,
 			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
@@ -863,8 +882,8 @@ var appModelController = (function () {
 			"taskList_id" : "4",
 			"user_id" : "1",
 			"taskList_name" :	"Shopping",
-			"taskList_totalCount" : 8,
-			"taskList_overDueCount" : 1, 
+			"taskList_totalCount" : 0,
+			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		}, 
@@ -872,8 +891,8 @@ var appModelController = (function () {
 			"taskList_id" : "5",
 			"user_id" : "1",
 			"taskList_name" :	"Wish List",
-			"taskList_totalCount" : 10,
-			"taskList_overDueCount" : 3, 
+			"taskList_totalCount" : 0,
+			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		},
@@ -881,7 +900,7 @@ var appModelController = (function () {
 			"taskList_id" : "6",
 			"user_id" : "1",
 			"taskList_name" :	"Work",
-			"taskList_totalCount" : 18,
+			"taskList_totalCount" : 0,
 			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
@@ -890,7 +909,7 @@ var appModelController = (function () {
 			"taskList_id" : "7",
 			"user_id" : "",
 			"taskList_name" :	"Completed",
-			"taskList_totalCount" : 72,
+			"taskList_totalCount" : 0,
 			"taskList_overDueCount" : 0, 
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
@@ -1157,6 +1176,14 @@ var appModelController = (function () {
 			return listNamesArray;	
 		},
 		
+		lookUpTaskListId: function(listName) {
+		var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
+			return listItem.taskList_name === listName;
+		});
+		return matchingListRecord[0].taskList_id;
+	
+		}, 
+		
 		//{newTaskTitle: "1234", newTaskDateTime: "12/22/2017 - 10:14 AM", newTaskRepeateOptionTxt: "None", newTaskListOptionTxt: "Default"}
 		createNewTaskItem: function (taskItemInput ) {
 			console.log("*************** createNewTaskItem()");
@@ -1168,7 +1195,7 @@ var appModelController = (function () {
 			console.log("TaskItem ID: ", taskItemId);
 				
 			// 2. Look up taskListId based on taskListName
-			 var taskListId = lookUpTaskListId(taskItemInput.newTaskListOptionTxt);
+			var taskListId = lookUpTaskListId(taskItemInput.newTaskListOptionTxt);
 			
 			// 3. Generate createTime
 			var createTime = getTimeStamp();
@@ -1189,6 +1216,93 @@ var appModelController = (function () {
 //			
 //			return newTaskItem; 
 		
+		},
+		/****************************************************************************************
+			METHOD updateListTaskTotals - recalculates the taskItem totals for each list 
+
+			Trigger(s): This function will be called each time any of the following events occurs:
+				1) A new taskitem is SAVED on newTaskForm
+				2) An existing Task is EDITED on editTaskForm 
+				3) A taskItem is marked as COMPLETED
+				4) A taskItem is DELETED 
+
+			Summary: 
+				Recalculates the taskItem totals for each List 
+				And save those updated values in appropriate TaskListTable variable
+				Note: It does not update the the totals on the UI. That is responssibility
+				of a UI mthod.
+
+
+			UI Behavior: NA 
+
+
+		*****************************************************************************************/
+	
+		updateListTaskTotals:  function ()  {
+			console.log("----UpdateListTaskTotals() function");
+			var taskListId;  
+			var listTotals = []; 
+			var taskDueDateYMD, currDateYMD;
+			var matchingTaskItems = [];
+			var overDueCount = 0;
+			var taskListTable;
+
+			Array.prototype.hasElement = function(element) {
+			var i;
+			for (i = 0; i < this.length; i++) {
+				if (this[i].taskList_name === element) {
+					return i; //Returns element position, so it exists
+				}
+			}
+
+			return -1; //The element isn't in your array
+		};
+
+			var convertDateString2DateObject = function (dateString) {
+				var date;
+				date = new Date(dateString);
+				return new Date (date.getFullYear(), date.getMonth(), date.getDate());
+			}
+
+			// Create an array containing all of the TaskList Names
+			var taskListNames = appModelController.getTaskListNames();
+
+	//		- For each list in taskListNamesArray (built in init()) 
+	//       	- Get the taskListId associated with the list name
+	//          - matchingTaskItems = Get all the taskItems with the matching listId (filter)
+	//          - For each taskItem count the number of items that are overDue
+	//          - Add the overDueCount and matchingTaskItems.length to userDefinedTaskListsInfo
+	//     - END For EACH
+
+			taskListNames.forEach(function(taskListName) {
+				taskListId = appModelController.lookUpTaskListId(taskListName);
+				matchingTaskItems = getMatchingTaskItemsWithID(taskListId);
+				overDueCount = matchingTaskItems.reduce(function (overDue, taskItem) {
+					if (taskItem.taskItem_due_date !== "") {
+						taskDueDateYMD = convertDateString2DateObject(taskItem.taskItem_due_date);
+						currDateYMD	= convertDateString2DateObject(new Date());
+						// If taskItem's Due date is before Today's Date & time then increment overDueCount
+						if (JSON.stringify(taskDueDateYMD) < JSON.stringify(currDateYMD)) {
+							overDue++
+						}
+					} 
+					return overDue;
+				}, 0);
+
+
+				console.log("Task: " + taskListName + " OverDueCount: " + overDueCount + " Total List Count " + matchingTaskItems.length );
+
+				taskListTable = appModelController.getTaskListTable();
+				var tableIndex = taskListTable.hasElement(taskListName);
+				if (tableIndex > -1) {
+	//				console.log("Table Index: " + tableIndex )
+					taskListTable[tableIndex].taskList_overDueCount = overDueCount;
+					taskListTable[tableIndex].taskList_totalCount = matchingTaskItems.length;
+				} else {
+					console.log("ERROR: No match found");
+				}
+
+			})
 		}
 	}
 })();
@@ -1227,7 +1341,7 @@ var appUIController = (function () {
 	
 	
 	function isEmpty(str){
-    	return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+		return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
 	}
 	
 	function resetFormError() {
@@ -1264,6 +1378,12 @@ var appUIController = (function () {
 		return getActiveTaskList().childNodes[1].textContent.trim();	
 	}
 	
+	function clearOutSelectList (selectNode) {
+      var length = selectNode.options.length;
+		while (length--){
+			selectNode.remove(length);
+		}	
+	}
 	/******************************************************************
 	Populates add New Task From List Drop down with list names (TaskListTable).
 	
@@ -1276,8 +1396,12 @@ var appUIController = (function () {
 	******************************************************************/
 	
 	function populateFormWithListNames (taskListNames) {
+		
+		// Clear out existing Select list options each time to ensure that if any new list items 
+		clearOutSelectList(inputListName);
+		
 		// Populate list with TaskList Namesoptions:
-		for (var i = 2; i < taskListNames.length-1; i++) {
+		for (var i = 1; i < taskListNames.length-1; i++) {
 			var opt = taskListNames[i];
 			inputListName.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
 		}			
@@ -1482,14 +1606,16 @@ var appUIController = (function () {
 		********************************************************************************/
 		
 		addListInfoToMenu: function (subMenuTaskList, nextNode) {
+			var firstListElement = true;
+			var newNode;
 			// Template to create ListName elements for nav's listSubmenu
 			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="overDue">&nbsp%overDueCount%</span><span class="listTotal">&nbsp%dueCount%</span></li>';
 
 			
 			// Sort all List alphabetically
 			subMenuTaskList.sort(function(a, b) {
-			  var nameA = a.listName.toUpperCase(); // ignore upper and lowercase
-			  var nameB = b.listName.toUpperCase(); // ignore upper and lowercase
+			  var nameA = a.taskList_name.toUpperCase(); // ignore upper and lowercase
+			  var nameB = b.taskList_name.toUpperCase(); // ignore upper and lowercase
 			  if (nameA < nameB) {
 				return -1;
 			  }
@@ -1504,19 +1630,19 @@ var appUIController = (function () {
 			for (var i = 0; i < subMenuTaskList.length; i++) {	
 
 				// Insert the list name in HTML
-				specificSubMenuHtml = genericSubMenuHtml.replace('%listName%', subMenuTaskList[i].listName);
+				specificSubMenuHtml = genericSubMenuHtml.replace('%listName%', subMenuTaskList[i].taskList_name);
 
 				// Insert the overdue task list count in HTML
 				// If count is zero you want to add class to overdue item so that 0 count and "+" sign do not appear
 				if (subMenuTaskList[i].overDue !== "0") {
-					specificSubMenuHtml = specificSubMenuHtml.replace('%overDueCount%', subMenuTaskList[i].overDue);
+					specificSubMenuHtml = specificSubMenuHtml.replace('%overDueCount%', subMenuTaskList[i].taskList_overDueCount);
 				} else { // Else the count is zero then don't display it (hideIt)
 					specificSubMenuHtml = specificSubMenuHtml.replace("overDue", "overDue hideIt");
 				}
 
 				// Insert the total task list count due (excluding overdue tasks count) in HTML
 				if (subMenuTaskList[i].totalTasks !== "0") {
-					specificSubMenuHtml = specificSubMenuHtml.replace('%dueCount%', subMenuTaskList[i].totalTasks);
+					specificSubMenuHtml = specificSubMenuHtml.replace('%dueCount%', subMenuTaskList[i].taskList_totalCount);
 				} else { // Else the count is zero then don't display it (hideIt) 
 					specificSubMenuHtml = specificSubMenuHtml.replace("listTotal", "listTotal hideIt");
 				}
@@ -1524,11 +1650,21 @@ var appUIController = (function () {
 				//* Convert completed HTML string into DOM node so it can be inserted
 				newNode = document.createRange().createContextualFragment(specificSubMenuHtml);
 
-				// Insert new node into taskListsubmenu
-				insertAfter(newNode, nextNode);
+//				if (firstListElement) {
+//					firstListElement = false;
+//					nextNode.prepend(newNode);
+//					nextNode = nextNode.firstElementChild;
+//					nextNode.classList.add("selected");
+					
+//				} else {
+					// Insert new node into taskListsubmenu
+					insertAfter(newNode, nextNode);
+					// Now make the node we just inserted the nextNode so that other nodes will be inserted after it
+					nextNode = nextNode.nextElementSibling;
+//				}
 
-				// Now make the node we just inserted the nextNode so that other nodes will be inserted after it
-				nextNode = nextNode.nextElementSibling;
+
+
 			}
 		
 		}, // END addListInfoToMenu
@@ -1549,8 +1685,8 @@ var appUIController = (function () {
 			 Build Tasks to display on screen
 			*********************************************************************************/
 
-			// Global variable whose value is set in for loop below
-			var taskListId;
+			
+			var taskListId; // Global variable whose value is set in for loop below
 			var insertNodeLocation = document.getElementById(idOfInsertLocation);
 			var specificTaskItemHtml, newNode;
 
@@ -1559,6 +1695,8 @@ var appUIController = (function () {
 			// Similar to example provided MDN webdocs https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
 			
 			function getListName(taskList) {
+//				console.log("--------->getListName()" );
+//				console.log(taskList);
 				return taskList.taskList_id === taskListId;
 			}
 
@@ -1677,6 +1815,8 @@ var appUIController = (function () {
 					for grouping criteira
 				*/
 				if (taskItem.taskItem_due_date !== "") {
+					
+//					taskDueDateYMD = convertDateString2DateObject(taskItem.taskItem_due_date);
 					// Convert the taskItem_due_date into Date object so that it can be compared to date for grouping criteria
 					taskDueDate = new Date(taskItem.taskItem_due_date);
 					taskDueDateYMD = new Date (taskDueDate.getFullYear(), 
@@ -1903,26 +2043,56 @@ var appController = (function (appModelCtrl, appUICtrl) {
 
 	}
 	
-	/***********************************************************************************
-		FUNCTION buildAndDisplayTaskItemForm - builds the new task item form and displays it
+	/****************************************************************************************
+		FUNCTION buildAndDisplayTaskItemForm - builds the new task item form and displays it,
+			modifies the nav bar and hides other parts of the UI (e.g., main page) 
 		
 		Trigger: User clicks the Floating PLUS symbol on main page
 		
 		Summary: 
-
-			
+			New taskItem Form "List" drop down must be populated with ListNames 
+	
 		UI Behavior: 
+			App is really a Single Page App (SPA) where parts of the app are displayed hidden
+				or shown as needed.
 
-	***********************************************************************************/
+	*****************************************************************************************/
 	var buildAndDisplayTaskItemForm = function () {
 		
 		// Create an array containing all of the TaskList Names
 		var taskListNames = appModelCtrl.getTaskListNames();
 		
-		// Build and Display 
+		// Build and Display the New task form  
 		appUICtrl.displayAddNewTaskForm(taskListNames); 
 		
 	}
+	
+	/*****************************************************************************************************
+		FUNCTION: refreshListDropDownInfo - applies new values from taskListTable to taskListDropdown
+		
+		Summary: 
+			New taskItem Form "List" drop down must be populated with ListNames 
+			
+		Trigger: 
+		
+	
+		UI Behavior: 
+	
+	*******************************************************************************************************/
+	
+	
+	// UNDERCONSTRUCTION 
+	
+//	var refreshListDropDownInfo = function () {
+//		// Update list names
+//		appModelCtrl.updateListName
+//		
+//		// Update all DropDown totals
+//		appModelCtrl.updateListTaskTotals();
+//		appUICtrl.refreshTaskTotalsOnTaskListDropdown();
+//		
+//	}
+
 	
 	return {
 		// Initialize data objects and set up all event listeners
@@ -1931,13 +2101,30 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		
 		
 		init: function () { 
+			
+			
+			var preDefinedListNames = ["All Lists", "Default", "Completed"];
+			
+			
+			Array.prototype.contains = function(element) {
+				var i;
+				for (i = 0; i < this.length; i++) {
+					if (this[i] === element) {
+						return i; //Returns element position, so it exists
+					}
+				}
+					return -1;
+			}
+			
 			if (!appInitialized) {
+			
 				
 				appInitialized = true;
 				console.log('Application has started');
 				
 				var taskListNamesArray = appModelCtrl.getTaskListNames();
 				console.log("TASK LIST NAMES: " + taskListNamesArray);
+				appModelController.updateListTaskTotals();
 //				populateNewTaskFormWithListNames ();
 				// Load data into app
 				// 1. Load task list
@@ -1957,7 +2144,21 @@ var appController = (function (appModelCtrl, appUICtrl) {
 
 				
 				var listInsertPoint = document.getElementById("listInsertPoint");
-				appUIController.addListInfoToMenu(appModelController.getUserDefinedTaskListInfo(), listInsertPoint);
+				
+				var taskListTable = appModelController.getTaskListTable();
+				
+				var userDefinedTaskLists = taskListTable.filter(function(taskItem) {
+					if (preDefinedListNames.contains(taskItem.taskList_name) === -1) {
+						return taskItem;
+					}	
+				});
+				
+				console.log("User Defined TaskList");
+				console.log(userDefinedTaskLists);
+				
+				appUIController.addListInfoToMenu(userDefinedTaskLists, listInsertPoint);
+				
+				appModelController.updateListTaskTotals();
 
 				// 2. Load task items
 
@@ -1967,7 +2168,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 				// Use taskId to gather and display all task with that ID
 				var taskList_id = updateTaskListDisplayed (taskListId);
 
-				var taskList2Display = setListItemsToCategorize (taskList_id); 
+				var taskList2Display = getMatchingTaskItemsWithID (taskList_id); 
 				appUIController.groupAndDisplayTaskItems(taskList2Display);
 				setupEventListeners();
 			}
