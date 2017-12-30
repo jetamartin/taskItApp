@@ -1330,7 +1330,12 @@ var appUIController = (function () {
 	var inputNewTaskList = document.querySelector("#newListNameSelection");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
 	var newTaskFormErrorMsg = document.querySelector(".newTaskFormErrorMsg");
-	var taskSaveMessage = document.querySelector("#taskSaveMessage"); 
+	var taskSaveMessage = document.querySelector("#taskSaveMessage");
+	
+	var allListsElem = document.querySelector("#allListsElem");
+	var completedListElem = document.querySelector("#completedListElem");
+	var defaultListElem = document.querySelector(".defaultListElem");
+	
 	
 	/* aTaskInGroup - flag used when displaying a user selected task list to facilitate display of that list into "Due Date Groups". It's a flag (initially set to false) that is set to true if at least one taskItem in a user selected task is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header (e.g., "Over Due") and closing tag need to be generated for that Due Date Group.  This flag is reset to false each time the controller is invoked it is invoked because each invocation means that 	you have a new key/category. 
 	*/
@@ -1610,8 +1615,8 @@ var appUIController = (function () {
 			var newNode;
 			// Template to create ListName elements for nav's listSubmenu
 			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="overDue">&nbsp%overDueCount%</span><span class="listTotal">&nbsp%dueCount%</span></li>';
-
 			
+
 			// Sort all List alphabetically
 			subMenuTaskList.sort(function(a, b) {
 			  var nameA = a.taskList_name.toUpperCase(); // ignore upper and lowercase
@@ -1665,7 +1670,33 @@ var appUIController = (function () {
 
 
 
-			}
+			} // END FOR LOOP
+			
+			
+			// Update pre-defined listst totals
+			var taskListTable = appModelController.getTaskListTable();
+			var listRecord = taskListTable.hasElement("All Lists");
+			
+		
+			// OverDueTotal count
+			allListsElem.childNodes[2].innerText = taskListTable[listRecord].taskList_overDueCount;			
+			// TotalList count
+			allListsElem.childNodes[3].innerText = taskListTable[listRecord].taskList_totalCount;
+			
+			
+			var listRecord = taskListTable.hasElement("Default");
+			
+			// OverDueTotal count
+			defaultListElem.childNodes[2].innerText = taskListTable[listRecord].taskList_overDueCount;
+			// TotalList count
+			defaultListElem.childNodes[3].innerText = taskListTable[listRecord].taskList_totalCount;
+
+			var listRecord = taskListTable.hasElement("Completed");
+			
+			// OverDueTotal count
+			completedListElem.childNodes[2].innerText = taskListTable[listRecord].taskList_overDueCount;
+			// TotalList count
+			completedListElem.childNodes[3].innerText = taskListTable[listRecord].taskList_totalCount; 
 		
 		}, // END addListInfoToMenu
 		
