@@ -1602,17 +1602,22 @@ var appUIController = (function () {
 		/********************************************************************************
 			METHOD:  addListInfoToMenu()
 			
-			Builds the Nav Task List Submenu and inserts it into Navigation area;
+			Summary: 
+			 - Builds the User Defined Task List HTML based on info in TaskListTable and inserts into the Nav's Task List Dropdown 
+			 Note: The Pre Defined Task List nodes are hardcoded in the HTML so no need to build their HTML and insert nodes;
+			 Note: Each list's TotalList and OverDue counts from the TaskListTable are updated in another method and simply inserted in this method  
+			
 			ARGUMENTS:
-			- subMenuTaskList - table containing user defined task list (userDefinedTaskListsInfo);
+			- subMenuTaskList - array containing just the User Defined Task Lists (subset of TaskListTable) 
 			- nextNode: is specific DOM location within subMenuTaskList where these user defined taskList need to be inserted. Note: Specifically userDefined list names need to be inserted starting after the system defined List name: Default. 
 			(i.e., "All List, "Default", <- userDefinedTaskListInfo, "Completed ->)
 			
 		********************************************************************************/
 		
 		addListInfoToMenu: function (subMenuTaskList, nextNode) {
-			var firstListElement = true;
 			var newNode;
+			var preDefinedListRecord;
+			
 			// Template to create ListName elements for nav's listSubmenu
 			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="overDue">&nbsp%overDueCount%</span><span class="listTotal">&nbsp%dueCount%</span></li>';
 			
@@ -1632,6 +1637,10 @@ var appUIController = (function () {
 			  return 0;
 			});
 			
+		//*****************************************************************************************************
+		// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
+		//*****************************************************************************************************
+
 			for (var i = 0; i < subMenuTaskList.length; i++) {	
 
 				// Insert the list name in HTML
@@ -1655,48 +1664,48 @@ var appUIController = (function () {
 				//* Convert completed HTML string into DOM node so it can be inserted
 				newNode = document.createRange().createContextualFragment(specificSubMenuHtml);
 
-//				if (firstListElement) {
-//					firstListElement = false;
-//					nextNode.prepend(newNode);
-//					nextNode = nextNode.firstElementChild;
-//					nextNode.classList.add("selected");
-					
-//				} else {
-					// Insert new node into taskListsubmenu
-					insertAfter(newNode, nextNode);
-					// Now make the node we just inserted the nextNode so that other nodes will be inserted after it
-					nextNode = nextNode.nextElementSibling;
-//				}
+
+				// Insert new node into taskListsubmenu
+				insertAfter(newNode, nextNode);
+
+				// Now make the node we just inserted the nextNode so that other nodes will be inserted after it
+				nextNode = nextNode.nextElementSibling;
 
 
 
-			} // END FOR LOOP
+			} // END FOR LOOP for building and adding UserDefined List to dropdown
 			
 			
-			// Update pre-defined listst totals
+		//*****************************************************************************************************
+		// Insert OverDueCount and TotalCounts into  list totals from TaskListTable 
+		//*****************************************************************************************************
+			// Retreive the taskListTable 
 			var taskListTable = appModelController.getTaskListTable();
-			var listRecord = taskListTable.hasElement("All Lists");
 			
+			// Get the taskListTable record for the "All List"
+			preDefinedListRecord = taskListTable.hasElement("All Lists");
+	
 		
 			// OverDueTotal count
-			allListsElem.childNodes[2].innerText = taskListTable[listRecord].taskList_overDueCount;			
+			allListsElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;			
 			// TotalList count
-			allListsElem.childNodes[3].innerText = taskListTable[listRecord].taskList_totalCount;
+			allListsElem.childNodes[3].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 			
 			
-			var listRecord = taskListTable.hasElement("Default");
+			preDefinedListRecord = taskListTable.hasElement("Default");
 			
 			// OverDueTotal count
-			defaultListElem.childNodes[2].innerText = taskListTable[listRecord].taskList_overDueCount;
+			defaultListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+			
 			// TotalList count
-			defaultListElem.childNodes[3].innerText = taskListTable[listRecord].taskList_totalCount;
+			defaultListElem.childNodes[3].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 
-			var listRecord = taskListTable.hasElement("Completed");
+			preDefinedListRecord = taskListTable.hasElement("Completed");
 			
 			// OverDueTotal count
-			completedListElem.childNodes[2].innerText = taskListTable[listRecord].taskList_overDueCount;
+			completedListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
 			// TotalList count
-			completedListElem.childNodes[3].innerText = taskListTable[listRecord].taskList_totalCount; 
+			completedListElem.childNodes[3].innerText = taskListTable[preDefinedListRecord].taskList_totalCount; 
 		
 		}, // END addListInfoToMenu
 		
