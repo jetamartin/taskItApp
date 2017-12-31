@@ -1160,6 +1160,12 @@ var appModelController = (function () {
 		getUserDefinedTaskListInfo: function() {
 			return userDefinedTaskListsInfo
 		},
+		
+		getPreDefinedTaskListNames:  function() {
+			return ["All Lists", "Default", "Completed"];
+		},
+
+
 		getTaskItemsTable: function(){
 //			var taskItemsTable = [];
 			return taskItemsTable;
@@ -1167,6 +1173,17 @@ var appModelController = (function () {
 		getTaskListTable: function() {
 			return taskListTable;
 		},
+		
+		getUserDefinedTaskList: function() {
+			var taskListTable = appModelController.getTaskListTable();
+			return userDefinedTaskLists = taskListTable.filter(function(taskItem) {
+				if (appModelController.getPreDefinedTaskListNames().contains(taskItem.taskList_name) === -1) {
+					return taskItem;
+				} 
+			});
+		
+		}, 
+	
 		
 		getTaskListNames: function () {			
 			var listNamesArray = taskListTable.reduce(function(namesList, listObj) {
@@ -1608,22 +1625,26 @@ var appUIController = (function () {
 			 Note: Each list's TotalList and OverDue counts from the TaskListTable are updated in another method and simply inserted in this method  
 			
 			ARGUMENTS:
-			- subMenuTaskList - array containing just the User Defined Task Lists (subset of TaskListTable) 
-			- nextNode: is specific DOM location within subMenuTaskList where these user defined taskList need to be inserted. Note: Specifically userDefined list names need to be inserted starting after the system defined List name: Default. 
+			- userDefinedTaskList - array containing just the User Defined Task Lists (subset of TaskListTable) 
+			- nextNode: is specific DOM location within userDefinedTaskList where these user defined taskList need to be inserted. Note: Specifically userDefined list names need to be inserted starting after the system defined List name: Default. 
 			(i.e., "All List, "Default", <- userDefinedTaskListInfo, "Completed ->)
 			
 		********************************************************************************/
 		
-		addListInfoToMenu: function (subMenuTaskList, nextNode) {
+		addListInfoToMenu: function (taskListTable, userDefinedTaskList) {
 			var newNode;
 			var preDefinedListRecord;
+			
+			// Get the 2nd predefined list element ("Default List") position so that we can start adding user defined list after it
+			var nextNode = document.getElementById("listInsertPoint");
+			
 			
 			// Template to create ListName elements for nav's listSubmenu
 			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="overDue">&nbsp%overDueCount%</span><span class="listTotal">&nbsp%dueCount%</span></li>';
 			
 
 			// Sort all List alphabetically
-			subMenuTaskList.sort(function(a, b) {
+			userDefinedTaskList.sort(function(a, b) {
 			  var nameA = a.taskList_name.toUpperCase(); // ignore upper and lowercase
 			  var nameB = b.taskList_name.toUpperCase(); // ignore upper and lowercase
 			  if (nameA < nameB) {
@@ -1641,22 +1662,22 @@ var appUIController = (function () {
 		// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
 		//*****************************************************************************************************
 
-			for (var i = 0; i < subMenuTaskList.length; i++) {	
+			for (var i = 0; i < userDefinedTaskList.length; i++) {	
 
 				// Insert the list name in HTML
-				specificSubMenuHtml = genericSubMenuHtml.replace('%listName%', subMenuTaskList[i].taskList_name);
+				specificSubMenuHtml = genericSubMenuHtml.replace('%listName%', userDefinedTaskList[i].taskList_name);
 
 				// Insert the overdue task list count in HTML
 				// If count is zero you want to add class to overdue item so that 0 count and "+" sign do not appear
-				if (subMenuTaskList[i].overDue !== "0") {
-					specificSubMenuHtml = specificSubMenuHtml.replace('%overDueCount%', subMenuTaskList[i].taskList_overDueCount);
+				if (userDefinedTaskList[i].overDue !== "0") {
+					specificSubMenuHtml = specificSubMenuHtml.replace('%overDueCount%', userDefinedTaskList[i].taskList_overDueCount);
 				} else { // Else the count is zero then don't display it (hideIt)
 					specificSubMenuHtml = specificSubMenuHtml.replace("overDue", "overDue hideIt");
 				}
 
 				// Insert the total task list count due (excluding overdue tasks count) in HTML
-				if (subMenuTaskList[i].totalTasks !== "0") {
-					specificSubMenuHtml = specificSubMenuHtml.replace('%dueCount%', subMenuTaskList[i].taskList_totalCount);
+				if (userDefinedTaskList[i].totalTasks !== "0") {
+					specificSubMenuHtml = specificSubMenuHtml.replace('%dueCount%', userDefinedTaskList[i].taskList_totalCount);
 				} else { // Else the count is zero then don't display it (hideIt) 
 					specificSubMenuHtml = specificSubMenuHtml.replace("listTotal", "listTotal hideIt");
 				}
@@ -1680,7 +1701,7 @@ var appUIController = (function () {
 		// Insert OverDueCount and TotalCounts into  list totals from TaskListTable 
 		//*****************************************************************************************************
 			// Retreive the taskListTable 
-			var taskListTable = appModelController.getTaskListTable();
+//			var taskListTable = appModelController.getTaskListTable();
 			
 			// Get the taskListTable record for the "All List"
 			preDefinedListRecord = taskListTable.hasElement("All Lists");
@@ -2035,6 +2056,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 
 	***********************************************************************************/
 	var ctrlAddItem = function(event) {
+		
 		var saveWasSuccessful = true;
 		var msg = new Object(); 
 		console.log("++++++++++++ ctrlAddItem()");
@@ -2055,12 +2077,24 @@ var appController = (function (appModelCtrl, appUICtrl) {
 			
 			// Save task object to local/Storage/DB
 			
+			// INSERT ---> DB call and or save to localStorage
 			
 			
-			// Create appropriate save message (success or failure)
+			
+
 			if (saveWasSuccessful) {
+				
+				// Set success message 
 				msg.type = "success";
 				msg.text = "Your Task Item was successfully saved!";
+				
+				// Upadate ALL totals on all lists -- may want to make this more surgical & update just list affected.
+				appModelController.updateListTaskTotals();
+				
+				// Update Count totals on taskListSubmenu 
+				appUIController.addListInfoToMenu(appModelController.getTaskListTable(),
+												  appModelController.getUserDefinedTaskList());
+				
 			} else {
 				msg.type = "error";
 				msg.text = "ERROR! The Task Item was NOT saved";
@@ -2072,6 +2106,8 @@ var appController = (function (appModelCtrl, appUICtrl) {
 			
 			// Reset 
 			appUIController.resetNewTaskForm();
+			
+			
 
 			
 			
@@ -2143,7 +2179,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		init: function () { 
 			
 			
-			var preDefinedListNames = ["All Lists", "Default", "Completed"];
+			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
 			
 			
 			Array.prototype.contains = function(element) {
@@ -2164,7 +2200,9 @@ var appController = (function (appModelCtrl, appUICtrl) {
 				
 				var taskListNamesArray = appModelCtrl.getTaskListNames();
 				console.log("TASK LIST NAMES: " + taskListNamesArray);
+				
 				appModelController.updateListTaskTotals();
+				
 //				populateNewTaskFormWithListNames ();
 				// Load data into app
 				// 1. Load task list
@@ -2172,7 +2210,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 					*	First load "Pre-set" task lists into taskSubMenu. "New Tasks" already in taskSubMenu as it is already hard coded in html 
 					*	so it will occupy .childNodes[0] position initially. "Pre-set" lists will be added before "New task" item.	 
 				********************************************************************************************************************************/
-	//			appUIController.addListInfoToMenu(appModelController.getPresetTaskListInfo(), taskListsSubMenuContainer.childNodes[0]);
+	
 
 				/********************************************************************************************************************************	
 				 Now we will add "Pre-configured"/"UserDefined" task lists that were previously saved by user (now retrieved from DB)  
@@ -2180,23 +2218,16 @@ var appController = (function (appModelCtrl, appUICtrl) {
 				 Specifically they are added after the "Default" task list item, which is now .childNodes[2] node.
 				********************************************************************************************************************************/
 
-				// Get the 2nd default list element ("Default List") position so that we can start adding user defined list after it
 
 				
-				var listInsertPoint = document.getElementById("listInsertPoint");
-				
 				var taskListTable = appModelController.getTaskListTable();
-				
-				var userDefinedTaskLists = taskListTable.filter(function(taskItem) {
-					if (preDefinedListNames.contains(taskItem.taskList_name) === -1) {
-						return taskItem;
-					}	
-				});
+				var userDefinedTaskLists = appModelController.getUserDefinedTaskList(); 
+			
 				
 				console.log("User Defined TaskList");
 				console.log(userDefinedTaskLists);
 				
-				appUIController.addListInfoToMenu(userDefinedTaskLists, listInsertPoint);
+				appUIController.addListInfoToMenu(taskListTable, userDefinedTaskLists);
 				
 				appModelController.updateListTaskTotals();
 
