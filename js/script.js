@@ -1968,23 +1968,47 @@ var appUIController = (function () {
 			}
 		}, // END groupAndDisplayTaskItems
 		
-		refreshTaskListSubMenuTotals: function() {
-			var index;
-			var taskListTable = appModelController.getTaskListTable();
+		/******************************************************************************** 
+			METHOD: refreshTaskListSubMenuTotals():
+			
+			Summary; Refresh the OverDue and ListTotal counts on the taskListSubMenu on Nav bar list selector
+			- For each DOM list element on the taskListSubmenu
+				- Extract the list name from the DOM
+				- Find that list's matching record in the TaskListTable 
+				- Use the OverDueCount and ListTotalcounts values from the matching TaskListTable to update the DOM list totals
+	
+			 VARIABLES: 
+			 	
+		**********************************************************************************/	
+		
+		refreshTaskListSubMenuTotals: function(taskListTable) {
+			
 			console.log("in appUIController.refreshTaskListSubMenuTotals() method");
+			var index; // index of taskListTable record that match list name from DOM element
+			
+			
+			// Get all of the taskList from the taskListSubmenu 
 			var subMenuListDOMNodes = document.querySelector(".taskListsSubMenu").getElementsByTagName("li");
-			console.log(subMenuListDOMNodes);
+			
+			// For each subMenuTask List element search for a matching listname in the taskListTable
+			// If a match is found update the DOM listcounts with those from the taskListTable
+			
 			Array.prototype.forEach.call (subMenuListDOMNodes, function(listNode) {
+				
+				// Using the innerText method will return the list name, totals & any blank characters 
+				// In order to isolate the name we use replace (to eliminate numbers) and trim(to remove extra space chars)
 				listName = listNode.innerText.replace(/[0-9]/g, '').trim();
-				console.log ("============$$$$$ ListNode List Name: " + listName);
+				
+				// hasElement method returns the index of the matching taskListTable records, if no match returns -1
+				// NOTE: The subMenuListDOMNodes will include some members that will not have an entry in the taskListTable (e.g., "New List)
 				index = taskListTable.hasElement(listName);
-				console.log(index);
+				
 				if (index >= 0 ) {
-					
+					// Update DOM subMenu totals with value from TaskListTable
 					listNode.querySelector(".overDue").innerHTML = taskListTable[index].taskList_overDueCount;
 					listNode.querySelector(".listTotal").innerHTML = taskListTable[index].taskList_totalCount;
 				}
-			});
+			});  // End forEach Loop
 		}
 	}
 })();
@@ -2077,7 +2101,8 @@ var appController = (function (appModelCtrl, appUICtrl) {
 		var saveWasSuccessful = true;
 		var msg = new Object(); 
 		console.log("++++++++++++ ctrlAddItem()");
-		var newTaskItemInput, newTaskItemObject
+		var newTaskItemInput, newTaskItemObject;
+		var taskListTable = appModelController.getTaskListTable(); 
 		
 		//	Validate New Task Data
 		newTaskItemInput = appUIController.getNewTaskInput(event);
@@ -2125,7 +2150,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 			appUIController.resetNewTaskForm();
 			
 			// Update the overDue and listTotals on the taskListSubmenu
-			appUIController.refreshTaskListSubMenuTotals(); 
+			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
 
 			
 			
