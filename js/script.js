@@ -1271,9 +1271,8 @@ var appModelController = (function () {
 					return i; //Returns element position, so it exists
 				}
 			}
-
-			return -1; //The element isn't in your array
-		};
+				return -1; //The element isn't in your array
+			};
 
 			var convertDateString2DateObject = function (dateString) {
 				var date;
@@ -1967,9 +1966,27 @@ var appUIController = (function () {
 
 				listItemsToCategorize = listItemsLeftToCategorize;
 			}
-		} // END groupAndDisplayTaskItems
-	} 
-
+		}, // END groupAndDisplayTaskItems
+		
+		refreshTaskListSubMenuTotals: function() {
+			var index;
+			var taskListTable = appModelController.getTaskListTable();
+			console.log("in appUIController.refreshTaskListSubMenuTotals() method");
+			var subMenuListDOMNodes = document.querySelector(".taskListsSubMenu").getElementsByTagName("li");
+			console.log(subMenuListDOMNodes);
+			Array.prototype.forEach.call (subMenuListDOMNodes, function(listNode) {
+				listName = listNode.innerText.replace(/[0-9]/g, '').trim();
+				console.log ("============$$$$$ ListNode List Name: " + listName);
+				index = taskListTable.hasElement(listName);
+				console.log(index);
+				if (index >= 0 ) {
+					
+					listNode.querySelector(".overDue").innerHTML = taskListTable[index].taskList_overDueCount;
+					listNode.querySelector(".listTotal").innerHTML = taskListTable[index].taskList_totalCount;
+				}
+			});
+		}
+	}
 })();
 
 
@@ -2092,8 +2109,8 @@ var appController = (function (appModelCtrl, appUICtrl) {
 				appModelController.updateListTaskTotals();
 				
 				// Update Count totals on taskListSubmenu 
-				appUIController.addListInfoToMenu(appModelController.getTaskListTable(),
-												  appModelController.getUserDefinedTaskList());
+//				appUIController.addListInfoToMenu(appModelController.getTaskListTable(),
+//												  appModelController.getUserDefinedTaskList());
 				
 			} else {
 				msg.type = "error";
@@ -2104,10 +2121,11 @@ var appController = (function (appModelCtrl, appUICtrl) {
 			appUIController.displaySaveMessage(msg);
 			// Create log entry if failure
 			
-			// Reset 
+			// Reset values on new Task form
 			appUIController.resetNewTaskForm();
 			
-			
+			// Update the overDue and listTotals on the taskListSubmenu
+			appUIController.refreshTaskListSubMenuTotals(); 
 
 			
 			
@@ -2203,6 +2221,8 @@ var appController = (function (appModelCtrl, appUICtrl) {
 				
 				appModelController.updateListTaskTotals();
 				
+
+				
 //				populateNewTaskFormWithListNames ();
 				// Load data into app
 				// 1. Load task list
@@ -2230,6 +2250,7 @@ var appController = (function (appModelCtrl, appUICtrl) {
 				appUIController.addListInfoToMenu(taskListTable, userDefinedTaskLists);
 				
 				appModelController.updateListTaskTotals();
+			
 
 				// 2. Load task items
 
