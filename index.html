@@ -78,7 +78,9 @@
 <!--		</a>-->
 
 
-		<!-- Add List Modal -->
+		<!-- Add New List Modal -->
+			
+			
 		<div class="modal" id="addNewListModal">
 			<div class="modal-dialog modal-sm" role="document">
 				<!-- Modal content-->
@@ -87,14 +89,17 @@
 						<h4 class="modal-title">New List</h4>
 					</div>
 					<div class="modal-body">
+						<!-- Success/Error message inserted via JS								-->
+
+						<div id="navTaskFormListModalMessage"></div>
 						<form>
 							<div class="form-group">
 								<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
-								<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name">
+								<input type="text" class="form-control" id="newTaskListName" placeholder="Enter new list name">
 							</div>
 						</form>
 					</div>
-					<!-- Modal widow for creating new list							-->
+					<!-- Modal window for creating new list							-->
 					<div class="modal-footer button-group">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 						<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
@@ -116,6 +121,8 @@
 					<div class="modal-body">
 						<p>You want to mark completed?</p>
 					</div>
+					
+					
 					<!-- Modal widow for creating new list							-->
 					<div class="modal-footer button-group">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -163,7 +170,7 @@
 		<section class="container newTaskPage">
 			<article class="">
 				<!--	Div where success message is stored			-->
-				<div id="taskSaveMessage"></div>
+				<div id="newTaskSaveMsg"></div>
 
 				<form id="formSaveNewTask" novalidate>
 					<!--	Enter Task Name				-->
@@ -243,7 +250,9 @@
 				</form>
 				
 				
-				<!-- Add List Modal -->
+				<!-- Add New List Modal -->
+				
+				
 				<div class="modal" id="addListModal">
 					<div class="modal-dialog modal-sm" role="document">
 						<!-- Modal content-->
@@ -252,6 +261,10 @@
 								<h4 class="modal-title">New List</h4>
 							</div>
 							<div class="modal-body">
+								
+								<!-- Success/Error message inserted via JS								-->
+								<div id="newTaskFormListModalMsg"></div>
+
 								<form>
 									<div class="form-group">
 										<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
@@ -261,7 +274,7 @@
 							</div>
 							<!-- Modal widow for creating new list							-->
 							<div class="modal-footer button-group">
-								<button type="button" class="btn btn-default" data-dismiss="modal" >Cance</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
 								<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
 							</div>
 						</div>
@@ -293,6 +306,7 @@
 		</nav>
 		<section class="container editTaskPage">
 			<article class="">
+				<div id="editTaskSaveMsg"></div>
 				<!--
 				<header>
 					<h1>Edit Task</h1>
@@ -364,7 +378,10 @@
 						<button type="Cancel" class="btn btn-default">Cancel</button>
 					</div>
 				</form>
+				
+				
 				<!-- Add List Modal -->
+				
 				<div class="modal" id="myModal">
 					<div class="modal-dialog modal-sm" role="document">
 						<!-- Modal content-->
@@ -373,6 +390,8 @@
 								<h4 class="modal-title">New List</h4>
 							</div>
 							<div class="modal-body">
+								<!-- Success/Error message inserted via JS								-->
+								<div id="editTaskFormListModalMsg"></div>
 								<form>
 									<div class="form-group">
 										<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->

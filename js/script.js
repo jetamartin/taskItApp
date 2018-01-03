@@ -773,8 +773,6 @@ var appModelController = (function () {
 		this.taskList_id = listId; 
 		this.taskList_name = listName;
 		this.user_id = userId;
-		this.taskList_totalCount = totalTaskItemCount;
-		this.taskList_overDueCount = overDueTaskItemCount; 
 		this.taskList_createTime = listCreateTime;	
 		this.taskList_isArchived = taskListIsArchived;
 	}
@@ -1209,6 +1207,18 @@ var appModelController = (function () {
 	
 		}, 
 		
+		/****************************************************************************************
+			MODULE: Model Controller
+			
+			METHOD: createNewTaskItem - 
+
+			Trigger(s): 
+			Summary: 
+
+			UI Behavior: NA 
+
+		*****************************************************************************************/
+		
 		//{newTaskTitle: "1234", newTaskDateTime: "12/22/2017 - 10:14 AM", newTaskRepeateOptionTxt: "None", newTaskListOptionTxt: "Default"}
 		createNewTaskItem: function (taskItemInput ) {
 			console.log("*************** createNewTaskItem()");
@@ -1242,9 +1252,40 @@ var appModelController = (function () {
 //			return newTaskItem; 
 		
 		},
+		/****************************************************************************************
+			MODULE: Model Controller
+			
+			METHOD: createNewTaskList - 
+
+			Trigger(s): 
+			Summary: 
+
+			UI Behavior: NA 
+
+		*****************************************************************************************/
+		createNewTaskList: function (taskListInput ) {
+			console.log("*************** createNewTaskList()");
+			console.log("TaskListInput", taskListInput);
+
+
+			// 1. Generate taskItem_Id and assign
+			var taskListId = getUniqueId();
+			console.log("TaskList ID: ", taskListId);
+
+			// 2. Generate createTime
+			var createTime = getTimeStamp();
+
+			return newTaskList = new TaskList(
+				taskListId, 
+				taskListInput.newTaskTitle,
+				taskListIsArchived,
+				createTime
+			) 
+	
+		},
 		
 		/****************************************************************************************
-			MODULE: Model Conroller
+			MODULE: Model Controller
 			
 			METHOD updateListTaskTotals - recalculates the taskItem totals for all lists (Pre-defined and Userdefined)
 			that are displayed on the taskList subMenu dropdown on Nav bar
@@ -1371,12 +1412,19 @@ var appUIController = (function () {
 	/* While grouping taskItems by due date category, this array holds the list of taskItems that have not yet been grouped into their appropriate Due Date Category 
 	*/
 	var listItemsLeftToCategorize = [];
+	var inputNewTaskListName = document.getElementById("newTaskListName");
 	var inputNewTaskTitle = document.getElementById("newTaskTitle");
 	var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
 	var inputNewTaskList = document.querySelector("#newListNameSelection");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
+	
 	var newTaskFormErrorMsg = document.querySelector(".newTaskFormErrorMsg");
-	var taskSaveMessage = document.querySelector("#taskSaveMessage");
+	var newTaskSaveMessage = document.querySelector("#newTaskSaveMsg");				 
+	var editTaskSaveMessage = document.querySelector("#editTaskSaveMsg");
+	var navTaskListModalMessage = document.querySelector("#navTaskListModalMsg");
+	var newTaskFormListModalMessage = document.querySelector("#newTaskFormListModalMsg");
+	var editTaskFormListModalMessage = document.querySelector("#editTaskFormListModalMsg");
+	
 	
 	var allListsElem = document.querySelector("#allListsElem");
 	var completedListElem = document.querySelector("#completedListElem");
@@ -1514,30 +1562,49 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
-		displaySaveMessage: function(msg) {
+		getUIVars: function() {
+			return {
+				inputNewTaskListName,
+				inputNewTaskTitle,
+				inputNewTaskDateTime,
+				inputNewTaskList,
+				inputNewTaskRepeat,
+				newTaskFormErrorMsg, 
+				newTaskSaveMessage, 				 
+				editTaskSaveMessage,
+				navTaskListModalMessage,
+				newTaskFormListModalMessage, 
+				editTaskFormListModalMessage,
+				allListsElem, 
+				completedListElem, 
+				defaultListElem
+			}
+
+		}, 
+		displaySaveMessage: function(msgLocation, msg) {
 			console.log("************** displaySaveMessage method");
 			if (msg.type === "success") {
-				taskSaveMessage.innerHTML = msg.text;
-				taskSaveMessage.classList.add("success-message");
+				msgLocation.innerHTML = msg.text;
+				msgLocation.classList.add("success-message");
 			
 				// After fadeout animation ends we need to reset message so animation will work on subsequent saves
 				setTimeout(function () {
 					// Must remove the success-message class otherwise it will not appear on future saves
-					taskSaveMessage.classList.remove("success-message");
+					msgLocation.classList.remove("success-message");
 					// Also must clear out the message otherwise the message will reappear after fadeout animation ends
-					taskSaveMessage.innerHTML = "";
+					msgLocation.innerHTML = "";
 				}, 5000);
 
 			} else { // msg.type = "error"
-				taskSaveMessage.innerHTML = msg.text;
-				taskSaveMessage.classList.add("error-message");
+				msgLocation.innerHTML = msg.text;
+				msgLocation.classList.add("error-message");
 				
 				// After fadeout animation ends we need to reset message so animation will work on subsequent saves
 				setTimeout(function () {
 					// Must remove the success-message class otherwise it will not appear on future saves
-					taskSaveMessage.classList.remove("error-message");
+					msgLocation.classList.remove("error-message");
 					// Also must clear out the message otherwise the message will reappear after fadeout animation ends
-					taskSaveMessage.innerHTML = "";
+					msgLocation.innerHTML = "";
 				}, 5000);
 			}
 
@@ -1548,7 +1615,6 @@ var appUIController = (function () {
 			
 		*/
 		clearTaskItemError: function () {
-//			if (formError && inputNewTaskTitle.value.length >= 0 ) {
 			if (formError ) {
 				resetFormError();
 			}
@@ -1577,8 +1643,8 @@ var appUIController = (function () {
 			console.log("************** appUIController.displayAddNewTaskForm()");
 			toggleClass(homePage, "hideIt");
 			toggleClass(newTaskPage, "hideIt");
-			taskSaveMessage.classList.remove("success-message");
-			taskSaveMessage.innerHTML = "";
+			newTaskSaveMessage.classList.remove("success-message");
+			newTaskSaveMessage.innerHTML = "";
 			populateFormWithListNames (taskListNames);
 			// Need to set newTask Form list dropdown to match the "active" task list
 			setTaskListSelect();
@@ -1598,12 +1664,12 @@ var appUIController = (function () {
 
 	
 		/********************************************************************************
-			METHOD:  getNewTaskInputData()  -- Primary method 
+			METHOD:  getTaskItemInput()  -- Primary method 
 		********************************************************************************/
-		getNewTaskInput: function (event) {			
+		getTaskItemInput: function (event) {			
 			event.preventDefault();
 			event.stopPropagation();
-			console.log("-----------> appUIController.getNewTaskInput()");
+			console.log("-----------> appUIController.getTaskItemInput()");
 			console.log("Event: " + event);
 
 			/*  If errors had been set on prior save attempt then need to reset them before checking for errors on this save attempt */
@@ -1627,6 +1693,33 @@ var appUIController = (function () {
 			}
 		},
 		
+		/********************************************************************************
+			METHOD:  getTaskListInput()  -- Primary method 
+		********************************************************************************/
+		getTaskListInput: function (event) {			
+			event.preventDefault();
+			event.stopPropagation();
+			console.log("-----------> appUIController.getTaskListInput()");
+			console.log("Event: " + event);
+
+			/*  If errors had been set on prior save attempt then need to reset them before checking for errors on this save attempt */
+			if (formError) {
+				resetFormError();
+			}
+
+			var newTaskListName = inputNewTaskListName.value.trim();
+
+			if (isEmpty(newTaskListName)) {
+				// Setup and apply error formatting/messaging on form
+				setFormError();
+				return null;
+			} else {
+				return {
+					newTaskTitle: inputNewTaskListName.value.trim()
+
+				}			
+			}
+		},
 		/********************************************************************************
 			METHOD:  resetNewTaskForm()  - called when user hits the reset button on new task form
 			- Removes all error formating and resets formatError flag
@@ -2094,16 +2187,16 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			this Nav save button should yield the same exact results as pressing
 			the Save button at the bottom of the New Task Form
 		*/
-		addTaskSaveMenuButton.addEventListener("click", appUIController.getNewTaskInput);
+		addTaskSaveMenuButton.addEventListener("click", appUIController.getTaskItemInput);
 
 		// Event Listener for Save button at bottom of form
 //		formSaveNewTask.addEventListener("submit",function (event) {
 //				event.preventDefault();
 //				event.stopPropagation();
-//				appUIController.getNewTaskInput();
+//				appUIController.getTaskItemInput();
 //		}, false);
 		
-//		formSaveNewTask.addEventListener("submit",function (event) { appUIController.getNewTaskInput(event)}, false);
+//		formSaveNewTask.addEventListener("submit",function (event) { appUIController.getTaskItemInput(event)}, false);
 		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);
 
  
@@ -2151,7 +2244,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		var taskListTable = appModelController.getTaskListTable(); 
 		
 		//	Validate New Task Data
-		newTaskItemInput = appUIController.getNewTaskInput(event);
+		newTaskItemInput = appUIController.getTaskItemInput(event);
 		if (newTaskItemInput != null ) {
 			console.log(newTaskItemInput);
 
@@ -2183,7 +2276,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			}
 			
 			// DisplaySaveMessage (success or failure message)
-			appUIController.displaySaveMessage(msg);
+			appUIController.displaySaveMessage(appUIController.getUIVars().newTaskSaveMessage, msg);
 			// Create log entry if failure
 			
 			// Reset values on new Task form
@@ -2224,8 +2317,64 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	***********************************************************************************/
 	var ctrlAddTaskList = function(event) {
 		
+		var saveWasSuccessful = true;
+		var msg = new Object(); 
+		console.log("++++++++++++ ctrlAddTaskList()");
+		var newTaskListNameInput, newTaskListObject;
+		var taskListTable = appModelController.getTaskListTable();
+		
+		
+		//	Validate New Task Data
+		newTaskListNameInput = appUIController.getTaskListInput(event);
+		
+		if (newTaskListNameInput != null ) {
+			console.log(newTaskListNameInput);
+
+			// Create New Task Object  (create required fields for object e.g., unique taskItemId, assign taskListId, etc)
+			newTaskListObject = appModelController.createNewTaskList(newTaskListNameInput);
+			
+			
+			// Add New task List object to New TaskList table	
+			appModelController.getTaskListTable().push(newTaskListObject);
+			
+			
+			// Save task object to local/Storage/DB			
+				// INSERT ---> DB call and or save to localStorage
+		
+
+			if (saveWasSuccessful) {
+				
+				// Set success message 
+				msg.type = "success";
+				msg.text = "SUCCESS! Your list was added";
+				
+				// Regenerate UserDefined Task List on taskListSubmenu
+				appUIController.buildAndDisplayUserDefinedTaskList(appModelController.getUserDefinedTaskList());
+				
+			} else {
+				msg.type = "error";
+				msg.text = "ERROR! Your List was **NOT** added. TRY AGAIN";
+			}
+			
+			// DisplaySaveMessage (success or failure message)
+			appUIController.displaySaveMessage(appUIController.navTaskListModalMessage, msg);
+			
+			// Create log entry if failure
+			// TBD
+			
+			// Reset values on new Task form
+//			appUIController.resetNewTaskForm();
+			
+//			// Regenerate UserDefinedTaskList 
+//			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
+//		
+//			
+//			
+		} else {  // newTaskListNameInput = null
+			console.log(newTaskListNameInput);
+		}
+
 	}
-	
 	/****************************************************************************************
 		FUNCTION buildAndDisplayTaskItemForm - builds the new task item form and displays it,
 			modifies the nav bar and hides other parts of the UI (e.g., main page) 
