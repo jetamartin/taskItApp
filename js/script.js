@@ -411,8 +411,7 @@ var handleSubMenuClick = function (event) {
 	
 	// Get the current "active" task list 
 	var currActiveList = getActiveTaskList();
-	// Deactive the current active list by removing 'selected' class 
-	toggleClass(currActiveList, 'selected');
+
 		
 	// Get name of submenu list selected
 	var listNameSelected = event.target.childNodes[1].textContent.trim();
@@ -425,21 +424,38 @@ var handleSubMenuClick = function (event) {
 	// Look up listNameSelected in taskListTable and get it's taskList_id so that we can display all tasks that with that matching id
 //	console.log("******** List Name:  " + listNameSelected);
 //	console.log("******** List Id: " + taskListId);
-	var taskListId = appModelController.getTaskListTable().find(getListId).taskList_id;
+	
+	// Get the taskList record that with the selected list name
+	var matchedTaskListRecord = appModelController.getTaskListTable().find(getListId);
+	
+	// If the "New List" option is selected on the task list subMenu you will want to skip performing all of the actions insid the if statement
+	if (matchedTaskListRecord !== undefined) {
+		
+		// Get the taskListId of the list that was selected on the taskSubMenu so that I can display taskItems matching that listId
+		taskListId = matchedTaskListRecord.taskList_id;
+		
+		// Get location of List menu title 
+		var listMenuTitle = listMenuElement.childNodes[2];
 
-	// Get location of List menu title 
-	var listMenuTitle = listMenuElement.childNodes[2];
+		// Make the List menu title equal to submenu name selected
+		listMenuTitle.nodeValue = listNameSelected;
+		
+		// Deactive the current active list by removing 'selected' class 
+		toggleClass(currActiveList, 'selected');
+		
+		// The selected list name will have the "selected" class added to darken background so when 
+		// user hovers and gets the submenu to display the previously selected list will be distinguishable 
+		toggleClass(event.target, 'selected');
 
-	// Make the List menu title equal to submenu name selected
-	listMenuTitle.nodeValue = listNameSelected;
 
-	// The selected list name will have the "selected" class added to darken background so when 
-	// user hovers and gets the submenu to display the previously selected list will be distinguishable 
-	toggleClass(event.target, 'selected');
+		// Now display the taskItems associates with the new "active" task list
+		updateTaskListDisplayed (taskListId);
+		
+	}
 
 	
-	// Now display the taskItems associates with the new "active" task list
-	updateTaskListDisplayed (taskListId);
+
+
 
 };
 
@@ -753,16 +769,14 @@ var appModelController = (function () {
 	var taskListTable1 = [];
 	var taskItemsTable1 = [];
 	
-	var TaskList = function(listName) {
+	var TaskList = function(listId, listName, userId, totalTaskItemCount, overDueTaskItemCount, listCreateTime, taskListIsArchived) {
+		this.taskList_id = listId; 
 		this.taskList_name = listName;
-		
-//			"taskList_id" : "1",
-//			"user_id" : "1",
-//			"taskList_name" :	"All Lists",
-//			"taskList_totalCount" : 44,
-//			"taskList_overDueCount" : 18, 
-//			"taskList_createTime": "",
-//			"taskList_isArchived": ""
+		this.user_id = userId;
+		this.taskList_totalCount = totalTaskItemCount;
+		this.taskList_overDueCount = overDueTaskItemCount; 
+		this.taskList_createTime = listCreateTime;	
+		this.taskList_isArchived = taskListIsArchived;
 	}
 	
 	var TaskItem = function(id, listId, title, dueDate, repeat, createTime) {
@@ -1689,9 +1703,13 @@ var appUIController = (function () {
 			
 		}, 
 		
-		//*****************************************************************************************************
-		// updateAndDisplayPreDefinedTaskListTotals - Insert OverDueCount and TotalCounts into list totals from TaskListTable 
-		//*****************************************************************************************************
+		/*****************************************************************************************************
+			MODULE: appUIModule;
+			METHOD: updateAndDisplayPreDefinedTaskListTotals - Insert OverDueCount and TotalCounts into list totals 
+			from TaskListTable 
+			
+			
+		*****************************************************************************************************/
 		
 		updateAndDisplayPreDefinedTaskListTotals: function(taskListTable) {
 		
@@ -2086,7 +2104,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 //		}, false);
 		
 //		formSaveNewTask.addEventListener("submit",function (event) { appUIController.getNewTaskInput(event)}, false);
-		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddItem(event)}, true);
+		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);
 
  
 		/* Detects when the user exits form input field (blur event) and if user has entered/selected data then it adds the "filled" class so that any user
@@ -2106,7 +2124,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	}
 	
 	/***********************************************************************************
-		FUNCTION ctrlAddItem - manages process of adding a new taskItem to the app
+		MODULE:  appController
+		
+		FUNCTION ctrlAddTaskItem - manages process of adding a new taskItem to the app
 		
 		Trigger: User hits submit button on New Task Form
 		
@@ -2122,11 +2142,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
 
 	***********************************************************************************/
-	var ctrlAddItem = function(event) {
+	var ctrlAddTaskItem = function(event) {
 		
 		var saveWasSuccessful = true;
 		var msg = new Object(); 
-		console.log("++++++++++++ ctrlAddItem()");
+		console.log("++++++++++++ ctrlAddTaskItem()");
 		var newTaskItemInput, newTaskItemObject;
 		var taskListTable = appModelController.getTaskListTable(); 
 		
@@ -2179,6 +2199,31 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		}
 		
 
+	}
+	/***********************************************************************************
+		MODULE:  appController
+		
+		FUNCTION ctrlAddTaskList - manages process of adding a new Task List to the app
+		
+		Trigger: User hits submit button on one of the New Task Modal Windows
+			- subMenuTaskList menu
+			- newTaskForm
+			- editTaskForm
+		
+		Summary: 
+			Validate user data and styles form as needed 
+			Create new task record
+			Add it to newTask table
+			Generate "new taskItem added" success message or failure message
+			Display success/failure message
+			
+		UI Behavior: 
+			Close the New List modal upon successful validation of the new list name
+			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
+
+	***********************************************************************************/
+	var ctrlAddTaskList = function(event) {
+		
 	}
 	
 	/****************************************************************************************
@@ -2325,10 +2370,10 @@ appController.init();
 
 // Notes: TODOS for App
 /* 
-(1) I made need to allow data entry (maybe form submission) by allowing user to just hit enter key rather than having to click a specific button in the UI.  To do this I'll need the following logic in addition to the normal button event listener. Note: ctrlAddItem is method that provides logic for 
+(1) I made need to allow data entry (maybe form submission) by allowing user to just hit enter key rather than having to click a specific button in the UI.  To do this I'll need the following logic in addition to the normal button event listener. Note: ctrlAddTaskItem is method that provides logic for 
 handling the click event regardless of whether it were a button click or user hit return key. 
 
-function ctrlAddItem( ) {
+function ctrlAddTaskItem( ) {
 	// logic to handle button click or return key press
 }
 
@@ -2336,7 +2381,7 @@ document.addEventListener('keypress', function(event) {
 	// Note: event.which is used to accomodate older browsers
 	// 13 is value of return key press
 	if (event.keyCode === 13 || event.which === 13 ) {
-		ctrlAddItem(); 
+		ctrlAddTaskItem(); 
 	}
 
 })
