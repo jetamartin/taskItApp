@@ -1528,8 +1528,9 @@ var appUIController = (function () {
 		// Clear out existing Select list options each time to ensure that if any new list items 
 		clearOutSelectList(inputListName);
 		
-		// Populate list with TaskList Namesoptions:
-		for (var i = 1; i < taskListNames.length-1; i++) {
+		// $$$ Need to evaluate use of length-2...there may be a better way to solve 
+		// Populate list with TaskList Namesoptions: 
+		for (var i = 0; i < taskListNames.length; i++) {
 			var opt = taskListNames[i];
 			inputListName.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
 		}			
@@ -2181,7 +2182,7 @@ var appUIController = (function () {
 		removeUserDefinedTaskLists: function (userDefinedTaskLists) {
 			var subMenuListDOMNodes = document.querySelector(".taskListsSubMenu").getElementsByTagName("li");
 			
-			
+			// Got the following for;Each solution from https://css-tricks.com/snippets/javascript/loop-queryselectorall-matches/
 			// forEach method, could be shipped as part of an Object Literal/Module
 			var forEach = function (array, callback, scope) {
 				for (var i = 0; i < array.length; i++) {
@@ -2455,7 +2456,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		Trigger: User clicks the Floating PLUS symbol on main page
 		
 		Summary: 
-			New taskItem Form "List" drop down must be populated with ListNames 
+			New taskItem Form "List" drop down must be populated with ListNames but 
+			minus "All Lists" and "Completed" listnames
 	
 		UI Behavior: 
 			App is really a Single Page App (SPA) where parts of the app are displayed hidden
@@ -2467,8 +2469,16 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Create an array containing all of the TaskList Names
 		var taskListNames = appModelCtrl.getTaskListNames();
 		
+		// Build the listNames to display on New Task Form...
+		// Don't want to include "All Lists
+		var editedTaskListNames = taskListNames.filter(function(listName) {
+			if (listName !== "All Lists" && listName !== "Completed") {
+				return listName;
+			}
+		})
+		
 		// Build and Display the New task form  
-		appUICtrl.displayAddNewTaskForm(taskListNames); 
+		appUICtrl.displayAddNewTaskForm(editedTaskListNames); 
 		
 	}
 	
