@@ -769,10 +769,12 @@ var appModelController = (function () {
 	var taskListTable1 = [];
 	var taskItemsTable1 = [];
 	
-	var TaskList = function(listId, listName, userId, totalTaskItemCount, overDueTaskItemCount, listCreateTime, taskListIsArchived) {
+	var TaskList = function(listId, listName, userId, totalItemCount, overDueItemCount, listCreateTime, taskListIsArchived) {
 		this.taskList_id = listId; 
 		this.taskList_name = listName;
 		this.user_id = userId;
+		this.taskList_totalCount = totalItemCount;
+		this.taskList_overDueCount = overDueItemCount;
 		this.taskList_createTime = listCreateTime;	
 		this.taskList_isArchived = taskListIsArchived;
 	}
@@ -1159,6 +1161,15 @@ var appModelController = (function () {
 			"taskItem_createTime": ""	
 		}
 	];
+	Array.prototype.contains = function(element) {
+	var i;
+	for (i = 0; i < this.length; i++) {
+		if (this[i] === element) {
+			return i; //Returns element position, so it exists
+		}
+	}
+		return -1;
+	}
 	
 
 	return {
@@ -1191,7 +1202,8 @@ var appModelController = (function () {
 		}, 
 	
 		
-		getTaskListNames: function () {			
+		getTaskListNames: function () {
+			var sortedTaskListTable = appModelController.sortListByName(taskListTable);
 			var listNamesArray = taskListTable.reduce(function(namesList, listObj) {
 				namesList.push(listObj.taskList_name);
 				return namesList;
@@ -1264,6 +1276,8 @@ var appModelController = (function () {
 
 		*****************************************************************************************/
 		createNewTaskList: function (taskListInput ) {
+			var overDueCount = 0;
+			var totalListCount = 0;
 			console.log("*************** createNewTaskList()");
 			console.log("TaskListInput", taskListInput);
 
@@ -1271,16 +1285,25 @@ var appModelController = (function () {
 			// 1. Generate taskItem_Id and assign
 			var taskListId = getUniqueId();
 			console.log("TaskList ID: ", taskListId);
+			
+			// 2. Set is_Archived
+			taskListIsArchived = false;
 
-			// 2. Generate createTime
+			// 3. Generate createTime
 			var createTime = getTimeStamp();
+			
+			// 4. Task list userId
+			var userId = null;
 
 			return newTaskList = new TaskList(
 				taskListId, 
 				taskListInput.newTaskTitle,
-				taskListIsArchived,
-				createTime
-			) 
+				userId,
+				overDueCount,
+				totalListCount,
+				createTime,
+				taskListIsArchived
+			); 
 	
 		},
 		
@@ -1374,6 +1397,8 @@ var appModelController = (function () {
 			})
 		},
 		
+
+		
 		sortListByName: function (listToSort) {
 			// Sort all List alphabetically
 			listToSort.sort(function(a, b) {
@@ -1424,11 +1449,15 @@ var appUIController = (function () {
 	var navTaskListModalMessage = document.querySelector("#navTaskListModalMsg");
 	var newTaskFormListModalMessage = document.querySelector("#newTaskFormListModalMsg");
 	var editTaskFormListModalMessage = document.querySelector("#editTaskFormListModalMsg");
+	////////
+	var formNavTaskListModal = document.querySelector("#formNavTaskListModal");
 	
 	
 	var allListsElem = document.querySelector("#allListsElem");
 	var completedListElem = document.querySelector("#completedListElem");
 	var defaultListElem = document.querySelector(".defaultListElem");
+	
+	
 	
 	
 	/* aTaskInGroup - flag used when displaying a user selected task list to facilitate display of that list into "Due Date Groups". It's a flag (initially set to false) that is set to true if at least one taskItem in a user selected task is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header (e.g., "Over Due") and closing tag need to be generated for that Due Date Group.  This flag is reset to false each time the controller is invoked it is invoked because each invocation means that 	you have a new key/category. 
@@ -1564,20 +1593,21 @@ var appUIController = (function () {
 	return {
 		getUIVars: function() {
 			return {
-				inputNewTaskListName,
-				inputNewTaskTitle,
-				inputNewTaskDateTime,
-				inputNewTaskList,
-				inputNewTaskRepeat,
-				newTaskFormErrorMsg, 
-				newTaskSaveMessage, 				 
-				editTaskSaveMessage,
-				navTaskListModalMessage,
-				newTaskFormListModalMessage, 
-				editTaskFormListModalMessage,
-				allListsElem, 
-				completedListElem, 
-				defaultListElem
+				inputNewTaskListName: inputNewTaskListName,
+				inputNewTaskTitle: inputNewTaskTitle,
+				inputNewTaskDateTime: inputNewTaskDateTime,
+				inputNewTaskList: inputNewTaskList,
+				inputNewTaskRepeat: inputNewTaskRepeat,
+				newTaskFormErrorMsg: newTaskFormErrorMsg, 
+				newTaskSaveMessage: newTaskSaveMessage, 				 
+				editTaskSaveMessage: editTaskSaveMessage,
+				formNavTaskListModal: formNavTaskListModal,
+				navTaskListModalMessage: navTaskListModalMessage,
+				newTaskFormListModalMessage: newTaskFormListModalMessage, 
+				editTaskFormListModalMessage: editTaskFormListModalMessage,
+				allListsElem: allListsElem, 
+				completedListElem: completedListElem, 
+				defaultListElem: defaultListElem
 			}
 
 		}, 
@@ -2124,7 +2154,7 @@ var appUIController = (function () {
 			
 			
 			// Get all of the taskList from the taskListSubmenu 
-			var subMenuListDOMNodes = document.querySelector(".taskListsSubMenu").getElementsByTagName("li");
+			var subMenuListDOMNodes = document.querySelector(".taskListsSubMenu").querySelectorAll('li');
 			
 			// For each subMenuTask List element search for a matching listname in the taskListTable
 			// If a match is found update the DOM listcounts with those from the taskListTable
@@ -2146,7 +2176,33 @@ var appUIController = (function () {
 					listNode.querySelector(".listTotal").innerHTML = taskListTable[index].taskList_totalCount;
 				}
 			});  // End forEach Loop
-		}
+	
+		},
+		removeUserDefinedTaskLists: function (userDefinedTaskLists) {
+			var subMenuListDOMNodes = document.querySelector(".taskListsSubMenu").getElementsByTagName("li");
+			
+			
+			// forEach method, could be shipped as part of an Object Literal/Module
+			var forEach = function (array, callback, scope) {
+				for (var i = 0; i < array.length; i++) {
+				callback.call(scope, i, array[i]); // passes back stuff we need
+				}
+			};
+
+			
+			userDefinedTaskLists.forEach(function(udtlRecord) {
+				var udtlListName = udtlRecord.taskList_name;
+				forEach(subMenuListDOMNodes, function (index, listNode) {
+					var listName = listNode.innerText.replace(/[0-9]/g, '').trim();
+					if (udtlListName === listName) {
+						listNode.parentNode.removeChild(listNode);
+					}
+				});
+										
+			});
+	
+
+		}, 
 	}
 })();
 
@@ -2164,6 +2220,8 @@ var appUIController = (function () {
 //**************************************************************************************
 
 var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
+	
+	var userDefinedTaskLists = appModelController.getUserDefinedTaskList()
 	var setupEventListeners = function () {
 
 
@@ -2181,6 +2239,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		newTaskBackArrow.addEventListener("click", appUIController.exitNewTaskPage);	
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
 		addTaskResetButton.addEventListener("click", appUIController.resetNewTaskForm);
+
+		
 		
 		
 		/* Event Listener for Save button in Nav Menu bar. Note pressing 
@@ -2198,6 +2258,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 //		formSaveNewTask.addEventListener("submit",function (event) { appUIController.getTaskItemInput(event)}, false);
 		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);
+		
+		// NavBar Tasklist Modal
+		appUIController.getUIVars().formNavTaskListModal.addEventListener("submit", function(event) {ctrlAddTaskList(event)}, true); 
 
  
 		/* Detects when the user exits form input field (blur event) and if user has entered/selected data then it adds the "filled" class so that any user
@@ -2322,6 +2385,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		console.log("++++++++++++ ctrlAddTaskList()");
 		var newTaskListNameInput, newTaskListObject;
 		var taskListTable = appModelController.getTaskListTable();
+		var userDefinedList; 
 		
 		
 		//	Validate New Task Data
@@ -2337,6 +2401,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			// Add New task List object to New TaskList table	
 			appModelController.getTaskListTable().push(newTaskListObject);
 			
+			userDefinedTaskLists = appModelController.getUserDefinedTaskList()
+			;
+			// Sort the userDefinedTask List
+			appModelController.sortListByName(userDefinedTaskLists); 
+			
 			
 			// Save task object to local/Storage/DB			
 				// INSERT ---> DB call and or save to localStorage
@@ -2347,9 +2416,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Set success message 
 				msg.type = "success";
 				msg.text = "SUCCESS! Your list was added";
+			
+				// Remove existing UserDefined Task list from TaskListSubmenu
+				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
 				
 				// Regenerate UserDefined Task List on taskListSubmenu
-				appUIController.buildAndDisplayUserDefinedTaskList(appModelController.getUserDefinedTaskList());
+				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists);
 				
 			} else {
 				msg.type = "error";
@@ -2357,7 +2429,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			}
 			
 			// DisplaySaveMessage (success or failure message)
-			appUIController.displaySaveMessage(appUIController.navTaskListModalMessage, msg);
+			
+			appUIController.displaySaveMessage(appUIController.getUIVars().navTaskListModalMessage, msg);
 			
 			// Create log entry if failure
 			// TBD
