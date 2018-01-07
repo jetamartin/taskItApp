@@ -2301,7 +2301,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	***********************************************************************************/
 	var ctrlAddTaskItem = function(event) {
 		
-		var saveWasSuccessful = true;
 		var msg = new Object(); 
 		console.log("++++++++++++ ctrlAddTaskItem()");
 		var newTaskItemInput, newTaskItemObject;
@@ -2324,25 +2323,16 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			// INSERT ---> DB call and or save to localStorage
 		
 
-			if (saveWasSuccessful) {
+//			if (saveWasSuccessful) {
 				
 				// Set success message 
 				msg.type = "success";
 				msg.text = "Your Task Item was successfully saved!";
 				
 				// Upadate ALL totals on all lists *** May want to make this more surgical & update single list affected.
-				appModelController.updateListTaskTotals();
-				
-				
-			} else {
-				msg.type = "error";
-				msg.text = "ERROR! The Task Item was NOT saved";
-			}
-			
-			// DisplaySaveMessage (success or failure message)
-			appUIController.displaySaveMessage(appUIController.getUIVars().newTaskSaveMessage, msg);
-			// Create log entry if failure
-			
+				appModelController.updateListTaskTotals();		
+
+
 			// Reset values on new Task form
 			appUIController.resetNewTaskForm();
 			
@@ -2351,10 +2341,18 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 			
 			
-		} else {  // newTaskItemInput = null
-			console.log(newTaskItemInput);
+		} else {  // newTaskItemInput = null.....i.e., Error nothing entered or only spaces entered
+
+				// Create error message object
+				msg.type = "error";
+				msg.text = "ERROR! The Task Item was NOT saved";
+			
+				// Create log entry if failure
+				// Log Entry TBD
 		}
 		
+		// DisplaySaveMessage (success or failure message)
+		appUIController.displaySaveMessage(appUIController.getUIVars().newTaskSaveMessage, msg);
 
 	}
 	/***********************************************************************************
@@ -2402,8 +2400,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			// Add New task List object to New TaskList table	
 			appModelController.getTaskListTable().push(newTaskListObject);
 			
-			userDefinedTaskLists = appModelController.getUserDefinedTaskList()
-			;
+			userDefinedTaskLists = appModelController.getUserDefinedTaskList();
+			
 			// Sort the userDefinedTask List
 			appModelController.sortListByName(userDefinedTaskLists); 
 			
