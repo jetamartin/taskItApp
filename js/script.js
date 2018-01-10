@@ -1161,6 +1161,29 @@ var appModelController = (function () {
 			"taskItem_createTime": ""	
 		}
 	];
+	
+	
+  var formValidationObject = {
+	pageName: "navListModal",
+    formName : "formNavTaskListModal", 
+    formError : false,
+    fieldSubmitMsg : document.getElementById("navTaskListModalMsg"),
+	fieldSubmitSuccessMsg: "SUCCESS! Your list was added",
+	fieldSubmitErrorMsg: "ERROR! Your List was **NOT** added. TRY AGAIN",
+	
+    fieldsToValidate : [
+      {
+		fieldName: document.getElementById("navListModalListName"),
+		fieldErrorMsgLocation: document.getElementById("navListModalListNameErrorMsg"),
+		  //  fieldErrorMsgLocation
+        fieldErrMsg: "List name can't be blank",
+        isNotValid: function(str) {
+			return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+        }
+      }       
+    ]
+}
+
 	Array.prototype.contains = function(element) {
 	var i;
 	for (i = 0; i < this.length; i++) {
@@ -1173,6 +1196,9 @@ var appModelController = (function () {
 	
 
 	return {
+		getFormValidationObject: function ( )  {
+			return formValidationObject
+		},
 
 		getUserDefinedTaskListInfo: function() {
 			return userDefinedTaskListsInfo
@@ -1442,6 +1468,7 @@ var appUIController = (function () {
 	var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
 	var inputNewTaskList = document.querySelector("#newListNameSelection");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
+	var inputNavListModalListName = document.querySelector("#navListModalListName")
 	
 	var newTaskFormErrorMsg = document.querySelector(".newTaskFormErrorMsg");
 	var newTaskSaveMessage = document.querySelector("#newTaskSaveMsg");				 
@@ -1451,11 +1478,14 @@ var appUIController = (function () {
 	var editTaskFormListModalMessage = document.querySelector("#editTaskFormListModalMsg");
 	////////
 	var formNavTaskListModal = document.querySelector("#formNavTaskListModal");
+	var navListModalListNameErrorMsg = document.querySelector("#navListModalListNameErrorMsg");
+	
 	
 	
 	var allListsElem = document.querySelector("#allListsElem");
 	var completedListElem = document.querySelector("#completedListElem");
 	var defaultListElem = document.querySelector(".defaultListElem");
+	var newListCancelBtn = document.querySelector(".newListCancelBtn"); 
 	
 	
 	
@@ -1599,8 +1629,11 @@ var appUIController = (function () {
 				inputNewTaskDateTime: inputNewTaskDateTime,
 				inputNewTaskList: inputNewTaskList,
 				inputNewTaskRepeat: inputNewTaskRepeat,
+				inputNavListModalListName: inputNavListModalListName,
 				newTaskFormErrorMsg: newTaskFormErrorMsg, 
-				newTaskSaveMessage: newTaskSaveMessage, 				 
+				newTaskSaveMessage: newTaskSaveMessage,
+				navListModalListNameErrorMsg: navListModalListNameErrorMsg,
+				
 				editTaskSaveMessage: editTaskSaveMessage,
 				formNavTaskListModal: formNavTaskListModal,
 				navTaskListModalMessage: navTaskListModalMessage,
@@ -1608,7 +1641,8 @@ var appUIController = (function () {
 				editTaskFormListModalMessage: editTaskFormListModalMessage,
 				allListsElem: allListsElem, 
 				completedListElem: completedListElem, 
-				defaultListElem: defaultListElem
+				defaultListElem: defaultListElem,
+				newListCancelBtn: newListCancelBtn
 			}
 
 		}, 
@@ -1650,7 +1684,30 @@ var appUIController = (function () {
 				resetFormError();
 			}
 		}, 
-		
+		clearTaskListModalFormErrors: function (event) {
+			console.log("=========> clearTaskListModalFormErrors"); 
+			var taskListModalFormObject = appModelController.getFormValidationObject();
+			if (taskListModalFormObject.formError) {
+				taskListModalFormObject.formError = false;
+				
+				taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation.innerHTML = "";
+				// Input box border red
+				toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldName, "formErrors");
+				
+				// Error message text red
+				toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation, "errorMsg");
+				
+				// Reset taskList Form
+				event.target.form.reset();
+			}
+
+			// Use event.target to retrive the right formObject so formError can be reset
+	
+			// 
+//			if (formError ) {
+//				resetFormError();
+//			}
+		}, 
 		
 		/********************************************************************************
 			METHOD:  exitTaskPage()  -- Primary method 
@@ -2240,6 +2297,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		newTaskBackArrow.addEventListener("click", appUIController.exitNewTaskPage);	
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
 		addTaskResetButton.addEventListener("click", appUIController.resetNewTaskForm);
+		
 
 		
 		
@@ -2277,6 +2335,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		*/
 		
 		document.getElementById("newTaskTitle").addEventListener("keydown", appUIController.clearTaskItemError);
+		
+		// Maybe change to class rather than ID.
+		document.getElementById("navListModalListName").addEventListener("keydown", function(event) { appUIController.clearTaskListModalFormErrors(event)}, true);
 
 	}
 	
@@ -2356,6 +2417,99 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	}
 	/***********************************************************************************
+		MODULE:  appUIController???
+		
+		FUNCTION validateFormUpdate - validates form input upon submission and if errors
+			it applies appropriate error messages to errant fields and sets form message
+		
+		Trigger: User hits submit button on form
+		
+		Summary: 
+
+			
+		UI Behavior: 
+
+
+	***********************************************************************************/
+	
+	var validateFormInput = function(validationObject) {
+		console.log("========> validateFormInput")
+		
+		// For each field on the form validate each field's input and 
+		// generate and style error messages
+		validationObject.fieldsToValidate.forEach (function(field) {
+			if (field.isNotValid(field.fieldName.value)) {
+				field.fieldErrorMsgLocation.innerHTML = field.fieldErrMsg;
+				
+				// Input box border red
+				toggleClass(field.fieldName, "formErrors");
+				
+				// Error message text red
+				toggleClass(field.fieldErrorMsgLocation, "errorMsg");
+				
+				// If non-valid entry detected put cursor inside and at beginning of input field so user can make needed changes.
+//				$('.modal').on('shown.bs.modal', function() {
+//						$(this).find('[autofocus]').focus();
+				});
+//				field.fieldName.value = "";
+				field.fieldName.focus();
+				field.fieldName.setSelectionRange(0,0);
+//				field.fieldName.focus();
+				
+				// Set form validationObject to true to indicate that
+				// at least one error message was found on the form 
+				// and that Form Error message should be displayed on submit
+				validationObject.formError = true;		
+			} else {
+				
+				// Change color of List name entered by user
+				field.fieldName.classList.add("filled");
+			}
+			
+		});
+		
+		// Handle form submission success or error
+		if (validationObject.formError) {
+			console.log("Error detected on form");
+			// Display the form submittal Error messsage
+//			validationObject.fieldSubmitMsg.innerHTML = validationObject.fieldSubmitErrorMsg;
+//			validationObject.fieldSubmitMsg.classList.add("error-message");
+			
+		} else { // All form input was valid
+			console.log("No errors detected on form");
+			// Display form success message
+			validationObject.fieldSubmitMsg.innerHTML = validationObject.fieldSubmitSuccessMsg;
+			validationObject.fieldSubmitMsg.classList.add("success-message");
+			
+
+			
+			// Do other stuff when all form input is valid
+			//
+			//
+			//
+			
+			
+			// After fadeout animation ends we need to reset message so animation will work on subsequent saves
+			setTimeout(function () {
+				
+				// Close the form by virtually clicking on cancel button
+				appUIController.getUIVars().newListCancelBtn.click();
+				
+				// Must remove the success-message class otherwise it will not appear on future saves 
+				validationObject.fieldSubmitMsg.innerHTML = "";
+				validationObject.fieldSubmitMsg.classList.remove("success-message");
+				// Reset the form
+				document.getElementById(validationObject.formName).reset();
+				$('.modal').on('shown.bs.modal', function() {
+						$(this).find('[autofocus]').focus();
+				});
+			}, 2000);
+
+			
+		}		
+
+	}
+	/***********************************************************************************
 		MODULE:  appController
 		
 		FUNCTION ctrlAddTaskList - manages process of adding a new Task List to the app
@@ -2378,6 +2532,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	***********************************************************************************/
 	var ctrlAddTaskList = function(event) {
+	 	event.preventDefault();
+     	event.stopPropagation();
+		
+		var navNewTaskListFormObject = appModelController.getFormValidationObject();
 		
 		var saveWasSuccessful = true;
 		var msg = new Object(); 
@@ -2386,65 +2544,72 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		var taskListTable = appModelController.getTaskListTable();
 		var userDefinedList; 
 		
+		$('#navNewListModal').on('shown.bs.modal', function () {
+//			$('#navListModalListName').focus()
+			$(this).find('[autofocus]').focus();
+		})
 		
 		//	Validate New Task Data
-		newTaskListNameInput = appUIController.getTaskListInput(event);
-		
-		if (newTaskListNameInput != null ) {
-			console.log(newTaskListNameInput);
+//		newTaskListNameInput = appUIController.getUIVars().inputNewTaskListName.value.trim();
 
-			// Create New Task Object  (create required fields for object e.g., unique taskItemId, assign taskListId, etc)
-			newTaskListObject = appModelController.createNewTaskList(newTaskListNameInput);
-			
-			
-			// Add New task List object to New TaskList table	
-			appModelController.getTaskListTable().push(newTaskListObject);
-			
-			userDefinedTaskLists = appModelController.getUserDefinedTaskList();
-			
-			// Sort the userDefinedTask List
-			appModelController.sortListByName(userDefinedTaskLists); 
-			
-			
-			// Save task object to local/Storage/DB			
-				// INSERT ---> DB call and or save to localStorage
+		validateFormInput(navNewTaskListFormObject); 
 		
-
-			if (saveWasSuccessful) {
-				
-				// Set success message 
-				msg.type = "success";
-				msg.text = "SUCCESS! Your list was added";
-			
-				// Remove existing UserDefined Task list from TaskListSubmenu
-				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
-				
-				// Regenerate UserDefined Task List on taskListSubmenu
-				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists);
-				
-			} else {
-				msg.type = "error";
-				msg.text = "ERROR! Your List was **NOT** added. TRY AGAIN";
-			}
-			
-			// DisplaySaveMessage (success or failure message)
-			
-			appUIController.displaySaveMessage(appUIController.getUIVars().navTaskListModalMessage, msg);
-			
-			// Create log entry if failure
-			// TBD
-			
-			// Reset values on new Task form
-//			appUIController.resetNewTaskForm();
-			
-//			// Regenerate UserDefinedTaskList 
-//			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
+		
+//		if (newTaskListNameInput != null ) {
+//			console.log(newTaskListNameInput);
+//
+//			// Create New Task Object  (create required fields for object e.g., unique taskItemId, assign taskListId, etc)
+//			newTaskListObject = appModelController.createNewTaskList(newTaskListNameInput);
+//			
+//			
+//			// Add New task List object to New TaskList table	
+//			appModelController.getTaskListTable().push(newTaskListObject);
+//			
+//			userDefinedTaskLists = appModelController.getUserDefinedTaskList();
+//			
+//			// Sort the userDefinedTask List
+//			appModelController.sortListByName(userDefinedTaskLists); 
+//			
+//			
+//			// Save task object to local/Storage/DB			
+//				// INSERT ---> DB call and or save to localStorage
 //		
+//
+//			if (saveWasSuccessful) {
+//				
+//				// Set success message 
+//				msg.type = "success";
+//				msg.text = "SUCCESS! Your list was added";
 //			
+//				// Remove existing UserDefined Task list from TaskListSubmenu
+//				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
+//				
+//				// Regenerate UserDefined Task List on taskListSubmenu
+//				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists);
+//				
+//			} else {
+//				msg.type = "error";
+//				msg.text = "ERROR! Your List was **NOT** added. TRY AGAIN";
+//			}
 //			
-		} else {  // newTaskListNameInput = null
-			console.log(newTaskListNameInput);
-		}
+//			// DisplaySaveMessage (success or failure message)
+//			
+//			appUIController.displaySaveMessage(appUIController.getUIVars().navTaskListModalMessage, msg);
+//			
+//			// Create log entry if failure
+//			// TBD
+//			
+//			// Reset values on new Task form
+////			appUIController.resetNewTaskForm();
+//			
+////			// Regenerate UserDefinedTaskList 
+////			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
+////		
+////			
+////			
+//		} else {  // newTaskListNameInput = null
+//			console.log(newTaskListNameInput);
+//		}
 
 	}
 	/****************************************************************************************
@@ -2474,6 +2639,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				return listName;
 			}
 		})
+		
 		
 		// Build and Display the New task form  
 		appUICtrl.displayAddNewTaskForm(editedTaskListNames); 

@@ -36,7 +36,7 @@
 						<li id="completedListElem"><i class="fa fa-list-ul" aria-hidden="true"></i>
 						   Completed<span class="overDue">0</span><span class="listTotal">0</span>
 					  	</li>	
-						<a data-toggle="modal" data-target="#addNewListModal" id="navNewListModalHandle">
+						<a data-toggle="modal" data-target="#navListModal" id="navNewListModalHandle">
 							<li>
 								<span class="newList fa-stack">
 							<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
@@ -81,7 +81,7 @@
 		<!-- Navbar Add New List Modal -->
 			
 			
-		<div class="modal" id="addNewListModal">
+		<div class="modal" id="navListModal">
 			<div class="modal-dialog modal-sm" role="document">
 				<!-- Modal content-->
 				<div class="modal-content">
@@ -98,11 +98,12 @@
 						<form id="formNavTaskListModal">
 							<div class="form-group">
 								<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
-								<input type="text" class="form-control" id="newTaskListName" placeholder="Enter new list name" required autofocus>
+								<input type="text" class="form-control" id="navListModalListName" placeholder="Enter new list name" required autofocus>
 							</div>
+							<div id="navListModalListNameErrorMsg"></div>
 							<div class="modal-footer button-group">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-								<button type="submit" class="btn btn-default takeActionBtn">Add</button>
+								<button type="button" class="btn btn-default newListCancelBtn" data-dismiss="modal" >Cancel</button>
+								<button type="submit" class="btn btn-default takeActionBtn" >Add</button>
 							</div>
 						</form>
 					</div>
@@ -277,7 +278,7 @@
 								<form>
 									<div class="form-group">
 										<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
-										<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name">
+										<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name" autofocus>
 									</div>
 									<div class="modal-footer button-group">
 										<button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>

@@ -722,7 +722,9 @@
 	
 	/* Class applied once user has entered text in input field of form */
 	#formSaveNewTask input[type="text"].filled,
-	#formSaveNewTask select.filled
+	#formSaveNewTask select.filled,
+	input[type="text"].filled,
+	select.filled
 	{
 		color: #636c72;
     	font-style: normal;
