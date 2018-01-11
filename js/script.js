@@ -1684,6 +1684,9 @@ var appUIController = (function () {
 				resetFormError();
 			}
 		}, 
+		
+		/* WILL NEED TO MAKE THIS METHOD MORE GENERIC */
+		
 		clearTaskListModalFormErrors: function (event) {
 			console.log("=========> clearTaskListModalFormErrors"); 
 			var taskListModalFormObject = appModelController.getFormValidationObject();
@@ -1698,7 +1701,7 @@ var appUIController = (function () {
 				toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation, "errorMsg");
 				
 				// Reset taskList Form
-				event.target.form.reset();
+//				event.target.form.reset();
 			}
 
 			// Use event.target to retrive the right formObject so formError can be reset
@@ -2298,10 +2301,28 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
 		addTaskResetButton.addEventListener("click", appUIController.resetNewTaskForm);
 		
-
+		// Clears ALL Modal form input fields when form is closed
+		// Also clears error messages and error formatting
+		$('#navListModal').on('hidden.bs.modal', function (e) {
+		  $(this)
+			.find("input,textarea,select")
+			   .val('')
+			   .end()
+			.find("input[type=checkbox], input[type=radio]")
+			   .prop("checked", "")
+			   .end();
+			// Clear any error messages and error formatting
+			appUIController.clearTaskListModalFormErrors(e);
+			
+		});
 		
+		// Got the following solution from stackoverflow:
+		// https://stackoverflow.com/questions/15474862/twitter-bootstrap-modal-input-field-focus/20435473
+		$('.modal').on('shown.bs.modal', function () {
+				$(this).find('input:text:visible:first').focus();
+		});
 		
-		
+	
 		/* Event Listener for Save button in Nav Menu bar. Note pressing 
 			this Nav save button should yield the same exact results as pressing
 			the Save button at the bottom of the New Task Form
@@ -2337,6 +2358,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		document.getElementById("newTaskTitle").addEventListener("keydown", appUIController.clearTaskItemError);
 		
 		// Maybe change to class rather than ID.
+		// When ever user starts to enter text in input area clear error messages
 		document.getElementById("navListModalListName").addEventListener("keydown", function(event) { appUIController.clearTaskListModalFormErrors(event)}, true);
 
 	}
@@ -2420,9 +2442,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		MODULE:  appUIController???
 		
 		FUNCTION validateFormUpdate - validates form input upon submission and if errors
-			it applies appropriate error messages to errant fields and sets form message
+			it applies appropriate error messages & styling to errant fields 
 		
-		Trigger: User hits submit button on form
+		Trigger: Only triggered when user hits submit button on form
 		
 		Summary: 
 
@@ -2430,15 +2452,18 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		UI Behavior: 
 
 
+
 	***********************************************************************************/
 	
 	var validateFormInput = function(validationObject) {
 		console.log("========> validateFormInput")
 		
+		
 		// For each field on the form validate each field's input and 
 		// generate and style error messages
 		validationObject.fieldsToValidate.forEach (function(field) {
 			if (field.isNotValid(field.fieldName.value)) {
+				// Add error message under field in error
 				field.fieldErrorMsgLocation.innerHTML = field.fieldErrMsg;
 				
 				// Input box border red
@@ -2447,22 +2472,17 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Error message text red
 				toggleClass(field.fieldErrorMsgLocation, "errorMsg");
 				
-				// If non-valid entry detected put cursor inside and at beginning of input field so user can make needed changes.
-//				$('.modal').on('shown.bs.modal', function() {
-//						$(this).find('[autofocus]').focus();
-				});
-//				field.fieldName.value = "";
+
 				field.fieldName.focus();
 				field.fieldName.setSelectionRange(0,0);
 //				field.fieldName.focus();
 				
 				// Set form validationObject to true to indicate that
-				// at least one error message was found on the form 
-				// and that Form Error message should be displayed on submit
+				// at least one error was found 
 				validationObject.formError = true;		
 			} else {
 				
-				// Change color of List name entered by user
+				// Change color of List name text to differentiate it from placeholder text
 				field.fieldName.classList.add("filled");
 			}
 			
@@ -2476,9 +2496,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 //			validationObject.fieldSubmitMsg.classList.add("error-message");
 			
 		} else { // All form input was valid
+			
+
 			console.log("No errors detected on form");
-			// Display form success message
+			// Display form success message 
 			validationObject.fieldSubmitMsg.innerHTML = validationObject.fieldSubmitSuccessMsg;
+			
+			// Style the success message
 			validationObject.fieldSubmitMsg.classList.add("success-message");
 			
 
@@ -2489,7 +2513,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			//
 			
 			
-			// After fadeout animation ends we need to reset message so animation will work on subsequent saves
+			// After fadeout animation ends we need to reset message 
 			setTimeout(function () {
 				
 				// Close the form by virtually clicking on cancel button
@@ -2498,6 +2522,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Must remove the success-message class otherwise it will not appear on future saves 
 				validationObject.fieldSubmitMsg.innerHTML = "";
 				validationObject.fieldSubmitMsg.classList.remove("success-message");
+				
 				// Reset the form
 				document.getElementById(validationObject.formName).reset();
 				$('.modal').on('shown.bs.modal', function() {
@@ -2527,8 +2552,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			Display success/failure message
 			
 		UI Behavior: 
-			Close the New List modal upon successful validation of the new list name
-			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
+			- When user "submits" a valid Task List a success message is displayed
+			on the modal window for several seconds and then the modal is closed.
+			- An alternative approach could be to immediately close the modal if a
+			a valid Task List Name is entered and display the success message at the 
+			top of the Main page. 
+			Consideration: Consistency of this behaviour with other forms (e.g., AddNewTaskItem/EditItem form)
 
 	***********************************************************************************/
 	var ctrlAddTaskList = function(event) {
