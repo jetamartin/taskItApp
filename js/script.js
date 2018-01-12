@@ -1163,26 +1163,48 @@ var appModelController = (function () {
 	];
 	
 	
-  var formValidationObject = {
-	pageName: "navListModal",
-    formName : "formNavTaskListModal", 
-    formError : false,
-    fieldSubmitMsg : document.getElementById("navTaskListModalMsg"),
-	fieldSubmitSuccessMsg: "SUCCESS! Your list was added",
-	fieldSubmitErrorMsg: "ERROR! Your List was **NOT** added. TRY AGAIN",
+//  var formValidationObject = {
+//	pageName: "navListModal",
+//    formName : "formNavTaskListModal", 
+//    formError : false,
+//    fieldSubmitMsg : document.getElementById("navTaskListModalMsg"),
+//	fieldSubmitSuccessMsg: "SUCCESS! Your list was added",
+//	fieldSubmitErrorMsg: "ERROR! Your List was **NOT** added. TRY AGAIN",
+//	
+//    fieldsToValidate : [
+//      {
+//		fieldName: document.getElementById("navListModalListName"),
+//		fieldErrorMsgLocation: document.getElementById("navListModalListNameErrorMsg"),
+//		  //  fieldErrorMsgLocation
+//        fieldErrMsg: "List name can't be blank",
+//        isNotValid: function(str) {
+//			return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+//        }
+//      }       
+//    ]
+//  }
 	
-    fieldsToValidate : [
-      {
-		fieldName: document.getElementById("navListModalListName"),
-		fieldErrorMsgLocation: document.getElementById("navListModalListNameErrorMsg"),
-		  //  fieldErrorMsgLocation
-        fieldErrMsg: "List name can't be blank",
-        isNotValid: function(str) {
-			return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
-        }
-      }       
-    ]
-}
+  var formValidationObject = [
+	{  
+		pageName: "navListModal",
+		formName : "formNavTaskListModal", 
+		formError : false,
+		fieldSubmitMsg : document.getElementById("navTaskListModalMsg"),
+		fieldSubmitSuccessMsg: "SUCCESS! Your list was added",
+		fieldSubmitErrorMsg: "ERROR! Your List was **NOT** added. TRY AGAIN",
+
+		fieldsToValidate : [
+		  {
+			fieldName: document.getElementById("navListModalListName"),
+			fieldErrorMsgLocation: document.getElementById("navListModalListNameErrorMsg"),
+			fieldErrMsg: "List name can't be blank",
+			isNotValid: function(str) {
+				return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+			}
+		  }       
+		]
+	}
+  ]
 
 	Array.prototype.contains = function(element) {
 	var i;
@@ -1196,8 +1218,15 @@ var appModelController = (function () {
 	
 
 	return {
-		getFormValidationObject: function ( )  {
-			return formValidationObject
+//		getFormValidationObject: function ( )  {
+//			return formValidationObject
+//		},
+		
+		getFormValidationObject: function (formName )  {
+			var formObj;
+			return formObj = formValidationObject.filter (function(formObject) {
+				return formObject.formName === formName;
+			} )
 		},
 
 		getUserDefinedTaskListInfo: function() {
@@ -2455,10 +2484,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	***********************************************************************************/
 	
-	var validateFormInput = function(validationObject) {
+	var validateFormInput = function(formValidationObject) {
 		console.log("========> validateFormInput")
 		
-		
+		var validationObject = formValidationObject[0];
 		// For each field on the form validate each field's input and 
 		// generate and style error messages
 		validationObject.fieldsToValidate.forEach (function(field) {
@@ -2466,13 +2495,19 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Add error message under field in error
 				field.fieldErrorMsgLocation.innerHTML = field.fieldErrMsg;
 				
-				// Input box border red
-				toggleClass(field.fieldName, "formErrors");
+				// No need to add error styling if error styling already in place
 				
-				// Error message text red
-				toggleClass(field.fieldErrorMsgLocation, "errorMsg");
-				
+				if (!validationObject.formError) {
+					// Input box border red
+					toggleClass(field.fieldName, "formErrors");
 
+					// Error message text red
+					toggleClass(field.fieldErrorMsgLocation, "errorMsg");					
+					
+				}
+				
+				$(validationObject.fieldName).focus();
+				
 				field.fieldName.focus();
 				field.fieldName.setSelectionRange(0,0);
 //				field.fieldName.focus();
@@ -2523,11 +2558,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				validationObject.fieldSubmitMsg.innerHTML = "";
 				validationObject.fieldSubmitMsg.classList.remove("success-message");
 				
-				// Reset the form
-				document.getElementById(validationObject.formName).reset();
-				$('.modal').on('shown.bs.modal', function() {
-						$(this).find('[autofocus]').focus();
-				});
+//				// Reset the form
+//				document.getElementById(validationObject.formName).reset();
+//				$('.modal').on('shown.bs.modal', function() {
+//						$(this).find('[autofocus]').focus();
+//				});
 			}, 2000);
 
 			
@@ -2564,7 +2599,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	 	event.preventDefault();
      	event.stopPropagation();
 		
-		var navNewTaskListFormObject = appModelController.getFormValidationObject();
+		var formValidationObj = appModelController.getFormValidationObject(event.target.id);
 		
 		var saveWasSuccessful = true;
 		var msg = new Object(); 
@@ -2581,7 +2616,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		//	Validate New Task Data
 //		newTaskListNameInput = appUIController.getUIVars().inputNewTaskListName.value.trim();
 
-		validateFormInput(navNewTaskListFormObject); 
+		validateFormInput(formValidationObj); 
 		
 		
 //		if (newTaskListNameInput != null ) {
