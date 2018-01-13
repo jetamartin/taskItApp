@@ -746,6 +746,17 @@ return {
 		return -1; //The element isn't in your array
 		}
 		return list.hasElement(listName);
+	},
+	/* Given a DOM node (element) it returns the closest ancestor of that
+		node with a specific class name										*/
+	findAncestor: function (el, cls) {
+		// First check to see if the node (el) is the ancestor I'm looking for
+		if (el.className === cls) {
+			return el
+		} else { // loop through each parent to find the ancestor
+			while ((el = el.parentElement) && !el.classList.contains(cls));
+			return el;
+		}
 	}
 
 }
@@ -1222,10 +1233,10 @@ var appModelController = (function () {
 //			return formValidationObject
 //		},
 		
-		getFormValidationObject: function (formName )  {
+		getFormValidationObject: function (pageName )  {
 			var formObj;
 			return formObj = formValidationObject.filter (function(formObject) {
-				return formObject.formName === formName;
+				return formObject.pageName === pageName;
 			} )
 		},
 
@@ -1714,31 +1725,44 @@ var appUIController = (function () {
 			}
 		}, 
 		
-		/* WILL NEED TO MAKE THIS METHOD MORE GENERIC */
+		/* $$$$ WILL NEED TO MAKE THIS METHOD MORE GENERIC 
+		
+			Specifically need to use event to get the Modals div id OR the id of the form and that needs
+			to be passed into getformValidationObject() method to the retrieve the right formValidationOject
+		
+		*/
 		
 		clearTaskListModalFormErrors: function (event) {
-			console.log("=========> clearTaskListModalFormErrors"); 
-			var taskListModalFormObject = appModelController.getFormValidationObject();
-			if (taskListModalFormObject.formError) {
-				taskListModalFormObject.formError = false;
+			var modalPage, modalPageId;
+			console.log("=========> clearTaskListModalFormErrors");
+			
+
+			var modalPage = utilMethods.findAncestor(event.currentTarget, 'modal'); 
+			
+			if (modalPage) {
+				modalPageId = modalPage.id;
 				
-				taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation.innerHTML = "";
-				// Input box border red
-				toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldName, "formErrors");
-				
-				// Error message text red
-				toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation, "errorMsg");
-				
-				// Reset taskList Form
-//				event.target.form.reset();
+				var taskListModalFormObj = appModelController.getFormValidationObject(modalPageId);
+			
+				/* If no matching taskModalFormObj record found then skip logic below...
+				In theory there should always be a match but for some reason this method is called
+				*/
+	//			if (taskListModalFormObj.length > 0 ) {
+					var taskListModalFormObject = taskListModalFormObj[0];
+					if (taskListModalFormObject.formError) {
+						taskListModalFormObject.formError = false;
+
+						taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation.innerHTML = "";
+						// Input box border red
+						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldName, "formErrors");
+
+						// Error message text red
+						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation, "errorMsg");
+					}
+	//			}
+		
 			}
 
-			// Use event.target to retrive the right formObject so formError can be reset
-	
-			// 
-//			if (formError ) {
-//				resetFormError();
-//			}
 		}, 
 		
 		/********************************************************************************
@@ -2332,6 +2356,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		// Clears ALL Modal form input fields when form is closed
 		// Also clears error messages and error formatting
+		
 		$('#navListModal').on('hidden.bs.modal', function (e) {
 		  $(this)
 			.find("input,textarea,select")
@@ -2341,6 +2366,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			   .prop("checked", "")
 			   .end();
 			// Clear any error messages and error formatting
+			var test = document.querySelector("div").closest(".modal");
 			appUIController.clearTaskListModalFormErrors(e);
 			
 		});
@@ -2369,7 +2395,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);
 		
 		// NavBar Tasklist Modal
-		appUIController.getUIVars().formNavTaskListModal.addEventListener("submit", function(event) {ctrlAddTaskList(event)}, true); 
+		appUIController.getUIVars().formNavTaskListModal.addEventListener("submit", function(event) {ctrlAddTaskList(event)}); 
 
  
 		/* Detects when the user exits form input field (blur event) and if user has entered/selected data then it adds the "filled" class so that any user
@@ -2380,15 +2406,15 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		formSaveNewTask.addEventListener("blur", function(event) { appUIController.styleUserFormInput(event) }, true);
 		
 		/* 
-			If the NewTask Title field was has "error styling" you want to remove
+			If the NewTask Title on New Task Form field was has "error styling" you want to remove
 			that form's error styling once the user starts entering in a new value (keydown) in that field.   
 		*/
 		
 		document.getElementById("newTaskTitle").addEventListener("keydown", appUIController.clearTaskItemError);
 		
-		// Maybe change to class rather than ID.
-		// When ever user starts to enter text in input area clear error messages
-		document.getElementById("navListModalListName").addEventListener("keydown", function(event) { appUIController.clearTaskListModalFormErrors(event)}, true);
+		// $$$$$ Maybe change to class rather than ID.
+		// For Task List Modal - Clear prior error messages that may exist when user starts to enter Task List Name in Task List Modal form  
+		document.getElementById("navListModalListName").addEventListener("keydown", function(event) { appUIController.clearTaskListModalFormErrors(event)}, false);
 
 	}
 	
@@ -2599,7 +2625,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	 	event.preventDefault();
      	event.stopPropagation();
 		
-		var formValidationObj = appModelController.getFormValidationObject(event.target.id);
+		var modalPageId = utilMethods.findAncestor(event.currentTarget, 'modal').id;
+		
+		
+		var formValidationObj = appModelController.getFormValidationObject(modalPageId);
 		
 		var saveWasSuccessful = true;
 		var msg = new Object(); 
