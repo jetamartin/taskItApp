@@ -1363,7 +1363,7 @@ var appModelController = (function () {
 
 			return newTaskList = new TaskList(
 				taskListId, 
-				taskListInput.newTaskTitle,
+				taskListInput,
 				userId,
 				overDueCount,
 				totalListCount,
@@ -2395,6 +2395,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);
 		
 		// NavBar Tasklist Modal
+		// $$$$  May need to make this more generic 
 		appUIController.getUIVars().formNavTaskListModal.addEventListener("submit", function(event) {ctrlAddTaskList(event)}); 
 
  
@@ -2514,85 +2515,45 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		console.log("========> validateFormInput")
 		
 		var validationObject = formValidationObject[0];
+		
 		// For each field on the form validate each field's input and 
 		// generate and style error messages
 		validationObject.fieldsToValidate.forEach (function(field) {
+			
+			// Error found in input field - Set error message and error styling
 			if (field.isNotValid(field.fieldName.value)) {
-				// Add error message under field in error
-				field.fieldErrorMsgLocation.innerHTML = field.fieldErrMsg;
 				
-				// No need to add error styling if error styling already in place
 				
-				if (!validationObject.formError) {
+				// Set form validationObject to true to indicate that
+				// at least one error was found 
+				validationObject.formError = true;
+				
+				// If error message hasn't been set then add to form and style it
+				if (field.fieldErrorMsgLocation.innerHTML == "") {		
+					
+					// Set error message for field on form
+					field.fieldErrorMsgLocation.innerHTML = field.fieldErrMsg;
+					
 					// Input box border red
 					toggleClass(field.fieldName, "formErrors");
 
 					// Error message text red
-					toggleClass(field.fieldErrorMsgLocation, "errorMsg");					
+					toggleClass(field.fieldErrorMsgLocation, "errorMsg");
 					
-				}
-				
-				$(validationObject.fieldName).focus();
-				
+				} 
+
+				// Keep focus on error field
 				field.fieldName.focus();
 				field.fieldName.setSelectionRange(0,0);
-//				field.fieldName.focus();
-				
-				// Set form validationObject to true to indicate that
-				// at least one error was found 
-				validationObject.formError = true;		
-			} else {
+		
+			} else {  // No error was 
 				
 				// Change color of List name text to differentiate it from placeholder text
 				field.fieldName.classList.add("filled");
 			}
 			
 		});
-		
-		// Handle form submission success or error
-		if (validationObject.formError) {
-			console.log("Error detected on form");
-			// Display the form submittal Error messsage
-//			validationObject.fieldSubmitMsg.innerHTML = validationObject.fieldSubmitErrorMsg;
-//			validationObject.fieldSubmitMsg.classList.add("error-message");
-			
-		} else { // All form input was valid
-			
-
-			console.log("No errors detected on form");
-			// Display form success message 
-			validationObject.fieldSubmitMsg.innerHTML = validationObject.fieldSubmitSuccessMsg;
-			
-			// Style the success message
-			validationObject.fieldSubmitMsg.classList.add("success-message");
-			
-
-			
-			// Do other stuff when all form input is valid
-			//
-			//
-			//
-			
-			
-			// After fadeout animation ends we need to reset message 
-			setTimeout(function () {
-				
-				// Close the form by virtually clicking on cancel button
-				appUIController.getUIVars().newListCancelBtn.click();
-				
-				// Must remove the success-message class otherwise it will not appear on future saves 
-				validationObject.fieldSubmitMsg.innerHTML = "";
-				validationObject.fieldSubmitMsg.classList.remove("success-message");
-				
-//				// Reset the form
-//				document.getElementById(validationObject.formName).reset();
-//				$('.modal').on('shown.bs.modal', function() {
-//						$(this).find('[autofocus]').focus();
-//				});
-			}, 2000);
-
-			
-		}		
+	
 
 	}
 	/***********************************************************************************
@@ -2622,87 +2583,107 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	***********************************************************************************/
 	var ctrlAddTaskList = function(event) {
+		console.log("++++++++++++ ctrlAddTaskList()");
+
 	 	event.preventDefault();
      	event.stopPropagation();
 		
+		// Represents results from attempting to save Task List record to DB/local storage
+		var saveWasSuccessful = true; // Default value is true
+		
+		var newTaskListNameInput, newTaskListObject;
+		var userDefinedList;
+
+		
+		// Find the "root" node of the modal page so that I can get ID of which modal fired 
 		var modalPageId = utilMethods.findAncestor(event.currentTarget, 'modal').id;
 		
-		
+		// Using the modal page ID look up the form validation object
 		var formValidationObj = appModelController.getFormValidationObject(modalPageId);
-		
-		var saveWasSuccessful = true;
-		var msg = new Object(); 
-		console.log("++++++++++++ ctrlAddTaskList()");
-		var newTaskListNameInput, newTaskListObject;
+
+
 		var taskListTable = appModelController.getTaskListTable();
-		var userDefinedList; 
-		
-		$('#navNewListModal').on('shown.bs.modal', function () {
-//			$('#navListModalListName').focus()
-			$(this).find('[autofocus]').focus();
-		})
-		
-		//	Validate New Task Data
-//		newTaskListNameInput = appUIController.getUIVars().inputNewTaskListName.value.trim();
+
 
 		validateFormInput(formValidationObj); 
 		
+		// If all input was valid (e.g., formError = false)
+		if (!formValidationObj.formError) {
+
+
+			// Create New Task List Object  
+			newTaskListObject = appModelController.createNewTaskList(formValidationObj[0].fieldsToValidate[0].fieldName.value);
+			
+			
+			// Add New task List object to New TaskList table	
+			appModelController.getTaskListTable().push(newTaskListObject);
+			
+			userDefinedTaskLists = appModelController.getUserDefinedTaskList();
+			
+			// Sort the userDefinedTask List
+			appModelController.sortListByName(userDefinedTaskLists); 
+			
+			
+			// Save task object to local/Storage/DB			
+				// INSERT ---> DB call and or save to localStorage
+				// INSERT ---> SaveWasSuccessful flag needs to be set based on save results from DB/Local Storage save 
+			
 		
-//		if (newTaskListNameInput != null ) {
-//			console.log(newTaskListNameInput);
-//
-//			// Create New Task Object  (create required fields for object e.g., unique taskItemId, assign taskListId, etc)
-//			newTaskListObject = appModelController.createNewTaskList(newTaskListNameInput);
-//			
-//			
-//			// Add New task List object to New TaskList table	
-//			appModelController.getTaskListTable().push(newTaskListObject);
-//			
-//			userDefinedTaskLists = appModelController.getUserDefinedTaskList();
-//			
-//			// Sort the userDefinedTask List
-//			appModelController.sortListByName(userDefinedTaskLists); 
-//			
-//			
-//			// Save task object to local/Storage/DB			
-//				// INSERT ---> DB call and or save to localStorage
-//		
-//
-//			if (saveWasSuccessful) {
-//				
-//				// Set success message 
-//				msg.type = "success";
-//				msg.text = "SUCCESS! Your list was added";
-//			
-//				// Remove existing UserDefined Task list from TaskListSubmenu
-//				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
-//				
-//				// Regenerate UserDefined Task List on taskListSubmenu
-//				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists);
-//				
-//			} else {
-//				msg.type = "error";
-//				msg.text = "ERROR! Your List was **NOT** added. TRY AGAIN";
-//			}
-//			
-//			// DisplaySaveMessage (success or failure message)
-//			
-//			appUIController.displaySaveMessage(appUIController.getUIVars().navTaskListModalMessage, msg);
-//			
-//			// Create log entry if failure
-//			// TBD
-//			
-//			// Reset values on new Task form
-////			appUIController.resetNewTaskForm();
-//			
-////			// Regenerate UserDefinedTaskList 
-////			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
-////		
-////			
-////			
-//		} else {  // newTaskListNameInput = null
-//			console.log(newTaskListNameInput);
-//		}
+			// Check status of saving List to DB/local storage
+			if (saveWasSuccessful) {
+				
+				// Style the success message
+				formValidationObj[0].fieldSubmitMsg.classList.add("success-message");
+				
+				// Insert Submit Success Message
+				formValidationObj[0].fieldSubmitMsg.innerHTML = formValidationObj[0].fieldSubmitSuccessMsg;
+			
+				// Remove existing UserDefined Task list from TaskListSubmenu
+				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
+				
+				// Regenerate UserDefined Task List on taskListSubmenu
+				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists);
+				
+			} else { //Some thing failed in Save process....either writing to DB or local storage
+				
+				// Create log entry if failure
+				// TBD
+				
+				// Insert Submit Success Message
+				formValidationObj[0].fieldSubmitMsg.innerHTML = formValidationObj[0].fieldSubmitErrorMsg;
+				
+				// Style the errorSubmitMsg
+				formValidationObj[0].fieldSubmitMsg.classList.add("error-message");
+	
+			}
+			
+			
+			// After fadeout animation ends we need to reset message 
+			setTimeout(function () {
+				
+				// Close the form by virtually clicking on cancel button
+				appUIController.getUIVars().newListCancelBtn.click();
+
+				// Must remove the success-message class otherwise it will not appear on future saves 
+				formValidationObj[0].fieldSubmitMsg.innerHTML = "";
+				formValidationObj[0].fieldSubmitMsg.classList.remove("success-message");
+				formValidationObj[0].fieldSubmitMsg.classList.remove("error-message");				
+			}, 3000);
+			
+			// Regenerate UserDefinedTaskList so it includes newly created Task List 
+			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
+			
+		} else {  // newTaskListNameInput = null
+			console.log("Error was detected with Task List Entry ");
+				// Create log entry if failure
+				// TBD
+				
+				// Insert Submit Success Message
+				formValidationObj[0].fieldSubmitMsg.innerHTML = formValidationObj[0].fieldSubmitErrorMsg;
+				
+				// Style the errorSubmitMsg
+				formValidationObj[0].fieldSubmitMsg.classList.add("error-message");
+		}
 
 	}
 	/****************************************************************************************
