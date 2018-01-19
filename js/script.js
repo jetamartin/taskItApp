@@ -1626,20 +1626,7 @@ var appUIController = (function () {
 		}	
 	}
 
-	function setTaskListSelect() {
 
-		var activeTaskListName = appUIController.getActiveTaskListName();
-		console.log("===========ACTIVE LIST NAME: " + activeTaskListName );
-
-		if (activeTaskListName === "All Lists") {
-			inputNewTaskList.value = "Default"
-
-		} else {
-			inputNewTaskList.value = activeTaskListName;
-			console.log("=============TASK LIST VALUE: " + inputNewTaskList.value);
-		}
-
-	}
 
 	/********************************************************************************
 		METHOD:  insertAfter()
@@ -1679,6 +1666,24 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
+		
+		// $$$ Currently the fields are specific to newTaskForm..this needs
+		// to be made more generic formObject needs to be passed as input
+		// param once I can conver newTaskForm to use form object. 
+		setTaskListSelect: function() {
+
+			var activeTaskListName = appUIController.getActiveTaskListName();
+			console.log("===========ACTIVE LIST NAME: " + activeTaskListName );
+
+			if (activeTaskListName === "All Lists") {
+				inputNewTaskList.value = "Default"
+
+			} else {
+				inputNewTaskList.value = activeTaskListName;
+				console.log("=============TASK LIST VALUE: " + inputNewTaskList.value);
+			}
+
+		}, 
 			/* Gets the Active List Task Name */
 		getActiveTaskListName: function() {
 			return getActiveTaskList().childNodes[1].textContent.trim();	
@@ -1828,7 +1833,7 @@ var appUIController = (function () {
 		var taskListNames = appModelController.getTaskListNames();
 		
 		// Build the listNames to display on New Task Form...
-		// Don't want to include "All Lists
+		// Don't want to include "All Lists" or "Completed"
 		var editedTaskListNames = taskListNames.filter(function(listName) {
 			if (listName !== "All Lists" && listName !== "Completed") {
 				return listName;
@@ -1838,10 +1843,10 @@ var appUIController = (function () {
 		// Clear out existing Select list options each time to ensure that if any new list items 
 		clearOutSelectList(formListSelectionDropDown);
 		
-		// $$$ Need to evaluate use of length-2...there may be a better way to solve 
+		 
 		// Populate list with TaskList Namesoptions: 
-		for (var i = 0; i < taskListNames.length; i++) {
-			var opt = taskListNames[i];
+		for (var i = 0; i < editedTaskListNames.length; i++) {
+			var opt = editedTaskListNames[i];
 			formListSelectionDropDown.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
 		}			
 	},
@@ -1856,7 +1861,7 @@ var appUIController = (function () {
 			// Populate List Selection dropdown on new task item form 
 			appUIController.populateFormWithListNames (formListSelectionDropDown);
 			// Need to set newTask Form list dropdown to match the "active" task list
-			setTaskListSelect();
+			appUIController.setTaskListSelect();
 
 		}, 	
 		
@@ -1949,13 +1954,11 @@ var appUIController = (function () {
 			
 			formSaveNewTask.reset();
 	
-			
-
 			// Focus the cursor on the New Task Title form
 			inputNewTaskTitle.focus();
 		
 		},
-		
+		// Builds and displays the UsrDefined Task Lists on taskList Submenu
 		buildAndDisplayUserDefinedTaskList: function (userDefinedTaskList,  newListName) {
 			var newNode; 
 			var currActiveListNode = getActiveTaskList();
@@ -2550,6 +2553,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		//	Validate New Task Data
 		newTaskItemInput = appUIController.getTaskItemInput(event);
+		
 		if (newTaskItemInput != null ) {
 			console.log(newTaskItemInput);
 
@@ -2747,10 +2751,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Regenerate UserDefined Task List on taskListSubmenu
 				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, formValidationObj[0].fieldsToValidate[0].fieldName.value);
 				
-				// Make newly added list the "active" list on taksListSubmenu
-				
-				// $$$ RebuldTask list forms
+				// Rebuild values in List selection on form
 				appUIController.populateFormWithListNames (formListSelectionDropDown)
+				
+				// Make newly added list the "active" list selection on taskItem form
+				appUIController.setTaskListSelect();
 				
 			} else { //Some thing failed in Save process....either writing to DB or local storage
 				
