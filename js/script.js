@@ -26,7 +26,7 @@ var activeListId = null;
 
 var homeIcon = document.getElementById('homeIcon');
 var backArrowSearch = document.getElementById('backArrowSearch');
-var listMenuElement = document.getElementById('taskListDropdown');
+//var listMenuElement = document.getElementById('taskListDropdown');
 var sysMenuElement = document.querySelector('.sysMenu');
 var clearSearchIcon = document.querySelector(".clearSearchIcon");
 var searchInput = document.getElementById("search");
@@ -49,7 +49,7 @@ var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
 
 var formSaveNewTask = document.querySelector("#formSaveNewTask"); 
 //var inputNewTaskTitle = document.getElementById("newTaskTitle");
-var inputListName = document.getElementById("newListNameSelection");
+var formListSelectionDropDown = document.getElementById("newListNameSelection");
 var addTaskSaveMenuButton = document.querySelector("#addTaskMenuSaveButton");
 
 var addTaskSaveButton = document.querySelector("#addTaskSaveButton");
@@ -345,17 +345,21 @@ function unblockUserClicks(elem) {
 
 // Resets the UI including navbar to original state
 function resetUI2InitialState() {
+	var taskListId;
+	
+	// Find the listId of the "active" list element (class = selected)
+	taskListId = getListIdForActiveTaskList();
+	
 
-	// Find the listId of the "active" list
-	var taskListId = getListIdForActiveTaskList();
+	// Set taskListSubmenu dropdown title = the list name of the active list
+	appUIController.getUIVars().listMenuTitle.childNodes[2].textContent = appUIController.getActiveTaskListName();
 	
 	// Use taskId to gather and display all task with that ID
 	updateTaskListDisplayed (taskListId);
 	
-//	unhideTasks();
-//	unhideCategoryNames();
+
 	showFloatAddBtn();
-	addElement(listMenuElement);
+	addElement(appUIController.getUIVars().listMenuTitle);
 	addElement(sysMenuElement);
 	addElement(homeIcon);
 	removeElement(backArrowSearch);
@@ -409,7 +413,7 @@ function getActiveTaskList() {
 
 var handleSubMenuClick = function (event) {
 	
-	// Get the current "active" task list 
+	// Get the current "active" task list Node 
 	var currActiveList = getActiveTaskList();
 
 		
@@ -435,7 +439,7 @@ var handleSubMenuClick = function (event) {
 		taskListId = matchedTaskListRecord.taskList_id;
 		
 		// Get location of List menu title 
-		var listMenuTitle = listMenuElement.childNodes[2];
+		var listMenuTitle = appUIController.getUIVars().listMenuTitle.childNodes[2];
 
 		// Make the List menu title equal to submenu name selected
 		listMenuTitle.nodeValue = listNameSelected;
@@ -475,7 +479,7 @@ var handleSubMenuClick = function (event) {
 //		- homeIcon
 //		- backArowSearch
 //		- sysMenuElement
-//		- listMenuElement
+//		- listMenuTitle
 //
 //*******************************************************************************************************
 
@@ -490,7 +494,7 @@ var handleSearchFocus = function (event) {
 	if (!clearSearchClicked) {
 
 		// Hide (via display:none) other elements of Navbar so Search is focus 
-		removeElement(listMenuElement);
+		removeElement(appUIController.getUIVars().listMenuTitle);
 		removeElement(sysMenuElement);
 		removeElement(homeIcon);
 		addElement(backArrowSearch);
@@ -1212,7 +1216,27 @@ var appModelController = (function () {
 			isNotValid: function(str) {
 				return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
 			}
-		  }       
+		  }
+		]
+	},
+	  
+	{  
+		pageName: "newTaskItemListModal",
+		formName : "newTaskFormListModalForm", 
+		formError : false,
+		fieldSubmitMsg : document.getElementById("newTaskFormListModalMsg"),
+		fieldSubmitSuccessMsg: "SUCCESS! Your list was added",
+		fieldSubmitErrorMsg: "ERROR! Your List was **NOT** added. TRY AGAIN",
+
+		fieldsToValidate : [
+		  {
+			fieldName: document.getElementById("newTaskFormListName"),
+			fieldErrorMsgLocation: document.getElementById("newTaskFormModalListNameErrorMsg"),
+			fieldErrMsg: "List name can't be blank",
+			isNotValid: function(str) {
+				return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+			}
+		  }
 		]
 	}
   ]
@@ -1229,9 +1253,23 @@ var appModelController = (function () {
 	
 
 	return {
-//		getFormValidationObject: function ( )  {
-//			return formValidationObject
-//		},
+		
+		getModalWindowIndex: function (modalFormName) {
+			switch(modalFormName) {
+				case "navTaskListModalForm":
+					return 0;
+		
+				case "newTaskListModalForm":
+					return 1;
+				
+				case "editTaskListModalForm":
+					return 2; 
+					
+				default:
+					return -1;
+				
+			}
+		}, 
 		
 		getFormValidationObject: function (pageName )  {
 			var formObj;
@@ -1508,7 +1546,11 @@ var appUIController = (function () {
 	var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
 	var inputNewTaskList = document.querySelector("#newListNameSelection");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
-	var inputNavListModalListName = document.querySelector("#navListModalListName")
+	
+	
+	var inputNavListModalListName = document.querySelector("#navListModalListName");
+	var modalListInput = document.querySelector(".modalListInput");
+	
 	
 	var newTaskFormErrorMsg = document.querySelector(".newTaskFormErrorMsg");
 	var newTaskSaveMessage = document.querySelector("#newTaskSaveMsg");				 
@@ -1525,9 +1567,10 @@ var appUIController = (function () {
 	var allListsElem = document.querySelector("#allListsElem");
 	var completedListElem = document.querySelector("#completedListElem");
 	var defaultListElem = document.querySelector(".defaultListElem");
-	var newListCancelBtn = document.querySelector(".newListCancelBtn"); 
+	var newListCancelBtn = document.querySelectorAll(".newListCancelBtn"); 
 	
-	
+	var listMenuTitle = document.getElementById('taskListDropdown');
+//	var taskListMenuTitle = document.getElementById('taskListMenuTitle');
 	
 	
 	/* aTaskInGroup - flag used when displaying a user selected task list to facilitate display of that list into "Due Date Groups". It's a flag (initially set to false) that is set to true if at least one taskItem in a user selected task is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header (e.g., "Over Due") and closing tag need to be generated for that Due Date Group.  This flag is reset to false each time the controller is invoked it is invoked because each invocation means that 	you have a new key/category. 
@@ -1572,9 +1615,9 @@ var appUIController = (function () {
 	}
 	
 	/* Gets the Active List Task Name */
-	function getActiveTaskListName() {
-		return getActiveTaskList().childNodes[1].textContent.trim();	
-	}
+//	function getActiveTaskListName() {
+//		return getActiveTaskList().childNodes[1].textContent.trim();	
+//	}
 	
 	function clearOutSelectList (selectNode) {
       var length = selectNode.options.length;
@@ -1582,35 +1625,10 @@ var appUIController = (function () {
 			selectNode.remove(length);
 		}	
 	}
-	/******************************************************************
-	Populates add New Task From List Drop down with list names (TaskListTable).
-	
-	Note: TaskListTable contains "All List" and "Completed". Don't want to 
-	include those two list names (which happen to be first and last list name)
-	so the for loop params have been modified (loop starts at 2 and ends at length-1) to eliminate those two list names. 
-	Note 2: Need to determine if I want to create a sepearate global list 
-	for just user defined list names and use that instead of TaskListTable
-	that is inclusive of system defined lists (e.g., "All List", "Default" and "Completed) 
-	******************************************************************/
-	
-	function populateFormWithListNames (taskListNames) {
-		
-		// Clear out existing Select list options each time to ensure that if any new list items 
-		clearOutSelectList(inputListName);
-		
-		// $$$ Need to evaluate use of length-2...there may be a better way to solve 
-		// Populate list with TaskList Namesoptions: 
-		for (var i = 0; i < taskListNames.length; i++) {
-			var opt = taskListNames[i];
-			inputListName.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
-		}			
-	}
-	
-
 
 	function setTaskListSelect() {
 
-		var activeTaskListName = getActiveTaskListName();
+		var activeTaskListName = appUIController.getActiveTaskListName();
 		console.log("===========ACTIVE LIST NAME: " + activeTaskListName );
 
 		if (activeTaskListName === "All Lists") {
@@ -1622,7 +1640,6 @@ var appUIController = (function () {
 		}
 
 	}
-	
 
 	/********************************************************************************
 		METHOD:  insertAfter()
@@ -1662,6 +1679,10 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
+			/* Gets the Active List Task Name */
+		getActiveTaskListName: function() {
+			return getActiveTaskList().childNodes[1].textContent.trim();	
+		},
 		getUIVars: function() {
 			return {
 				inputNewTaskListName: inputNewTaskListName,
@@ -1682,7 +1703,10 @@ var appUIController = (function () {
 				allListsElem: allListsElem, 
 				completedListElem: completedListElem, 
 				defaultListElem: defaultListElem,
-				newListCancelBtn: newListCancelBtn
+				newListCancelBtn: newListCancelBtn,
+				
+				listMenuTitle: listMenuTitle,
+//				taskListMenuTitle: taskListMenuTitle
 			}
 
 		}, 
@@ -1771,6 +1795,10 @@ var appUIController = (function () {
 		exitNewTaskPage: function() {
 			console.log("********************** exitNewTaskPage");
 			
+			// Get the current "active" task list Node 
+			var currActiveList = getActiveTaskList();
+		
+			
 			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
 			resetUI2InitialState()
 			
@@ -1783,13 +1811,50 @@ var appUIController = (function () {
 			// Reset all values in form
 			formSaveNewTask.reset();
 		},
-		displayAddNewTaskForm: function (taskListNames) {
+	/******************************************************************
+	Populates add New Task From List Drop down with list names (TaskListTable).
+	
+	Note: TaskListTable contains "All List" and "Completed". Don't want to 
+	include those two list names (which happen to be first and last list name)
+	so the for loop params have been modified (loop starts at 2 and ends at length-1) to eliminate those two list names. 
+	Note 2: Need to determine if I want to create a sepearate global list 
+	for just user defined list names and use that instead of TaskListTable
+	that is inclusive of system defined lists (e.g., "All List", "Default" and "Completed) 
+	******************************************************************/
+	
+	populateFormWithListNames: function (formListSelectionDropDown) {
+		
+		// Create an array containing all of the TaskList Names
+		var taskListNames = appModelController.getTaskListNames();
+		
+		// Build the listNames to display on New Task Form...
+		// Don't want to include "All Lists
+		var editedTaskListNames = taskListNames.filter(function(listName) {
+			if (listName !== "All Lists" && listName !== "Completed") {
+				return listName;
+			}
+		})
+		
+		// Clear out existing Select list options each time to ensure that if any new list items 
+		clearOutSelectList(formListSelectionDropDown);
+		
+		// $$$ Need to evaluate use of length-2...there may be a better way to solve 
+		// Populate list with TaskList Namesoptions: 
+		for (var i = 0; i < taskListNames.length; i++) {
+			var opt = taskListNames[i];
+			formListSelectionDropDown.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
+		}			
+	},
+		
+		
+		displayAddNewTaskForm: function () {
 			console.log("************** appUIController.displayAddNewTaskForm()");
 			toggleClass(homePage, "hideIt");
 			toggleClass(newTaskPage, "hideIt");
 			newTaskSaveMessage.classList.remove("success-message");
 			newTaskSaveMessage.innerHTML = "";
-			populateFormWithListNames (taskListNames);
+			// Populate List Selection dropdown on new task item form 
+			appUIController.populateFormWithListNames (formListSelectionDropDown);
 			// Need to set newTask Form list dropdown to match the "active" task list
 			setTaskListSelect();
 
@@ -1891,8 +1956,11 @@ var appUIController = (function () {
 		
 		},
 		
-		buildAndDisplayUserDefinedTaskList: function (userDefinedTaskList) {
-			var newNode;
+		buildAndDisplayUserDefinedTaskList: function (userDefinedTaskList,  newListName) {
+			var newNode; 
+			var currActiveListNode = getActiveTaskList();
+//			var currActiveListId = getListIdForActiveTaskList();
+			
 			// Get the 2nd predefined list element ("Default List") position so that we can start adding user defined list after it
 			var nextNode = document.getElementById("listInsertPoint");
 			
@@ -1933,8 +2001,26 @@ var appUIController = (function () {
 
 				// Now make the node we just inserted the nextNode so that other nodes will be inserted after it
 				nextNode = nextNode.nextElementSibling;
-
-
+				
+				
+				/* If the userDefined task list we are adding to the DOM is the new list the user just created we'll need to make it the active list element
+				*/
+				
+				if (userDefinedTaskList[i].taskList_name === newListName) {
+					
+					/* CurrentActiveList node will be null if the active list was a userdefinedTaskList because in the calling function all of the userDefinedList DOM nodes were removed (via removeUserDefinedTaskLists() function) so that we could re-create the userDefined DOM nodes inclusive of the new list that we just added here. However, if the
+					the previous Active List was a system defined task list then it will still be present
+					and we need to make it no longer the active list by toggling off the 'selected' class
+					so that we don't end up with two active lists
+					*/
+					
+					if (currActiveListNode) {
+						toggleClass(currActiveListNode, 'selected');
+					}
+					// Make the new list the selected list
+					toggleClass(nextNode, 'selected');
+			
+				}
 
 			} // END FOR LOOP for building and adding UserDefined List to dropdown
 			
@@ -2394,9 +2480,23 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 //		formSaveNewTask.addEventListener("submit",function (event) { appUIController.getTaskItemInput(event)}, false);
 		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);
 		
+		
+		
 		// NavBar Tasklist Modal
 		// $$$$  May need to make this more generic 
-		appUIController.getUIVars().formNavTaskListModal.addEventListener("submit", function(event) {ctrlAddTaskList(event)}); 
+		
+//		appUIController.getUIVars().formNavTaskListModal.addEventListener("submit", function(event) {ctrlAddTaskList(event)}); 
+		
+		// Method to addEventListener to every item with className 
+		function addEventListenerByClass(className, event, fn) {
+			var list = document.getElementsByClassName(className);
+			for (var i = 0, len = list.length; i < len; i++) {
+				list[i].addEventListener(event, fn, true);
+			}
+		}
+		
+		// Assign event listener to form on all modal forms
+		addEventListenerByClass('modalForm', 'submit', function(event) {ctrlAddTaskList(event)}); 
 
  
 		/* Detects when the user exits form input field (blur event) and if user has entered/selected data then it adds the "filled" class so that any user
@@ -2415,9 +2515,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		// $$$$$ Maybe change to class rather than ID.
 		// For Task List Modal - Clear prior error messages that may exist when user starts to enter Task List Name in Task List Modal form  
-		document.getElementById("navListModalListName").addEventListener("keydown", function(event) { appUIController.clearTaskListModalFormErrors(event)}, false);
+//		document.getElementById("navListModalListName").addEventListener("keydown", function(event) { appUIController.clearTaskListModalFormErrors(event)}, false);
+		
+		addEventListenerByClass('modalListInput', 'keydown', function(event) { appUIController.clearTaskListModalFormErrors(event)});
 
 	}
+								
 	
 	/***********************************************************************************
 		MODULE:  appController
@@ -2642,7 +2745,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
 				
 				// Regenerate UserDefined Task List on taskListSubmenu
-				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists);
+				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, formValidationObj[0].fieldsToValidate[0].fieldName.value);
+				
+				// Make newly added list the "active" list on taksListSubmenu
+				
+				// $$$ RebuldTask list forms
+				appUIController.populateFormWithListNames (formListSelectionDropDown)
 				
 			} else { //Some thing failed in Save process....either writing to DB or local storage
 				
@@ -2660,9 +2768,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 			// After fadeout animation ends we need to reset message 
 			setTimeout(function () {
+				var modalWindowIndex = appModelController.getModalWindowIndex(event.target.id); 
 				
 				// Close the form by virtually clicking on cancel button
-				appUIController.getUIVars().newListCancelBtn.click();
+				appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
 
 				// Must remove the success-message class otherwise it will not appear on future saves 
 				formValidationObj[0].fieldSubmitMsg.innerHTML = "";
@@ -2703,20 +2812,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	*****************************************************************************************/
 	var buildAndDisplayTaskItemForm = function () {
 		
-		// Create an array containing all of the TaskList Names
-		var taskListNames = appModelCtrl.getTaskListNames();
-		
-		// Build the listNames to display on New Task Form...
-		// Don't want to include "All Lists
-		var editedTaskListNames = taskListNames.filter(function(listName) {
-			if (listName !== "All Lists" && listName !== "Completed") {
-				return listName;
-			}
-		})
-		
-		
 		// Build and Display the New task form  
-		appUICtrl.displayAddNewTaskForm(editedTaskListNames); 
+		appUICtrl.displayAddNewTaskForm(); 
 		
 	}
 	
@@ -2811,7 +2908,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				
 				// Build the HTML/DOM nodes for UserDefined Task List and insert in DOM for display on subMenuTaskList
-				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists);
+				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, null);
 
 				// Update task list totals  for PreDefinedTaskListTotals and add them to DOM for display on subMenuTaskList 
 				appUIController.updateAndDisplayPreDefinedTaskListTotals(taskListTable);
