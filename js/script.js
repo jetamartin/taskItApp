@@ -2653,8 +2653,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				field.fieldName.focus();
 				field.fieldName.setSelectionRange(0,0);
 		
-			} else {  // No error was 
+			} else {  // No error was
 				
+				// Get rid of any preceding or trailing blanks and resave
+				field.fieldName.value = field.fieldName.value.trim();
 				// Change color of List name text to differentiate it from placeholder text
 				field.fieldName.classList.add("filled");
 			}
@@ -2715,7 +2717,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		validateFormInput(formValidationObj); 
 		
 		// If all input was valid (e.g., formError = false)
-		if (!formValidationObj.formError) {
+		if (!formValidationObj[0].formError) {
 
 
 			// Create New Task List Object  
