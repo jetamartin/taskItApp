@@ -1780,7 +1780,10 @@ var appUIController = (function () {
 					var taskListModalFormObject = taskListModalFormObj[0];
 					if (taskListModalFormObject.formError) {
 						taskListModalFormObject.formError = false;
-
+						//????
+						taskListModalFormObject.fieldSubmitMsg.innerHTML = "";
+						
+						toggleClass(taskListModalFormObject.fieldSubmitMsg, 'error-message');
 						taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation.innerHTML = "";
 						// Input box border red
 						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldName, "formErrors");
@@ -2460,6 +2463,21 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 		});
 		
+		$('#newTaskItemListModal').on('hidden.bs.modal', function (e) {
+		  $(this)
+			.find("input,textarea,select")
+			   .val('')
+			   .end()
+			.find("input[type=checkbox], input[type=radio]")
+			   .prop("checked", "")
+			   .end();
+			// Clear any error messages and error formatting
+			var test = document.querySelector("div").closest(".modal");
+			appUIController.clearTaskListModalFormErrors(e);
+			
+		});
+		
+		
 		// Got the following solution from stackoverflow:
 		// https://stackoverflow.com/questions/15474862/twitter-bootstrap-modal-input-field-focus/20435473
 		$('.modal').on('shown.bs.modal', function () {
@@ -2655,6 +2673,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 			} else {  // No error was
 				
+				validationObject.formError = false;
 				// Get rid of any preceding or trailing blanks and resave
 				field.fieldName.value = field.fieldName.value.trim();
 				// Change color of List name text to differentiate it from placeholder text
