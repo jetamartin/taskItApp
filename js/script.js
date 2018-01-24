@@ -350,8 +350,10 @@ function resetUI2InitialState() {
 	// Find the listId of the "active" list element (class = selected)
 	taskListId = getListIdForActiveTaskList();
 	
-
+	// %%%%%
+	//	toggleClass(appUIController.getUIVars().inputNewTaskRepeat,"hideIt");
 	// Set taskListSubmenu dropdown title = the list name of the active list
+	
 	appUIController.getUIVars().listMenuTitle.childNodes[2].textContent = appUIController.getActiveTaskListName();
 	
 	// Use taskId to gather and display all task with that ID
@@ -1547,6 +1549,9 @@ var appUIController = (function () {
 	var inputNewTaskList = document.querySelector("#newListNameSelection");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
 	
+	//$$$$$
+	var addDueDateBtn = document.querySelector(".addDueDateBtn");
+	var clearDueDateBtn = document.querySelector(".clearDueDateBtn"); 
 	
 	var inputNavListModalListName = document.querySelector("#navListModalListName");
 	var modalListInput = document.querySelector(".modalListInput");
@@ -1570,7 +1575,10 @@ var appUIController = (function () {
 	var newListCancelBtn = document.querySelectorAll(".newListCancelBtn"); 
 	
 	var listMenuTitle = document.getElementById('taskListDropdown');
+	var formDatetimeInputBox = document.querySelector(".form_datetime");
+	var repeatErrorMsgDiv = document.getElementById('repeatErrorMsgDiv');
 //	var taskListMenuTitle = document.getElementById('taskListMenuTitle');
+	
 	
 	
 	/* aTaskInGroup - flag used when displaying a user selected task list to facilitate display of that list into "Due Date Groups". It's a flag (initially set to false) that is set to true if at least one taskItem in a user selected task is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header (e.g., "Over Due") and closing tag need to be generated for that Due Date Group.  This flag is reset to false each time the controller is invoked it is invoked because each invocation means that 	you have a new key/category. 
@@ -1662,10 +1670,103 @@ var appUIController = (function () {
 			}
 				return -1; //The element isn't in your array
 			};
+	
+	function disableRepeatInputAndSetErrors () {
+		appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "Must enter Due Date to make repeatable";
+		appUIController.getUIVars().repeatErrorMsgDiv.classList.add("errorMsg"); 
+		appUIController.getUIVars().formDatetimeInputBox.classList.add("formErrors");
+		inputNewTaskRepeat.disabled = true;	
+	}
+	
+
+
 	/****************************************************************************************************************/
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
+		
+		reEnableRepeatInputAndRemoveErrors: function () {
+			appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
+			appUIController.getUIVars().repeatErrorMsgDiv.classList.remove("errorMsg"); 
+			appUIController.getUIVars().formDatetimeInputBox.classList.remove("formErrors");
+			inputNewTaskRepeat.disabled = false;	
+		}, 
+		
+		//%%%%%%%% NOT USED NOW --- DELETE this function
+		hideRepeatOption: function (event) {
+			console.log("-------> Hide Repeat Option"); 
+			var repeatOptionFormGroup = utilMethods.findAncestor(event.currentTarget, 'form-group');
+			if (!repeatOptionFormGroup.nextElementSibling.classList.contains("hideIt")) {
+				repeatOptionFormGroup.nextElementSibling.classList.add("hideIt");
+			}
+		},
+		
+		//%%%%%%%
+		showHideDueDateField: function (event) {
+			console.log("-----> showHideDueDateField");
+			var repeatOptionFormGroup = utilMethods.findAncestor(event.currentTarget, 'form-group');
+			
+			/* If cursor in Due date field or user clicked on Calendar button then get the parent formgroup for the Due dat so that we can then get 
+			*/
+			if ((event.type === "mouseout") && (appUIController.getUIVars().inputNewTaskDateTime.value === "") ) {
+				console.log("====>MouseOut event", event.currentTarget);
+				if (!repeatOptionFormGroup.nextElementSibling.classList.contains("hideIt")) {
+//					setTimeout(function () {
+					repeatOptionFormGroup.nextElementSibling.classList.add("hideIt");
+//					}, 1000);
+				}
+			} 
+			
+			// Cursor focus on DueDate input field or clicked on Add Due Date button
+			else if ((event.currentTarget === appUIController.getUIVars().inputNewTaskDateTime) || (event.currentTarget === appUIController.getUIVars().addDueDateBtn) ) {
+				console.log("====> Input field or AddDueDateBtn");
+				var currTarget = event.currentTarget;
+				appUIController.reEnableRepeatInputAndRemoveErrors();
+				repeatOptionFormGroup = utilMethods.findAncestor(currTarget, 'form-group')
+				repeatOptionFormGroup.nextElementSibling.classList.remove("hideIt");
+				
+//					setTimeout(function () {
+//						if (inputNewTaskDateTime.value !== "") {
+//							inputNewTaskRepeat.disabled = false;
+//						}
+//					}, 5000);
+			} 
+			
+			// User clicks on Clear Due Date Button
+			else if ((event.currentTarget === appUIController.getUIVars().clearDueDateBtn) && (!repeatOptionFormGroup.nextElementSibling.classList.contains("hideIt"))) {
+				console.log("====> ClearDueDateBtn");
+				// Hide repleat option if the user removes the date
+				repeatOptionFormGroup.nextElementSibling.classList.add("hideIt");
+				
+				/* Reset Repeat option to 'None' (value = "1") to prevent form from inadvertenally being set with wrong Repeat option
+				*/
+				appUIController.getUIVars().inputNewTaskRepeat.value = "1";
+				
+				
+			} else {
+				console.log(event, event.currentTarget)
+			}
+		}, 
+		
+		/* If no due date present then disable the Repeat opton field 
+			and set error messages to advise user that Due date is required
+			must be entered if you want to make task repeatable
+		*/
+		checkForDueDate: function (event) {
+			if (inputNewTaskDateTime.value === "") {
+				
+				disableRepeatInputAndSetErrors(); 
+//				appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "Must enter Due Date to make repeatable";
+//				appUIController.getUIVars().repeatErrorMsgDiv.classList.add("errorMsg"); 
+//				appUIController.getUIVars().formDatetimeInputBox.classList.add("formErrors");
+//				inputNewTaskRepeat.disabled = true;
+				
+			}
+			
+		},
+		
+		
+		
 		
 		// $$$ Currently the fields are specific to newTaskForm..this needs
 		// to be made more generic formObject needs to be passed as input
@@ -1711,6 +1812,10 @@ var appUIController = (function () {
 				newListCancelBtn: newListCancelBtn,
 				
 				listMenuTitle: listMenuTitle,
+				addDueDateBtn: addDueDateBtn,
+				clearDueDateBtn: clearDueDateBtn,
+				formDatetimeInputBox: formDatetimeInputBox,
+				repeatErrorMsgDiv: repeatErrorMsgDiv
 //				taskListMenuTitle: taskListMenuTitle
 			}
 
@@ -1870,11 +1975,16 @@ var appUIController = (function () {
 		
 		
 		styleUserFormInput: function(event) {
+			var repeatOptionFormGroup;
 			console.log("Blur event for FormSaveNewTask");
 			console.log("Event Target: " + event.target.tagName);
 			event.target.classList.remove("filled");
 			if (event.target.value !== "") {
 				event.target.classList.add("filled");
+			}
+			if (event.target === appUIController.getUIVars().inputNewTaskDateTime) {
+				repeatOptionFormGroup = utilMethods.findAncestor(event.currentTarget, 'form-group');
+				toggleClass(repeatOptionFormGroup,"hideIt");
 			}
 			
 		},
@@ -1895,6 +2005,7 @@ var appUIController = (function () {
 			}
 
 			var newTaskTitle = inputNewTaskTitle.value.trim();
+
 
 			if (isEmpty(newTaskTitle)) {
 				// Setup and apply error formatting/messaging on form
@@ -2484,6 +2595,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				$(this).find('input:text:visible:first').focus();
 		});
 		
+		
+		
 	
 		/* Event Listener for Save button in Nav Menu bar. Note pressing 
 			this Nav save button should yield the same exact results as pressing
@@ -2525,7 +2638,26 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		-- styleNewTaskUserInput*/
 		
 		
-		formSaveNewTask.addEventListener("blur", function(event) { appUIController.styleUserFormInput(event) }, true);
+
+		formSaveNewTask.addEventListener("blur", function(event) { appUIController.styleUserFormInput(event) }, false);
+		
+		//%%%%%%%
+		
+		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("focus", function(event) { appUIController.reEnableRepeatInputAndRemoveErrors (event) }, true);
+		
+		appUIController.getUIVars().addDueDateBtn.addEventListener("click", function(event) { appUIController.showHideDueDateField (event) }, true);
+		
+		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.showHideDueDateField (event)}, true);
+		
+		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("blur", function(event) { appUIController.showHideDueDateField (event) }, true);
+		
+		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("hide", function(event) { appUIController.showHideDueDateField (event) }, true);
+		
+		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("mouseout", function(event) { appUIController.showHideDueDateField (event) }, true);
+		
+		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("focus", function(event) { appUIController.checkForDueDate(event) }, true);
+		
+		
 		
 		/* 
 			If the NewTask Title on New Task Form field was has "error styling" you want to remove
@@ -2539,6 +2671,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 //		document.getElementById("navListModalListName").addEventListener("keydown", function(event) { appUIController.clearTaskListModalFormErrors(event)}, false);
 		
 		addEventListenerByClass('modalListInput', 'keydown', function(event) { appUIController.clearTaskListModalFormErrors(event)});
+		
+		
 
 	}
 								

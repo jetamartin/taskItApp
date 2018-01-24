@@ -200,10 +200,10 @@
 						<div class="row col-10">
 							<div class="input-append date form_datetime" id="datetimepicker" class="form-control-label" data-date-format="2012-12-21T15:25:00Z">
 								<input size="32" id="newTaskDateTime" type="text" value="" readonly placeholder="Click to set date/time">	
-								<span class="add-on">
+								<span class="add-on  clearDueDateBtn">
 									<i class="fa fa-times" aria-hidden="true"></i>
 								</span>
-								<span class="add-on">
+								<span class="add-on addDueDateBtn">
 									<i class="fa fa-calendar" aria-hidden="true"></i>
 								</span> 
 								
@@ -213,10 +213,10 @@
 
 
 					<!--	Select Repeat			-->
-					<div class="form-group">
+					<div class="form-group hideIt">
 						<label for="inRepeatOption" class="form-control-label">Repeat:</label>
 						<div class="row col-12">
-							<select class="form-control " id="newTaskRepeatOption" >
+							<select class="form-control" id="newTaskRepeatOption" disabled >
 <!--							<option class="placeholder" value="0" disabled selected>Select your option</option>-->
 							<option value="1">None</option>
 							<option value="2">Daily</option>
@@ -225,7 +225,11 @@
 							<option value="5">Yearly</option>
 						</select>
 						</div>
+						<!-- Error msg inserted via J						-->
+						<div id="repeatErrorMsgDiv"></div>
+
 					</div>
+
 
 					<!--	Select ListName			-->
 
@@ -376,6 +380,7 @@
 						</select>
 						</div>
 					</div>
+					
 					<div class="form-group">
 						<label for="listName" class="form-control-label">List:</label>
 						<div class="row col-10">
@@ -456,7 +461,10 @@
 	<script src="js/bootstrap-datetimepicker.js"></script>
 	<script src="js/script.js"></script>
 	<script>
-		$('.datetimepicker').datetimepicker();
+		$('.datetimepicker').datetimepicker()
+		.on("hide", function(e) { console.log("*******  HELLO *********", e) });
+        // `e` here contains the extra attributes
+//    	});
 	</script>
 	
 	<script type="text/javascript">
@@ -465,6 +473,7 @@
         showMeridian: true,
         autoclose: true,
         todayBtn: true,
+		clearBtn: true,
 		pickerPosition: "bottom-left"
     	});
 	</script> 
