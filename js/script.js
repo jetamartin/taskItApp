@@ -2278,7 +2278,7 @@ var appUIController = (function () {
 				specificTaskItemHtml = specificTaskItemHtml.replace('%time%', taskItemList[i].taskItem_due_time);
 
 				// Insert the repeat option selected
-				if (taskItemList[i].taskItem_repeat === "none" || taskItemList[i].taskItem_repeat  === "") {
+				if (taskItemList[i].taskItem_repeat.toLowerCase() === "none" || taskItemList[i].taskItem_repeat  === "") {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', "");
 				} else {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', repeatSymbol);
