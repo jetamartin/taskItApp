@@ -1913,15 +1913,8 @@ var appUIController = (function () {
 			// Get the current "active" task list Node 
 			var currActiveList = getActiveTaskList();
 		
-			
-			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
-			resetUI2InitialState()
-			
-			toggleClass(homePage, "hideIt");
-			toggleClass(newTaskPage, "hideIt");
-		
 			// Remove any user input styling from form
-			removeNewTaskFormInputStyle();
+//			removeNewTaskFormInputStyle();
 			
 			
 			// Want to hide Repeat field when form is first launched
@@ -1930,9 +1923,22 @@ var appUIController = (function () {
 				newTaskRepeatGroup.classList.add("hideIt");
 			}
 			
+			appUIController.resetNewTaskForm();
+			
+			appUIController.reEnableRepeatInputAndRemoveErrors();
 			
 			// Reset all values in form
 			formSaveNewTask.reset();
+			
+			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
+			resetUI2InitialState()
+			
+			
+			
+			toggleClass(homePage, "hideIt");
+			toggleClass(newTaskPage, "hideIt");
+		
+
 		},
 	/******************************************************************
 	Populates add New Task From List Drop down with list names (TaskListTable).
