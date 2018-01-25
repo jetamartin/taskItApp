@@ -1577,6 +1577,7 @@ var appUIController = (function () {
 	var listMenuTitle = document.getElementById('taskListDropdown');
 	var formDatetimeInputBox = document.querySelector(".form_datetime");
 	var repeatErrorMsgDiv = document.getElementById('repeatErrorMsgDiv');
+	var newTaskRepeatGroup = document.getElementById('newTaskRepeatGroup');
 //	var taskListMenuTitle = document.getElementById('taskListMenuTitle');
 	
 	
@@ -1815,7 +1816,8 @@ var appUIController = (function () {
 				addDueDateBtn: addDueDateBtn,
 				clearDueDateBtn: clearDueDateBtn,
 				formDatetimeInputBox: formDatetimeInputBox,
-				repeatErrorMsgDiv: repeatErrorMsgDiv
+				repeatErrorMsgDiv: repeatErrorMsgDiv,
+				newTaskRepeatGroup: newTaskRepeatGroup
 //				taskListMenuTitle: taskListMenuTitle
 			}
 
@@ -1920,6 +1922,14 @@ var appUIController = (function () {
 		
 			// Remove any user input styling from form
 			removeNewTaskFormInputStyle();
+			
+			
+			// Want to hide Repeat field when form is first launched
+			// If it isn't already hidden then add 'hideIt' 
+			if (!newTaskRepeatGroup.classList.contains("hideIt")) {
+				newTaskRepeatGroup.classList.add("hideIt");
+			}
+			
 			
 			// Reset all values in form
 			formSaveNewTask.reset();
@@ -2065,6 +2075,12 @@ var appUIController = (function () {
 			}
 			// Need to remove special formatting (defined by css "filled" class) if any has been applied previously
 			removeNewTaskFormInputStyle();
+			
+			// Want to hide Repeat field when form is first launched
+			// If it isn't already hidden then add 'hideIt' 
+			if (!newTaskRepeatGroup.classList.contains("hideIt")) {
+				newTaskRepeatGroup.classList.add("hideIt");
+			}
 			
 			formSaveNewTask.reset();
 	
@@ -2602,7 +2618,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			this Nav save button should yield the same exact results as pressing
 			the Save button at the bottom of the New Task Form
 		*/
-		addTaskSaveMenuButton.addEventListener("click", appUIController.getTaskItemInput);
+//		addTaskSaveMenuButton.addEventListener("click", appUIController.getTaskItemInput);
+		
+		addTaskSaveMenuButton.addEventListener("click", function (event) {ctrlAddTaskItem(event)});
+
 
 		// Event Listener for Save button at bottom of form
 //		formSaveNewTask.addEventListener("submit",function (event) {
@@ -2639,7 +2658,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		
 
-		formSaveNewTask.addEventListener("blur", function(event) { appUIController.styleUserFormInput(event) }, false);
+		formSaveNewTask.addEventListener("focusout", function(event) { appUIController.styleUserFormInput(event) }, true);
 		
 		//%%%%%%%
 		
