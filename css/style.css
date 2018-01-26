@@ -776,6 +776,9 @@
 }
 .formErrors {
 	border: solid 1px red !important;
+	-webkit-box-shadow: 0 0 5px 1px red;
+	box-shadow: 0 0 5px 1px red;
+	
 }
 
 .form_datetime {

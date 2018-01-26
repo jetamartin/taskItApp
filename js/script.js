@@ -2142,21 +2142,21 @@ var appUIController = (function () {
 				nextNode = nextNode.nextElementSibling;
 				
 				
-				/* If the userDefined task list we are adding to the DOM is the new list the user just created we'll need to make it the active list element
+				/* If this userDefined task list element is the new list the user just added we'll need to make it the active list element
 				*/
 				
 				if (userDefinedTaskList[i].taskList_name === newListName) {
 					
-					/* CurrentActiveList node will be null if the active list was a userdefinedTaskList because in the calling function all of the userDefinedList DOM nodes were removed (via removeUserDefinedTaskLists() function) so that we could re-create the userDefined DOM nodes inclusive of the new list that we just added here. However, if the
+					/* The active list node (currActiveListNode) will  be null if the prior activelistNode had been a userdefinedTaskList. Why? because in the calling function the userDefinedList DOM nodes were removed (via removeUserDefinedTaskLists() function) so that we could re-create the userDefined DOM nodes here inclusive of the new list that user just added. However, if the
 					the previous Active List was a system defined task list then it will still be present
 					and we need to make it no longer the active list by toggling off the 'selected' class
 					so that we don't end up with two active lists
 					*/
 					
-					if (currActiveListNode) {
+					if (currActiveListNode) {  // not null 
 						toggleClass(currActiveListNode, 'selected');
 					}
-					// Make the new list the selected list
+					// Make the new list the active list by adding class 'selected' 
 					toggleClass(nextNode, 'selected');
 			
 				}
@@ -2865,8 +2865,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			on the modal window for several seconds and then the modal is closed.
 			- An alternative approach could be to immediately close the modal if a
 			a valid Task List Name is entered and display the success message at the 
-			top of the Main page. 
-			Consideration: Consistency of this behaviour with other forms (e.g., AddNewTaskItem/EditItem form)
+			top of the Main page. Consideration: Consistency of this behaviour with other forms (e.g., AddNewTaskItem/EditItem form)
+			- After the modal is closed the main page is re-displayed
+				- As currently designed the the newly created list becomes the active task list and
+				as a result the task items for that new list are displayed...but of course there are 
+				no task items to display with a newly created task list 
+				- Alternatively the design could be to create the new list but not make it the active list.
+				That may be the better approach. 
 
 	***********************************************************************************/
 	var ctrlAddTaskList = function(event) {
@@ -2928,14 +2933,40 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Remove existing UserDefined Task list from TaskListSubmenu
 				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
 				
-				// Regenerate UserDefined Task List on taskListSubmenu
+				// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
 				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, formValidationObj[0].fieldsToValidate[0].fieldName.value);
+				
+				
+				/* Set Active task list menu title equal to the new list that was just created */
+				
+					// Get location of List menu title 
+					var listMenuTitle = appUIController.getUIVars().listMenuTitle.childNodes[2];
+
+					// Make the List menu title equal to submenu name selected
+					listMenuTitle.nodeValue = appUIController.getActiveTaskListName();
+				
+				/* Now display the task list items associated with this newly created list - note there will be no 		task items for a newly created task list 
+				*/
+				
+					// Find the listId of the "active" list
+					var taskListId = getListIdForActiveTaskList();
+
+					// Use taskId to gather and display all task with that ID
+					var taskList_id = updateTaskListDisplayed (taskListId);
+
+					var taskList2Display = getMatchingTaskItemsWithID (taskList_id); 
+					appUIController.groupAndDisplayTaskItems(taskList2Display);
+				// --------------
+				
+				
 				
 				// Rebuild values in List selection on form
 				appUIController.populateFormWithListNames (formListSelectionDropDown)
 				
 				// Make newly added list the "active" list selection on taskItem form
 				appUIController.setTaskListSelect();
+				
+
 				
 			} else { //Some thing failed in Save process....either writing to DB or local storage
 				
