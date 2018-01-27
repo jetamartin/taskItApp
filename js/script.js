@@ -2071,7 +2071,7 @@ var appUIController = (function () {
 			- Removes special user input formatting that might have been applied previously (via 'filled'CSS class)
 			- Resets value of all form fields
 		********************************************************************************/
-		resetNewTaskForm: function (taskListId) {
+		resetNewTaskForm: function (listName) {
 		
 //			function resetNewTaskPage () {
 			console.log("------------> appUIController.resetNewTaskPage()");
@@ -2093,6 +2093,8 @@ var appUIController = (function () {
 	
 			// Focus the cursor on the New Task Title form
 			inputNewTaskTitle.focus();
+			
+			inputNewTaskListSelection.value = listName;
 		
 		},
 		
