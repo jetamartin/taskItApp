@@ -695,6 +695,13 @@
 		color: white;
 		padding: 10px;
 		text-align: center;
+		font-size: 1.25rem;
+	}
+
+	.fa-thumbs-o-up, 
+	.fa-thumbs-o-down
+	{
+		font-size: 1.5em;
 	}
 	/* Animation for error message */
 	.error-message {
@@ -706,6 +713,7 @@
 		color: white;
 		padding: 10px;
 		text-align: center;
+		font-size: 1.25rem
 	}
 	@-webkit-keyframes fadeOut {
 		from {opacity: 1;}
