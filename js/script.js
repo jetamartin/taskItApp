@@ -1604,7 +1604,7 @@ var appUIController = (function () {
 		//Set Form error information
 
 		// Set error message
-		newTaskFormErrorMsg.innerHTML = "Task Title is required/Cannot be blank";
+		newTaskFormErrorMsg.innerHTML = '<i class="fa fa-times-circle"></i>' + '&nbsp;' + "Task Title is required/Cannot be blank";
 		// Format field to highlight error
 		toggleClass(inputNewTaskTitle, "formErrors");
 
@@ -2829,10 +2829,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				validationObject.formError = true;
 				
 				// If error message hasn't been set then add to form and style it
-				if (field.fieldErrorMsgLocation.innerHTML == "") {		
+				if (field.fieldErrorMsgLocation.innerHTML.trim() == "") {		
 					
 					// Set error message for field on form
-					field.fieldErrorMsgLocation.innerHTML = field.fieldErrMsg;
+					field.fieldErrorMsgLocation.innerHTML = '<i class="fa fa-times-circle"></i>' + '&nbsp;' + field.fieldErrMsg;
 					
 					// Input box border red
 					toggleClass(field.fieldName, "formErrors");
