@@ -1579,6 +1579,7 @@ var appUIController = (function () {
 	var repeatErrorMsgDiv = document.getElementById('repeatErrorMsgDiv');
 	var newTaskRepeatGroup = document.getElementById('newTaskRepeatGroup');
 //	var taskListMenuTitle = document.getElementById('taskListMenuTitle');
+	var addTaskResetButton = document.getElementById("addTaskResetButton");
 	
 	
 	
@@ -1818,7 +1819,8 @@ var appUIController = (function () {
 				clearDueDateBtn: clearDueDateBtn,
 				formDatetimeInputBox: formDatetimeInputBox,
 				repeatErrorMsgDiv: repeatErrorMsgDiv,
-				newTaskRepeatGroup: newTaskRepeatGroup
+				newTaskRepeatGroup: newTaskRepeatGroup,
+				addTaskResetButton: addTaskResetButton
 //				taskListMenuTitle: taskListMenuTitle
 			}
 
@@ -2072,8 +2074,8 @@ var appUIController = (function () {
 			- Resets value of all form fields
 		********************************************************************************/
 		resetNewTaskForm: function (listName) {
-		
-//			function resetNewTaskPage () {
+//		   setTimeout(function(){
+ 
 			console.log("------------> appUIController.resetNewTaskPage()");
 			console.log("====Task List Id: " + taskListId); 
 			// Reset Form Error
@@ -2093,8 +2095,11 @@ var appUIController = (function () {
 	
 			// Focus the cursor on the New Task Title form
 			inputNewTaskTitle.focus();
-			
-			inputNewTaskListSelection.value = listName;
+			if (listName) {
+				inputNewTaskListSelection.value = listName;
+			}
+//		   },	0);
+//			return true;
 		
 		},
 		
@@ -2593,7 +2598,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		floatAddBtn.addEventListener("click", buildAndDisplayTaskItemForm); 
 		newTaskBackArrow.addEventListener("click", appUIController.exitNewTaskPage);	
 		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
-		addTaskResetButton.addEventListener("click", appUIController.resetNewTaskForm(null));
+		addTaskResetButton.addEventListener("click", function() {appUIController.resetNewTaskForm()});
 		
 		// Clears ALL Modal form input fields when form is closed
 		// Also clears error messages and error formatting
