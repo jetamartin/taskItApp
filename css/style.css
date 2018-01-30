@@ -13,6 +13,14 @@
 		background-color: #EEEEEE;
 		/*	color: #9a9696;*/
 	}
+
+	.hideIt {
+		display: none; 	
+	}
+
+	.invisible {
+		visibility: hidden;
+	}
 	/*****************************************************************/
 	/* NAVIGATION */
 	/*****************************************************************/
@@ -261,9 +269,7 @@
 		display: none; 
 	}
 	
-	.hideIt {
-		display: none; 
-	}
+
 	
 	nav .invisible {
 		visibility: hidden;
@@ -691,17 +697,24 @@
 		animation: fadeOut 5s forwards;
 		-webkit-animation-delay: .5s;
 		animation-delay: .5s;
-		background: #76d6d1;
-		color: white;
+		letter-spacing: .1rem;
+/*		background: #76d6d1;*/
+/*		color: white;*/
+		
+		color: #76d6d1;
+/*		border: solid 2px #76d6d1;*/
+/*		border-radius: 5%;*/
+		
 		padding: 10px;
 		text-align: center;
-		font-size: 1.25rem;
+		font-size: 1.5rem;
 	}
 
 	.fa-thumbs-o-up, 
-	.fa-thumbs-o-down
+	.fa-thumbs-o-down,
+	.fa-times-circle-o
 	{
-		font-size: 1.5em;
+		font-size: 2.5em;
 	}
 	/* Animation for error message */
 	.error-message {
@@ -709,11 +722,20 @@
 		animation: fadeOut 5s forwards;
 		-webkit-animation-delay: .5s;
 		animation-delay: .5s;
+		letter-spacing: .1rem;
+/*
 		background: red;
 		color: white;
+*/
+		color: red;
+/*
+		border: solid 2px red;
+		border-radius: 5%;
+*/
+		
 		padding: 10px;
 		text-align: center;
-		font-size: 1.25rem
+		font-size: 1rem;
 	}
 	@-webkit-keyframes fadeOut {
 		from {opacity: 1;}

@@ -1186,7 +1186,8 @@ var appModelController = (function () {
 		pageName: "navListModal",
 		formName : "formNavTaskListModal", 
 		formError : false,
-		fieldSubmitMsg : document.getElementById("navTaskListModalMsg"),
+		formSubmitErrorMsgLoc : document.getElementById("navTaskListModalMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
 		fieldSubmitSuccessMsg: "List saved",
 		fieldSubmitErrorMsg: "List NOT saved. TRY AGAIN!",
 
@@ -1206,7 +1207,8 @@ var appModelController = (function () {
 		pageName: "newTaskItemListModal",
 		formName : "newTaskFormListModalForm", 
 		formError : false,
-		fieldSubmitMsg : document.getElementById("newTaskFormListModalMsg"),
+		formSubmitErrorMsgLoc : document.getElementById("newTaskFormListModalMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("newTaskSaveMsg"),
 		fieldSubmitSuccessMsg: "List saved",
 		fieldSubmitErrorMsg: "List NOT saved. TRY AGAIN!",
 
@@ -1560,6 +1562,7 @@ var appUIController = (function () {
 	var newTaskRepeatGroup = document.getElementById('newTaskRepeatGroup');
 //	var taskListMenuTitle = document.getElementById('taskListMenuTitle');
 	var addTaskResetButton = document.getElementById("addTaskResetButton");
+	var mainPageSuccessMsg = document.getElementById("mainPageSuccessMsg");
 	
 	
 	
@@ -1800,7 +1803,8 @@ var appUIController = (function () {
 				formDatetimeInputBox: formDatetimeInputBox,
 				repeatErrorMsgDiv: repeatErrorMsgDiv,
 				newTaskRepeatGroup: newTaskRepeatGroup,
-				addTaskResetButton: addTaskResetButton
+				addTaskResetButton: addTaskResetButton,
+				mainPageSuccessMsg: mainPageSuccessMsg
 //				taskListMenuTitle: taskListMenuTitle
 			}
 
@@ -1871,9 +1875,9 @@ var appUIController = (function () {
 					if (taskListModalFormObject.formError) {
 						taskListModalFormObject.formError = false;
 						//????
-						taskListModalFormObject.fieldSubmitMsg.innerHTML = "";
+						taskListModalFormObject.formSubmitErrorMsgLoc.innerHTML = "";
 						
-						toggleClass(taskListModalFormObject.fieldSubmitMsg, 'error-message');
+						toggleClass(taskListModalFormObject.formSubmitErrorMsgLoc, 'error-message');
 						taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation.innerHTML = "";
 						// Input box border red
 						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldName, "formErrors");
@@ -2751,7 +2755,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				// Set success message 
 				msg.type = "success";
-				msg.text = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ "Task Item saved!";
+				msg.text = '<i class="fa fa-check-circle"></i>' + '&nbsp;'+ "Task Item saved!";
 				
 				// Upadate ALL totals on all lists *** May want to make this more surgical & update single list affected.
 				appModelController.updateListTaskTotals();		
@@ -2769,7 +2773,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				// Create error message object
 				msg.type = "error";
-				msg.text = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + "Task Item NOT saved! Try again!";
+				msg.text = '<i class="fa fa-times-circle-o"></i>' + '&nbsp;' + "Task Item NOT saved! Try again!";
 			
 				// Create log entry if failure
 				// Log Entry TBD
@@ -2929,10 +2933,17 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			if (saveWasSuccessful) {
 				
 				// Style the success message
-				formValidationObj[0].fieldSubmitMsg.classList.add("success-message");
+				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
 				
 				// Insert Submit Success Message
-				formValidationObj[0].fieldSubmitMsg.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ formValidationObj[0].fieldSubmitSuccessMsg;
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ formValidationObj[0].fieldSubmitSuccessMsg;
+				
+				//XYZ----------------------
+				
+				var modalWindowIndex = appModelController.getModalWindowIndex(event.target.id);
+				appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
+				
+				//XYZ--------------------
 			
 				// Remove existing UserDefined Task list from TaskListSubmenu
 				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
@@ -2991,10 +3002,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// TBD
 				
 				// Insert Submit Error Message
-				formValidationObj[0].fieldSubmitMsg.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' +   '&nbsp;' + formValidationObj[0].fieldSubmitErrorMsg;
+				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' +   '&nbsp;' + formValidationObj[0].fieldSubmitErrorMsg;
 				
 				// Style the errorSubmitMsg
-				formValidationObj[0].fieldSubmitMsg.classList.add("error-message");
+				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 	
 			}
 			
@@ -3007,10 +3018,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
 
 				// Must remove the success-message class otherwise it will not appear on future saves 
-				formValidationObj[0].fieldSubmitMsg.innerHTML = "";
-				formValidationObj[0].fieldSubmitMsg.classList.remove("success-message");
-				formValidationObj[0].fieldSubmitMsg.classList.remove("error-message");				
-			}, 3000);
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
+				formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+				// ????
+				formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+			}, 5000);
 			
 			// Regenerate UserDefinedTaskList so it includes newly created Task List 
 			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
@@ -3021,10 +3033,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// TBD
 				
 				// Insert Submit Success Message
-				formValidationObj[0].fieldSubmitMsg.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].fieldSubmitErrorMsg;
+				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].fieldSubmitErrorMsg;
 				
 				// Style the errorSubmitMsg
-				formValidationObj[0].fieldSubmitMsg.classList.add("error-message");
+				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 		}
 
 	}
