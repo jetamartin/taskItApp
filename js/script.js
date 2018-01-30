@@ -1188,8 +1188,8 @@ var appModelController = (function () {
 		formError : false,
 		formSubmitErrorMsgLoc : document.getElementById("navTaskListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
-		fieldSubmitSuccessMsg: "List saved",
-		fieldSubmitErrorMsg: "List NOT saved. TRY AGAIN!",
+		formSubmitSuccessMsg: "List saved",
+		formSubmitErrorMsg: "List NOT saved." + "<br />" + "Try again",
 
 		fieldsToValidate : [
 		  {
@@ -1209,8 +1209,8 @@ var appModelController = (function () {
 		formError : false,
 		formSubmitErrorMsgLoc : document.getElementById("newTaskFormListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("newTaskSaveMsg"),
-		fieldSubmitSuccessMsg: "List saved",
-		fieldSubmitErrorMsg: "List NOT saved. TRY AGAIN!",
+		formSubmitSuccessMsg: "List saved",
+		formSubmitErrorMsg: "List NOT saved." + "<br />" + "Try again",
 
 		fieldsToValidate : [
 		  {
@@ -2773,7 +2773,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				// Create error message object
 				msg.type = "error";
-				msg.text = '<i class="fa fa-times-circle-o"></i>' + '&nbsp;' + "Task Item NOT saved! Try again!";
+				msg.text = '<i class="fa fa-times-circle-o"></i>' + '&nbsp;' + "Task Item NOT saved!" + '<br />' + "Try again!";
 			
 				// Create log entry if failure
 				// Log Entry TBD
@@ -2936,7 +2936,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
 				
 				// Insert Submit Success Message
-				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ formValidationObj[0].fieldSubmitSuccessMsg;
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ formValidationObj[0].formSubmitSuccessMsg;
 				
 				//XYZ----------------------
 				
@@ -3002,7 +3002,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// TBD
 				
 				// Insert Submit Error Message
-				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' +   '&nbsp;' + formValidationObj[0].fieldSubmitErrorMsg;
+				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' +   '&nbsp;' + formValidationObj[0].formSubmitErrorMsg;
 				
 				// Style the errorSubmitMsg
 				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
@@ -3033,7 +3033,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// TBD
 				
 				// Insert Submit Success Message
-				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].fieldSubmitErrorMsg;
+				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].formSubmitErrorMsg;
 				
 				// Style the errorSubmitMsg
 				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");

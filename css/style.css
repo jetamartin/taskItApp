@@ -21,6 +21,30 @@
 	.invisible {
 		visibility: hidden;
 	}
+
+	#mainPageSuccessMsg {
+		width: 90%;
+		height: 3rem;
+/*		background-color: white;*/
+		border-radius: 10px;
+		margin: 0 auto; 
+	
+	}
+
+	#newTaskSaveMsg{
+		width: 100%;
+		height: 3rem;
+/*		border-radius: 10px;*/
+		margin: 0 auto; 
+	
+	}
+
+	#navTaskListModalMsg, 
+	#newTaskFormListModalMsg {
+		width: 100%;
+		height: 4.5rem;
+		margin: 0 auto; 
+	}
 	/*****************************************************************/
 	/* NAVIGATION */
 	/*****************************************************************/
@@ -701,7 +725,9 @@
 /*		background: #76d6d1;*/
 /*		color: white;*/
 		
-		color: #76d6d1;
+/*		color: #76d6d1;*/
+		color: #34AFA9;
+		"List NOT saved." + "<br />" + "TRY AGAIN!"
 /*		border: solid 2px #76d6d1;*/
 /*		border-radius: 5%;*/
 		
@@ -714,7 +740,7 @@
 	.fa-thumbs-o-down,
 	.fa-times-circle-o
 	{
-		font-size: 2.5em;
+		font-size: 2em;
 	}
 	/* Animation for error message */
 	.error-message {
@@ -728,6 +754,7 @@
 		color: white;
 */
 		color: red;
+		color: #e46767;
 /*
 		border: solid 2px red;
 		border-radius: 5%;
