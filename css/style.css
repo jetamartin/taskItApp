@@ -261,31 +261,36 @@
 	/* Place and style task overdue counts on task list submenu */
 	
 	nav ul li:hover ul li span.overDue {
+		font-family: 'Roboto Mono', monospace;
 		float: right;
 		color: #f9f9f9;
 		background-color: #e46767;
-		padding: 5px 5px;
+		padding: 4px 8px;
 		text-align: center;
 		font-size: .8rem;
 		border-radius: 30%;
 	}
 	/* Auto Place "+" sign before overdue task total */
 	
+/*
 	nav ul li:hover ul li span.overDue::before {
 		font-family: "FontAwesome";
 		color: #fff;
 		font-weight: 100;
 		content: "\f067";
 	}
+*/
 	/* Place & Style non-overdue task totals */
 	
 	nav ul li:hover ul li span.listTotal {
+		font-family: 'Roboto Mono', monospace;
 		float: right;
 		color: #f9f9f9;
 		padding: 1px 5px;
 		text-align: center;
 		font-size: 1.2rem;
 		border-radius: 3px;
+		margin-left: .3rem;
 	}
 	/* Add space after task totals to sep from overdue counts */
 	/*	Test adding plus after listtotal */
@@ -294,8 +299,8 @@
 		font-family: "FontAwesome";
 		font-weight: 100;
 		font-size: .75rem;
-		content: "\00a0 \00a0 \f067 \00a0";
-		content: "\00a0";
+/*		content: "\00a0 \00a0 \f067 \00a0";*/
+/*		content: "\00a0";*/
 	}
 	
 	nav .hideIt {
@@ -472,7 +477,7 @@
 	/* Inserts blank after each font awesome icon */
 	
 	nav .fa::after {
-		content: "\00a0 \00a0";
+		content: "\00a0";
 	}
 	/******************************************************/
 	/* MAIN CONTENT AREA */

@@ -133,7 +133,7 @@ function updateTaskListDisplayed (taskListId) {
 		appUIController.groupAndDisplayTaskItems(taskList2Display);
 	} else {
 		
-		listName = utilMethods.containsTaskId(appModelController.getTaskListTable(), taskListId);
+		listName = utilMethods.lookUpTaskName(appModelController.getTaskListTable(), taskListId);
 		
 		switch(listName) {
 		case "All Lists":
@@ -787,8 +787,8 @@ return {
 		}
 	},
 	
-	containsTaskId: function (list, taskListId) {
-		Array.prototype.containsTaskId = function(taskListId) {
+	lookUpTaskName: function (list, taskListId) {
+		Array.prototype.lookUpTaskName = function(taskListId) {
 		var i;
 		for (i = 0; i < this.length; i++) {
 			if (this[i].taskList_id === taskListId) {
@@ -797,7 +797,7 @@ return {
 		}
 			return -1;
 		}
-		return list.containsTaskId(taskListId);
+		return list.lookUpTaskName(taskListId);
 		
 	}
 
@@ -2139,7 +2139,7 @@ var appUIController = (function () {
 			
 			
 			// Template to create ListName elements for nav's listSubmenu
-			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="overDue">&nbsp%overDueCount%</span><span class="listTotal">&nbsp%dueCount%</span></li>';
+			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDue">%overDueCount%</span></li>';
 			
 			//*****************************************************************************************************
 			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
@@ -2225,25 +2225,25 @@ var appUIController = (function () {
 			preDefinedListRecord = taskListTable.hasElement("All Lists");
 	
 			// OverDueTotal count
-			allListsElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;			
+			allListsElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;			
 			// TotalList count
-			allListsElem.childNodes[3].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
+			allListsElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 			
 			
 			preDefinedListRecord = taskListTable.hasElement("Default");
 			
 			// OverDueTotal count
-			defaultListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+			defaultListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
 			
 			// TotalList count
-			defaultListElem.childNodes[3].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
+			defaultListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 
 			preDefinedListRecord = taskListTable.hasElement("Completed");
 			
 			// OverDueTotal count
-			completedListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+			completedListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
 			// TotalList count
-			completedListElem.childNodes[3].innerText = taskListTable[preDefinedListRecord].taskList_totalCount; 
+			completedListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount; 
 		
 		}, 
 			
