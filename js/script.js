@@ -119,14 +119,36 @@ function clearoutTaskItemsDisplayed () {
 */
 function updateTaskListDisplayed (taskListId) {
 	
+	var listName;
+	
 	// Clear the screen of any task previously displayed
 	clearoutTaskItemsDisplayed();
 	
 	// Gather all taskItems related to the user selected list
 	var taskList2Display = getMatchingTaskItemsWithID (taskListId); 
 	
-	// Group and display all tasks items and their Group header (e.g, overdue, tomorrow, etc)
-	appUIController.groupAndDisplayTaskItems(taskList2Display);	
+	if (taskList2Display.length > 0 ) {	
+		appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = "";
+		// Group and display all tasks items and their Group header (e.g, overdue, tomorrow, etc)
+		appUIController.groupAndDisplayTaskItems(taskList2Display);
+	} else {
+		
+		listName = utilMethods.containsTaskId(appModelController.getTaskListTable(), taskListId);
+		
+		switch(listName) {
+		case "All Lists":
+			// Display No task items in the list message
+			appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<i class="fa fa-info-circle"></i>' + '&nbsp;' + "Currently there are no task items defined." + '<br /><br />' + '<i class="fa fa-bullseye"></i>' + '&nbsp;' + "Click the Plus symbol to add a task to an existing list or to list you create"; 
+			break;
+		case "Completed":
+			// Display No task items in the list message
+			appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<i class="fa fa-info-circle"></i>' + '&nbsp;' + "Currently there are no 'Completed' task items." + "<br /><br />" + '<i class="fa fa-bullseye"></i>' + '&nbsp;' + "Each time you mark a task item as 'Completed' it'll be added to this list." 
+			break;
+		default:
+			// Display No task items in the list message
+			appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<i class="fa fa-info-circle"></i>' + '&nbsp;' +"Currently there are no task items in this list." + "<br /><br />" + '<i class="fa fa-bullseye"></i>' + '&nbsp;' + "Click the Plus symbol below to add some now.";
+		}
+	}
 }
 
 /* 
@@ -763,7 +785,22 @@ return {
 			while ((el = el.parentElement) && !el.classList.contains(cls));
 			return el;
 		}
+	},
+	
+	containsTaskId: function (list, taskListId) {
+		Array.prototype.containsTaskId = function(taskListId) {
+		var i;
+		for (i = 0; i < this.length; i++) {
+			if (this[i].taskList_id === taskListId) {
+				return this[i].taskList_name; //Returns name of task List
+			}
+		}
+			return -1;
+		}
+		return list.containsTaskId(taskListId);
+		
 	}
+
 
 }
 })();
@@ -1563,6 +1600,7 @@ var appUIController = (function () {
 //	var taskListMenuTitle = document.getElementById('taskListMenuTitle');
 	var addTaskResetButton = document.getElementById("addTaskResetButton");
 	var mainPageSuccessMsg = document.getElementById("mainPageSuccessMsg");
+	var mainPageGeneralMsgLoc = document.getElementById("mainPageGeneralMsgLoc");
 	
 	
 	
@@ -1804,7 +1842,8 @@ var appUIController = (function () {
 				repeatErrorMsgDiv: repeatErrorMsgDiv,
 				newTaskRepeatGroup: newTaskRepeatGroup,
 				addTaskResetButton: addTaskResetButton,
-				mainPageSuccessMsg: mainPageSuccessMsg
+				mainPageSuccessMsg: mainPageSuccessMsg,
+				mainPageGeneralMsgLoc: mainPageGeneralMsgLoc
 //				taskListMenuTitle: taskListMenuTitle
 			}
 

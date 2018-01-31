@@ -31,6 +31,15 @@
 	
 	}
 
+	#mainPageGeneralMsgLoc {
+		width: 90%;
+/*		height: 4rem;*/
+		margin: 0 auto;
+		color: darkred;
+		color: #34AFA9;
+		font-size: 1.5rem;
+	}
+
 	#newTaskSaveMsg{
 		width: 100%;
 		height: 3rem;
