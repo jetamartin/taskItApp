@@ -2814,14 +2814,14 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				msg.type = "success";
 				msg.text = '<i class="fa fa-check-circle"></i>' + '&nbsp;'+ "Task Item saved!";
 				
-				// Upadate ALL totals on all lists *** May want to make this more surgical & update single list affected.
+				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
 				appModelController.updateListTaskTotals();		
 
 
 			// Reset values on new Task form but leave List selection to last list value selected by user
 			appUIController.resetNewTaskForm(newTaskItemInput.newTaskListOptionTxt); 
 			
-			// Update the overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
+			// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
 			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
 		
 			
@@ -3081,8 +3081,15 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
 			}, 5000);
 			
+			// **************************************************************
+			// --->$$$$ - Don't think call to below method (refreshTaskListSubmenuTotals) is necessaryin this
+			// method given that prior call to buildAndDisplayUserDefinedTaskList() generates the
+			// DOM node for any new user defined list that was 
+			// created here and it also updates the totals for all UserDefined List..
+			//***************************************************************
 			// Regenerate UserDefinedTaskList so it includes newly created Task List 
-			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
+//			appUIController.refreshTaskListSubMenuTotals(taskListTable);
+
 			
 		} else {  // newTaskListNameInput = null
 			console.log("Error was detected with Task List Entry ");
@@ -3119,32 +3126,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 	}
 	
-	/*****************************************************************************************************
-		FUNCTION: refreshListDropDownInfo - applies new values from taskListTable to taskListDropdown
-		
-		Summary: 
-			New taskItem Form "List" drop down must be populated with ListNames 
-			
-		Trigger: 
-		
-	
-		UI Behavior: 
-	
-	*******************************************************************************************************/
-	
-	
-	// UNDERCONSTRUCTION 
-	
-//	var refreshListDropDownInfo = function () {
-//		// Update list names
-//		appModelCtrl.updateListName
-//		
-//		// Update all DropDown totals
-//		appModelCtrl.updateListTaskTotals();
-//		appUICtrl.refreshTaskTotalsOnTaskListDropdown();
-//		
-//	}
-
 	
 	return {
 		// Initialize data objects and set up all event listeners
