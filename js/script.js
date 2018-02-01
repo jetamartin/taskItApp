@@ -2139,8 +2139,8 @@ var appUIController = (function () {
 			
 			
 			// Template to create ListName elements for nav's listSubmenu
-			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDue">%overDueCount%</span></li>';
-			
+			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDue overDueItemsPresent">%overDueCount%</span></li>';
+			var specificSubMenuHtml;
 			//*****************************************************************************************************
 			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
 			//*****************************************************************************************************
@@ -2152,18 +2152,16 @@ var appUIController = (function () {
 
 				// Insert the overdue task list count in HTML
 				// If count is zero you want to add class to overdue item so that 0 count and "+" sign do not appear
-				if (userDefinedTaskList[i].overDue !== "0") {
+				if (userDefinedTaskList[i].taskList_overDueCount > 0) {
 					specificSubMenuHtml = specificSubMenuHtml.replace('%overDueCount%', userDefinedTaskList[i].taskList_overDueCount);
-				} else { // Else the count is zero then don't display it (hideIt)
-					specificSubMenuHtml = specificSubMenuHtml.replace("overDue", "overDue hideIt");
+				} else { // Else the count is zero then remove styling
+					specificSubMenuHtml = specificSubMenuHtml.replace('%overDueCount%',"");
+					specificSubMenuHtml = specificSubMenuHtml.replace("overDue overDueItemsPresent", "overDue");
 				}
 
 				// Insert the total task list count due (excluding overdue tasks count) in HTML
-				if (userDefinedTaskList[i].totalTasks !== "0") {
-					specificSubMenuHtml = specificSubMenuHtml.replace('%dueCount%', userDefinedTaskList[i].taskList_totalCount);
-				} else { // Else the count is zero then don't display it (hideIt) 
-					specificSubMenuHtml = specificSubMenuHtml.replace("listTotal", "listTotal hideIt");
-				}
+				specificSubMenuHtml = specificSubMenuHtml.replace('%dueCount%', userDefinedTaskList[i].taskList_totalCount);
+
 
 				//* Convert completed HTML string into DOM node so it can be inserted
 				newNode = document.createRange().createContextualFragment(specificSubMenuHtml);
@@ -2223,25 +2221,37 @@ var appUIController = (function () {
 		
 			// Get the taskListTable record for the "All List"
 			preDefinedListRecord = taskListTable.hasElement("All Lists");
-	
-			// OverDueTotal count
-			allListsElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;			
+			
+			allListsElem.childNodes[4].classList.remove("overDueItemsPresent");
+			if (taskListTable[preDefinedListRecord].taskList_overDueCount > 0) {
+				allListsElem.childNodes[4].classList.add("overDueItemsPresent");
+				// OverDueTotal count
+				allListsElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;	
+			}
+		
 			// TotalList count
 			allListsElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 			
 			
 			preDefinedListRecord = taskListTable.hasElement("Default");
-			
-			// OverDueTotal count
-			defaultListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
-			
+//			defaultListElem.childNodes[4].classList.remove("overDueItemsPresent");
+			if (taskListTable[preDefinedListRecord].taskList_overDueCount > 0) {
+				// OverDueTotal count
+				defaultListElem.childNodes[4].classList.add("overDueItemsPresent");
+				defaultListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+			}
+
 			// TotalList count
 			defaultListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 
 			preDefinedListRecord = taskListTable.hasElement("Completed");
-			
+//			completedListElem.childNodes[4].classList.remove("overDueItemsPresent");
 			// OverDueTotal count
-			completedListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+			if (taskListTable[preDefinedListRecord].taskList_overDueCount > 0 ) {
+				completedListElem.childNodes[4].classList.add("overDueItemsPresent");
+				completedListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+			}
+
 			// TotalList count
 			completedListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount; 
 		
@@ -2554,8 +2564,16 @@ var appUIController = (function () {
 				index = taskListTable.hasElement(listName);
 				
 				if (index >= 0 ) {
-					// Update DOM subMenu totals with value from TaskListTable
-					listNode.querySelector(".overDue").innerHTML = taskListTable[index].taskList_overDueCount;
+					if (taskListTable[index].taskList_overDueCount > 0) {
+						// Update DOM subMenu totals with value from TaskListTable
+						listNode.querySelector(".overDue").innerHTML = taskListTable[index].taskList_overDueCount;
+						if (!listNode.querySelector(".overDue").classList.contains("overDueItemsPresent")) {
+							listNode.querySelector(".overDue").classList.add("overDueItemsPresent")
+						}
+
+					} else if (listNode.querySelector(".overDue").classList.contains("overDueItemsPresent")) {
+						listNode.querySelector(".overDue").classList.remove("overDueItemsPresent");					
+					}
 					listNode.querySelector(".listTotal").innerHTML = taskListTable[index].taskList_totalCount;
 				}
 			});  // End forEach Loop
