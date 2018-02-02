@@ -3082,10 +3082,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			}, 5000);
 			
 			// **************************************************************
-			// --->$$$$ - Don't think call to below method (refreshTaskListSubmenuTotals) is necessaryin this
+			// --->$$$$ - Don't think call to below method (refreshTaskListSubmenuTotals) is necessary in this
 			// method given that prior call to buildAndDisplayUserDefinedTaskList() generates the
 			// DOM node for any new user defined list that was 
 			// created here and it also updates the totals for all UserDefined List..
+			// After I've confirmed I don't need call to function with more testing I will call and all comments
 			//***************************************************************
 			// Regenerate UserDefinedTaskList so it includes newly created Task List 
 //			appUIController.refreshTaskListSubMenuTotals(taskListTable);
