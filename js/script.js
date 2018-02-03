@@ -799,6 +799,14 @@ return {
 		}
 		return list.lookUpTaskName(taskListId);
 		
+	},
+	titleCase: function(str) {
+		var splitStr = str.toLowerCase().split(' ');
+		for (var i = 0; i < splitStr.length; i++) {
+			splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+		}
+		// Directly return the joined string
+		return splitStr.join(' '); 
 	}
 
 
@@ -2319,9 +2327,9 @@ var appUIController = (function () {
 			}
 
 			var mainPage = document.getElementById("mainPage"); 
-			var repeatSymbol = '<i class="fa fa-repeat taskDetails floatLeft" aria-hidden="true"></i>';
+			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
 
-			var genericTaskItemHtml = '<div class="card"><a href="editTask.html"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span class="card-subtitle mb-2 text-muted" for="">%taskTitle%</span></div><h6 class="card-text taskDue floatLeft">%date%</h6>%repeatSymbol%<h6 class="taskListName clearBoth">%listName%</h6></div></a></div>'
+			var genericTaskItemHtml = '<div class="card"><a href="editTask.html"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span class="card-subtitle mb-2 text-muted" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text"> %repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></a></div>'
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
@@ -2334,7 +2342,10 @@ var appUIController = (function () {
 				// Insert the repeat option selected
 				if (taskItemList[i].taskItem_repeat.toLowerCase() === "none" || taskItemList[i].taskItem_repeat  === "") {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', "");
+					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatOption%', "");
+
 				} else {
+					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatOption%', utilMethods.titleCase(taskItemList[i].taskItem_repeat));
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', repeatSymbol);
 				}
 
