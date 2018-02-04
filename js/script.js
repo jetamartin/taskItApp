@@ -2358,7 +2358,11 @@ var appUIController = (function () {
 
 				//* Convert completed HTML string into DOM node so it can be inserted
 				newNode = document.createRange().createContextualFragment(specificTaskItemHtml);
-
+				
+				// If a TaskItem is determined to be overDue then you want taksItem Title to be red
+				if (idOfInsertLocation === "overDue") {
+					newNode.querySelector('.card-subtitle').classList.add('overDue');
+				}
 				insertNodeLocation.appendChild(newNode);
 
 			}

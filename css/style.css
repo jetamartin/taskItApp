@@ -612,7 +612,7 @@
 	
 	.overDue {
 		/*	color: #b52020;*/
-		color: #e46767;
+		color: #e46767 !important;
 	}
 	
 	.floatAddBtn {
