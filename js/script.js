@@ -2147,7 +2147,7 @@ var appUIController = (function () {
 			
 			
 			// Template to create ListName elements for nav's listSubmenu
-			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDue overDueItemsPresent">%overDueCount%</span></li>';
+			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
 			var specificSubMenuHtml;
 			//*****************************************************************************************************
 			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
@@ -2164,7 +2164,7 @@ var appUIController = (function () {
 					specificSubMenuHtml = specificSubMenuHtml.replace('%overDueCount%', userDefinedTaskList[i].taskList_overDueCount);
 				} else { // Else the count is zero then remove styling
 					specificSubMenuHtml = specificSubMenuHtml.replace('%overDueCount%',"");
-					specificSubMenuHtml = specificSubMenuHtml.replace("overDue overDueItemsPresent", "overDue");
+					specificSubMenuHtml = specificSubMenuHtml.replace("overDueCount overDueItemsPresent", "overDueCount");
 				}
 
 				// Insert the total task list count due (excluding overdue tasks count) in HTML
@@ -2359,7 +2359,7 @@ var appUIController = (function () {
 				//* Convert completed HTML string into DOM node so it can be inserted
 				newNode = document.createRange().createContextualFragment(specificTaskItemHtml);
 				
-				// If a TaskItem is determined to be overDue then you want taksItem Title to be red
+				// If a TaskItem is determined to be overDue then you want taksItem Title text to be red
 				if (idOfInsertLocation === "overDue") {
 					newNode.querySelector('.card-subtitle').classList.add('overDue');
 				}
@@ -2572,7 +2572,7 @@ var appUIController = (function () {
 				
 				// Using the innerText method will return the list name, totals & any blank characters 
 				// In order to isolate the name we use replace (to eliminate numbers) and trim(to remove extra space chars)
-				listName = listNode.innerText.replace(/[0-9]/g, '').trim();
+				var listName = listNode.innerText.replace(/[0-9]/g, '').trim();
 				
 				// hasElement method returns the index of the matching taskListTable records, if no match returns -1
 				// NOTE: The subMenuListDOMNodes will include some members that will not have an entry in the taskListTable (e.g., "New List)
@@ -2581,13 +2581,13 @@ var appUIController = (function () {
 				if (index >= 0 ) {
 					if (taskListTable[index].taskList_overDueCount > 0) {
 						// Update DOM subMenu totals with value from TaskListTable
-						listNode.querySelector(".overDue").innerHTML = taskListTable[index].taskList_overDueCount;
-						if (!listNode.querySelector(".overDue").classList.contains("overDueItemsPresent")) {
-							listNode.querySelector(".overDue").classList.add("overDueItemsPresent")
+						listNode.querySelector(".overDueCount").innerHTML = taskListTable[index].taskList_overDueCount;
+						if (!listNode.querySelector(".overDueCount").classList.contains("overDueItemsPresent")) {
+							listNode.querySelector(".overDueCount").classList.add("overDueItemsPresent")
 						}
 
-					} else if (listNode.querySelector(".overDue").classList.contains("overDueItemsPresent")) {
-						listNode.querySelector(".overDue").classList.remove("overDueItemsPresent");					
+					} else if (listNode.querySelector(".overDueCount").classList.contains("overDueItemsPresent")) {
+						listNode.querySelector(".overDueCount").classList.remove("overDueItemsPresent");					
 					}
 					listNode.querySelector(".listTotal").innerHTML = taskListTable[index].taskList_totalCount;
 				}

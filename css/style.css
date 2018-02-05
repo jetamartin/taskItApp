@@ -260,7 +260,7 @@
 	}
 	/* Place and style task overdue counts on task list submenu */
 	
-	nav ul li:hover ul li span.overDue {
+	nav ul li:hover ul li span.overDueCount {
 		font-family: 'Roboto Mono', monospace;
 		float: right;
 		color: #f9f9f9;
