@@ -308,6 +308,12 @@
 /*		content: "\00a0 \00a0 \f067 \00a0";*/
 /*		content: "\00a0";*/
 	}
+
+nav ul li:hover ul li span.overDueCount, 
+nav ul li:hover ul li span.listTotal {
+	pointer-events: none;
+}
+
 	
 	nav .hideIt {
 		display: none; 
