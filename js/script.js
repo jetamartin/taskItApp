@@ -2827,7 +2827,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				// Set success message 
 				msg.type = "success";
-				msg.text = '<i class="fa fa-check-circle"></i>' + '&nbsp;'+ "Task Item saved!";
+				msg.text = '<i class="fa fa-check-circle"></i>' + '&nbsp;'+ '"' + newTaskItemObject.taskItem_title + '"' + " successfully created!";
 				
 				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
 				appModelController.updateListTaskTotals();		
