@@ -1253,7 +1253,7 @@ var appModelController = (function () {
 		formName : "newTaskFormListModalForm", 
 		formError : false,
 		formSubmitErrorMsgLoc : document.getElementById("newTaskFormListModalMsg"),
-		formSubmitSuccessMsgLoc : document.getElementById("newTaskSaveMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("newTaskListCreateMsg"),
 		formSubmitSuccessMsg: "list successfully created!",
 		formSubmitErrorMsg: "List NOT saved." + "<br />" + "Try again",
 
