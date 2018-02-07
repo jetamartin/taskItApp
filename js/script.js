@@ -1233,7 +1233,7 @@ var appModelController = (function () {
 		formError : false,
 		formSubmitErrorMsgLoc : document.getElementById("navTaskListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
-		formSubmitSuccessMsg: "List saved",
+		formSubmitSuccessMsg: "list successfully created!",
 		formSubmitErrorMsg: "List NOT saved." + "<br />" + "Try again",
 
 		fieldsToValidate : [
@@ -1254,7 +1254,7 @@ var appModelController = (function () {
 		formError : false,
 		formSubmitErrorMsgLoc : document.getElementById("newTaskFormListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("newTaskSaveMsg"),
-		formSubmitSuccessMsg: "List saved",
+		formSubmitSuccessMsg: "list successfully created!",
 		formSubmitErrorMsg: "List NOT saved." + "<br />" + "Try again",
 
 		fieldsToValidate : [
@@ -3008,7 +3008,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
 				
 				// Insert Submit Success Message
-				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ formValidationObj[0].formSubmitSuccessMsg;
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + newTaskListObject.taskList_name + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
 				
 				//XYZ----------------------
 				
