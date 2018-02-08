@@ -1233,8 +1233,8 @@ var appModelController = (function () {
 		formError : false,
 		formSubmitErrorMsgLoc : document.getElementById("navTaskListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
-		formSubmitSuccessMsg: "list successfully created!",
-		formSubmitErrorMsg: "List NOT saved." + "<br />" + "Try again",
+		formSubmitSuccessMsg: "list created!",
+		formSubmitErrorMsg: "List NOT saved." + " Correct Error",
 
 		fieldsToValidate : [
 		  {
@@ -1254,8 +1254,8 @@ var appModelController = (function () {
 		formError : false,
 		formSubmitErrorMsgLoc : document.getElementById("newTaskFormListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("newTaskListCreateMsg"),
-		formSubmitSuccessMsg: "list successfully created!",
-		formSubmitErrorMsg: "List NOT saved." + "<br />" + "Try again",
+		formSubmitSuccessMsg: "list created!",
+		formSubmitErrorMsg: "List NOT saved." + " Correct Error",
 
 		fieldsToValidate : [
 		  {
@@ -2827,7 +2827,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				// Set success message 
 				msg.type = "success";
-				msg.text = '<i class="fa fa-check-circle"></i>' + '&nbsp;'+ '"' + newTaskItemObject.taskItem_title + '"' + " successfully created!";
+				msg.text = '<i class="fa fa-check-circle"></i>' + '&nbsp;'+ '"' + newTaskItemObject.taskItem_title + '"' + " task created!";
 				
 				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
 				appModelController.updateListTaskTotals();		
@@ -2845,7 +2845,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				// Create error message object
 				msg.type = "error";
-				msg.text = '<i class="fa fa-times-circle-o"></i>' + '&nbsp;' + "Task Item NOT saved!" + '<br />' + "Try again!";
+				msg.text = '<i class="fa fa-times-circle-o"></i>' + '&nbsp;' + "Error Task NOT saved! Try again!";
 			
 				// Create log entry if failure
 				// Log Entry TBD
