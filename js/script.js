@@ -2328,8 +2328,12 @@ var appUIController = (function () {
 
 			var mainPage = document.getElementById("mainPage"); 
 			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
-
-			var genericTaskItemHtml = '<div class="card"><a href="editTask.html"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span class="card-subtitle mb-2 text-muted" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text"> %repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></a></div>'
+			
+			/* Older version of task item HTML...can discard it now */
+			/* var genericTaskItemHtml1 = '<div class="card"><a href="editTask.html"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span class="card-subtitle mb-2 text-muted" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text"> %repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></a></div>'
+			*/
+			
+			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><a href="editTask.html"><span class=" card-subtitle mb-2" for="">%taskTitle%</span></a></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></div>'	
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
