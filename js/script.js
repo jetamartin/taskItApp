@@ -43,7 +43,7 @@ var addNewTaskBtn = document.querySelector(".addNewTaskButton");
 var addNewTaskPage = document.querySelector("#newTaskPage"); 
 var newTaskBackArrow = document.querySelector(".newTaskBackArrow");
 
-var editNewTaskPage = document.querySelector("#editTaskPage"); 
+var editTaskPage = document.querySelector("#editTaskPage"); 
 var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
 
 
@@ -63,32 +63,6 @@ var listItemsToCategorize;
 function isEmpty(str){
     return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
 }
-
-
-
-//function exitNewTaskPage() {
-//	console.log("********************** exitNewTaskPage");
-//	toggleClass(homePage, "hideIt");
-//	toggleClass(newTaskPage, "hideIt");
-//	// Reset all values in form
-//	formSaveNewTask.reset()
-//}
-
-function editNewTask () {
-	console.log("************** editNewTask");
-	toggleClass(homePage, "hideIt");
-	toggleClass(editTaskPage, "hideIt");
-	
-}
-
-
-function exitEditTaskPage() {
-	console.log("********************** exitEditTaskPage()");
-	toggleClass(homePage, "hideIt");
-	toggleClass(editTaskPage, "hideIt");
-	removeNewTaskFormInputStyle();
-}
-
 
 /* Removes all taskItems on screen */
 
@@ -1280,7 +1254,10 @@ var appModelController = (function () {
 		return -1;
 	}
 	
-
+	/****************************************************************************/
+	//			APPMODELCONTROLLER EXPORTED FUNCTIONS
+	/****************************************************************************/
+	
 	return {
 		
 		getModalWindowIndex: function (modalFormName) {
@@ -1320,6 +1297,7 @@ var appModelController = (function () {
 //			var taskItemsTable = [];
 			return taskItemsTable;
 		},
+		
 		getTaskListTable: function() {
 			return taskListTable;
 		},
@@ -1351,6 +1329,20 @@ var appModelController = (function () {
 		return matchingListRecord[0].taskList_id;
 	
 		}, 
+		
+		/****************************************************************************************
+			MODULE: Model Controller
+			METHOD: lookUpTaskItemRecord
+		*****************************************************************************************/
+
+
+		lookUpTaskItemRecord: function(taskItemId) {
+			var taskItemsTable = appModelController.getTaskItemsTable();
+			var matchingTaskItemRecord = taskItemsTable.filter(function(taskItem) {
+				return taskItem.taskItem_id === taskItemId;
+			})
+			return matchingTaskItemRecord[0];
+		},
 		
 		/****************************************************************************************
 			MODULE: Model Controller
@@ -1609,7 +1601,7 @@ var appUIController = (function () {
 	var addTaskResetButton = document.getElementById("addTaskResetButton");
 	var mainPageSuccessMsg = document.getElementById("mainPageSuccessMsg");
 	var mainPageGeneralMsgLoc = document.getElementById("mainPageGeneralMsgLoc");
-	
+		
 	
 	
 	/* aTaskInGroup - flag used when displaying a user selected task list to facilitate display of that list into "Due Date Groups". It's a flag (initially set to false) that is set to true if at least one taskItem in a user selected task is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header (e.g., "Over Due") and closing tag need to be generated for that Due Date Group.  This flag is reset to false each time the controller is invoked it is invoked because each invocation means that 	you have a new key/category. 
@@ -1715,6 +1707,26 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
+		
+		
+		displayEditTaskPage: function (event) {
+			console.log("************** displayEditTaskPage");
+			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record
+			var selectedTaskItemRecord = appModelController.lookUpTaskItemRecord(event.dataset.id);
+			
+			
+			// Populate each field of the form with the task_item fields
+			
+			toggleClass(homePage, "hideIt");
+			toggleClass(editTaskPage, "hideIt");
+		},
+		
+		exitEditTaskPage: function() {
+			console.log("********************** exitEditTaskPage()");
+			toggleClass(homePage, "hideIt");
+			toggleClass(editTaskPage, "hideIt");
+			removeNewTaskFormInputStyle();
+		},
 		
 		reEnableRepeatInputAndRemoveErrors: function () {
 			appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
@@ -1851,7 +1863,7 @@ var appUIController = (function () {
 				newTaskRepeatGroup: newTaskRepeatGroup,
 				addTaskResetButton: addTaskResetButton,
 				mainPageSuccessMsg: mainPageSuccessMsg,
-				mainPageGeneralMsgLoc: mainPageGeneralMsgLoc
+				mainPageGeneralMsgLoc: mainPageGeneralMsgLoc,
 //				taskListMenuTitle: taskListMenuTitle
 			}
 
@@ -2333,12 +2345,17 @@ var appUIController = (function () {
 			/* var genericTaskItemHtml1 = '<div class="card"><a href="editTask.html"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span class="card-subtitle mb-2 text-muted" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text"> %repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></a></div>'
 			*/
 			
-			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><a href="editTask.html"><span class=" card-subtitle mb-2" for="">%taskTitle%</span></a></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></div>'	
+			var genericTaskItemHtml1 = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><a href="#"><span class="card-subtitle mb-2" for="">%taskTitle%</span></a></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></div>'	
+			
+			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></div>'	
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
+				// Insert the record ID in the special data attribute data-id="recordId"
+				specificTaskItemHtml = genericTaskItemHtml.replace('%taskItemId%',taskItemList[i].taskItem_id);
+				
 				// Insert the list name in HTML
-				specificTaskItemHtml = genericTaskItemHtml.replace('%taskTitle%', taskItemList[i].taskItem_title);
+				specificTaskItemHtml = specificTaskItemHtml.replace('%taskTitle%', taskItemList[i].taskItem_title);
 
 				specificTaskItemHtml = specificTaskItemHtml.replace('%date%', taskItemList[i].taskItem_due_date);
 				specificTaskItemHtml = specificTaskItemHtml.replace('%time%', taskItemList[i].taskItem_due_time);
@@ -2655,10 +2672,15 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		searchInput.addEventListener("keyup", detectSearchInput);
 		clearSearchIcon.addEventListener("click", clearSearchField);
 		backArrowSearch.addEventListener("click", exitSearch);
+		
+		
+		
 		floatAddBtn.addEventListener("click", buildAndDisplayTaskItemForm); 
-		newTaskBackArrow.addEventListener("click", appUIController.exitNewTaskPage);	
-		editTaskBackArrow.addEventListener("click", exitEditTaskPage);
+		newTaskBackArrow.addEventListener("click", appUIController.exitNewTaskPage);
+		editTaskBackArrow.addEventListener("click", appUIController.exitEditTaskPage);
 		addTaskResetButton.addEventListener("click", function() {appUIController.resetNewTaskForm()});
+		
+		
 		
 		// Clears ALL Modal form input fields when form is closed
 		// Also clears error messages and error formatting
@@ -2762,7 +2784,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("mouseout", function(event) { appUIController.showHideDueDateField (event) }, true);
 		
 		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("focus", function(event) { appUIController.checkForDueDate(event) }, true);
-		
 		
 		
 		/* 

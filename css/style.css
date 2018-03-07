@@ -517,7 +517,6 @@ nav ul li:hover ul li span.listTotal {
 	
 	.card {
 		width: 90%;
-		cursor: pointer;
 		margin: 1rem auto;
 		background-color: #f8f8f9;
 		-webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1), 0 2px 5px 0 rgba(0, 0, 0, 0.05);
@@ -536,7 +535,9 @@ nav ul li:hover ul li span.listTotal {
 	
 	.card-subtitle {
 		font-size: 1.5rem;
+		cursor: pointer;
 	}
+
 	/* TaskItem and date text color to dark grey (but not dates for overdue items)	*/
 	
 	.card h6:not(.overDue) {
