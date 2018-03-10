@@ -1762,7 +1762,7 @@ var appUIController = (function () {
 			
 //			inputEditFormFinishedSetting.value = selectedTaskItemRecord.taskItem_isCompleted;
 			inputEditFormTaskItemDueDate.value = selectedTaskItemRecord.taskItem_due_date;
-			inputEditFormRepeatSelect.value = selectedTaskItemRecord.taskItem_repeat;
+			inputEditFormRepeatSelect.value = selectedTaskItemRecord.taskItem_repeat.toLowerCase();
 			
 			appUIController.populateFormWithListNames (inputEditFormListSelect);
 			
