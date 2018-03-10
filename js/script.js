@@ -49,7 +49,7 @@ var editTaskBackArrow = document.querySelector(".editTaskBackArrow");
 
 var formSaveNewTask = document.querySelector("#formSaveNewTask"); 
 //var inputNewTaskTitle = document.getElementById("newTaskTitle");
-var formListSelectionDropDown = document.getElementById("newListNameSelection");
+//var formListSelectionDropDown = document.getElementById("newListNameSelection");
 var addTaskSaveMenuButton = document.querySelector("#addTaskMenuSaveButton");
 
 var addTaskSaveButton = document.querySelector("#addTaskSaveButton");
@@ -1241,7 +1241,29 @@ var appModelController = (function () {
 			}
 		  }
 		]
+	},
+	/* Edit Task Item List Modal */  
+	{  
+		pageName: "editTaskItemListModal",
+		formName : "editTaskFormListModalForm", 
+		formError : false,
+		formSubmitErrorMsgLoc : document.getElementById("editTaskFormListModalMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("editTaskListCreateMsg"),
+		formSubmitSuccessMsg: "list created!",
+		formSubmitErrorMsg: "List NOT saved." + " Correct Error",
+
+		fieldsToValidate : [
+		  {
+			fieldName: document.getElementById("editTaskModalFormListName"),
+			fieldErrorMsgLocation: document.getElementById("editTaskFormModalListNameErrorMsg"),
+			fieldErrMsg: "List name can't be blank",
+			isNotValid: function(str) {
+				return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+			}
+		  }
+		]
 	}
+	  
   ]
 
 	Array.prototype.contains = function(element) {
@@ -1261,7 +1283,7 @@ var appModelController = (function () {
 	return {
 		
 		getModalWindowIndex: function (modalFormName) {
-			switch(modalFormName) {
+			switch(modalFormName.trim()) {
 				case "navTaskListModalForm":
 					return 0;
 		
@@ -1344,6 +1366,13 @@ var appModelController = (function () {
 			return matchingTaskItemRecord[0];
 		},
 		
+		lookUpTaskListName: function(taskListId) {
+			var taskListTable = appModelController.getTaskListTable();
+			var matchingTaskListName = taskListTable.filter(function(taskList) {
+				return taskList.taskList_id === taskListId;
+			})
+			return matchingTaskListName[0].taskList_name;
+		},
 		/****************************************************************************************
 			MODULE: Model Controller
 			
@@ -1562,11 +1591,23 @@ var appUIController = (function () {
 	/* While grouping taskItems by due date category, this array holds the list of taskItems that have not yet been grouped into their appropriate Due Date Category 
 	*/
 	var listItemsLeftToCategorize = [];
+	
+	/* New Task Form Elements*/
 	var inputNewTaskListName = document.getElementById("newTaskListName");
 	var inputNewTaskTitle = document.getElementById("newTaskTitle");
 	var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
-	var inputNewTaskListSelection = document.querySelector("#newListNameSelection");
+	var inputNewTaskListSelection = document.querySelector("#newTaskListNameSelect");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
+	
+	
+	/* Edit Task Form Elements*/
+	var inputEditFormTaskItemName = document.getElementById("editFormTaskItemName");
+	var inputEditFormFinishedSetting = document.getElementById("editFormFinishedSetting");
+	var inputEditFormTaskItemDueDate = document.getElementById("editTaskItemDueDate");
+	var inputEditFormRepeatSelect = document.getElementById("editFormRepeatSelect");
+	var inputEditFormListSelect = document.getElementById("editTaskFormListSelect");
+
+
 	
 	//$$$$$
 	var addDueDateBtn = document.querySelector(".addDueDateBtn");
@@ -1711,9 +1752,23 @@ var appUIController = (function () {
 		
 		displayEditTaskPage: function (event) {
 			console.log("************** displayEditTaskPage");
-			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record
-			var selectedTaskItemRecord = appModelController.lookUpTaskItemRecord(event.dataset.id);
+			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record. Note: taskItem_id was stored in a custom attribute (data-id) of span when the taskItem card was created. 
 			
+			var taskItemId = event.dataset.id;
+			var selectedTaskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
+			
+
+			inputEditFormTaskItemName.value = selectedTaskItemRecord.taskItem_title;
+			
+//			inputEditFormFinishedSetting.value = selectedTaskItemRecord.taskItem_isCompleted;
+			inputEditFormTaskItemDueDate.value = selectedTaskItemRecord.taskItem_due_date;
+			inputEditFormRepeatSelect.value = selectedTaskItemRecord.taskItem_repeat;
+			
+			appUIController.populateFormWithListNames (inputEditFormListSelect);
+			
+			
+			inputEditFormListSelect.value = appModelController.lookUpTaskListName(selectedTaskItemRecord.taskList_id); 
+
 			
 			// Populate each field of the form with the task_item fields
 			
@@ -1864,7 +1919,11 @@ var appUIController = (function () {
 				addTaskResetButton: addTaskResetButton,
 				mainPageSuccessMsg: mainPageSuccessMsg,
 				mainPageGeneralMsgLoc: mainPageGeneralMsgLoc,
-//				taskListMenuTitle: taskListMenuTitle
+				inputEditFormTaskItemName: inputEditFormTaskItemName, 
+				inputEditFormFinishedSetting: inputEditFormFinishedSetting,
+				inputEditFormTaskItemDueDate: inputEditFormTaskItemDueDate,
+				inputEditFormRepeatSelect: inputEditFormRepeatSelect,
+				inputEditFormListSelect: inputEditFormListSelect
 			}
 
 		}, 
@@ -1997,7 +2056,7 @@ var appUIController = (function () {
 	that is inclusive of system defined lists (e.g., "All List", "Default" and "Completed) 
 	******************************************************************/
 	
-	populateFormWithListNames: function (formListSelectionDropDown) {
+	populateFormWithListNames: function (taskItemFormListSelect) {
 		
 		// Create an array containing all of the TaskList Names
 		var taskListNames = appModelController.getTaskListNames();
@@ -2011,13 +2070,13 @@ var appUIController = (function () {
 		})
 		
 		// Clear out existing Select list options each time to ensure that if any new list items 
-		clearOutSelectList(formListSelectionDropDown);
+		clearOutSelectList(taskItemFormListSelect);
 		
 		 
 		// Populate list selector with TaskList Names: 
 		for (var i = 0; i < editedTaskListNames.length; i++) {
 			var opt = editedTaskListNames[i];
-			formListSelectionDropDown.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
+			taskItemFormListSelect.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
 		}			
 	},
 		
@@ -2028,8 +2087,9 @@ var appUIController = (function () {
 			toggleClass(addNewTaskPage, "hideIt");
 			newTaskSaveMessage.classList.remove("success-message");
 			newTaskSaveMessage.innerHTML = "";
-			// Populate List Selection dropdown on new task item form 
-			appUIController.populateFormWithListNames (formListSelectionDropDown);
+			// Populate List Selection dropdown on new task item form
+			//ZZZZZZZ
+			appUIController.populateFormWithListNames (inputNewTaskListSelection);
 			// Need to set newTask Form list dropdown to match the "active" task list
 			appUIController.setTaskListSelect(appUIController.getActiveTaskListName());
 
@@ -2713,6 +2773,20 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 		});
 		
+		/* Edit List Modal Form */
+		$('#editTaskItemListModal').on('hidden.bs.modal', function (e) {
+		  $(this)
+			.find("input,textarea,select")
+			   .val('')
+			   .end()
+			.find("input[type=checkbox], input[type=radio]")
+			   .prop("checked", "")
+			   .end();
+			// Clear any error messages and error formatting
+			var test = document.querySelector("div").closest(".modal");
+			appUIController.clearTaskListModalFormErrors(e);
+			
+		});
 		
 		// Got the following solution from stackoverflow:
 		// https://stackoverflow.com/questions/15474862/twitter-bootstrap-modal-input-field-focus/20435473
@@ -2988,6 +3062,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		var newTaskListNameInput, newTaskListObject;
 		var userDefinedList;
 		
+		
+		var taskItemFormListSelect;
+		
 		var currActiveListNode = getActiveTaskList();
 		var currActiveListName = appUIController.getActiveTaskListName();
 
@@ -3081,12 +3158,20 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 //					var taskList2Display = getMatchingTaskItemsWithID (taskList_id); 
 //					appUIController.groupAndDisplayTaskItems(taskList2Display);
 				
-				// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+				//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 				
 				
+				/* 
+				Determine which form's List Selection Dropdown (NewTaskForm or EditTaskForm) needs to be updated with the new taskList that was just created
+				*/ 
 				
+				if (modalPageId === "editTaskItemListModal") {
+					taskItemFormListSelect = appUICtrl.getUIVars().inputEditFormListSelect; 
+				} else {
+					taskItemFormListSelect = appUICtrl.getUIVars().inputNewTaskListSelection;
+				}
 				// Rebuild values in List selection on form
-				appUIController.populateFormWithListNames (formListSelectionDropDown)
+				appUIController.populateFormWithListNames (taskItemFormListSelect)
 				
 				// Make newly added list the "active" list selection on taskItem form
 				appUIController.setTaskListSelect(newTaskListObject.taskList_name);

@@ -557,10 +557,10 @@ nav ul li:hover ul li span.listTotal {
 	}
 	
 	input[type="checkbox"] {
-		height: 1.5rem;
+		height: 1rem;
 		width: 1.5rem;
 		margin-left: .5rem;
-		float: right;
+/*		float: right;*/
 		cursor: pointer;
 	}
 	

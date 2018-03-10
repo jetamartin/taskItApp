@@ -226,7 +226,6 @@
 						<label for="inRepeatOption" class="form-control-label">Repeat:</label>
 						<div class="row col-12">
 							<select class="form-control" id="newTaskRepeatOption" disabled >
-<!--							<option class="placeholder" value="0" disabled selected>Select your option</option>-->
 							<option value="1">None</option>
 							<option value="2">Daily</option>
 							<option value="3">Weekly</option>
@@ -246,9 +245,9 @@
 						<label for="inListNameSelection">List:</label>
 						<div class="row col-10">
 							<!--	Will need to build list dynamically based on user input						-->
-							<select class="form-control" id="newListNameSelection">
-<!--							<option value="Default">Default</option>-->
-							// Adtl option values populated dynamically via JS
+							<select class="form-control" id="newTaskListNameSelect">
+
+								<!--	Option values populated dynamically via JS -->
 							</select>
 						</div>
 
@@ -262,7 +261,8 @@
 						</a>
 						
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
-						<div class="" id="newTaskListCreateMsg"></div>
+						<div class="" id="newTaskListCreateMsg">
+						</div>
 
 
 					</div>
@@ -359,37 +359,57 @@
 					<div class="form-group">
 						<label for="taskName" class="form-control-label">Task Name:</label>
 						<div class="row col-12">
-							<input type="text" class="form-control" id="taskName" value="Task Item Title 1">
+							<input type="text" class="form-control" id="editFormTaskItemName">
 						</div>
 					</div>
 					<div class="form-group">
-						<input class="checkbox" type="checkbox" id="finished" name="taskTitle" value="taskTitle">
+
 						<label class="form-control-label" for="finished">Task Finished?</label>
+						<input class="checkbox" type="checkbox" id="editFormFinishedSetting" name="taskTitle" value="taskTitle">
 					</div>
+					
+					<div class="form-group">
+						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
+						<div class="row col-10">
+							<div class="input-append date form_datetime" id="datetimepicker" class="form-control-label" data-date-format="2012-12-21T15:25:00Z">
+								<input size="32" id="editTaskItemDueDate" type="text" value="" readonly placeholder="Click to set date/time">	
+								<span class="add-on  clearDueDateBtn">
+									<i class="fa fa-times" aria-hidden="true"></i>
+								</span>
+								<span class="add-on addDueDateBtn">
+									<i class="fa fa-calendar" aria-hidden="true"></i>
+								</span> 					
+							</div>
+						</div>
+					</div>
+
+<!--
 					<div>
 						<div class="form-group">
 							<label for="dueDate" class="form-control-label">Due Date:</label>
 							<div class="row col-12">
-								<input type="date" value="2017-07-09" class="form-control input-sm" name="dueDate">
+								<input type="text" class="form-control input-sm" name="dueDate" id="editFormDueDate">
 							</div>
 						</div>
 					</div>
+-->
+<!--
 					<div class="form-group">
 						<label for="time-input" class="control-label">Time:</label>
 						<div class="row col-12">
-							<input class="form-control" type="time" value="17:00" id="time-input">
+							<input class="form-control" type="time" id="time-input">
 						</div>
-
 					</div>
+-->
 					<div class="form-group">
 						<label for="exampleSelect1">Repeat:</label>
 						<div class="row col-12">
-							<select class="form-control" id="exampleSelect1">
-							<option selected="selected">No repeat</option>
-							<option>Once a Day</option>
-							<option>Once a Week</option>
-							<option>Once a Month</option>
-							<option>Once a Year</option>
+							<select class="form-control" id="editFormRepeatSelect">
+							<option value="none">None</option>
+							<option value="daily">Daily</option>
+							<option value="weekly">Weekly</option>
+							<option value="monthly">Monthly</option>
+							<option value="yearly">Yearly</option>
 						</select>
 						</div>
 					</div>
@@ -397,23 +417,23 @@
 					<div class="form-group">
 						<label for="listName" class="form-control-label">List:</label>
 						<div class="row col-10">
-							<select class="form-control" id="listName">
-							<option>Default</option>
-							<option>Personal</option>
-							<option>Shopping</option>
-							<option>Wishlist</option>
-							<option selected="selected">Work</option>
+							<select class="form-control" id="editTaskFormListSelect">
+								<!--	Option values populated dynamically via JS -->
 							</select>
 						</div>
 
 
-						<a data-toggle="modal" data-target="#myModal">
+						<a data-toggle="modal" data-target="#editTaskItemListModal">
 							<span class="newList fa-stack">
-							<i class="fa fa-list-ul fa-stack-2x" aria-hidden="true"></i>
+							<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
 							<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
 								
 						</span>
 						</a>
+						
+						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
+						<div class="" id="editTaskListCreateMsg">
+						</div>
 
 					</div>
 					<div class="button-group">
@@ -425,7 +445,7 @@
 				
 				<!-- Add List Modal -->
 				
-				<div class="modal" id="myModal">
+				<div class="modal" id="editTaskItemListModal">
 					<div class="modal-dialog modal-sm" role="document">
 						<!-- Modal content-->
 						<div class="modal-content">
@@ -435,18 +455,21 @@
 							<div class="modal-body">
 								<!-- Success/Error message inserted via JS								-->
 								<div id="editTaskFormListModalMsg"></div>
-								<form class="modalForm editTaskListModalForm">
+								
+								<form class="modalForm" id="editTaskListModalForm">
 									<div class="form-group">
 										<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
-										<input type="text" class="form-control" id="recipient-name" placeholder="Enter new list name">
+										<input type="text" class="form-control" id="editTaskModalFormListName" placeholder="Enter new list name">
+									</div>
+									<!-- Modal widow for creating new list							-->
+							
+									<div class="modal-footer button-group">
+										<button type="button" class="btn btn-default newListCancelBtn" data-dismiss="modal" >Cancel</button>
+										<button type="submit" class="btn btn-default takeActionBtn" >Add</button>
 									</div>
 								</form>
 							</div>
-							<!-- Modal widow for creating new list							-->
-							<div class="modal-footer button-group">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-								<button type="button" class="btn btn-default takeActionBtn" data-dismiss="modal">Add</button>
-							</div>
+
 						</div>
 
 					</div>
