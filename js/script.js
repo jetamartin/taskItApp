@@ -781,9 +781,16 @@ return {
 		}
 		// Directly return the joined string
 		return splitStr.join(' '); 
+	}, 
+	
+	
+	equateTaskItemObjects: function(taskItemObject, inputTaskObject) {
+		taskItemObject.taskList_id = appModelController.lookUpTaskListId(inputTaskObject.taskList);
+		taskItemObject.taskItem_title = inputTaskObject.taskTitle;
+		taskItemObject.taskItem_due_date = inputTaskObject.taskDueDate;
+		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat;
+		taskItemObject.taskItem_isCompleted = inputTaskObject.taskFinished;
 	}
-
-
 }
 })();
 
@@ -1262,8 +1269,29 @@ var appModelController = (function () {
 			}
 		  }
 		]
-	}
+	},
 	  
+	  /* Edit Task Form Validation Object */
+	  {
+		pageName: "editTaskPage",
+		formName : "formEditNewTask", 
+		formError : false,
+		formSubmitErrorMsgLoc : document.getElementById("editTaskFormListModalMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("editTaskListCreateMsg"),
+		formSubmitSuccessMsg: "Task Successfully Updated!",
+		formSubmitErrorMsg: "Task Update Failed" + " See Form Error",
+
+		fieldsToValidate : [
+			{
+				fieldName: document.getElementById("editFormTaskItemName"),
+				fieldErrorMsgLocation: document.getElementById("editFormTaskItemNameErrorMsg"),
+				fieldErrMsg: '<i class="fa fa-times-circle"></i>' + '&nbsp;' + "Task Title is required/Cannot be blank",
+				isNotValid: function(str) {
+					return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+				}
+			}
+		]
+	}
   ]
 
 	Array.prototype.contains = function(element) {
@@ -1601,7 +1629,10 @@ var appUIController = (function () {
 	
 	
 	/* Edit Task Form Elements*/
+	var formEditNewTask = document.getElementById("formEditNewTask");
 	var inputEditFormTaskItemName = document.getElementById("editFormTaskItemName");
+	var inputEditFormTaskItemId = 
+	document.getElementById("editFormTaskItemId");
 	var inputEditFormFinishedSetting = document.getElementById("editFormFinishedSetting");
 	var inputEditFormTaskItemDueDate = document.getElementById("editTaskItemDueDate");
 	var inputEditFormRepeatSelect = document.getElementById("editFormRepeatSelect");
@@ -1759,11 +1790,18 @@ var appUIController = (function () {
 			
 
 			inputEditFormTaskItemName.value = selectedTaskItemRecord.taskItem_title;
+			// Item Id is stored in a hidden field on TaskItem editForm
+			inputEditFormTaskItemId.value = taskItemId;
 			
-//			inputEditFormFinishedSetting.value = selectedTaskItemRecord.taskItem_isCompleted;
+			inputEditFormFinishedSetting.value = selectedTaskItemRecord.taskItem_isCompleted;
 			inputEditFormTaskItemDueDate.value = selectedTaskItemRecord.taskItem_due_date;
-			inputEditFormRepeatSelect.value = selectedTaskItemRecord.taskItem_repeat.toLowerCase();
 			
+			if (selectedTaskItemRecord.taskItem_repeat === "") {
+				inputEditFormRepeatSelect.value = "none"
+			} else {
+				inputEditFormRepeatSelect.value = selectedTaskItemRecord.taskItem_repeat.toLowerCase();
+			}
+
 			appUIController.populateFormWithListNames (inputEditFormListSelect);
 			
 			
@@ -1852,13 +1890,7 @@ var appUIController = (function () {
 		*/
 		checkForDueDate: function (event) {
 			if (inputNewTaskDateTime.value === "") {
-				
 				disableRepeatInputAndSetErrors(); 
-//				appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "Must enter Due Date to make repeatable";
-//				appUIController.getUIVars().repeatErrorMsgDiv.classList.add("errorMsg"); 
-//				appUIController.getUIVars().formDatetimeInputBox.classList.add("formErrors");
-//				inputNewTaskRepeat.disabled = true;
-				
 			}
 			
 		},
@@ -1869,18 +1901,18 @@ var appUIController = (function () {
 		// $$$ Currently the fields are specific to newTaskForm..this needs
 		// to be made more generic formObject needs to be passed as input
 		// param once I can conver newTaskForm to use form object. 
-		setTaskListSelect: function(listName) {
+		setTaskListSelect: function(taskItemFormListSelect, listName) {
 
 //			var activeTaskListName = appUIController.getActiveTaskListName();
 			
 			console.log("===========LIST NAME: " + listName );
 
 			if (listName === "All Lists") {
-				inputNewTaskListSelection.value = "Default"
+				taskItemFormListSelect.value = "Default"
 
 			} else {
-				inputNewTaskListSelection.value = listName;
-				console.log("=============TASK LIST VALUE: " + inputNewTaskListSelection.value);
+				taskItemFormListSelect.value = listName;
+				console.log("=============TASK LIST VALUE: " + taskItemFormListSelect.value);
 			}
 
 		}, 
@@ -1919,7 +1951,12 @@ var appUIController = (function () {
 				addTaskResetButton: addTaskResetButton,
 				mainPageSuccessMsg: mainPageSuccessMsg,
 				mainPageGeneralMsgLoc: mainPageGeneralMsgLoc,
-				inputEditFormTaskItemName: inputEditFormTaskItemName, 
+				
+				// EditForm Fields
+				formEditNewTask: formEditNewTask,
+				inputEditFormTaskItemName: inputEditFormTaskItemName,
+				inputEditFormTaskItemId:
+				inputEditFormTaskItemId,
 				inputEditFormFinishedSetting: inputEditFormFinishedSetting,
 				inputEditFormTaskItemDueDate: inputEditFormTaskItemDueDate,
 				inputEditFormRepeatSelect: inputEditFormRepeatSelect,
@@ -2087,11 +2124,10 @@ var appUIController = (function () {
 			toggleClass(addNewTaskPage, "hideIt");
 			newTaskSaveMessage.classList.remove("success-message");
 			newTaskSaveMessage.innerHTML = "";
-			// Populate List Selection dropdown on new task item form
-			//ZZZZZZZ
+			// Populate List Selection dropdown on new task item for
 			appUIController.populateFormWithListNames (inputNewTaskListSelection);
 			// Need to set newTask Form list dropdown to match the "active" task list
-			appUIController.setTaskListSelect(appUIController.getActiveTaskListName());
+			appUIController.setTaskListSelect(inputNewTaskListSelection, appUIController.getActiveTaskListName());
 
 		}, 	
 		
@@ -2110,7 +2146,15 @@ var appUIController = (function () {
 			}
 			
 		},
-
+		
+		/***********************************************************************************
+			METHOD:  getTaskInput()  -- Get TaskItem data entered on form (New or Edit Task)
+			Potential replacement for getTaskItemInput() method 
+		***********************************************************************************/
+		getTaskItemUserInput: function (event) {
+			// Event should indicate which form we are dealing with.
+			
+		},
 	
 		/********************************************************************************
 			METHOD:  getTaskItemInput()  -- Primary method 
@@ -2141,6 +2185,20 @@ var appUIController = (function () {
 					newTaskListOptionTxt: inputNewTaskListSelection.options[inputNewTaskListSelection.selectedIndex].text
 				}			
 			}
+		},
+		
+		/********************************************************************************
+			METHOD:  getTaskItemEditInput()  -- Primary method 
+		********************************************************************************/
+		getTaskItemEditInput: function (event) {
+			return {		
+				taskId: inputEditFormTaskItemId.value.trim(),
+				taskTitle: inputEditFormTaskItemName.value.trim(),
+				taskFinished: inputEditFormFinishedSetting.value,  
+				taskDueDate: inputEditFormTaskItemDueDate.value,
+				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].text,
+				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].text
+			}			
 		},
 		
 		/********************************************************************************
@@ -2806,18 +2864,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		addTaskSaveMenuButton.addEventListener("click", function (event) {ctrlAddTaskItem(event)});
 
 
-		// Event Listener for Save button at bottom of form
-//		formSaveNewTask.addEventListener("submit",function (event) {
-//				event.preventDefault();
-//				event.stopPropagation();
-//				appUIController.getTaskItemInput();
-//		}, false);
-		
-//		formSaveNewTask.addEventListener("submit",function (event) { appUIController.getTaskItemInput(event)}, false);
+		// Submit for Add New Task Form Save button at bottom of form
+
 		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);
-		
-		
-		
+	
+		// Submit button for editTaskPage
+		appUIController.getUIVars().formEditNewTask.addEventListener("submit", function (event) {ctrlUpdateTaskItem(event)});
+	
 		// NavBar Tasklist Modal
 		// $$$$  May need to make this more generic 
 		
@@ -2876,7 +2929,110 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 
 	}
-								
+	
+	/***********************************************************************************
+		MODULE:  appController
+		
+		FUNCTION ctrlUpdateTaskItem - manages process of updating an existing task item
+		
+		Trigger: User hits submit button on Edit Task Form
+		
+		Summary: 
+			Validate user data and styles form as needed 
+			Create new task record
+			Add it to newTask table
+			Generate "new taskItem added" success message or failure message
+			Display success/failure message
+			
+		UI Behavior: 
+			User will remain on new task form until they explicitly navigate off of this page. This approach allows the
+			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
+
+	***********************************************************************************/
+	var ctrlUpdateTaskItem = function(event) {
+		console.log("*=======> ctrlUpdateTaskItem");
+		
+		var taskItemInputRecord = appUIController.getTaskItemEditInput(event);
+		
+		// Indicates whether update was successfully save to perm storage. Value set based on return code from save operation
+		var saveToPermStorageWasSuccessful = true;
+		
+		// Look up the page ID where this form is located so I can get associated validateObj
+		var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+		
+		// Note: If I modify getFormValidationObject I can just leverage event to get valObj
+//		var formValidationObj = appModelController.getFormValidationObject(event.target.id);
+		
+		// Page Id is used to identify the appropirate validationObject
+		var formValidationObj = appModelController.getFormValidationObject(pageId);
+		
+		// Validate the data entered on the form
+		validateFormInput(formValidationObj);
+		
+		// If all input was valid (e.g., formError = false)
+		if (!formValidationObj[0].formError) {
+			
+			// Find the taskItem in memory object (using Id in hidden input field) and update it with values	
+			var taskItemRecord = appModelController.lookUpTaskItemRecord(appUIController.getUIVars().inputEditFormTaskItemId.value);
+			
+			// Update the TaskItem record with values input on editTaskItem form
+			utilMethods.equateTaskItemObjects(taskItemRecord, taskItemInputRecord);
+			
+			// Save the updated taskItem record to the DB (or local storage)
+			
+			// Set saveToPermStorageWasSuccessful based on return code from save operation
+			
+			if (saveToPermStorageWasSuccessful) {
+				
+				// Style the success message
+				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
+				
+				// Insert Submit Success Message
+//				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + newTaskListObject.taskList_name + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
+				
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' +  formValidationObj[0].formSubmitSuccessMsg;
+				
+				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
+				appModelController.updateListTaskTotals();		
+
+
+				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
+				appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable()); 
+				
+			} else {
+				// Log an error message "Update could not be saved to permananent storage and try again
+				// If this is the first time it failed then
+				// -- create error message asking user to try again
+				// else if this is second or greater time this has failed
+				// -- Log an error code in system log
+				// -- Based on error code make some recommendations on how they could fix the problem
+				// -- Ask user if they would like to send their log info to app creator for diagnosis
+				// -- If they agree and user has registered app (we have their email)
+				// ---- Collect log info and send it via email
+				// ---- Confirm email has been sent and let them know I will follow up
+				// -- else (we don't have their email address)
+				// ---- present dialog to prompt them for their email & register them
+				// ---- Confirm email has been sent and let them know someone will follow up
+				// -- endIf
+			}
+			
+		} else {  // Some form input was found in error formValidationObj[0].formError = true
+			console.log("Error was detected Updating TaskItem ");
+				// Create log entry if failure
+				// TBD
+				
+				// Insert Failsure Message
+				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].formSubmitErrorMsg;
+				
+				// Style the errorSubmitMsg
+				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
+		}
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+		
+		
+	}							
 	
 	/***********************************************************************************
 		MODULE:  appController
@@ -2897,6 +3053,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
 
 	***********************************************************************************/
+
+	
 	var ctrlAddTaskItem = function(event) {
 		
 		var msg = new Object(); 
@@ -3052,14 +3210,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	***********************************************************************************/
 	var ctrlAddTaskList = function(event) {
 		console.log("++++++++++++ ctrlAddTaskList()");
-
-	 	event.preventDefault();
-     	event.stopPropagation();
+		event.preventDefault();
+		event.stopPropagation();
 		
 		// Represents results from attempting to save Task List record to DB/local storage
-		var saveWasSuccessful = true; // Default value is true
-		
-		var newTaskListNameInput, newTaskListObject;
+		var saveWasSuccessful = true;	// Default value is true
+		var newTaskListNameInput; 
+		var	newTaskListObject;
 		var userDefinedList;
 		
 		
@@ -3174,7 +3331,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				appUIController.populateFormWithListNames (taskItemFormListSelect)
 				
 				// Make newly added list the "active" list selection on taskItem form
-				appUIController.setTaskListSelect(newTaskListObject.taskList_name);
+				appUIController.setTaskListSelect(taskItemFormListSelect, newTaskListObject.taskList_name);
 				
 
 				

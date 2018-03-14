@@ -360,10 +360,11 @@
 						<label for="taskName" class="form-control-label">Task Name:</label>
 						<div class="row col-12">
 							<input type="text" class="form-control" id="editFormTaskItemName">
+							<input type="hidden" id="editFormTaskItemId">
 						</div>
+						<div class="errorMsg" id="editFormTaskItemNameErrorMsg"></div>
 					</div>
 					<div class="form-group">
-
 						<label class="form-control-label" for="finished">Task Finished?</label>
 						<input class="checkbox" type="checkbox" id="editFormFinishedSetting" name="taskTitle" value="taskTitle">
 					</div>
@@ -383,24 +384,7 @@
 						</div>
 					</div>
 
-<!--
-					<div>
-						<div class="form-group">
-							<label for="dueDate" class="form-control-label">Due Date:</label>
-							<div class="row col-12">
-								<input type="text" class="form-control input-sm" name="dueDate" id="editFormDueDate">
-							</div>
-						</div>
-					</div>
--->
-<!--
-					<div class="form-group">
-						<label for="time-input" class="control-label">Time:</label>
-						<div class="row col-12">
-							<input class="form-control" type="time" id="time-input">
-						</div>
-					</div>
--->
+
 					<div class="form-group">
 						<label for="exampleSelect1">Repeat:</label>
 						<div class="row col-12">
@@ -436,10 +420,14 @@
 						</div>
 
 					</div>
+					
 					<div class="button-group">
-						<button type="submit" class="btn btn-default takeActionBtn">Save</button>
-						<button type="Cancel" class="btn btn-default">Cancel</button>
+
+						<button type="submit" class="btn btn-default takeActionBtn" id="updateTaskButton">Update</button>
+						
+						<button type="Cancel" class="btn btn-default takeActionBtn" id="updateTaskCancelButton">Cancel</button>
 					</div>
+
 				</form>
 				
 				
