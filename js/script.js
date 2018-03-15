@@ -788,7 +788,7 @@ return {
 		taskItemObject.taskList_id = appModelController.lookUpTaskListId(inputTaskObject.taskList);
 		taskItemObject.taskItem_title = inputTaskObject.taskTitle;
 		taskItemObject.taskItem_due_date = inputTaskObject.taskDueDate;
-		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat;
+		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat.toLowerCase();
 		taskItemObject.taskItem_isCompleted = inputTaskObject.taskFinished;
 	}
 }
@@ -1276,8 +1276,9 @@ var appModelController = (function () {
 		pageName: "editTaskPage",
 		formName : "formEditNewTask", 
 		formError : false,
-		formSubmitErrorMsgLoc : document.getElementById("editTaskFormListModalMsg"),
-		formSubmitSuccessMsgLoc : document.getElementById("editTaskListCreateMsg"),
+		formSubmitErrorMsgLoc : document.getElementById("editTaskSaveMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("editTaskSaveMsg"),
+//	  	formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
 		formSubmitSuccessMsg: "Task Successfully Updated!",
 		formSubmitErrorMsg: "Task Update Failed" + " See Form Error",
 
@@ -1285,7 +1286,8 @@ var appModelController = (function () {
 			{
 				fieldName: document.getElementById("editFormTaskItemName"),
 				fieldErrorMsgLocation: document.getElementById("editFormTaskItemNameErrorMsg"),
-				fieldErrMsg: '<i class="fa fa-times-circle"></i>' + '&nbsp;' + "Task Title is required/Cannot be blank",
+				fieldErrMsg: "Task Title is required/Cannot be blank",
+//				fieldErrMsg: '<i class="fa fa-times-circle"></i>' + '&nbsp;' + "Task Title is required/Cannot be blank",
 				isNotValid: function(str) {
 					return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
 				}
@@ -1319,7 +1321,10 @@ var appModelController = (function () {
 					return 1;
 				
 				case "editTaskListModalForm":
-					return 2; 
+					return 2;
+					
+				case "formEditNewTask":
+					return 3;
 					
 				default:
 					return -1;
@@ -1577,6 +1582,7 @@ var appModelController = (function () {
 				}
 
 			})
+			return taskListTable;
 		},
 		
 
@@ -1637,6 +1643,7 @@ var appUIController = (function () {
 	var inputEditFormTaskItemDueDate = document.getElementById("editTaskItemDueDate");
 	var inputEditFormRepeatSelect = document.getElementById("editFormRepeatSelect");
 	var inputEditFormListSelect = document.getElementById("editTaskFormListSelect");
+	var editFormCancelButton = document.getElementById("editFormCancelButton");
 
 
 	
@@ -1814,11 +1821,14 @@ var appUIController = (function () {
 			toggleClass(editTaskPage, "hideIt");
 		},
 		
-		exitEditTaskPage: function() {
+		exitEditTaskPage: function(event) {
 			console.log("********************** exitEditTaskPage()");
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
-			removeNewTaskFormInputStyle();
+			appUIController.resetTaskForm(event);
+			
+			// Include method below into resetTaskForm
+//			removeNewTaskFormInputStyle();
 		},
 		
 		reEnableRepeatInputAndRemoveErrors: function () {
@@ -1960,7 +1970,8 @@ var appUIController = (function () {
 				inputEditFormFinishedSetting: inputEditFormFinishedSetting,
 				inputEditFormTaskItemDueDate: inputEditFormTaskItemDueDate,
 				inputEditFormRepeatSelect: inputEditFormRepeatSelect,
-				inputEditFormListSelect: inputEditFormListSelect
+				inputEditFormListSelect: inputEditFormListSelect,
+				editFormCancelButton: editFormCancelButton
 			}
 
 		}, 
@@ -2014,9 +2025,13 @@ var appUIController = (function () {
 			var modalPage, modalPageId;
 			console.log("=========> clearTaskListModalFormErrors");
 			
-
-			var modalPage = utilMethods.findAncestor(event.currentTarget, 'modal'); 
-			
+			// $$$$$$ TEMP SOLUTION - Need to general purpose solution
+			if (event.target.id === "editFormTaskItemName" ) {
+				modalPage = utilMethods.findAncestor(event.currentTarget, 'container-fluid');
+			} else {
+				modalPage = utilMethods.findAncestor(event.currentTarget, 'modal'); 
+			}
+		
 			if (modalPage) {
 				modalPageId = modalPage.id;
 				
@@ -2038,7 +2053,7 @@ var appUIController = (function () {
 						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldName, "formErrors");
 
 						// Error message text red
-						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation, "errorMsg");
+//						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation, "errorMsg");
 					}
 	//			}
 		
@@ -2194,7 +2209,7 @@ var appUIController = (function () {
 			return {		
 				taskId: inputEditFormTaskItemId.value.trim(),
 				taskTitle: inputEditFormTaskItemName.value.trim(),
-				taskFinished: inputEditFormFinishedSetting.value,  
+				taskFinished: inputEditFormFinishedSetting.checked,  
 				taskDueDate: inputEditFormTaskItemDueDate.value,
 				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].text,
 				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].text
@@ -2262,6 +2277,31 @@ var appUIController = (function () {
 //		   },	0);
 //			return true;
 		
+		},
+		
+		/********************************************************************************
+			METHOD:  resetTaskForm()  - resets error and
+			success messages
+			- Removes all error formating and error msgs
+			- Removes special user input formatting that might have been applied previously (via 'filled'CSS class)
+			- Resets value of all form fields
+		********************************************************************************/
+		
+		resetTaskForm: function(event) {
+			console.log("*******>>> appUIController.resetTaskForm");
+			var pageId = utilMethods.findAncestor(event.currentTarget, "container-fluid").id;
+			var formValidationObj = appModelController.getFormValidationObject(pageId);
+			var validationObject = formValidationObj[0];
+			validationObject.formError = false;
+			validationObject.formSubmitErrorMsgLoc.innerHTML = "";
+			validationObject.formSubmitSuccessMsgLoc.innerHTML = "";
+			// For each field on the form remove any error message & styling
+			validationObject.fieldsToValidate.forEach (function(field) {
+				field.fieldErrorMsgLocation.innerHTML = "";
+				field.fieldName.classList.remove("filled");
+				field.fieldName.classList.remove("formErrors");
+//				field.fieldName.classList.remove("errorMsg");
+			});
 		},
 		
 		
@@ -2726,7 +2766,8 @@ var appUIController = (function () {
 						}
 
 					} else if (listNode.querySelector(".overDueCount").classList.contains("overDueItemsPresent")) {
-						listNode.querySelector(".overDueCount").classList.remove("overDueItemsPresent");					
+						listNode.querySelector(".overDueCount").classList.remove("overDueItemsPresent");
+						listNode.querySelector(".overDueCount").innerHTML = "";
 					}
 					listNode.querySelector(".listTotal").innerHTML = taskListTable[index].taskList_totalCount;
 				}
@@ -2794,9 +2835,14 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		
 		floatAddBtn.addEventListener("click", buildAndDisplayTaskItemForm); 
+		
 		newTaskBackArrow.addEventListener("click", appUIController.exitNewTaskPage);
-		editTaskBackArrow.addEventListener("click", appUIController.exitEditTaskPage);
+		
+		editTaskBackArrow.addEventListener("click", function (event) {appUIController.exitEditTaskPage(event) });
+		
 		addTaskResetButton.addEventListener("click", function() {appUIController.resetNewTaskForm()});
+		
+		appUIController.getUIVars().editFormCancelButton.addEventListener("click", function (event) { appUIController.exitEditTaskPage(event) } );
 		
 		
 		
@@ -2926,7 +2972,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		addEventListenerByClass('modalListInput', 'keydown', function(event) { appUIController.clearTaskListModalFormErrors(event)});
 		
-		
+		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('keydown', function(event) {
+			appUIController.clearTaskListModalFormErrors(event)
+		})
 
 	}
 	
@@ -2951,6 +2999,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	***********************************************************************************/
 	var ctrlUpdateTaskItem = function(event) {
 		console.log("*=======> ctrlUpdateTaskItem");
+		
+		event.preventDefault();
+		event.stopPropagation();
 		
 		var taskItemInputRecord = appUIController.getTaskItemEditInput(event);
 		
@@ -2992,12 +3043,30 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' +  formValidationObj[0].formSubmitSuccessMsg;
 				
+				// Refresh the TaskItem List
+				var activeTaskId = getListIdForActiveTaskList();
+				updateTaskListDisplayed (activeTaskId);
+				
 				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
-				appModelController.updateListTaskTotals();		
+				var taskListTable = appModelController.updateListTaskTotals();		
 
 
 				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
-				appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable()); 
+				appUIController.refreshTaskListSubMenuTotals(taskListTable); 
+								
+
+				
+				//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+				setTimeout(function () {
+					appUIController.getUIVars().editFormCancelButton.click();
+					
+					// Must remove the success-message class otherwise it will not appear on future saves 
+					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
+					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+				
+					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+				}, 5000);
+				//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
 				
 			} else {
 				// Log an error message "Update could not be saved to permananent storage and try again
@@ -3027,9 +3096,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Style the errorSubmitMsg
 				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 		}
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
 		
 		
 	}							
@@ -3156,7 +3223,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					toggleClass(field.fieldName, "formErrors");
 
 					// Error message text red
-					toggleClass(field.fieldErrorMsgLocation, "errorMsg");
+//					toggleClass(field.fieldErrorMsgLocation, "errorMsg");
 					
 				} 
 
