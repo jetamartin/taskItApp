@@ -880,7 +880,7 @@ nav ul li:hover ul li span.listTotal {
 }
 .fa-calendar:before {
     content: "\f271";
-    margin-left: 4.1rem;
+/*    margin-left: 4.1rem;*/
     padding: .425rem;
     padding-right: .5rem;
     padding-left: .75rem;
@@ -902,9 +902,14 @@ nav ul li:hover ul li span.listTotal {
     padding-left: .75rem;
     padding-bottom: .575rem;
     color: #34AFA9;
-    margin-left: 2.75rem;
+/*    margin-left: 2.75rem;    */
+	margin-left: -3.5rem;
     background-color: #f2f2f2;
     border: 1px solid #ced4da;
+}
+
+.addDueDateBtn, .clearDueDateBtn {
+	float: right;
 }
 
 	/* Make form controls appear in a row rather than as a column */
@@ -940,11 +945,20 @@ nav ul li:hover ul li span.listTotal {
 	.editTaskPage span.newList, .newTaskPage span.newList {
 		position: relative;
 		float: right;
-		margin-top: -2.2rem;
+		margin-top: -2.29rem;
 		color: #34AFA9;
-		left: -3.5rem;
-		margin-top: -2.5rem;
+/*		left: -3.5rem;*/
+		left: -1.95rem;
+		background-color: #f2f2f2;
+		border-top-right-radius: 5px;
+		border-bottom-right-radius: 5px;
+		padding-right: 2px;
+/*		margin-top: -2.5rem;*/
 	}
+/* Allow new list stack to fit inside list input area on newTask and editTask forms*/
+span.newList.fa-stack {
+	height: 1.8em !important;
+}
 	
 	i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
 		position: relative;
