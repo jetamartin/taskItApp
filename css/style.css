@@ -810,48 +810,33 @@ nav ul li:hover ul li span.listTotal {
 		from {opacity: 1;}
 		to {opacity: 0;}
 	}
-	
+
 	/* Class applied once user has entered text in input field of form */
 	#formSaveNewTask input[type="text"].filled,
 	#formSaveNewTask select.filled,
 	input[type="text"].filled,
 	select.filled
 	{
-		color: #636c72;
+		color: #636c72 !important;
     	font-style: normal;
-    	font-size: 1.25rem;
+/*    	font-size: 1.25rem;*/
+	}
+	
+
+	input, 
+	input[type="text"],
+	input[type="date"],
+	select {
+		color: #76d6d1 !important;
+		font-style: italic;
 	}
 
-	input::-webkit-input-placeholder,
-	input[type="text"]::-webkit-input-placeholder,
-	input[type="date"]::-webkit-input-placeholder,
-	.form-control {
-		color: 	 #76d6d1;
-		font-style: italic;
-	}
-	
-	input:-ms-input-placeholder,
-	input[type="text"]:-ms-input-placeholder,
-	input[type="date"]:-ms-input-placeholder,
-	.form-control {
-		color: #76d6d1;
-		font-style: italic;
-	}
-	
-	input::-webkit-input-placeholder,
-	input[type="text"]::-webkit-input-placeholder,
-	input[type="date"]::-webkit-input-placeholder,
-	.form-control {
-		color: #76d6d1;
-		font-style: italic;
-	}
-	
-	input::placeholder,
-	input[type="text"]::placeholder,
-	input[type="date"]::placeholder,
-	.form-control {
-		color: #76d6d1;
-		font-style: italic;
+	input, 
+	input[type="text"],
+	input[type="date"],
+	select {
+		-webkit-color: #76d6d1 !important;
+		-webkit-font-style: italic;
 	}
 
 	input:not([type=range]), label, select, summary, textarea {

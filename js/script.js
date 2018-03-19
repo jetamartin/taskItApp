@@ -1788,6 +1788,24 @@ var appUIController = (function () {
 	return {
 		
 		
+		styleTaskFormFieldAsChanged: function (event) {
+			console.log("************** styleTaskFormFieldAsChanged");
+			switch(event.target.id) {
+				case "editFormTaskItemName":
+					inputEditFormTaskItemName.classList.add("filled");
+					break;
+				case "editFormRepeatSelect":
+					inputEditFormRepeatSelect.classList.add("filled");
+					break;
+				case "editTaskFormListSelect":
+					inputEditFormListSelect.classList.add("filled");
+					break;
+				default:
+					console.log("No matching event found");
+			}
+		},
+		
+		
 		displayEditTaskPage: function (event) {
 			console.log("************** displayEditTaskPage");
 			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record. Note: taskItem_id was stored in a custom attribute (data-id) of span when the taskItem card was created. 
@@ -2288,8 +2306,20 @@ var appUIController = (function () {
 		********************************************************************************/
 		
 		resetTaskForm: function(event) {
+			
 			console.log("*******>>> appUIController.resetTaskForm");
 			var pageId = utilMethods.findAncestor(event.currentTarget, "container-fluid").id;
+			
+			/* $$$$ Need to make this if statement more generic so it works easily with both versions
+				of taskForm...if I had all fields in the validationObject I could just
+				reset all of them (e.g., remove 'filled' class from all fields in loop below'*/
+			if(pageId === "editTaskPage") {
+				appUIController.getUIVars().inputEditFormTaskItemDueDate.classList.remove("filled");
+				inputEditFormTaskItemName.classList.remove("filled");
+				inputEditFormRepeatSelect.classList.remove("filled")
+				inputEditFormListSelect.classList.remove("filled");
+			}
+			
 			var formValidationObj = appModelController.getFormValidationObject(pageId);
 			var validationObject = formValidationObj[0];
 			validationObject.formError = false;
@@ -2942,7 +2972,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		formSaveNewTask.addEventListener("focusout", function(event) { appUIController.styleUserFormInput(event) }, true);
 		
-		//%%%%%%%
+		/* &$&$ Added */
+//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("focusout", function(event) {appUIController.styleUserFormInput(event) }, true);
 		
 		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("focus", function(event) { appUIController.reEnableRepeatInputAndRemoveErrors (event) }, true);
 		
@@ -2952,11 +2983,17 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("blur", function(event) { appUIController.showHideDueDateField (event) }, true);
 		
-		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("hide", function(event) { appUIController.showHideDueDateField (event) }, true);
+		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("mouseout", function(event) { appUIController.showHideDueDateField (event) }, true);
+		
+		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("focus", function(event) { appUIController.checkForDueDate(event) }, true);
+		
+		/* &$&$ Commented out -- There is no such event as a "hide" so don't think this would ever fire*/
+//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("hide", function(event) { appUIController.showHideDueDateField (event) }, true);
 		
 		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("mouseout", function(event) { appUIController.showHideDueDateField (event) }, true);
 		
 		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("focus", function(event) { appUIController.checkForDueDate(event) }, true);
+		
 		
 		
 		/* 
@@ -2975,6 +3012,34 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('keydown', function(event) {
 			appUIController.clearTaskListModalFormErrors(event)
 		})
+		
+		
+		
+		/* Edit TaskItem Form EventListeners*/
+		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('input',  function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+		});
+		
+		appUIController.getUIVars().inputEditFormRepeatSelect.addEventListener('input',  function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+		});
+		
+		appUIController.getUIVars().inputEditFormListSelect.addEventListener('input',
+        function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+		});
+		
+		
+		$(".form_datetime").datetimepicker({
+        format: "mm/dd/yyyy  H:ii P",
+        showMeridian: true,
+        autoclose: true,
+        todayBtn: true,
+		pickerPosition: "bottom-left"
+    	});
+		
+		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
+			$('#editTaskItemDueDate').addClass('filled');
+			console.log(e);
+			
+		});
 
 	}
 	
@@ -3329,6 +3394,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 			// Check status of saving List to DB/local storage
 			if (saveWasSuccessful) {
+				
+				// Style the newly added list selection input to reflect list selection had changed (add class="filled")
+				appUIController.getUIVars().inputEditFormListSelect.classList.add("filled");
 				
 				// Style the success message
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");

@@ -367,7 +367,7 @@
 						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
 						<div class="row col-12">
 							<div class="input-append date form_datetime form-control" id="datetimepicker" data-date-format="2012-12-21T15:25:00Z">
-								<input id="editTaskItemDueDate" type="text" value="" readonly placeholder="Click to set date/time">	
+								<input id="editTaskItemDueDate" type="text" placeholder="Click to set date/time" readonly >	
 								<span class="add-on  clearDueDateBtn">
 									<i class="fa fa-times" aria-hidden="true"></i>
 								</span>
@@ -480,21 +480,19 @@
 	
 	<script src="js/bootstrap-datetimepicker.js"></script>
 	<script src="js/script.js"></script>
-	<script>
-		$('.datetimepicker').datetimepicker()
-		.on("hide", function(e) { console.log("*******  HELLO *********", e) });
-        // `e` here contains the extra attributes
-//    	});
-	</script>
+
 	
 	<script type="text/javascript">
-    	$(".form_datetime").datetimepicker({
-        format: "mm/dd/yyyy  H:ii P",
-        showMeridian: true,
-        autoclose: true,
-        todayBtn: true,
-		pickerPosition: "bottom-left"
-    	});
+//    	$(".form_datetime").datetimepicker({
+//        format: "mm/dd/yyyy  H:ii P",
+//        showMeridian: true,
+//        autoclose: true,
+//        todayBtn: true,
+//		pickerPosition: "bottom-left"
+//    	});
+//		
+//		$('.form_datetime').datetimepicker().on('changeDate', function(e) {alert("A Date has changed")});
+
 	</script> 
 
 	

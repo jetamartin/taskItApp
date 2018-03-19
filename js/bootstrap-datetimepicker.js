@@ -1960,8 +1960,13 @@
       $this.datetimepicker('show');
     }
   );
+
   $(function () {
     $('[data-provide="datetimepicker-inline"]').datetimepicker();
+
+//	$('#editTaskItemDueDate').datetimepicker().on('changeDate', function(ev){alert('****A DATE CHANGED!')});
+
   });
+	
 
 }));
