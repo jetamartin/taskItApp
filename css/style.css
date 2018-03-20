@@ -823,21 +823,14 @@ nav ul li:hover ul li span.listTotal {
 	}
 	
 
-	input, 
 	input[type="text"],
 	input[type="date"],
 	select {
 		color: #76d6d1 !important;
-		font-style: italic;
+		font-style: italic !important;
 	}
 
-	input, 
-	input[type="text"],
-	input[type="date"],
-	select {
-		-webkit-color: #76d6d1 !important;
-		-webkit-font-style: italic;
-	}
+
 
 	input:not([type=range]), label, select, summary, textarea {
 		-ms-touch-action: manipulation;

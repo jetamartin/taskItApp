@@ -1277,8 +1277,8 @@ var appModelController = (function () {
 		formName : "formEditNewTask", 
 		formError : false,
 		formSubmitErrorMsgLoc : document.getElementById("editTaskSaveMsg"),
-		formSubmitSuccessMsgLoc : document.getElementById("editTaskSaveMsg"),
-//	  	formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
+//		formSubmitSuccessMsgLoc : document.getElementById("editTaskSaveMsg"),
+	  	formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
 		formSubmitSuccessMsg: "Task Successfully Updated!",
 		formSubmitErrorMsg: "Task Update Failed" + " See Form Error",
 
@@ -2323,8 +2323,12 @@ var appUIController = (function () {
 			var formValidationObj = appModelController.getFormValidationObject(pageId);
 			var validationObject = formValidationObj[0];
 			validationObject.formError = false;
-			validationObject.formSubmitErrorMsgLoc.innerHTML = "";
-			validationObject.formSubmitSuccessMsgLoc.innerHTML = "";
+			
+			setTimeout(function () {
+				validationObject.formSubmitErrorMsgLoc.innerHTML = "";
+				validationObject.formSubmitSuccessMsgLoc.innerHTML = "";
+           }, 5000); 
+		
 			// For each field on the form remove any error message & styling
 			validationObject.fieldsToValidate.forEach (function(field) {
 				field.fieldErrorMsgLocation.innerHTML = "";
@@ -3118,19 +3122,20 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
 				appUIController.refreshTaskListSubMenuTotals(taskListTable); 
-								
-
+				
+				// ADDED
+				appUIController.getUIVars().editFormCancelButton.click();
 				
 				//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
-				setTimeout(function () {
-					appUIController.getUIVars().editFormCancelButton.click();
-					
-					// Must remove the success-message class otherwise it will not appear on future saves 
-					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
-					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
-				
-					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
-				}, 5000);
+//				setTimeout(function () {
+//					appUIController.getUIVars().editFormCancelButton.click();
+//					
+//					// Must remove the success-message class otherwise it will not appear on future saves 
+//					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
+//					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+//				
+//					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+//				}, 5000);
 				//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
 				
 			} else {
