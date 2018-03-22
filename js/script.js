@@ -1853,7 +1853,7 @@ var appUIController = (function () {
 			appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
 			appUIController.getUIVars().repeatErrorMsgDiv.classList.remove("errorMsg"); 
 			appUIController.getUIVars().formDatetimeInputBox.classList.remove("formErrors");
-			inputNewTaskRepeat.disabled = false;	
+				
 		}, 
 		
 		//%%%%%%%% NOT USED NOW --- DELETE this function
@@ -2994,9 +2994,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		/* &$&$ Commented out -- There is no such event as a "hide" so don't think this would ever fire*/
 //		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("hide", function(event) { appUIController.showHideDueDateField (event) }, true);
 		
-		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("mouseout", function(event) { appUIController.showHideDueDateField (event) }, true);
+//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("mouseout", function(event) { appUIController.showHideDueDateField (event) }, true);
 		
-		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("focus", function(event) { appUIController.checkForDueDate(event) }, true);
+//		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("focus", function(event) { appUIController.checkForDueDate(event) }, true);
 		
 		
 		
