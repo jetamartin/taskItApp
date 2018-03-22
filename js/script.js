@@ -1270,6 +1270,30 @@ var appModelController = (function () {
 		  }
 		]
 	},
+	  /* NEW Task Form Validation Object */
+	  {
+		pageName: "newTaskPage",
+		formName : "formSaveNewTask", 
+		formError : false,
+		formSubmitErrorMsgLoc : document.getElementById("newTaskSaveMsg"),
+	//		formSubmitSuccessMsgLoc : document.getElementById("editTaskSaveMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
+		formSubmitSuccessMsg: "Task Successfully Created!",
+		formSubmitErrorMsg: "Task Update Failed" + " See Form Error",
+
+		fieldsToValidate : [
+			{
+				fieldName: document.getElementById("newTaskTitle"),
+				fieldErrorMsgLocation: document.getElementById("newTaskFormErrorMsg"),
+				fieldErrMsg: "Task Title is required/Cannot be blank",
+	//				fieldErrMsg: '<i class="fa fa-times-circle"></i>' + '&nbsp;' + "Task Title is required/Cannot be blank",
+				isNotValid: function(str) {
+					return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+				}
+			}
+		]
+	},	  
+	  
 	  
 	  /* Edit Task Form Validation Object */
 	  {
@@ -1655,7 +1679,7 @@ var appUIController = (function () {
 	var modalListInput = document.querySelector(".modalListInput");
 	
 	
-	var newTaskFormErrorMsg = document.querySelector(".newTaskFormErrorMsg");
+	var newTaskFormErrorMsg = document.getElementById("newTaskFormErrorMsg");
 	var newTaskSaveMessage = document.querySelector("#newTaskSaveMsg");				 
 	var editTaskSaveMessage = document.querySelector("#editTaskSaveMsg");
 	var navTaskListModalMessage = document.querySelector("#navTaskListModalMsg");
