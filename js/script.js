@@ -1724,6 +1724,15 @@ var appUIController = (function () {
 		toggleClass(inputNewTaskTitle, "formErrors");
 		formError = false;
 	}
+	
+	function resetFormError1(formValidationObj) {
+		formValidationObj.fieldsToValidate[0].fieldErrorMsgLocation.innerHTML = "";
+		formValidationObj.fieldsToValidate[0].fieldName.value = "";
+//		formValidationObj.fieldsToValidate[0].fieldName.focus();
+//		formValidationObj.fieldsToValidate[0].fieldName.setSelectionRange(0,0);
+		toggleClass(formValidationObj.fieldsToValidate[0].fieldName, "formErrors");
+		formValidationObj.formError = false;
+	} 
 
 	function setFormError() {
 		//Set Form error information
@@ -2056,6 +2065,20 @@ var appUIController = (function () {
 			}
 		}, 
 		
+		clearTaskItemError1: function (event) {
+			// Look up the page ID where this form is located so I can get associated validateObj
+			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+		
+			// Page Id is used to identify the appropirate validationObject
+			var formValidationObj = appModelController.getFormValidationObject(pageId);
+			
+			if (formValidationObj[0].formError) {
+				resetFormError1(formValidationObj[0]);
+			}
+			
+			
+		},
+		
 		/* $$$$ WILL NEED TO MAKE THIS METHOD MORE GENERIC 
 		
 			Specifically need to use event to get the Modals div id OR the id of the form and that needs
@@ -2208,9 +2231,14 @@ var appUIController = (function () {
 			METHOD:  getTaskInput()  -- Get TaskItem data entered on form (New or Edit Task)
 			Potential replacement for getTaskItemInput() method 
 		***********************************************************************************/
-		getTaskItemUserInput: function (event) {
+		getNewTaskFormUserInput: function () {
 			// Event should indicate which form we are dealing with.
-			
+			return {
+				newTaskTitle: inputNewTaskTitle.value.trim(),
+				newTaskDueDate: inputNewTaskDateTime.value,
+				newTaskRepeateOptionTxt: inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text,
+				newTaskListOptionTxt: inputNewTaskListSelection.options[inputNewTaskListSelection.selectedIndex].text
+			}
 		},
 	
 		/********************************************************************************
@@ -2965,12 +2993,18 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		*/
 //		addTaskSaveMenuButton.addEventListener("click", appUIController.getTaskItemInput);
 		
-		addTaskSaveMenuButton.addEventListener("click", function (event) {ctrlAddTaskItem(event)});
+		//!!! Call to old ctrlAddTaskItem method
+		
+//		addTaskSaveMenuButton.addEventListener("click", function (event) {ctrlAddTaskItem(event)});
+		
+		addTaskSaveMenuButton.addEventListener("click", function (event) {ctrlAddTaskItem1(event)});
 
 
 		// Submit for Add New Task Form Save button at bottom of form
-
-		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);
+		
+		//!!! Call to old ctrlAddTaskItem method
+//		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem(event)}, true);		
+		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem1(event)}, true);
 	
 		// Submit button for editTaskPage
 		appUIController.getUIVars().formEditNewTask.addEventListener("submit", function (event) {ctrlUpdateTaskItem(event)});
@@ -3029,7 +3063,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			that form's error styling once the user starts entering in a new value (keydown) in that field.   
 		*/
 		
-		document.getElementById("newTaskTitle").addEventListener("keydown", appUIController.clearTaskItemError);
+//		document.getElementById("newTaskTitle").addEventListener("keydown", appUIController.clearTaskItemError);
+		document.getElementById("newTaskTitle").addEventListener("keydown", function(event) {appUIController.clearTaskItemError1(event)});
 		
 		// $$$$$ Maybe change to class rather than ID.
 		// For Task List Modal - Clear prior error messages that may exist when user starts to enter Task List Name in Task List Modal form  
@@ -3193,7 +3228,135 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		
 		
-	}							
+	}
+	/***********************************************************************************
+		MODULE:  appController
+		
+		FUNCTION ctrlAddTaskItem1 - manages process of adding a new taskItem to the app
+		
+		Trigger: User hits submit button on New Task Form
+		
+		Summary: 
+			Validate user data and styles form as needed 
+			Create new task record
+			Add it to newTask table
+			Generate "new taskItem added" success message or failure message
+			Display success/failure message
+			
+		UI Behavior: 
+			User will remain on new task form until they explicitly navigate off of this page. This approach allows the
+			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
+
+	***********************************************************************************/
+
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	var ctrlAddTaskItem1 = function(event) {
+		
+		event.preventDefault();
+		event.stopPropagation();
+		
+		console.log("++++++++++++ ctrlAddTaskItem1()");
+		var newTaskItemInput, newTaskItemObject;
+		var taskListTable = appModelController.getTaskListTable(); 
+		
+		// ----------------- New ----------------------
+		
+		// Indicates whether update was successfully save to perm storage. Value set based on return code from save operation
+		var saveToPermStorageWasSuccessful = true;
+		
+		// Look up the page ID where this form is located so I can get associated validateObj
+		var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+		
+		// Page Id is used to identify the appropirate validationObject
+		var formValidationObj = appModelController.getFormValidationObject(pageId);
+		
+		// Validate the data entered on the form
+		validateFormInput(formValidationObj);
+		
+		// If all input was valid (e.g., formError = false)
+		if (!formValidationObj[0].formError) {
+		
+		// ----------------- New ----------------------	
+			
+			//	Get user input from newTaskForm
+			newTaskItemInput = appUIController.getNewTaskFormUserInput();
+
+			// Create New Task Object  (create required fields for object e.g., unique taskItemId, assign taskListId, etc)
+			newTaskItemObject = appModelController.createNewTaskItem(newTaskItemInput);
+			
+			
+			// Add New task object to New TaskItem table
+			appModelController.getTaskItemsTable().push(newTaskItemObject);
+			
+			
+			// Save task object to local/Storage/DB			
+			// INSERT ---> DB call and or save to localStorage
+		
+			if (saveToPermStorageWasSuccessful) {
+				
+				// Style the success message
+				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
+				
+				// Insert Submit Success Message
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' +  formValidationObj[0].formSubmitSuccessMsg;
+				
+				// Refresh the TaskItem List
+				var activeTaskId = getListIdForActiveTaskList();
+				updateTaskListDisplayed (activeTaskId);
+				
+				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
+				var taskListTable = appModelController.updateListTaskTotals();	
+				
+				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
+				appUIController.refreshTaskListSubMenuTotals(taskListTable); 
+
+
+				// Reset values on new Task form but leave List selection to last list value selected by user
+				appUIController.resetNewTaskForm(newTaskItemInput.newTaskListOptionTxt); 
+
+				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
+				appUIController.refreshTaskListSubMenuTotals(taskListTable);
+				
+				//??????
+				appUIController.getUIVars().addTaskResetButton.click();
+								// ADDED
+				appUIController.exitNewTaskPage();
+				
+			} else {
+				// Log an error message "Update could not be saved to permananent storage and try again
+				// If this is the first time it failed then
+				// -- create error message asking user to try again
+				// else if this is second or greater time this has failed
+				// -- Log an error code in system log
+				// -- Based on error code make some recommendations on how they could fix the problem
+				// -- Ask user if they would like to send their log info to app creator for diagnosis
+				// -- If they agree and user has registered app (we have their email)
+				// ---- Collect log info and send it via email
+				// ---- Confirm email has been sent and let them know I will follow up
+				// -- else (we don't have their email address)
+				// ---- present dialog to prompt them for their email & register them
+				// ---- Confirm email has been sent and let them know someone will follow up
+				// -- endIf
+			}
+			
+		} else {   // Some form input was found in error formValidationObj[0].formError = true
+			
+			console.log("Error was detected Updating TaskItem ");
+			// Create log entry if failure
+			// TBD
+
+			// Insert Failsure Message
+			formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].formSubmitErrorMsg;
+
+			// Style the errorSubmitMsg
+			formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
+
+		}
+		
+		// DisplaySaveMessage (success or failure message)
+//		appUIController.displaySaveMessage(appUIController.getUIVars().newTaskSaveMessage, msg);
+
+	}
 	
 	/***********************************************************************************
 		MODULE:  appController
