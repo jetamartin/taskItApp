@@ -827,9 +827,41 @@ nav ul li:hover ul li span.listTotal {
 	input[type="date"],
 	select {
 		color: #76d6d1 !important;
-		font-style: italic !important;
+		font-style: italic; 
 	}
 
+
+
+
+
+	input[type="text"]::-webkit-input-placeholder,
+	input[type="date"]::-webkit-input-placeholder,
+	select::-webkit-input-placeholder {
+		color: #76d6d1 !important;
+		font-style: italic; 
+	}
+
+
+
+
+
+	input[type="text"]:-ms-input-placeholder,
+	input[type="date"]:-ms-input-placeholder,
+	select:-ms-input-placeholder {
+		color: #76d6d1 !important;
+		font-style: italic; 
+	}
+
+
+
+
+
+	input[type="text"]::placeholder,
+	input[type="date"]::placeholder,
+	select::placeholder {
+		color: #76d6d1 !important;
+		font-style: italic; 
+	}
 
 
 	input:not([type=range]), label, select, summary, textarea {

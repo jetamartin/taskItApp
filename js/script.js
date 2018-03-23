@@ -1755,6 +1755,8 @@ var appUIController = (function () {
 		inputNewTaskTitle.classList.remove("filled");
 		inputNewTaskRepeat.classList.remove("filled");
 		inputNewTaskListSelection.classList.remove("filled");
+		inputNewTaskDateTime.classList.remove("filled");
+		
 	}
 	
 	/* Gets the Active List Task Name */
@@ -1822,6 +1824,7 @@ var appUIController = (function () {
 		
 		
 		styleTaskFormFieldAsChanged: function (event) {
+			var pageId;
 			console.log("************** styleTaskFormFieldAsChanged");
 			switch(event.target.id) {
 				case "editFormTaskItemName":
@@ -1832,6 +1835,17 @@ var appUIController = (function () {
 					break;
 				case "editTaskFormListSelect":
 					inputEditFormListSelect.classList.add("filled");
+					break;
+				case "datetimepicker":
+					console.log("DateTimePicker Event");
+					pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+					if (pageId === "newTaskPage") {
+						console.log("Page where clicked: ", pageId);
+						inputNewTaskDateTime.classList.add("filled");
+					} else { // "editTaskPage"
+						console.log("Page where clicked: ", pageId);
+						inputEditFormTaskItemDueDate.classList.add("filled");
+					}	
 					break;
 				default:
 					console.log("No matching event found");
@@ -3099,7 +3113,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
     	});
 		
 		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
-			$('#editTaskItemDueDate').addClass('filled');
+			appUIController.styleTaskFormFieldAsChanged(e);
+//			$('#editTaskItemDueDate').addClass('filled');
 			console.log(e);
 			
 		});
