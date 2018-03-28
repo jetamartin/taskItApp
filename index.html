@@ -186,7 +186,7 @@
 				<!--	Div where success message is stored			-->
 				<div id="newTaskSaveMsg" ></div>
 
-				<form id="formSaveNewTask" novalidate>
+				<form id="formSaveNewTask" class="taskForm" novalidate>
 					<!--	Enter Task Name				-->
 					<div class="form-group">
 						<label for="newTaskTitle" class="form-control-label">Task Title:</label>
@@ -212,11 +212,12 @@
 								
 							</div>
 						</div>
+						<div class="errorMsg" id="newTaskDueDateErrorMsg"></div>
 					</div>
 
 
 					<!--	Select Repeat			-->
-					<div class="form-group hideIt" id="newTaskRepeatGroup">
+					<div class="form-group" id="newTaskRepeatGroup">
 						<label for="inRepeatOption" class="form-control-label">Repeat:</label>
 						<div class="row col-12">
 							<select class="form-control" id="newTaskRepeatOption" >
@@ -228,7 +229,7 @@
 						</select>
 						</div>
 						<!-- Error msg inserted via JS						-->
-						<div id="repeatErrorMsgDiv"></div>
+						<div class="errorMsg" id="repeatErrorMsgDiv"></div>
 
 					</div>
 
@@ -257,7 +258,7 @@
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
 						<div class="" id="newTaskListCreateMsg">
 						</div>
-
+						<div class="errorMsg" id="newTaskListSelectErrorMsg"></div>
 
 					</div>
 					<div class="button-group">
@@ -349,7 +350,7 @@
 				</header>
 -->
 
-				<form id="formEditNewTask">
+				<form id="formEditNewTask" class="taskForm">
 					<div class="form-group">
 						<label for="taskName" class="form-control-label">Task Name:</label>
 						<div class="row col-12">
