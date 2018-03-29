@@ -1270,7 +1270,10 @@ var appModelController = (function () {
 		  }
 		]
 	},
+	  
+	  //***********************************
 	  /* NEW Task Form Validation Object */
+	  //***********************************
 	  {
 		pageName: "newTaskPage",
 		formName : "formSaveNewTask", 
@@ -1282,7 +1285,8 @@ var appModelController = (function () {
 		formSubmitErrorMsg: "Task Update Failed" + " See Form Error(s)",
 
 		fieldsToValidate : [
-			{
+			
+			{	// Task Item Title Field
 				fieldName: document.getElementById("newTaskTitle"),
 				fieldInError: false,
 				fieldDefaultValue: "",
@@ -1292,10 +1296,10 @@ var appModelController = (function () {
 			
 				isNotValid: function(str) {
 					return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
-				},
-				//
+				},	
 			},
-			{	
+
+			{	// Due Date Time field
 				fieldName: document.getElementById("newTaskDateTime"),
 				fieldInError: false,
 				fieldDefaultValue: "",
@@ -1304,22 +1308,23 @@ var appModelController = (function () {
 				isNotValid: function(str) {
 				}
 			},
-			{	
+			
+			{	// Repeat Option
 				fieldName: document.getElementById("newTaskRepeatOption"),
 				fieldInError: false,
 				fieldDefaultValue: "1",
 				fieldErrorMsgLocation: document.getElementById("repeatErrorMsgDiv"),
 				fieldErrMsg: "Must have a due date to make a task repeatable",
 				isNotValid: function(str) {
-					var repeatValue = document.getElementById("newTaskDateTime").value;
-					if (str !== "1" && !repeatValue.replace(/^\s+/g, '').length) {
+					var dateValue = document.getElementById("newTaskDateTime").value;
+					if (str !== "1" && !dateValue.replace(/^\s+/g, '').length) {
 						return true;
 					} else {
 						return false;
 					}
 				}
 			},
-			{	
+			{	// List Selection Option
 				fieldName: document.getElementById("newTaskListNameSelect"),
 				fieldInError: false,
 				fieldDefaultValue: "Default",			
@@ -1344,11 +1349,43 @@ var appModelController = (function () {
 		fieldsToValidate : [
 			{
 				fieldName: document.getElementById("editFormTaskItemName"),
+				fieldInError: false,
+				fieldDefaultValue: "",
 				fieldErrorMsgLocation: document.getElementById("editFormTaskItemNameErrorMsg"),
 				fieldErrMsg: "Task Title is required/Cannot be blank",
-//				fieldErrMsg: '<i class="fa fa-times-circle"></i>' + '&nbsp;' + "Task Title is required/Cannot be blank",
 				isNotValid: function(str) {
 					return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+				}
+			},
+			{	// Due Date Field
+				fieldName: document.getElementById("editTaskItemDueDate"),
+				fieldInError: false,
+				fieldDefaultValue: "",
+				fieldErrorMsgLocation: document.getElementById("editTaskDueDateErrorMsg"),
+				fieldErrMsg: null,
+				isNotValid: function(str) {
+				}
+			},
+			{	// Repeat Option
+				fieldName: document.getElementById("editFormRepeatSelect"),
+				fieldErrorMsgLocation: document.getElementById("editRepeatErrorMsgDiv"),
+				fieldErrMsg: "Must have a due date to make a task repeatable",
+				isNotValid: function(str) {
+					var dateValue = document.getElementById("editTaskItemDueDate").value;
+					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			},
+			{	// List Selection Option
+				fieldName: document.getElementById("editTaskFormListSelect"),
+				fieldInError: false,
+				fieldDefaultValue: "Default",			
+				fieldErrorMsgLocation: document.getElementById("editTaskListSelectErrorMsg"),
+				fieldErrMsg: null,
+				isNotValid: function(str) {
 				}
 			}
 		]
@@ -1734,6 +1771,7 @@ var appUIController = (function () {
 	var listMenuTitle = document.getElementById('taskListDropdown');
 	var formDatetimeInputBox = document.querySelector(".form_datetime");
 	var repeatErrorMsgDiv = document.getElementById('repeatErrorMsgDiv');
+	var editRepeatErrorMsgDiv = document.getElementById('editRepeatErrorMsgDiv');
 	var newTaskRepeatGroup = document.getElementById('newTaskRepeatGroup');
 //	var taskListMenuTitle = document.getElementById('taskListMenuTitle');
 	var addTaskResetButton = document.getElementById("addTaskResetButton");
@@ -1906,34 +1944,49 @@ var appUIController = (function () {
 		
 		
 		displayEditTaskPage: function (event) {
+
 			console.log("************** displayEditTaskPage");
-			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record. Note: taskItem_id was stored in a custom attribute (data-id) of span when the taskItem card was created. 
 			
+			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record. Note: taskItem_id was stored in a custom attribute (data-id) of span when the taskItem card was created
 			var taskItemId = event.dataset.id;
 			var selectedTaskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
 			
-
+			//------ Set the fields in the EditTaskForm -----
+			
+			// Set the taskItem name/title
 			inputEditFormTaskItemName.value = selectedTaskItemRecord.taskItem_title;
+			
 			// Item Id is stored in a hidden field on TaskItem editForm
 			inputEditFormTaskItemId.value = taskItemId;
 			
+			// Set the Completed value
 			inputEditFormFinishedSetting.value = selectedTaskItemRecord.taskItem_isCompleted;
+			
+			// Set the dueDate value
 			inputEditFormTaskItemDueDate.value = selectedTaskItemRecord.taskItem_due_date;
 			
+			// Set the repeat value
+			
+			// Some test records may have "" instead of "none"
 			if (selectedTaskItemRecord.taskItem_repeat === "") {
 				inputEditFormRepeatSelect.value = "none"
-			} else {
+			} else { // values on form input are all lower case
 				inputEditFormRepeatSelect.value = selectedTaskItemRecord.taskItem_repeat.toLowerCase();
 			}
 
+			// Populate the list select on the Edit Task Page
 			appUIController.populateFormWithListNames (inputEditFormListSelect);
 			
-			
+			// Set the list select value
 			inputEditFormListSelect.value = appModelController.lookUpTaskListName(selectedTaskItemRecord.taskList_id); 
 
 			
-			// Populate each field of the form with the task_item fields
-			
+			// Set cursor to TaskItemName field  (position 1)
+			appUIController.getUIVars().inputEditFormTaskItemName.focus();
+			appUIController.getUIVars().inputEditFormTaskItemName.setSelectionRange(0,0);
+
+
+			// Hide the mainPage and show the editTaksPage
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
 		},
@@ -2103,6 +2156,7 @@ var appUIController = (function () {
 				clearDueDateBtn: clearDueDateBtn,
 				formDatetimeInputBox: formDatetimeInputBox,
 				repeatErrorMsgDiv: repeatErrorMsgDiv,
+				editRepeatErrorMsgDiv: editRepeatErrorMsgDiv,
 				newTaskRepeatGroup: newTaskRepeatGroup,
 				addTaskResetButton: addTaskResetButton,
 				mainPageSuccessMsg: mainPageSuccessMsg,
@@ -2160,14 +2214,14 @@ var appUIController = (function () {
 			}
 		}, 
 		
-		clearTaskItemError1: function (event) {
+		clearTaskTitleError1: function (event) {
 			// Look up the page ID where this form is located so I can get associated validateObj
 			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
 		
 			// Page Id is used to identify the appropirate validationObject
 			var formValidationObj = appModelController.getFormValidationObject(pageId);
 			
-			
+			// Removes error formatting and clears error messages on 
 			if (formValidationObj[0].fieldsToValidate[0].fieldName.classList.contains("formErrors") ){
 				formValidationObj[0].fieldsToValidate[0].fieldName.classList.remove("formErrors");
 				formValidationObj[0].fieldsToValidate[0].fieldName.innerHTML = "";
@@ -2203,7 +2257,7 @@ var appUIController = (function () {
 		
 		With that in mind the code address the following scenarios:
 		
-		1) If user has entered a repeate value but there is no date then set error msg and error formating;
+		1) If user has entered a repeat value but there is no date then set error msg and error formating;
 		
 		2) If the repeat field is already in error (due date empty but repeat value other than "none" ) and user now enters value of "none" remove error formatting and msg;
 		
@@ -2211,19 +2265,43 @@ var appUIController = (function () {
 	
 		********************************************************************************************************/
 		clearOrSetRepeatFieldErrors: function (event) {
-			if (inputNewTaskRepeat.value !== "1" && appUIController.getUIVars().inputNewTaskDateTime.value === "") {	
-				appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = '<i class="fa fa-times-circle"></i>' + " Must enter Due Date to make repeatable";
-				if (!appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
-					appUIController.getUIVars().inputNewTaskRepeat.classList.add("formErrors");	
-				}
-			} else if (appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors") && inputNewTaskRepeat.value === "1") {
-				appUIController.getUIVars().inputNewTaskRepeat.classList.remove("formErrors");
-				appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
-				appUIController.getUIVars().inputNewTaskRepeat.classList.remove("filled");
-			} else if (inputNewTaskRepeat.value !== "1" && inputNewTaskDateTime !== "" && appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
-				appUIController.getUIVars().inputNewTaskRepeat.classList.remove("formErrors");
-				appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
-			}  			   					   	
+			
+			var pageId = utilMethods.findAncestor(event.currentTarget.firstElementChild, 'container-fluid').id;
+			switch ( pageId ) {
+				case "newTaskPage":
+					if (inputNewTaskRepeat.value !== "1" && appUIController.getUIVars().inputNewTaskDateTime.value === "") {	
+						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = '<i class="fa fa-times-circle"></i>' + " Must enter Due Date to make repeatable";
+						if (!appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
+							appUIController.getUIVars().inputNewTaskRepeat.classList.add("formErrors");	
+						}
+					} else if (appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors") && inputNewTaskRepeat.value === "1") {
+						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("formErrors");
+						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
+						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("filled");
+					} else if (inputNewTaskRepeat.value !== "1" && inputNewTaskDateTime !== "" && 		appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
+						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("formErrors");
+						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
+					}
+					break;
+				case "editTaskPage":
+					if (inputEditFormRepeatSelect.value !== "none" && appUIController.getUIVars().inputEditFormTaskItemDueDate.value === "") {	
+						appUIController.getUIVars().editRepeatErrorMsgDiv.innerHTML = '<i class="fa fa-times-circle"></i>' + " Must enter Due Date to make repeatable";
+						if (!appUIController.getUIVars().inputEditFormRepeatSelect.classList.contains("formErrors")) {
+							appUIController.getUIVars().inputEditFormRepeatSelect.classList.add("formErrors");	
+						}
+					} else if (appUIController.getUIVars().inputEditFormRepeatSelect.classList.contains("formErrors") && appUIController.getUIVars().inputEditFormRepeatSelect.value === "none") {
+						appUIController.getUIVars().inputEditFormRepeatSelect.classList.remove("formErrors");
+						appUIController.getUIVars().editRepeatErrorMsgDiv.innerHTML = "";
+						appUIController.getUIVars().inputEditFormRepeatSelect.classList.remove("filled");
+					} else if (inputEditFormRepeatSelect.value !== "none" && inputEditFormTaskItemDueDate !== "" && 		appUIController.getUIVars().inputEditFormRepeatSelect.classList.contains("formErrors")) {
+						appUIController.getUIVars().inputEditFormRepeatSelect.classList.remove("formErrors");
+						appUIController.getUIVars().editRepeatErrorMsgDiv.innerHTML = "";
+					}
+					break;
+				default:
+					console.log("clearOrSetRepeatFieldErrors(): No matching ID" );	
+		
+			}				   	
 		},
 		
 		/* $$$$ WILL NEED TO MAKE THIS METHOD MORE GENERIC 
@@ -2285,7 +2363,7 @@ var appUIController = (function () {
 		exitNewTaskPage: function(event) {
 			console.log("********************** exitNewTaskPage");
 			
-			// Get the current "active" task list Node 
+			// IS THIS STILL NEEDED.....Get the current "active" task list Node 
 			var currActiveList = getActiveTaskList();
 			
 			// Clear form error flag, error msgs/styling and values entered
@@ -2333,30 +2411,44 @@ var appUIController = (function () {
 			taskItemFormListSelect.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
 		}			
 	},
+	/****************************************************************************************
+		FUNCTION displayAddNewTaskForm - builds the new task item form and displays it,
+			modifies the nav bar and hides other parts of the UI (e.g., main page) 
 		
+		Trigger: User clicks the Floating PLUS symbol on main page
+		
+		Summary: 
+			New taskItem Form "List" drop down must be populated with ListNames but 
+			minus "All Lists" and "Completed" listnames
+	
+		UI Behavior: 
+			App is really a Single Page App (SPA) where parts of the app are displayed hidden
+				or shown as needed.
+
+	*****************************************************************************************/
 		
 		displayAddNewTaskForm: function () {
 			console.log("************** appUIController.displayAddNewTaskForm()");
+			
+			// Hide the main page and display the addTaskForm page
 			toggleClass(homePage, "hideIt");
 			toggleClass(addNewTaskPage, "hideIt");
 			
-			// Clear form error flag, error msgs/styling and values entered
-//			appUIController.resetNewTaskForm(event);
 			
-			// Clear any prior form submit success message
 			newTaskSaveMessage.classList.remove("success-message");
-			newTaskSaveMessage.innerHTML = "";
-			mainPageSuccessMsg.innerHTML = "";
+			// Clear any prior form submit success or error messages
 			
-			
-			
+			newTaskSaveMessage.innerHTML = ""; // Form submit failure msg displayed @ top of newTaskForm
+			mainPageSuccessMsg.innerHTML = ""; // Form submit success msg displayed @top of mainPage
+	
+			// When form opens you want the focus to be on newTaskTitle field with cursor at position 1
 			appUIController.getUIVars().inputNewTaskTitle.focus();
 			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0,0);
 			
 			// Populate List Selection dropdown on new task item for
 			appUIController.populateFormWithListNames (inputNewTaskListSelection);
 			
-			// Need to set newTask Form list dropdown to match the "active" task list
+			// Need to set newTask Form list selct dropdown to "active" task list value
 			appUIController.setTaskListSelect(inputNewTaskListSelection, appUIController.getActiveTaskListName());
 
 		}, 	
@@ -2367,15 +2459,30 @@ var appUIController = (function () {
 			var repeatOptionFormGroup;
 			console.log("Blur event for FormSaveNewTask");
 			console.log("Event Target: " + event.target.tagName);
-			event.target.classList.remove("filled");
-			if (event.target.value !== "") {
-				event.target.classList.add("filled");
-			}
-//			if (event.target === appUIController.getUIVars().inputNewTaskDateTime) {
-//				repeatOptionFormGroup = utilMethods.findAncestor(event.currentTarget, 'form-group');
-//				toggleClass(repeatOptionFormGroup,"hideIt");
-//			}
 			
+			if (event.type === "input") {
+				event.target.classList.remove("filled");
+				if (event.target.value !== "") {
+					event.target.classList.add("filled");
+					appUIController.clearOrSetRepeatFieldErrors(event);
+				}
+				
+			} else if (event.type === "changeDate") {
+				var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+				if (pageId === "newTaskPage") {
+					inputNewTaskDateTime.classList.add("filled");
+					appUIController.clearOrSetRepeatFieldErrors(event);
+				} else if (pageId === "editTaskPage") {
+					inputEditFormTaskItemDueDate.classList.add("filled");
+					// If I make method below I can use it here as well
+					appUIController.clearOrSetRepeatFieldErrors(event);
+				} else {
+					console.log ("StyleUserFormatInput() no matching pageId");
+				}
+			} else {
+				console.log ("StyleUserFormatInput() no matching eventtype");
+			}
+	
 		},
 		
 		/***********************************************************************************
@@ -2480,14 +2587,31 @@ var appUIController = (function () {
 			// Page Id is used to identify the appropirate validationObject
 			var formValidationObj = appModelController.getFormValidationObject(pageId);
 			
+			
 			// Remove error messages & styling (including "filled" class)
 			resetFormError1(formValidationObj[0]);
-
-			// Clear values that may have been entered in form
-			formSaveNewTask.reset();
+			
+			if (pageId === "newTaskPage") {
+				
+				// Clear values that may have been entered in form
+				formSaveNewTask.reset();
 	
-//			 Focus the cursor on the New Task Title form
-			inputNewTaskTitle.focus();
+				//Focus the cursor on the New Task Title form
+				inputNewTaskTitle.focus();
+				
+			} else if ( pageId === "editTaskPage" ) {
+				
+				// Clear values that may have been entered in form
+				formEditNewTask.reset();
+	
+				//Focus the cursor on the New Task Title form
+				inputEditFormTaskItemName.focus();
+				
+			} else {
+				console.log ("ERROR::resetNewTaskForm: pageId = " + pageId + ": Didn't match accepted values of 'newTaskPage' or 'editTaskPage'");
+			}
+
+
 			
 
 		},
@@ -3062,11 +3186,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		backArrowSearch.addEventListener("click", exitSearch);
 		
 		//****************************************************************************		
-		// NEW TASK FORM EVENT LISTENERS FOR 		
+		// NEW TASK FORM EVENT LISTENERS 		
 		//****************************************************************************
 
 		// Display the add new task form
-		floatAddBtn.addEventListener("click", buildAndDisplayTaskItemForm); 
+		floatAddBtn.addEventListener("click", appUIController.displayAddNewTaskForm); 
 		
 		// Nav Bar Back Arrow on New Task Form
 		newTaskBackArrow.addEventListener("click", function(event) {appUIController.exitNewTaskPage(event)} );
@@ -3080,23 +3204,31 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Save Button for New Task Form on Nav Bar 
 		addTaskSaveMenuButton.addEventListener("click", function (event) {ctrlAddTaskItem1(event)});
 		
-		appUIController.getUIVars().inputNewTaskTitle.addEventListener("keydown", function(event) {appUIController.clearTaskItemError1(event)});
+		appUIController.getUIVars().inputNewTaskTitle.addEventListener("keydown", function(event) {appUIController.clearTaskTitleError1(event)});
 		
 		
 		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.clearOrSetRepeatFieldErrors(event)});
+		
 
-		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('keydown', function(event) {
-			appUIController.clearTaskListModalFormErrors(event)
-		})
+				
+		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
+		
+		//*******************************************************
+		// "Input" events on all fields on newTask Form
+		//*******************************************************
 		
 		/* Detects when the user exits form input field (blur event) and if user has entered/selected data then it adds the "filled" class so that any user
 		data entered/or selection made by user will immediately be styled differently (and hence distinguishable) from the placeholder/default data on form. 
 		*/
-		formSaveNewTask.addEventListener("focusout", function(event) { appUIController.styleUserFormInput(event) }, true);
+		// OLD EVENTLISTENER --- if new ones below work I can delete this
+		//formSaveNewTask.addEventListener("focusout", function(event) { appUIController.styleUserFormInput(event) }, true);
+
+		appUIController.getUIVars().inputNewTaskTitle.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
 		
-				
-		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
+		appUIController.getUIVars().inputNewTaskListSelection.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
+
 		
+		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
 		
 		
 		//****************************************************************************		
@@ -3107,16 +3239,29 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		appUIController.getUIVars().editFormCancelButton.addEventListener("click", function (event) { appUIController.exitEditTaskPage(event) } );
 		
-		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('input',  function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+//		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('input',  function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+//		});
+//		
+//		appUIController.getUIVars().inputEditFormRepeatSelect.addEventListener('input',  function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+//		});
+//		
+//		appUIController.getUIVars().inputEditFormListSelect.addEventListener('input',
+//        function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+//		});
+		
+		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('input',  function(event) { appUIController.styleUserFormInput(event);
 		});
 		
-		appUIController.getUIVars().inputEditFormRepeatSelect.addEventListener('input',  function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+		appUIController.getUIVars().inputEditFormRepeatSelect.addEventListener('input',  function(event) { appUIController.styleUserFormInput(event)
 		});
 		
 		appUIController.getUIVars().inputEditFormListSelect.addEventListener('input',
-        function(event) { appUIController.styleTaskFormFieldAsChanged(event);
+        function(event) { appUIController.styleUserFormInput(event)
 		});
 		
+		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('keydown', function(event) {
+			appUIController.clearTaskListModalFormErrors(event)
+		})
 		//****************************************************************************		
 		// LIST MODAL FORM EVENT LISTENERS		
 		//****************************************************************************
@@ -3253,10 +3398,15 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		pickerPosition: "bottom-left"
     	});
 		
+		// TEMP comment this out to try eventListner below
+//		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
+//			appUIController.styleTaskFormFieldAsChanged(e);
+//			console.log(e);	
+//		});
+		
 		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
-			appUIController.styleTaskFormFieldAsChanged(e);
-			console.log(e);
-			
+			appUIController.styleUserFormInput(e);
+			console.log(e);	
 		});
 
 	}
@@ -3464,14 +3614,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
 				appUIController.refreshTaskListSubMenuTotals(taskListTable); 
-
-				// %X NEED TO EVAL WHETHER LINE BELOW IS NEEDED
-				// Reset values on new Task form but leave List selection to last list value selected by user
-//				appUIController.resetNewTaskForm(newTaskItemInput.newTaskListOptionTxt);
-				
-				
-				// %X Do I need this call given it is called w/i exitNewTask Page
-//				appUIController.resetNewTaskForm(event); 
 
 				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
 				appUIController.refreshTaskListSubMenuTotals(taskListTable);
