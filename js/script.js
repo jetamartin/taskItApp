@@ -2264,9 +2264,10 @@ var appUIController = (function () {
 		3) If the user had entered a repeat value and there is no due date (so repeat is marked with an error (formErrors class present) but now a due date has been entered then remove the errors on the repeat field because now having a repeat value other than none is valid;
 	
 		********************************************************************************************************/
-		clearOrSetRepeatFieldErrors: function (event) {
+//		clearOrSetRepeatFieldErrors: function (event) {	
+			clearOrSetRepeatFieldErrors: function (event) {
 			
-			var pageId = utilMethods.findAncestor(event.currentTarget.firstElementChild, 'container-fluid').id;
+			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
 			switch ( pageId ) {
 				case "newTaskPage":
 					if (inputNewTaskRepeat.value !== "1" && appUIController.getUIVars().inputNewTaskDateTime.value === "") {	
@@ -2453,21 +2454,26 @@ var appUIController = (function () {
 
 		}, 	
 		
-		/* Detects when the user exits form input field (focus event) and if user has entered/selected data then it adds the "filled" class so that any user
-		data entered/or selection made by user will immediately be styled differently (and hence distinguishable) from the placeholder/default data on fo*/
+		/* 
+		
+		Provides real time styling and error detection/formatting of fields on BOTH New Task & Edit Task forms. 
+		It does this for the Task Title and the Repeat field (via clearOrSetRepeatFieldErrors) on the forms. 
+		
+		*/
+		
 		styleUserFormInput: function(event) {
-			var repeatOptionFormGroup;
-			console.log("Blur event for FormSaveNewTask");
-			console.log("Event Target: " + event.target.tagName);
-			
+			// Any of the input non-date fields (TaskTitle, RepeatSelect, ListSelect)
 			if (event.type === "input") {
-				event.target.classList.remove("filled");
+				event.target.classList.remove("filled");  //event.target gives you specific field of form
 				if (event.target.value !== "") {
 					event.target.classList.add("filled");
 					appUIController.clearOrSetRepeatFieldErrors(event);
 				}
 				
-			} else if (event.type === "changeDate") {
+			// Calendar Entry fields (addCalendarBtn or inputArea)
+			// For calendar events (event.type = "changeDate") event.target doesn't give you the specific field to apply filled class so pageId must be derived to determine specific field	
+				
+			} else if (event.type === "changeDate") {  
 				var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
 				if (pageId === "newTaskPage") {
 					inputNewTaskDateTime.classList.add("filled");
@@ -2479,7 +2485,7 @@ var appUIController = (function () {
 				} else {
 					console.log ("StyleUserFormatInput() no matching pageId");
 				}
-			} else {
+			} else { // No match
 				console.log ("StyleUserFormatInput() no matching eventtype");
 			}
 	
@@ -3205,23 +3211,16 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		addTaskSaveMenuButton.addEventListener("click", function (event) {ctrlAddTaskItem1(event)});
 		
 		appUIController.getUIVars().inputNewTaskTitle.addEventListener("keydown", function(event) {appUIController.clearTaskTitleError1(event)});
-		
-		
-		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.clearOrSetRepeatFieldErrors(event)});
-		
-
-				
+			
+		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
+					
 		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
+		
 		
 		//*******************************************************
 		// "Input" events on all fields on newTask Form
 		//*******************************************************
-		
-		/* Detects when the user exits form input field (blur event) and if user has entered/selected data then it adds the "filled" class so that any user
-		data entered/or selection made by user will immediately be styled differently (and hence distinguishable) from the placeholder/default data on form. 
-		*/
-		// OLD EVENTLISTENER --- if new ones below work I can delete this
-		//formSaveNewTask.addEventListener("focusout", function(event) { appUIController.styleUserFormInput(event) }, true);
+	
 
 		appUIController.getUIVars().inputNewTaskTitle.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
 		
@@ -3262,6 +3261,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('keydown', function(event) {
 			appUIController.clearTaskListModalFormErrors(event)
 		})
+		
+		// Submit button for editTaskPage
+		appUIController.getUIVars().formEditNewTask.addEventListener("submit", function (event) {ctrlUpdateTaskItem(event)});
 		//****************************************************************************		
 		// LIST MODAL FORM EVENT LISTENERS		
 		//****************************************************************************
@@ -3328,8 +3330,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 //		addTaskSaveMenuButton.addEventListener("click", appUIController.getTaskItemInput);
 
 	
-		// Submit button for editTaskPage
-		appUIController.getUIVars().formEditNewTask.addEventListener("submit", function (event) {ctrlUpdateTaskItem(event)});
+
 	
 		// NavBar Tasklist Modal
 		// $$$$  May need to make this more generic 
