@@ -1740,6 +1740,7 @@ var appUIController = (function () {
 	var inputEditFormRepeatSelect = document.getElementById("editFormRepeatSelect");
 	var inputEditFormListSelect = document.getElementById("editTaskFormListSelect");
 	var editFormCancelButton = document.getElementById("editFormCancelButton");
+	var editFormUpdateTaskNavButton = document.getElementById("updateTaskNavBtn");
 
 
 	
@@ -2171,7 +2172,8 @@ var appUIController = (function () {
 				inputEditFormTaskItemDueDate: inputEditFormTaskItemDueDate,
 				inputEditFormRepeatSelect: inputEditFormRepeatSelect,
 				inputEditFormListSelect: inputEditFormListSelect,
-				editFormCancelButton: editFormCancelButton
+				editFormCancelButton: editFormCancelButton,
+				editFormUpdateTaskNavButton: editFormUpdateTaskNavButton
 			}
 
 		}, 
@@ -3264,6 +3266,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		// Submit button for editTaskPage
 		appUIController.getUIVars().formEditNewTask.addEventListener("submit", function (event) {ctrlUpdateTaskItem(event)});
+		
+		// Nav Bar Menu Update Button
+		appUIController.getUIVars().editFormUpdateTaskNavButton.addEventListener("click", function ( event ) {ctrlUpdateTaskItem(event)});
+		
 		//****************************************************************************		
 		// LIST MODAL FORM EVENT LISTENERS		
 		//****************************************************************************
