@@ -1735,7 +1735,7 @@ var appUIController = (function () {
 	var inputEditFormTaskItemName = document.getElementById("editFormTaskItemName");
 	var inputEditFormTaskItemId = 
 	document.getElementById("editFormTaskItemId");
-	var inputEditFormFinishedSetting = document.getElementById("editFormFinishedSetting");
+	var inputEditFormCompletedSetting = document.getElementById("editFormCompletedSetting");
 	var inputEditFormTaskItemDueDate = document.getElementById("editTaskItemDueDate");
 	var inputEditFormRepeatSelect = document.getElementById("editFormRepeatSelect");
 	var inputEditFormListSelect = document.getElementById("editTaskFormListSelect");
@@ -1961,7 +1961,7 @@ var appUIController = (function () {
 			inputEditFormTaskItemId.value = taskItemId;
 			
 			// Set the Completed value
-			inputEditFormFinishedSetting.value = selectedTaskItemRecord.taskItem_isCompleted;
+			inputEditFormCompletedSetting.value = selectedTaskItemRecord.taskItem_isCompleted;
 			
 			// Set the dueDate value
 			inputEditFormTaskItemDueDate.value = selectedTaskItemRecord.taskItem_due_date;
@@ -2168,7 +2168,7 @@ var appUIController = (function () {
 				inputEditFormTaskItemName: inputEditFormTaskItemName,
 				inputEditFormTaskItemId:
 				inputEditFormTaskItemId,
-				inputEditFormFinishedSetting: inputEditFormFinishedSetting,
+				inputEditFormCompletedSetting: inputEditFormCompletedSetting,
 				inputEditFormTaskItemDueDate: inputEditFormTaskItemDueDate,
 				inputEditFormRepeatSelect: inputEditFormRepeatSelect,
 				inputEditFormListSelect: inputEditFormListSelect,
@@ -2545,7 +2545,7 @@ var appUIController = (function () {
 			return {		
 				taskId: inputEditFormTaskItemId.value.trim(),
 				taskTitle: inputEditFormTaskItemName.value.trim(),
-				taskFinished: inputEditFormFinishedSetting.checked,  
+				taskFinished: inputEditFormCompletedSetting.checked,  
 				taskDueDate: inputEditFormTaskItemDueDate.value,
 				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].text,
 				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].text
