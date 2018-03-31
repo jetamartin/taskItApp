@@ -560,7 +560,7 @@ nav ul li:hover ul li span.listTotal {
 		height: 1rem;
 		width: 1.5rem;
 		margin-left: .5rem;
-/*		float: right;*/
+		margin-top: .3rem;     
 		cursor: pointer;
 	}
 	
@@ -568,6 +568,17 @@ nav ul li:hover ul li span.listTotal {
 		float: right;
 		margin-top: .5rem;
 		cursor: pointer;
+	}
+
+
+	.deleteTaskIcon {
+
+		margin-left: .5rem;
+		margin-right: .3rem;
+		font-size: 1.25rem;
+/*		float: right;*/
+		
+
 	}
 	/*
 	.card-text {
