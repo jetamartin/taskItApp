@@ -549,6 +549,7 @@ nav ul li:hover ul li span.listTotal {
 	
 	.card a label {
 		color: #2cb5a3;
+		cursor: pointer;
 	}
 	/* Completed label*/
 	
@@ -572,7 +573,6 @@ nav ul li:hover ul li span.listTotal {
 
 
 	.deleteTaskIcon {
-
 		margin-left: .5rem;
 		margin-right: .3rem;
 		font-size: 1.25rem;
@@ -617,6 +617,37 @@ nav ul li:hover ul li span.listTotal {
 	text-transform: uppercase;
 	letter-spacing: .09rem;
 }
+/**********  Task Actions START  ********************/
+
+.actionTaskLabel {
+	color: lightgrey;
+	font-size: .75rem;
+	margin-top: .6rem;
+}
+.actionTaskLabel:before {
+	font-family: "FontAwesome";
+	content: '\f067';
+	font-size: 1.2rem;
+	margin-right: .5rem;
+	margin-top: .5rem;
+	color: #2cb5a3;
+
+	transition: transform 0.3s ease-in-out, -webkit-transform 0.3s ease-in-out;
+
+}
+
+.actionTaskLabel:before:hover {
+	-webkit-transform: rotate(-240deg);
+	transform: rotate(-240deg);
+}
+.editTaskIcon {
+	margin-right: .5rem;
+}
+
+/**********  Task Actions END  **********************/
+
+
+
 
 .floatLeft {
 	float: left;
