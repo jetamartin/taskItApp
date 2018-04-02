@@ -616,30 +616,148 @@ nav ul li:hover ul li span.listTotal {
 .taskListName {
 	text-transform: uppercase;
 	letter-spacing: .09rem;
+	margin-bottom: 0;
 }
 /**********  Task Actions START  ********************/
 
 .actionTaskLabel {
-	color: lightgrey;
+	color: #2cb5a3;
 	font-size: .75rem;
 	margin-top: .6rem;
+	cursor: pointer;
+	letter-spacing: .2rem;
 }
-.actionTaskLabel:before {
-	font-family: "FontAwesome";
-	content: '\f067';
+.expandTaskActions {
 	font-size: 1.2rem;
 	margin-right: .5rem;
 	margin-top: .5rem;
-	color: #2cb5a3;
-
-	transition: transform 0.3s ease-in-out, -webkit-transform 0.3s ease-in-out;
-
+	color: #2cb5a3;			
+	-webkit-transition: -webkit-transform .7s ease-in-out;
+	transition: -webkit-transform .7s ease-in-out;
+	/*	Transform for rotating plus symbol */
+	transition: transform .7s ease-in-out;
+	transition: transform .7s ease-in-out, -webkit-transform .7s ease-in-out;
 }
 
-.actionTaskLabel:before:hover {
-	-webkit-transform: rotate(-240deg);
-	transform: rotate(-240deg);
+.taskActionRow {
+/*
+	overflow: hidden;
+	position: absolute;
+*/
+    opacity: 0;
+	max-height: 0; 
+	
+ 	/*  Supposed to slowly reveal Task Actions However space snaps open/closed rather than slowly opening space. Note: Task actions do fade-in (with opacity) transition but max-height seems to be ignored */
+	
+	/* Behavior isn't changed  if I explicitly reference opacity & max-height (as in below) or simply 'transition: all' */
+/*
+    -webkit-transition: opacity .9s, max-height .5s ease-out;
+    transition: opacity .9s, max-height .5s ease-out;
+*/
+	
+			
+	-webkit-transition: all .7s ease-out;		
+	transition: all .7s ease-out;
+	/* Tried transitioning on both opacity and max-height above but it seems to ignore max height as transition below works the same as transition below (without max-height) */
+/*
+	-webkit-transition: opacity .9s ease-out;	
+	-webkit-transition: opacity .9s ease-out;
+*/
+	
+/*
+	-webkit-transition: opacity .9s ease-out;
+	
+	transition: opacity .9s ease-out;	
+*/
+	cursor: pointer;
 }
+
+
+/* Tried using animation on max height*/
+@-webkit-keyframes disappear {
+	0% { max-height: 100%;}
+	25% { max-height: 75%}
+    50% { max-height: 50%;}
+	75% { max-height: 25%}
+	100% {max-height: 0;}
+}
+
+@keyframes disappear {
+	0% { max-height: 100%; }
+	25% { max-height: 75% }
+    50% { max-height: 50%; }
+	75% { max-height: 25% }
+	100% { max-height: 0%; }
+}
+
+/*
+@-webkit-keyframes disappear {
+	0% { max-height: 0%;}
+	25% { max-height: 25%}
+    50% { max-height: 50%;}
+	75% { max-height: 75%}
+	100% {max-height: 100%;}
+}
+
+@keyframes disappear {
+	0% { max-height: 0%;}
+	25% { max-height: 25%}
+    50% { max-height: 50%;}
+	75% { max-height: 75%}
+	100% {max-height: 100%;}
+}
+*/
+
+
+/*
+@-webkit-keyframes disappear {
+	0% {opacity: 100%;}
+	25% {opacity: 75%}
+    50% {opacity: 50%;}
+	75% {opacity: 25%}
+	100% {opacity: 0%;}
+}
+
+
+
+@keyframes disappear {
+	0% {opacity: 100%;}
+	25% {opacity: 75%}
+    50% {opacity: 50%;}
+	75% {opacity: 25%}
+	100% {opacity: 0%;}
+}
+*/
+
+
+
+.taskActionRow.materialize {
+/*
+	overflow: hidden;
+ 	position: static;
+*/
+	max-height: 100%;
+    opacity: 1;
+	cursor: pointer;
+	
+	/* Tried Animate taskActionRow height going to zero BUT DIDN'T WORK */
+/*
+	-webkit-animation: disappear 1s;
+	animation: disappear 1s;
+*/
+}
+
+.expandTaskActions.rotateIt {
+	-webkit-transform:rotate(-225deg);
+	transform:rotate(-225deg);
+}
+/*
+.actionTaskLabel:hover::before {
+	font-size: 1.5rem;
+	-webkit-transform:rotate(30deg);
+	transform:rotate(30deg);
+}
+*/
 .editTaskIcon {
 	margin-right: .5rem;
 }

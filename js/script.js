@@ -1778,6 +1778,7 @@ var appUIController = (function () {
 	var addTaskResetButton = document.getElementById("addTaskResetButton");
 	var mainPageSuccessMsg = document.getElementById("mainPageSuccessMsg");
 	var mainPageGeneralMsgLoc = document.getElementById("mainPageGeneralMsgLoc");
+	var expandTaskActions = document.querySelector(".expandTaskActions");
 		
 	
 	
@@ -1912,7 +1913,15 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
-		
+		showHideTaskActions: function (event) {
+			console.log("showHideTaskActions()");
+			var nodeContainingIconToRotate = event.firstElementChild;
+			toggleClass(nodeContainingIconToRotate, "rotateIt");
+			var parentNodeOfClick = utilMethods.findAncestor(event.parentNode, "showHideActionRow");
+			var taskActionsRowToShowHide = parentNodeOfClick.nextSibling;
+			toggleClass(taskActionsRowToShowHide, "materialize");
+//			toggleClass(nodeContainingIconToRotate, "rotateIt");
+		},
 		styleTaskFormFieldAsChanged: function (event) {
 			var pageId;
 			console.log("************** styleTaskFormFieldAsChanged");
@@ -2173,7 +2182,8 @@ var appUIController = (function () {
 				inputEditFormRepeatSelect: inputEditFormRepeatSelect,
 				inputEditFormListSelect: inputEditFormListSelect,
 				editFormCancelButton: editFormCancelButton,
-				editFormUpdateTaskNavButton: editFormUpdateTaskNavButton
+				editFormUpdateTaskNavButton: editFormUpdateTaskNavButton,
+				expandTaskActions: expandTaskActions
 			}
 
 		}, 
@@ -2870,7 +2880,7 @@ var appUIController = (function () {
 			
 			var genericTaskItemHtml3 = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox floatRight" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed</label></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6><a data-toggle="modal" data-target="markToDelete"><label class="checkBoxLabel floatRight"><i class="fa fa-trash-o floatRight deleteTaskIcon" aria-hidden="true"></i>Delete Task</label></a></div></div>'
 			
-			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2 overDue" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel">TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row"><div class="col"><a><label><i class="fa fa-pencil-square-o   editTaskIcon" aria-hidden="true"></i>Edit Task</label> </a> </div><div class="col"><a><label><input class="checkbox " type="checkbox" id="" name="taskTitle" value="taskTitle" ><span>Completed</span></label></a></div><div class="col"><a data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete Task</label></a></div></div></div>'
+			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2 overDue" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions " aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit Task</label> </a> </div><div class="col"><a><label><input class="checkbox " type="checkbox" id="" name="taskTitle" value="taskTitle" ><span>Completed</span></label></a></div><div class="col"><a data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete Task</label></a></div></div></div>'
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
@@ -3358,7 +3368,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Assign event listener to form on all modal forms
 		addEventListenerByClass('modalForm', 'submit', function(event) {ctrlAddTaskList(event)}); 
 
- 
 
 		
 		/* &$&$ Added */
