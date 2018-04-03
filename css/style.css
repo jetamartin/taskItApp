@@ -649,26 +649,12 @@ nav ul li:hover ul li span.listTotal {
 	
  	/*  Supposed to slowly reveal Task Actions However space snaps open/closed rather than slowly opening space. Note: Task actions do fade-in (with opacity) transition but max-height seems to be ignored */
 	
-	/* Behavior isn't changed  if I explicitly reference opacity & max-height (as in below) or simply 'transition: all' */
-/*
-    -webkit-transition: opacity .9s, max-height .5s ease-out;
-    transition: opacity .9s, max-height .5s ease-out;
-*/
+
+    -webkit-transition: opacity 1.5s, max-height .9s ease-in-out;
+  
+    transition: opacity 1.5s, max-height .9s ease-in-out;
 	
-			
-	-webkit-transition: all .7s ease-out;		
-	transition: all .7s ease-out;
-	/* Tried transitioning on both opacity and max-height above but it seems to ignore max height as transition below works the same as transition below (without max-height) */
-/*
-	-webkit-transition: opacity .9s ease-out;	
-	-webkit-transition: opacity .9s ease-out;
-*/
-	
-/*
-	-webkit-transition: opacity .9s ease-out;
-	
-	transition: opacity .9s ease-out;	
-*/
+
 	cursor: pointer;
 }
 

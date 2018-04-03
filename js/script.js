@@ -1913,6 +1913,13 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		markTaskAsCompleted: function ( event ) {
+			console.log("markTaskAsCompleted()");
+			var taskItemId = event.dataset.id;
+			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
+			taskItemRecord.taskItem_isCompleted = event.firstElementChild.firstElementChild.checked
+			
+		},
 		showHideTaskActions: function (event) {
 			console.log("showHideTaskActions()");
 			var nodeContainingIconToRotate = event.firstElementChild;
@@ -1970,7 +1977,7 @@ var appUIController = (function () {
 			inputEditFormTaskItemId.value = taskItemId;
 			
 			// Set the Completed value
-			inputEditFormCompletedSetting.value = selectedTaskItemRecord.taskItem_isCompleted;
+			inputEditFormCompletedSetting.checked = selectedTaskItemRecord.taskItem_isCompleted;
 			
 			// Set the dueDate value
 			inputEditFormTaskItemDueDate.value = selectedTaskItemRecord.taskItem_due_date;
@@ -2006,6 +2013,8 @@ var appUIController = (function () {
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
 			appUIController.resetTaskForm(event);
+			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
+			resetUI2InitialState();
 			
 			// Include method below into resetTaskForm
 //			removeNewTaskFormInputStyle();
@@ -2880,13 +2889,13 @@ var appUIController = (function () {
 			
 			var genericTaskItemHtml3 = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox floatRight" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed</label></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6><a data-toggle="modal" data-target="markToDelete"><label class="checkBoxLabel floatRight"><i class="fa fa-trash-o floatRight deleteTaskIcon" aria-hidden="true"></i>Delete Task</label></a></div></div>'
 			
-			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2 overDue" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions " aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit Task</label> </a> </div><div class="col"><a><label><input class="checkbox " type="checkbox" id="" name="taskTitle" value="taskTitle" ><span>Completed</span></label></a></div><div class="col"><a data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete Task</label></a></div></div></div>'
+			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit Task</label> </a> </div><div class="col"><a onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%"><label><input class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span>Completed</span></label></a></div><div class="col"><a data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete Task</label></a></div></div></div>';
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
 				// Insert the record ID in the special data attribute data-id="recordId"
-				specificTaskItemHtml = genericTaskItemHtml.replace('%taskItemId%',taskItemList[i].taskItem_id);
-				
+				specificTaskItemHtml = genericTaskItemHtml.replace(/%taskItemId%/g, taskItemList[i].taskItem_id);
+
 				// Insert the list name in HTML
 				specificTaskItemHtml = specificTaskItemHtml.replace('%taskTitle%', taskItemList[i].taskItem_title);
 
@@ -2901,6 +2910,12 @@ var appUIController = (function () {
 				} else {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatOption%', utilMethods.titleCase(taskItemList[i].taskItem_repeat));
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', repeatSymbol);
+				}
+				
+				if ( taskItemList[i].taskItem_isCompleted) {
+					specificTaskItemHtml = specificTaskItemHtml.replace('%checkedValue%', "checked")
+				} else {
+					specificTaskItemHtml = specificTaskItemHtml.replace('%checkedValue%', "");
 				}
 
 				/* A taskItem object doesn't include it's list's Name but instead it contains the id for the it's list name (taskList_id). But with the taskList_id you can look up the List Name in the taskListTable.  
@@ -2917,6 +2932,7 @@ var appUIController = (function () {
 				if (idOfInsertLocation === "overDue") {
 					newNode.querySelector('.card-subtitle').classList.add('overDue');
 				}
+				
 				insertNodeLocation.appendChild(newNode);
 
 			}
