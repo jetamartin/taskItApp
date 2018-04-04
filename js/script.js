@@ -1208,6 +1208,9 @@ var appModelController = (function () {
 	
 	
   var formValidationObject = [
+  	//***********************************
+	/*   Nav List Modal                */ 
+  	//***********************************		  
 	{  
 		pageName: "navListModal",
 		formName : "formNavTaskListModal", 
@@ -1228,7 +1231,9 @@ var appModelController = (function () {
 		  }
 		]
 	},
-	  
+  	//***********************************
+	/* New Task Item List Modal         */ 
+  	//***********************************	  
 	{  
 		pageName: "newTaskItemListModal",
 		formName : "newTaskFormListModalForm", 
@@ -1249,7 +1254,10 @@ var appModelController = (function () {
 		  }
 		]
 	},
-	/* Edit Task Item List Modal */  
+  	//***********************************
+	/* Edit Task Item List Modal       */ 
+  	//***********************************
+
 	{  
 		pageName: "editTaskItemListModal",
 		formName : "editTaskFormListModalForm", 
@@ -1270,6 +1278,31 @@ var appModelController = (function () {
 		  }
 		]
 	},
+	  
+	  //***********************************
+	  /*   Manage Task List Modal Form   */ 
+	  //***********************************
+	{  
+		pageName: "manageTaskListsModal",
+		formName : "manageTaskListsModalForm", 
+		formError : false,
+		formSubmitErrorMsgLoc : document.getElementById("manageTaskListsModalMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("manageTaskListsMsg"),
+		formSubmitSuccessMsg: "list created!",
+		formSubmitErrorMsg: "List NOT saved." + " Correct Error",
+
+		fieldsToValidate : [
+		  {
+			fieldName: document.getElementById("manageTaskListsModalFormListName"),
+			fieldErrorMsgLocation: document.getElementById("manageTaskListsModalListNameErrorMsg"),
+			fieldErrMsg: "List name can't be blank",
+			isNotValid: function(str) {
+				return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+			}
+		  }
+		]
+	},	  
+	  
 	  
 	  //***********************************
 	  /* NEW Task Form Validation Object */
