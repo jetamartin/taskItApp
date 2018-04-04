@@ -1742,7 +1742,10 @@ var appUIController = (function () {
 	var editFormCancelButton = document.getElementById("editFormCancelButton");
 	var editFormUpdateTaskNavButton = document.getElementById("updateTaskNavBtn");
 
-
+	/* Manage Task List Form elements */
+	var manageTaskListsIcon = document.getElementById("manageTaskListsIcon");
+	var manageTaskListsBackArrow = document.getElementById("manageTaskListsBackArrow");
+	
 	
 	//$$$$$
 	var addDueDateBtn = document.querySelector(".addDueDateBtn");
@@ -2009,7 +2012,7 @@ var appUIController = (function () {
 		},
 		
 		exitEditTaskPage: function(event) {
-			console.log("********************** exitEditTaskPage()");
+			console.log("exitEditTaskPage()");
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
 			appUIController.resetTaskForm(event);
@@ -2019,6 +2022,31 @@ var appUIController = (function () {
 			// Include method below into resetTaskForm
 //			removeNewTaskFormInputStyle();
 		},
+		
+		
+		/*******************************************************************
+		*            
+		*          MANAGE TASK LISTS PAGE METHODS
+		*
+		*********************************************************************/
+		displayManageTaskListsPage: function ( event ) {
+			console.log("displayManageTaskPage()");
+			
+			// Hide the mainPage and show the editTaksPage
+			toggleClass(homePage, "hideIt");
+			toggleClass(manageTaskListsPage, "hideIt");
+		}, 
+		
+		
+		exitManageTaskListsPage: function(event) {
+			console.log("exitManageTaskListsPage()");
+			toggleClass(homePage, "hideIt");
+			toggleClass(manageTaskListsPage, "hideIt");
+			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
+			resetUI2InitialState();
+			
+		},
+		
 		// Will need to make this more general if I want to use on EditTask form too.
 		reEnableRepeatInputAndRemoveErrors: function (event) {
 			appUIController.getUIVars().inputNewTaskRepeat.disabled = false;
@@ -2169,6 +2197,10 @@ var appUIController = (function () {
 				completedListElem: completedListElem, 
 				defaultListElem: defaultListElem,
 				newListCancelBtn: newListCancelBtn,
+				
+				// Manage Task List Form Vars
+				manageTaskListsIcon: manageTaskListsIcon,
+				manageTaskListsBackArrow: manageTaskListsBackArrow,
 				
 				listMenuTitle: listMenuTitle,
 				addDueDateBtn: addDueDateBtn,
@@ -3299,6 +3331,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		// Nav Bar Menu Update Button
 		appUIController.getUIVars().editFormUpdateTaskNavButton.addEventListener("click", function ( event ) {ctrlUpdateTaskItem(event)});
+		//****************************************************************************		
+		// MANAGE TASK LIST FORM EVENT LISTENERS		
+		//*******************************************************************
+		
+		appUIController.getUIVars().manageTaskListsIcon.addEventListener("click", function ( event ) { appUIController.displayManageTaskListsPage ( event )}); 
+		
+		appUIController.getUIVars().manageTaskListsBackArrow.addEventListener("click", function ( event ) { appUIController.exitManageTaskListsPage ( event )}); 
 		
 		//****************************************************************************		
 		// LIST MODAL FORM EVENT LISTENERS		

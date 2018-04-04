@@ -659,7 +659,7 @@ nav ul li:hover ul li span.listTotal {
 }
 
 
-/* Tried using animation on max height*/
+/* Tried using animation on max height didn't seem to work -- So this could be deleted*/
 @-webkit-keyframes disappear {
 	0% { max-height: 100%;}
 	25% { max-height: 75%}
