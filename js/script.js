@@ -1283,18 +1283,18 @@ var appModelController = (function () {
 	  /*   Manage Task List Modal Form   */ 
 	  //***********************************
 	{  
-		pageName: "manageTaskListsModal",
-		formName : "manageTaskListsModalForm", 
+		pageName: "manageListsAddNewListModal",
+		formName : "manageListsAddNewListModalForm", 
 		formError : false,
-		formSubmitErrorMsgLoc : document.getElementById("manageTaskListsModalMsg"),
+		formSubmitErrorMsgLoc : document.getElementById("manageListsAddNewListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("manageTaskListsMsg"),
 		formSubmitSuccessMsg: "list created!",
 		formSubmitErrorMsg: "List NOT saved." + " Correct Error",
 
 		fieldsToValidate : [
 		  {
-			fieldName: document.getElementById("manageTaskListsModalFormListName"),
-			fieldErrorMsgLocation: document.getElementById("manageTaskListsModalListNameErrorMsg"),
+			fieldName: document.getElementById("manageListsAddNewListModalFormListName"),
+			fieldErrorMsgLocation: document.getElementById("manageListsAddNewListModalListNameErrorMsg"),
 			fieldErrMsg: "List name can't be blank",
 			isNotValid: function(str) {
 				return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)

@@ -180,7 +180,7 @@
 		</nav>
 		
 		<!--********************************************-->
-		<!--	NEW TASK FORM	-->
+		<!--			NEW TASK FORM					-->
 		<!--********************************************-->
 
 		<section class="container newTaskPage">
@@ -472,7 +472,7 @@
 	
 <!--*******************************************************-->
 		
-<!--				MANAGE TASK LIST PAGE	  				   -->
+<!--				MANAGE TASK LIST PAGE 				   -->
 
 <!--*******************************************************-->
 <div class="container-fluid hideIt" id="manageTaskListsPage">
@@ -484,7 +484,7 @@
 <!--					</a>-->
 			</li>
 			<li class="screenTitle">Manage Lists</li>
-			<a data-toggle="modal" data-target="#manageTaskListsModal">
+			<a data-toggle="modal" data-target="#manageListsAddNewListModal">
 				<li class="floatRight">
 					<span class="newList fa-stack">
 						<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
@@ -495,41 +495,144 @@
 		</ul>
 	</nav>
 	<section class="container manageTaskListsPage">
-		<article class="">
-				<div id="manageTaskListsMsg"></div>
+		<div id="manageTaskListsMsg"></div>
+		<div class="card card-taskList">
+			<div class="card-block">
+				<div>
+					<p class="card-taskList-subtitle text-muted taskListName">Default</p>
+				</div>
+				<div class="floatRight">
+					<a data-toggle="modal" data-target="#manageListsEditListModal">
+						<i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>
+					</a>
+					<a data-toggle="modal" data-target="#manageListsDeleteListModal">
+						<i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i>
+					</a>
+				</div>
+				<p class="card-taskList-text text-muted taskListTotalsLine">
+					<span>Tasks:</span><span>&nbsp;2&nbsp;</span>
+					<span class="overDue">(4 overdue)</span>
+				</p>
+			</div>
+		</div>	
+		<div class="card card-taskList">
+			<div class="card-block">
+				<div>
+					<p class="card-taskList-subtitle text-muted taskListName">WORK</p>
+				</div>
+				<div class="floatRight">
+					<a data-toggle="modal" data-target="#manageListsEditListModal">
+						<i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>
+					</a>
+					<i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i>		
+				</div>
+				<p class="card-taskList-text text-muted taskListTotalsLine">
+					<span>Tasks:</span><span>&nbsp;2&nbsp;</span>
+					<span class="overDue">(4 overdue)</span>
+				</p>
+			</div>
+		</div>	
+		<div class="card card-taskList">
+			<div class="card-block">
+				<div>
+					<p class="card-taskList-subtitle text-muted taskListName">School</p>
+				</div>
+				<div class="floatRight">
+					<i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>
+					<i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i>		
+				</div>
+				<p class="card-taskList-text text-muted taskListTotalsLine">
+					<span>Tasks:</span><span>&nbsp;2&nbsp;</span>
+					<span class="overDue">(4 overdue)</span>
+				</p>
+			</div>
+		</div>	
 			
 			
-				<!-- Add List Modal for Manage Task Lists Page-->
-				
-				<div class="modal" id="manageTaskListsModal">
-					<div class="modal-dialog modal-sm" role="document">
-						<!-- Modal content-->
-						<div class="modal-content">
-							<div class="modal-header">
-								<h4 class="modal-title">Add New List</h4>
+			
+			
+		<!-- NavBar Add New List Modal for Manage Task Lists Page-->
+
+		<div class="modal" id="manageListsAddNewListModal">
+			<div class="modal-dialog modal-sm" role="document">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Add New List</h4>
+					</div>
+					<div class="modal-body">
+						<!-- Success/Error message inserted via JS								-->
+						<div id="manageListsAddNewListModalMsg"></div>
+
+						<form class="modalForm" id="manageListsAddNewListModalForm">
+							<div class="form-group">
+								<input type="text" class="form-control" id="manageListsAddNewListModalFormListName" placeholder="Enter new list name">
 							</div>
-							<div class="modal-body">
-								<!-- Success/Error message inserted via JS								-->
-								<div id="manageTaskListsModalMsg"></div>
-								
-								<form class="modalForm" id="manageTaskListsModalForm">
-									<div class="form-group">
-										<input type="text" class="form-control" id="manageTaskListsModalFormListName" placeholder="Enter new list name">
-									</div>
-									<!-- Location of field Error Msg added via JS -->
-									<div class="errorMsg" id="manageTaskListsModalListNameErrorMsg"></div>
-									<!-- Modal widow for creating new list							-->
-							
-									<div class="modal-footer button-group">
-										<button type="button" class="btn btn-default manageListCancelBtn" data-dismiss="modal" >Cancel</button>
-										<button type="submit" class="btn btn-default takeActionBtn" >Add</button>
-									</div>
-								</form>
+							<!-- Location of field Error Msg added via JS -->
+							<div class="errorMsg" id="manageListsAddNewListModalListNameErrorMsg"></div>
+							<!-- Modal widow for creating new list							-->
+
+							<div class="modal-footer button-group">
+								<button type="button" class="btn btn-default manageListCancelBtn" data-dismiss="modal" >Cancel</button>
+								<button type="submit" class="btn btn-default takeActionBtn" >Add</button>
 							</div>
-						</div>
+						</form>
 					</div>
 				</div>
-		</article>
+			</div>
+		</div>
+		
+		
+		<!-- Edit List Modal for Manage Task Lists Page-->
+
+		<div class="modal" id="manageListsEditListModal">
+			<div class="modal-dialog modal-sm" role="document">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Edit List Name</h4>
+					</div>
+					<div class="modal-body">
+						<!-- Success/Error message inserted via JS								-->
+						<div id="manageListsEditListModalMsg"></div>
+
+						<form class="modalForm" id="manageListsEditListModalForm">
+							<div class="form-group">
+								<input type="text" class="form-control" id="manageListsEditListModalFormListName" placeholder="Enter new list name">
+							</div>
+							<!-- Location of field Error Msg added via JS -->
+							<div class="errorMsg" id="manageListsEditListModalListNameErrorMsg"></div>
+							<!-- Modal widow for creating new list							-->
+
+							<div class="modal-footer button-group">
+								<button type="button" class="btn btn-default manageListCancelBtn" data-dismiss="modal" >Cancel</button>
+								<button type="submit" class="btn btn-default takeActionBtn" >Add</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--	Delete List Modal for Manage Task Lists Page	-->
+		<!-- Edit List Modal for Manage Task Lists Page-->
+
+		<div class="modal" id="manageListsDeleteListModal">
+			<div class="modal-dialog modal-sm" role="document">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Are you sure?</h4>
+					</div>
+					<div class="modal-body">
+						<p class="errorMsg">WARNING!!!</p>All tasks from this list will also be deleted! 
+					</div>
+					<div class="modal-footer button-group">
+						<button type="button" class="btn btn-default manageListCancelBtn" data-dismiss="modal" >Cancel</button>
+						<button type="submit" class="btn btn-default takeActionBtn" >Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</section>
 </div>
 	
