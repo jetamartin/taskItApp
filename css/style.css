@@ -1218,6 +1218,16 @@ span.newList.fa-stack {
     	margin-top: -.05rem;
 	}
 
+	.taskTotalCount {
+		margin-left: .3rem;
+	}
+
+	.taskOverDueCount {
+		margin-right: .3rem;
+	}
+
+
+
 	/* Reduce margin for new task list icon so navbar height remains same size between screens */
 	
 	.manageTasksPage nav .newList {

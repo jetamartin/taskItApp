@@ -2830,6 +2830,31 @@ var appUIController = (function () {
 			
 		}, 
 		
+	/********************************************************************************
+		METHOD:  buildAndDisplayTaskListCards()
+	********************************************************************************/
+	
+		buildAndDisplayTaskListCards: function () {
+			var newNode;
+			var userDefinedList = getUserDefinedTaskList();
+			
+			// Template to create ListName elements for nav's listSubmenu
+			var genericSubMenuHtml = '<div class="card card-taskList"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">Default</p></div><div class="floatRight"><a data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount”>%taskTotalCount%</span><span class="overDue">(<span  class="taskOverDueCount”>%taskOverDueCount%</span>overdue)</span></p></div></div>'; 
+			var specificSubMenuHtml;
+			
+			// Will Pend 
+			var nextNode = document.getElementById("manageTaskListContent");
+			
+			//*****************************************************************************************************
+			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into manageTaskListPage
+			//*****************************************************************************************************
+
+			for (var i = 0; i < userDefinedTaskList.length; i++) {
+				
+				
+			}
+	
+		},
 		/*****************************************************************************************************
 			MODULE: appUIModule;
 			METHOD: updateAndDisplayPreDefinedTaskListTotals - Insert OverDueCount and TotalCounts into list totals 
@@ -2909,16 +2934,17 @@ var appUIController = (function () {
 //
 //		
 //		}, // END addListInfoToMenu
-		
-		/********************************************************************************
-			METHOD:  buildAndDiplayTaskItemsToDisplay()
+
+				
+	/********************************************************************************
+		METHOD:  buildAndDisplayTaskItemsToDisplay()
 			
-			Builds the html to display the taskList that is passed as an input parameter
+		Builds the html to display the taskList that is passed as an input parameter
 			
-			ARGUMENTS:
-			- taskItemList - the tasks for which you want to build the html for display
+		ARGUMENTS:
+		- taskItemList - the tasks for which you want to build the html for display
 			
-		********************************************************************************/
+	********************************************************************************/
  
 		buildAndDisplayTaskItems: function (idOfInsertLocation, taskItemList) {
 			
@@ -2940,20 +2966,9 @@ var appUIController = (function () {
 //				console.log(taskList);
 				return taskList.taskList_id === taskListId;
 			}
-
 			var mainPage = document.getElementById("mainPage"); 
 			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
-			
-			/* Older version of task item HTML...can discard it now */
-			/* var genericTaskItemHtml1 = '<div class="card"><a href="editTask.html"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span class="card-subtitle mb-2 text-muted" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text"> %repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></a></div>'
-			*/
-			
-			var genericTaskItemHtml1 = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><a href="#"><span class="card-subtitle mb-2" for="">%taskTitle%</span></a></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></div>'	
-			
-			var genericTaskItemHtml2 = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed?</label></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><h6 class="taskListName clearBoth">%listName%</h6></div></div>'
-			
-			var genericTaskItemHtml3 = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"><label class="checkBoxLabel"><input class="checkbox floatRight" type="checkbox" id="" name="taskTitle" value="taskTitle">Completed</label></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue ">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6><a data-toggle="modal" data-target="markToDelete"><label class="checkBoxLabel floatRight"><i class="fa fa-trash-o floatRight deleteTaskIcon" aria-hidden="true"></i>Delete Task</label></a></div></div>'
-			
+	
 			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label> </a> </div><div class="col"><a onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%"><label><input class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span>Completed</span></label></a></div><div class="col"><a class="floatRight" data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
 
 			for (var i = 0; i < taskItemList.length; i++) {
