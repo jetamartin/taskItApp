@@ -35,7 +35,7 @@ var searchForm = document.querySelector("#searches");
 //var searchSubmit = document.getElementById("search_submit");
 var taskCategoryHeader = document.querySelectorAll(".taskCategory");
 var floatAddBtn = document.querySelector(".floatAddBtn");
-var mainPage = document.querySelector("#mainPage");
+
 var navBar = document.querySelector(".navBar");
 
 var homePage = document.querySelector("#homePage");
@@ -66,27 +66,28 @@ function isEmpty(str){
 
 /* Removes all taskItems on screen */
 
-function clearoutTaskItemsDisplayed () {
-	console.log("In clearOutCurrentTaskList");
-	
-	
-	var children = mainPage.children; // Returns nodeList..not an array;
-	// Convert nodeList (children) to true array so I can use .forEach()
-	var childrenArray = Array.prototype.slice.call(children);
-	childrenArray.forEach(function(item){
-    	if (item.nodeName === "ARTICLE" || item.className === "card") {
-			/* Two ways to delete nodes: Directly via .remove() or via it's parent;
-				Directly is more intutive but it may have browser support limitations
-				Via the parent is less intuitive but more widely supported
-		 	*/
-			// Delete Via parent
-			//	item.parentNode.removeChild(item)
+//function clearoutTaskItemsDisplayed1 () {
+//	console.log("In clearOutCurrentTaskList");
+//	
+//	
+//	var children = mainPage.children; // Returns nodeList..not an array;
+//	// Convert nodeList (children) to true array so I can use .forEach()
+//	var childrenArray = Array.prototype.slice.call(children);
+//	childrenArray.forEach(function(item){
+//    	if (item.nodeName === "ARTICLE" || item.className === "card") {
+//			/* Two ways to delete nodes: Directly via .remove() or via it's parent;
+//				Directly is more intutive but it may have browser support limitations
+//				Via the parent is less intuitive but more widely supported
+//		 	*/
+//			// Delete Via parent
+//			//	item.parentNode.removeChild(item)
+//
+//			// Delete directly via .remove()
+//			item.remove();
+//		}
+//	});
+//}
 
-			// Delete directly via .remove()
-			item.remove();
-		}
-	});
-}
 
 /* 
 	Manages steps to display a new set of task items (e.g, user choses to display a diff task list). 
@@ -96,7 +97,7 @@ function updateTaskListDisplayed (taskListId) {
 	var listName;
 	
 	// Clear the screen of any task previously displayed
-	clearoutTaskItemsDisplayed();
+	appUIController.clearOutExistingScreenContent(appUIController.getUIVars().mainPage, "dueTimeFrameLabel", "card");
 	
 	// Gather all taskItems related to the user selected list
 	var taskList2Display = getMatchingTaskItemsWithID (taskListId); 
@@ -638,7 +639,7 @@ var detectSearchInput = function (event) {
 	console.log("----->In DetectSearchInput function");
 
 	var matchingTaskItems = [];
-	clearoutTaskItemsDisplayed();
+	appUIController.clearOutExistingScreenContent( appUIController.getUIVars().mainPage, "dueTimeFrameLabel", "card" );
 	// At this point at least one keystroke has been entered..if there is only one keystroke
 	// then you know it was previously empty and this is the first character entered and thus
 	// the clearSearchIcon should be displayed
@@ -667,7 +668,7 @@ var detectSearchInput = function (event) {
 	matchingTaskItems = searchForMatchingTask(searchInput.value);	
 		
 	// Clear any existing task that are currently displayed
-	clearoutTaskItemsDisplayed ();
+	clearOutExistingScreenContent ( appUIController.getUIVars().mainPage, "dueTimeFrameLabel", "card" );
 	
 	// Display matching task items. 
 	appUIController.buildAndDisplayTaskItems("mainPage", matchingTaskItems);
@@ -1755,6 +1756,9 @@ var appUIController = (function () {
 	*/
 	var listItemsLeftToCategorize = [];
 	
+	/* MainPage Elements */
+	var mainPage = document.querySelector("#mainPage");
+	
 	/* New Task Form Elements*/
 	var inputNewTaskListName = document.getElementById("newTaskListName");
 	var inputNewTaskTitle = document.getElementById("newTaskTitle");
@@ -1775,9 +1779,10 @@ var appUIController = (function () {
 	var editFormCancelButton = document.getElementById("editFormCancelButton");
 	var editFormUpdateTaskNavButton = document.getElementById("updateTaskNavBtn");
 
-	/* Manage Task List Form elements */
+	/* Manage Task Lists Page elements */
 	var manageTaskListsIcon = document.getElementById("manageTaskListsIcon");
 	var manageTaskListsBackArrow = document.getElementById("manageTaskListsBackArrow");
+	var manageTaskListsContent = document.getElementById("manageTaskListsContent");
 	
 	
 	//$$$$$
@@ -1816,7 +1821,7 @@ var appUIController = (function () {
 	var mainPageGeneralMsgLoc = document.getElementById("mainPageGeneralMsgLoc");
 	var expandTaskActions = document.querySelector(".expandTaskActions");
 		
-	
+
 	
 	/* aTaskInGroup - flag used when displaying a user selected task list to facilitate display of that list into "Due Date Groups". It's a flag (initially set to false) that is set to true if at least one taskItem in a user selected task is found that matches a Due Date Grouping category. A true value signals that the Due Date HTML header (e.g., "Over Due") and closing tag need to be generated for that Due Date Group.  This flag is reset to false each time the controller is invoked it is invoked because each invocation means that 	you have a new key/category. 
 	*/
@@ -1949,6 +1954,53 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		/****************************************************************************
+		* METHOD:  clearOutExistingScreenContent ()
+		*
+		* This method removes existing screen content so that it can be refreshed
+		* with new content (e.g., taskItems, taskLists, etc). It uses the .remove() 
+		* method to accomplish this. 
+		* 
+		* When calling this method callee must provide the parentNode along with className(s)
+		* to identify the children nodes that should be deleted
+		*
+		* Params: 
+		*		parentNode: in this case that happens to be the node containing the pageId;
+		*		className(s): used to identify the child node(s) under parentNode to remove
+		*     		note: the classNames are passed in arguments. This method can be called   
+		*			with multiple 
+		*
+		* Note: Two ways to delete nodes: Directly via .remove() or via it's parent;
+		*		Directly is more intutive but it may have browser support limitations
+		*		Deleting via the parent is less intuitive but more widely supported
+		*		Deleting via parent would be done via node.parentNode.removeChild(node)
+		*
+		****************************************************************************/
+
+		clearOutExistingScreenContent: function ( parentNode ) {
+			console.log("ClearOutExistingScreenContent()");
+
+			// Identifying class names are passed in by via arguments..Need to convert those
+			//   arguments to a "true" array so they can be used in a loop. 
+			var nodeClassNames = Array.prototype.slice.call(arguments);
+
+			// Get all the parentNode's children 
+			var children = parentNode.children; // Returns nodeList..not an array;
+
+			// Convert nodeList that is returned (children) into a true array so I it can be used in loop
+			var childNodes = Array.prototype.slice.call(children);
+
+			// Search the childNodes to see if any of them contain a className that identifies them
+			nodeClassNames.slice(1).forEach(function ( nodeClassName ) {
+				childNodes.forEach(function(node){
+					if (node.classList.contains(nodeClassName)) {		
+						node.remove(); // Delete node directly via .remove()
+					}
+				});				  				  
+			});
+		},
+
+		
 		markTaskAsCompleted: function ( event ) {
 			console.log("markTaskAsCompleted()");
 			var taskItemId = event.dataset.id;
@@ -2064,7 +2116,8 @@ var appUIController = (function () {
 		*********************************************************************/
 		displayManageTaskListsPage: function ( event ) {
 			console.log("displayManageTaskPage()");
-			appUIController.buildAndDisplayTaskListCards();  
+			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().manageTaskListsContent, "card" );
+			appUIController.buildAndDisplayTaskListCards(appUIController.getUIVars().manageTaskListContent, "card");  
 			// Hide the mainPage and show the editTaksPage
 			toggleClass(homePage, "hideIt");
 			toggleClass(manageTaskListsPage, "hideIt");
@@ -2211,6 +2264,10 @@ var appUIController = (function () {
 		},
 		getUIVars: function() {
 			return {
+				/* Main Page Elements */
+				mainPage: mainPage, 
+				
+				/* New Task Form Elements */
 				inputNewTaskListName: inputNewTaskListName,
 				inputNewTaskTitle: inputNewTaskTitle,
 				inputNewTaskDateTime: inputNewTaskDateTime,
@@ -2234,6 +2291,7 @@ var appUIController = (function () {
 				// Manage Task List Form Vars
 				manageTaskListsIcon: manageTaskListsIcon,
 				manageTaskListsBackArrow: manageTaskListsBackArrow,
+				manageTaskListsContent: manageTaskListsContent,
 				
 				listMenuTitle: listMenuTitle,
 				addDueDateBtn: addDueDateBtn,
@@ -2257,7 +2315,9 @@ var appUIController = (function () {
 				inputEditFormListSelect: inputEditFormListSelect,
 				editFormCancelButton: editFormCancelButton,
 				editFormUpdateTaskNavButton: editFormUpdateTaskNavButton,
-				expandTaskActions: expandTaskActions
+				expandTaskActions: expandTaskActions 
+				
+
 			}
 
 		}, 
@@ -2980,7 +3040,8 @@ var appUIController = (function () {
 //				console.log(taskList);
 				return taskList.taskList_id === taskListId;
 			}
-			var mainPage = document.getElementById("mainPage"); 
+			// Should need this any longer now that defined in AppUIController
+//			var mainPage = document.getElementById("mainPage"); 
 			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
 	
 			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label> </a> </div><div class="col"><a onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%"><label><input class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span>Completed</span></label></a></div><div class="col"><a class="floatRight" data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
@@ -3044,7 +3105,7 @@ var appUIController = (function () {
 		
 		buildTaskDueDateHeader: function (key) {
 			
-			var genericTaskDueDateHeader ='<article id="%key%"><h5 class="taskCategory %overDueAttr%">%taskDueDateCategory%</h5>';
+			var genericTaskDueDateHeader ='<article id="%key%" class="dueTimeFrameLabel"><h5 class="taskCategory %overDueAttr%">%taskDueDateCategory%</h5>';
 			var specificDueDateHeader;
 			var newNode;
 			
@@ -3060,7 +3121,7 @@ var appUIController = (function () {
 			newNode = document.createRange().createContextualFragment(specificDueDateHeader);
 			
 			// Add the header to the DOM 
-			mainPage.appendChild(newNode);
+			appUIController.getUIVars().mainPage.appendChild(newNode);
 
 		},	// End buildTaskDueDateHeader
 		
@@ -3074,7 +3135,7 @@ var appUIController = (function () {
 		addClosingTagToList: function () {
 			var newNode; 
 			newNode = document.createRange().createContextualFragment("</article>");
-			mainPage.appendChild(newNode);
+			appUIController.getUIVars().mainPage.appendChild(newNode);
 		}, // END addClosingTagToList
 		
 		
