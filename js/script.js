@@ -2064,7 +2064,7 @@ var appUIController = (function () {
 		*********************************************************************/
 		displayManageTaskListsPage: function ( event ) {
 			console.log("displayManageTaskPage()");
-			
+			appUIController.buildAndDisplayTaskListCards();  
 			// Hide the mainPage and show the editTaksPage
 			toggleClass(homePage, "hideIt");
 			toggleClass(manageTaskListsPage, "hideIt");
@@ -2836,22 +2836,36 @@ var appUIController = (function () {
 	
 		buildAndDisplayTaskListCards: function () {
 			var newNode;
-			var userDefinedList = getUserDefinedTaskList();
+			var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 			
 			// Template to create ListName elements for nav's listSubmenu
-			var genericSubMenuHtml = '<div class="card card-taskList"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">Default</p></div><div class="floatRight"><a data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount”>%taskTotalCount%</span><span class="overDue">(<span  class="taskOverDueCount”>%taskOverDueCount%</span>overdue)</span></p></div></div>'; 
-			var specificSubMenuHtml;
+			var genericTaskListsCardHtml = '<div class="card card-taskList"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p></div></div>';
 			
-			// Will Pend 
-			var nextNode = document.getElementById("manageTaskListContent");
+			var specificTaskListsCardHtml;
+			
+			
+			var insertNodeLocation = document.getElementById("manageTaskListsContent");
+			var newNode;
 			
 			//*****************************************************************************************************
 			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into manageTaskListPage
 			//*****************************************************************************************************
 
-			for (var i = 0; i < userDefinedTaskList.length; i++) {
+			for (var i = 0; i < userDefinedTaskLists.length; i++) {
+				// Insert the record ID in the special data attribute data-id="recordId"
 				
+				specificTaskListsCardHtml = genericTaskListsCardHtml.replace('%taskListName%', userDefinedTaskLists[i].taskList_name);
 				
+				specificTaskListsCardHtml = specificTaskListsCardHtml.replace(/%taskListId%/g, userDefinedTaskLists[i].taskList_id);
+				
+				specificTaskListsCardHtml = specificTaskListsCardHtml.replace('%taskTotalCount%', userDefinedTaskLists[i].taskList_totalCount);
+				
+				specificTaskListsCardHtml = specificTaskListsCardHtml.replace('%taskOverDueCount%', userDefinedTaskLists[i].taskList_overDueCount);
+				
+				//* Convert completed HTML string into DOM node so it can be inserted
+				newNode = document.createRange().createContextualFragment(specificTaskListsCardHtml);
+
+				insertNodeLocation.appendChild(newNode)
 			}
 	
 		},
