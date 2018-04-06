@@ -22,7 +22,7 @@
 		visibility: hidden;
 	}
 
-	#mainPageSuccessMsg {
+	#mainPageSuccessMsg, #manageTaskListsMsg {
 		width: 90%;
 		height: 2rem;
 /*		background-color: white;*/
@@ -525,9 +525,8 @@ nav ul li:hover ul li span.listTotal {
 	}
 	/* Make sure there is enough space between last tasks and footer */
 	
-
 	#mainPage article:last-of-type {
-		margin-bottom: 15rem;
+		margin-bottom: 8rem;
 	}
 	
 	.card:hover {
@@ -1178,7 +1177,7 @@ span.newList.fa-stack {
 		max-width: 95%;
 	}
 	/*****************************************************************/
-	/* Manage Tasks Page */
+	/* Manage Tasks List Page */
 	/*****************************************************************/
 	#manageTaskListsPage .card {
 		width: 100%;
@@ -1227,7 +1226,12 @@ span.newList.fa-stack {
 		margin-right: .3rem;
 	}
 
+	#manageTaskListsPage .card:last-of-type {
+		margin-bottom: 6rem;
+	}
 
+
+/*  NOT SURE IF CSS BELOW still applies -- NEED TO TEST*/
 
 	/* Reduce margin for new task list icon so navbar height remains same size between screens */
 	

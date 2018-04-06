@@ -1281,12 +1281,16 @@ var appModelController = (function () {
 	},
 	  
 	  //***********************************
-	  /*   Manage Task List Modal Form   */ 
+	  /*   Manage Task List Modal Forms   */ 
 	  //***********************************
-	{  
+	  
+	  /*   Nav Add New List Modal Form   */ 
+	  
+  	{  
 		pageName: "manageListsAddNewListModal",
 		formName : "manageListsAddNewListModalForm", 
 		formError : false,
+		fieldDefaultValue: "",
 		formSubmitErrorMsgLoc : document.getElementById("manageListsAddNewListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("manageTaskListsMsg"),
 		formSubmitSuccessMsg: "list created!",
@@ -1296,6 +1300,30 @@ var appModelController = (function () {
 		  {
 			fieldName: document.getElementById("manageListsAddNewListModalFormListName"),
 			fieldErrorMsgLocation: document.getElementById("manageListsAddNewListModalListNameErrorMsg"),
+			fieldErrMsg: "List name can't be blank",
+			isNotValid: function(str) {
+				return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+			}
+		  }
+		]
+	},	  
+	  
+	/*   Edit List Modal Forms   */ 
+	  
+	{  
+		pageName: "manageListsEditListModal",
+		formName : "manageListsEditListModal", 
+		formError : false,
+		fieldDefaultValue: "",
+		formSubmitErrorMsgLoc : document.getElementById("manageListsEditListModalMsg"),
+		formSubmitSuccessMsgLoc : document.getElementById("manageTaskListsMsg"),
+		formSubmitSuccessMsg: "list created!",
+		formSubmitErrorMsg: "List NOT saved." + " Correct Error",
+
+		fieldsToValidate : [
+		  {
+			fieldName: document.getElementById("manageListsEditListModalFormListName"),
+			fieldErrorMsgLocation: document.getElementById("manageListsEditListModalListNameErrorMsg"),
 			fieldErrMsg: "List name can't be blank",
 			isNotValid: function(str) {
 				return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
@@ -1453,11 +1481,16 @@ var appModelController = (function () {
 				case "editTaskListModalForm":
 					return 2;
 					
-				case "formEditNewTask":
+				case "manageListsAddNewListModalForm":
 					return 3;
 					
+				case "manageListsEditListModalForm":	
+					return 4; 
+	
 				default:
+					console.log("getModalWindowIndex() error...no matching TaskListModal form: return -1 value)");
 					return -1;
+
 				
 			}
 		}, 
@@ -1783,6 +1816,7 @@ var appUIController = (function () {
 	var manageTaskListsIcon = document.getElementById("manageTaskListsIcon");
 	var manageTaskListsBackArrow = document.getElementById("manageTaskListsBackArrow");
 	var manageTaskListsContent = document.getElementById("manageTaskListsContent");
+	var manageListsEditListModalForm = document.getElementById("manageListsEditListModalForm");
 	
 	
 	//$$$$$
@@ -1800,8 +1834,11 @@ var appUIController = (function () {
 	var newTaskFormListModalMessage = document.querySelector("#newTaskFormListModalMsg");
 	var editTaskFormListModalMessage = document.querySelector("#editTaskFormListModalMsg");
 	////////
+	
+	// Modal Form Listeners 
 	var formNavTaskListModal = document.querySelector("#formNavTaskListModal");
 	var navListModalListNameErrorMsg = document.querySelector("#navListModalListNameErrorMsg");
+	var addNewTaskListModal = document.querySelector("addNewTaskListModal");
 	
 	
 	
@@ -2123,6 +2160,11 @@ var appUIController = (function () {
 			toggleClass(manageTaskListsPage, "hideIt");
 		}, 
 		
+		editTaskList: function ( event ) {
+			console.log("editTaskList()"); 
+			
+		},
+ 		
 		
 		exitManageTaskListsPage: function(event) {
 			console.log("exitManageTaskListsPage()");
@@ -2292,6 +2334,7 @@ var appUIController = (function () {
 				manageTaskListsIcon: manageTaskListsIcon,
 				manageTaskListsBackArrow: manageTaskListsBackArrow,
 				manageTaskListsContent: manageTaskListsContent,
+				manageListsEditListModalForm: manageListsEditListModalForm, 
 				
 				listMenuTitle: listMenuTitle,
 				addDueDateBtn: addDueDateBtn,
@@ -2898,6 +2941,9 @@ var appUIController = (function () {
 			var newNode;
 			var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 			
+			// Sort the userDefinedTask List
+			appModelController.sortListByName(userDefinedTaskLists); 
+			
 			// Template to create ListName elements for nav's listSubmenu
 			var genericTaskListsCardHtml = '<div class="card card-taskList"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p></div></div>';
 			
@@ -3378,6 +3424,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		clearSearchIcon.addEventListener("click", clearSearchField);
 		backArrowSearch.addEventListener("click", exitSearch);
 		
+		
 		//****************************************************************************		
 		// NEW TASK FORM EVENT LISTENERS 		
 		//****************************************************************************
@@ -3462,6 +3509,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		appUIController.getUIVars().manageTaskListsBackArrow.addEventListener("click", function ( event ) { appUIController.exitManageTaskListsPage ( event )}); 
 		
+		
+		// Form on ManageTaskLists Edit List Modal form
+//		appUIController.getUIVars().manageListsEditListModalForm.addEventListener("submit",function (event) { appUIController.editTaskList ( event)}, true);
+		
+		
 		//****************************************************************************		
 		// LIST MODAL FORM EVENT LISTENERS		
 		//****************************************************************************
@@ -3498,7 +3550,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		});
 		
 		/* Edit List Modal Form */
-		$('#editTaskItemListModal').on('hidden.bs.modal', function (e) {
+		$('#manageListsAddNewListModal').on('hidden.bs.modal', function (e) {
 		  $(this)
 			.find("input,textarea,select")
 			   .val('')
@@ -3511,6 +3563,40 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			appUIController.clearTaskListModalFormErrors(e);
 			
 		});
+		
+		
+		/* Manage Task List Modal Form */
+		$('#manageListsEditListModalForm').on('hidden.bs.modal', function (e) {
+		  $(this)
+			.find("input,textarea,select")
+			   .val('')
+			   .end()
+			.find("input[type=checkbox], input[type=radio]")
+			   .prop("checked", "")
+			   .end();
+			// Clear any error messages and error formatting
+			var test = document.querySelector("div").closest(".modal");
+			appUIController.editTaskList(e);
+		});
+			
+		
+		/* Manage Task List Modal Form */
+		$('#manageListsEditListModalForm').on('hidden.bs.modal', function (e) {
+		  $(this)
+			.find("input,textarea,select")
+			   .val('')
+			   .end()
+			.find("input[type=checkbox], input[type=radio]")
+			   .prop("checked", "")
+			   .end();
+			// Clear any error messages and error formatting
+			var test = document.querySelector("div").closest(".modal");
+			appUIController.editTaskList(e);
+			
+		});
+		
+		
+		
 		
 		// Got the following solution from stackoverflow:
 		// https://stackoverflow.com/questions/15474862/twitter-bootstrap-modal-input-field-focus/20435473
@@ -3535,6 +3621,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 //		appUIController.getUIVars().formNavTaskListModal.addEventListener("submit", function(event) {ctrlAddTaskList(event)}); 
 		
+
+		
 		// Method to addEventListener to every item with className 
 		function addEventListenerByClass(className, event, fn) {
 			var list = document.getElementsByClassName(className);
@@ -3544,7 +3632,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		}
 		
 		// Assign event listener to form on all modal forms
-		addEventListenerByClass('modalForm', 'submit', function(event) {ctrlAddTaskList(event)}); 
+		addEventListenerByClass( 'addNewTaskListModal', 'submit', function(event) {ctrlAddTaskList(event)}); 
 
 
 		
@@ -4095,6 +4183,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			// Check status of saving List to DB/local storage
 			if (saveWasSuccessful) {
 				
+
+				
 				// Style the newly added list selection input to reflect list selection had changed (add class="filled")
 				appUIController.getUIVars().inputEditFormListSelect.classList.add("filled");
 				
@@ -4104,12 +4194,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Insert Submit Success Message
 				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + newTaskListObject.taskList_name + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
 				
-				//XYZ----------------------
 				
 				var modalWindowIndex = appModelController.getModalWindowIndex(event.target.id);
 				appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
 				
-				//XYZ--------------------
 			
 				// Remove existing UserDefined Task list from TaskListSubmenu
 				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
@@ -4153,21 +4241,36 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 				
 				
-				/* 
-				Determine which form's List Selection Dropdown (NewTaskForm or EditTaskForm) needs to be updated with the new taskList that was just created
-				*/ 
+				switch (modalPageId) {
+						
+					case "manageListsAddNewListModal":
+						appUIController.clearOutExistingScreenContent( appUIController.getUIVars().manageTaskListsContent, "card" );
+						appUIController.buildAndDisplayTaskListCards(appUIController.getUIVars().manageTaskListContent, "card");  
+						break;
+						
+					case "editTaskItemListModal":
+						taskItemFormListSelect = appUICtrl.getUIVars().inputEditFormListSelect;
+						// Rebuild values in List selection on form
+						appUIController.populateFormWithListNames (taskItemFormListSelect)
 				
-				if (modalPageId === "editTaskItemListModal") {
-					taskItemFormListSelect = appUICtrl.getUIVars().inputEditFormListSelect; 
-				} else {
-					taskItemFormListSelect = appUICtrl.getUIVars().inputNewTaskListSelection;
+						// Make newly added list the "active" list selection on taskItem form
+						appUIController.setTaskListSelect(taskItemFormListSelect, newTaskListObject.taskList_name);
+						break;
+						
+					case "":
+						taskItemFormListSelect = appUICtrl.getUIVars().inputNewTaskListSelection;
+						// Rebuild values in List selection on form
+						appUIController.populateFormWithListNames (taskItemFormListSelect)
+
+						// Make newly added list the "active" list selection on taskItem form
+						appUIController.setTaskListSelect(taskItemFormListSelect, newTaskListObject.taskList_name);											
+						break;
+						
+					default: 
+						console.log("ctrAddTaskList()...no matching modal page)");
+		
 				}
-				// Rebuild values in List selection on form
-				appUIController.populateFormWithListNames (taskItemFormListSelect)
-				
-				// Make newly added list the "active" list selection on taskItem form
-				appUIController.setTaskListSelect(taskItemFormListSelect, newTaskListObject.taskList_name);
-				
+
 
 				
 			} else { //Some thing failed in Save process....either writing to DB or local storage
