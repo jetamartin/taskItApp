@@ -775,6 +775,20 @@ return {
 		return list.lookUpTaskName(taskListId);
 		
 	},
+	
+	lookUpTaskListRecord: function (list, taskListId) {
+		Array.prototype.lookUpTaskListRecord = function(taskListId) {
+		var i;
+		for (i = 0; i < this.length; i++) {
+			if (this[i].taskList_id === taskListId) {
+				return this[i]; //Returns list record
+			}
+		}
+			return -1;
+		}
+		return list.lookUpTaskListRecord(taskListId);
+		
+	},
 	titleCase: function(str) {
 		var splitStr = str.toLowerCase().split(' ');
 		for (var i = 0; i < splitStr.length; i++) {
@@ -1791,6 +1805,7 @@ var appUIController = (function () {
 	
 	/* MainPage Elements */
 	var mainPage = document.querySelector("#mainPage");
+	var subMenuListDOMNode = document.querySelector(".taskListsSubMenu");
 	
 	/* New Task Form Elements*/
 	var inputNewTaskListName = document.getElementById("newTaskListName");
@@ -1818,6 +1833,9 @@ var appUIController = (function () {
 	var manageTaskListsContent = document.getElementById("manageTaskListsContent");
 	var manageListsEditListModalForm = document.getElementById("manageListsEditListModalForm");
 	
+	/* Modal Form Lists Page elements */
+	var modalFormEditTaskListId = document.getElementById("modalFormEditTaskListId");
+	
 	
 	//$$$$$
 	var addDueDateBtn = document.querySelector(".addDueDateBtn");
@@ -1839,6 +1857,7 @@ var appUIController = (function () {
 	var formNavTaskListModal = document.querySelector("#formNavTaskListModal");
 	var navListModalListNameErrorMsg = document.querySelector("#navListModalListNameErrorMsg");
 	var addNewTaskListModal = document.querySelector("addNewTaskListModal");
+	var inputEditListName = document.getElementById("manageListsEditListModalFormListName")
 	
 	
 	
@@ -1990,6 +2009,19 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
+		
+		setUpEditTaskListModal: function ( event ) {
+			console.log("setUpEditTaskListName");
+			var taskListId = event.dataset.id;
+			
+			appUIController.getUIVars().modalFormEditTaskListId.value = taskListId;
+			
+			var listName = utilMethods.lookUpTaskName(appModelController.getTaskListTable(), taskListId);
+			appUIController.getUIVars().inputEditListName.value = listName;
+			
+			
+			
+		}, 
 		
 		/****************************************************************************
 		* METHOD:  clearOutExistingScreenContent ()
@@ -2161,7 +2193,45 @@ var appUIController = (function () {
 		}, 
 		
 		editTaskList: function ( event ) {
-			console.log("editTaskList()"); 
+			event.preventDefault();
+			event.stopPropagation();
+			console.log("editTaskList()");
+			console.log(appUIController.getUIVars().inputEditListName.value);
+			var taskListId = appUIController.getUIVars().modalFormEditTaskListId.value; 
+			
+			
+			var matchedTaskListRecord = utilMethods.lookUpTaskListRecord(appModelController.getTaskListTable(), taskListId);
+			
+			matchedTaskListRecord.taskList_name = appUIController.getUIVars().inputEditListName.value;
+			
+			
+			var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
+			
+			// Sort the userDefinedTask List
+			appModelController.sortListByName(userDefinedTaskLists);
+			
+			
+			// Remove existing UserDefined Task list from TaskListSubmenu
+//			appUIController.removeUserDefinedTaskLists(userDefinedTaskLists);
+			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList' );
+			
+			
+			var currActiveListNode = getActiveTaskList();
+			var currActiveListName = appUIController.getActiveTaskListName();
+			
+				
+			// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
+			appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, currActiveListNode, currActiveListName, null);
+			
+			
+			// Clearout prior TaskList cards  on the ManageTaskListPage
+			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().manageTaskListsContent, "card" );
+			
+			// Now rebuild the TaskList cards so that they will include any edits made to the the task List 
+			appUIController.buildAndDisplayTaskListCards(appUIController.getUIVars().manageTaskListContent, "card");  
+			
+			var modalWindowIndex = appModelController.getModalWindowIndex(event.target.getAttribute('id'));
+			appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
 			
 		},
  		
@@ -2307,7 +2377,8 @@ var appUIController = (function () {
 		getUIVars: function() {
 			return {
 				/* Main Page Elements */
-				mainPage: mainPage, 
+				mainPage: mainPage,
+				subMenuListDOMNode: subMenuListDOMNode, 
 				
 				/* New Task Form Elements */
 				inputNewTaskListName: inputNewTaskListName,
@@ -2334,7 +2405,8 @@ var appUIController = (function () {
 				manageTaskListsIcon: manageTaskListsIcon,
 				manageTaskListsBackArrow: manageTaskListsBackArrow,
 				manageTaskListsContent: manageTaskListsContent,
-				manageListsEditListModalForm: manageListsEditListModalForm, 
+				manageListsEditListModalForm: manageListsEditListModalForm,
+				inputEditListName: inputEditListName,
 				
 				listMenuTitle: listMenuTitle,
 				addDueDateBtn: addDueDateBtn,
@@ -2358,9 +2430,10 @@ var appUIController = (function () {
 				inputEditFormListSelect: inputEditFormListSelect,
 				editFormCancelButton: editFormCancelButton,
 				editFormUpdateTaskNavButton: editFormUpdateTaskNavButton,
-				expandTaskActions: expandTaskActions 
+				expandTaskActions: expandTaskActions, 
 				
-
+				// Modal Form Fields
+				modalFormEditTaskListId: modalFormEditTaskListId
 			}
 
 		}, 
@@ -2865,7 +2938,7 @@ var appUIController = (function () {
 			
 			
 			// Template to create ListName elements for nav's listSubmenu
-			var genericSubMenuHtml = '<li><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
+			var genericSubMenuHtml = '<li class="userDefinedList"><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
 			var specificSubMenuHtml;
 			//*****************************************************************************************************
 			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
@@ -2945,7 +3018,7 @@ var appUIController = (function () {
 			appModelController.sortListByName(userDefinedTaskLists); 
 			
 			// Template to create ListName elements for nav's listSubmenu
-			var genericTaskListsCardHtml = '<div class="card card-taskList"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p></div></div>';
+			var genericTaskListsCardHtml = '<div class="card card-taskList"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a onclick="appUIController.setUpEditTaskListModal(this)" data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p></div></div>';
 			
 			var specificTaskListsCardHtml;
 			
@@ -3511,7 +3584,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		
 		// Form on ManageTaskLists Edit List Modal form
-//		appUIController.getUIVars().manageListsEditListModalForm.addEventListener("submit",function (event) { appUIController.editTaskList ( event)}, true);
+		appUIController.getUIVars().manageListsEditListModalForm.addEventListener( "submit", function ( event ) { appUIController.editTaskList ( event )}, true);
 		
 		
 		//****************************************************************************		
@@ -4184,7 +4257,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			if (saveWasSuccessful) {
 				
 
-				
+				// NEED TO REVSIT THIS AS IT IS SPECIFIC TO ONLY ONE FORM
 				// Style the newly added list selection input to reflect list selection had changed (add class="filled")
 				appUIController.getUIVars().inputEditFormListSelect.classList.add("filled");
 				
