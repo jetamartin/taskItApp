@@ -382,13 +382,16 @@ function resetUI2InitialState() {
     
 ****************************************************************************/
 function getListIdForActiveTaskList() {
+	var activeTaskNode = document.querySelector(".selected");
+	return activeTaskNode.getAttribute('data-id');
 	
-	var activeTaskNode = getActiveTaskList();
-	listName = activeTaskNode.childNodes[1].textContent.trim();
-	var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
-		 return listItem.taskList_name === listName;
-	 });
-	return matchingListRecord[0].taskList_id;
+	
+//	var activeTaskNode = getActiveTaskList();
+//	var listName = activeTaskNode.childNodes[1].textContent.trim();
+//	var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
+//		 return listItem.taskList_name === listName;
+//	 });
+//	return matchingListRecord[0].taskList_id;
 	
 }
 
@@ -399,7 +402,14 @@ function getListIdForActiveTaskList() {
 
 ****************************************************************************/
 function getActiveTaskList() {
-	return activeTaskNode = document.querySelector(".selected");
+	var activeTaskNode = document.querySelector(".selected");
+	if (activeTaskNode === null ) {
+		console.log("getActiveTaskList():::ERROR no activeListNode found ");
+		activeTaskNode = appUIController.getUIVars().allListsElem;
+		activeTaskNode.classList.add("selected");
+	}
+	return activeTaskNode
+	
 }
 
 //**************************************************************************************
@@ -738,6 +748,19 @@ var exitSearch = function (event) {
 var utilMethods = (function () {
 	
 return {
+	
+	contains: function ( element ) {
+		Array.prototype.contains = function ( element ) {
+		var i;
+		for (i = 0; i < this.length; i++) {
+			if (this[i] === element) {
+				return true; //Returns element position, so it exists
+			}
+		}
+			return false;
+		}
+	},
+	
 	hasElement: function (list, listName) {
 		Array.prototype.hasElement = function (listName) {
 			var i;
@@ -1468,14 +1491,24 @@ var appModelController = (function () {
 	}
   ]
 
+//	Array.prototype.contains = function(element) {
+//	var i;
+//	for (i = 0; i < this.length; i++) {
+//		if (this[i] === element) {
+//			return i; //Returns element position, so it exists
+//		}
+//	}
+//		return -1;
+//	}
+	
 	Array.prototype.contains = function(element) {
 	var i;
 	for (i = 0; i < this.length; i++) {
 		if (this[i] === element) {
-			return i; //Returns element position, so it exists
+			return true; //Returns element position, so it exists
 		}
 	}
-		return -1;
+		return false;
 	}
 	
 	/****************************************************************************/
@@ -1534,15 +1567,38 @@ var appModelController = (function () {
 			return taskListTable;
 		},
 		
+		/* Returns an array containing just the User defined Task table entries from TaskListTable.
+		   It does this by filtering out any of the taskListTable entries whose names are in the 
+		   System/Predefined Task Task List Names..thus you end up with a a table containing only the 
+		   User Defined TaskList table entries
+		*/ 
 		getUserDefinedTaskList: function() {
 			var taskListTable = appModelController.getTaskListTable();
 			return userDefinedTaskLists = taskListTable.filter(function(taskItem) {
-				if (appModelController.getPreDefinedTaskListNames().contains(taskItem.taskList_name) === -1) {
+				if (!appModelController.getPreDefinedTaskListNames().contains(taskItem.taskList_name)) {
 					return taskItem;
 				} 
 			});
 		
-		}, 
+		},
+		
+		getPreDefinedTaskListIds: function () {
+			var preDefinedTaskListTable = appModelController.getPreDefinedTaskList();
+			return preDefinedTaskListIdArray = preDefinedTaskListTable.reduce ( function (taskIdList, taskList ) {
+				taskIdList.push(taskList.taskList_id);
+				return taskIdList;		
+			}, []);
+			return preDefinedTaskListIdArray;
+		},
+		
+		getPreDefinedTaskList: function ( ) {
+			var taskListTable = appModelController.getTaskListTable();	
+			return preDefinedTaskList = taskListTable.filter(function(taskList) {
+				if (appModelController.getPreDefinedTaskListNames().contains(taskList.taskList_name)) {
+					return taskList;
+				} 
+			});
+		}, 	
 	
 		
 		getTaskListNames: function () {
@@ -2199,6 +2255,8 @@ var appUIController = (function () {
 			console.log(appUIController.getUIVars().inputEditListName.value);
 			var taskListId = appUIController.getUIVars().modalFormEditTaskListId.value; 
 			
+			var predefinedTaskListTable = appModelController.getPreDefinedTaskList();
+			var predefinedTaskListIds = appModelController.getPreDefinedTaskListIds();
 			
 			var matchedTaskListRecord = utilMethods.lookUpTaskListRecord(appModelController.getTaskListTable(), taskListId);
 			
@@ -2210,18 +2268,22 @@ var appUIController = (function () {
 			// Sort the userDefinedTask List
 			appModelController.sortListByName(userDefinedTaskLists);
 			
+			var currActiveListNode = getActiveTaskList();
+			
+			// Added this because I may need to use currActiveListId rather than currActiveListName in buildAndDisplayUserDefinedTaskList() as currActiveListName can be changed whereas the id will not be changed. 
+			var currActiveListId = getListIdForActiveTaskList();
+			
+			var currActiveListName = appUIController.getActiveTaskListName();
+			
 			
 			// Remove existing UserDefined Task list from TaskListSubmenu
 //			appUIController.removeUserDefinedTaskLists(userDefinedTaskLists);
 			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList' );
-			
-			
-			var currActiveListNode = getActiveTaskList();
-			var currActiveListName = appUIController.getActiveTaskListName();
+	
 			
 				
 			// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
-			appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, currActiveListNode, currActiveListName, null);
+			appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
 			
 			
 			// Clearout prior TaskList cards  on the ManageTaskListPage
@@ -2928,26 +2990,33 @@ var appUIController = (function () {
 		
 		// Builds and displays the UsrDefined Task Lists on taskList Submenu
 		
-		buildAndDisplayUserDefinedTaskList: function (userDefinedTaskList, currActiveListNode, currActiveListName, newListName) {
+//		buildAndDisplayUserDefinedTaskList: function (userDefinedTaskList, currActiveListNode, currActiveListName, newListName) {
+		buildAndDisplayUserDefinedTaskList: function (currActiveListId) {
 			var newNode; 
 			
+			var userDefinedTaskList = appModelController.getUserDefinedTaskList();
 //			var currActiveListId = getListIdForActiveTaskList();
+			// ++++++ 
+			var preDefinedTaskListIds = appModelController.getPreDefinedTaskListIds();
 			
 			// Get the 2nd predefined list element ("Default List") position so that we can start adding user defined list after it
 			var nextNode = document.getElementById("listInsertPoint");
 			
 			
 			// Template to create ListName elements for nav's listSubmenu
-			var genericSubMenuHtml = '<li class="userDefinedList"><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
+			var genericSubMenuHtml = '<li class="userDefinedList" data-id="%listId%"><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
 			var specificSubMenuHtml;
 			//*****************************************************************************************************
 			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
 			//*****************************************************************************************************
 
 			for (var i = 0; i < userDefinedTaskList.length; i++) {	
+				
+				// Insert the taskList's id
+				specificSubMenuHtml = genericSubMenuHtml.replace('%listId%', userDefinedTaskList[i].taskList_id); 
 
 				// Insert the list name in HTML
-				specificSubMenuHtml = genericSubMenuHtml.replace('%listName%', userDefinedTaskList[i].taskList_name);
+				specificSubMenuHtml = specificSubMenuHtml.replace('%listName%', userDefinedTaskList[i].taskList_name);
 
 				// Insert the overdue task list count in HTML
 				// If count is zero you want to add class to overdue item so that 0 count and "+" sign do not appear
@@ -2994,13 +3063,19 @@ var appUIController = (function () {
 //				}
 				// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 				
-				/* There will not be an active list node if the prior active list was a userdefinedTaskList element. Why? because in the calling function the userDefinedList DOM nodes had to be removed (via removeUserDefinedTaskLists() function) so that we could re-create the userDefined DOM nodes here inclusive of the new list that user just added. However, if the the previous Active List was a system defined task list then it will still be present so we don't want to toggle off the selected class and and end up with no active list...so hence the check to see the previously active node was a userDefinedList item (and if it was we need to make it active by toggling on 'selected' class) 
+				/* There will not be an active list node found in userDefinedTaskList if the prior active list was a User Defined TaskList element. Why? because in the calling function the userDefinedList DOM nodes had to be removed (via removeUserDefinedTaskLists() function) so that we could re-create the userDefined DOM nodes here inclusive of the new list that user just added. However, if the the previous Active List was a System Defined task list then it will still be present so we don't want to toggle off the selected class and and end up with no active list...so hence the check to see if the previously active node was a User Defined List item (and if it was we need to make it active by toggling on 'selected' class) 
 				*/
 				
-				if (userDefinedTaskList[i].taskList_name === currActiveListName && 
-					appModelController.getPreDefinedTaskListNames().contains(userDefinedTaskList[i].taskListName) === -1) {
+//				if (userDefinedTaskList[i].taskList_name === currActiveListName && 
+//					!appModelController.getPreDefinedTaskListNames().contains(userDefinedTaskList[i].taskListName) ) {
+//						toggleClass(nextNode, 'selected');
+//					}
+				
+				// +++++ New Logic
+				if (userDefinedTaskList[i].taskList_id === currActiveListId && 
+					!preDefinedTaskListIds.contains(userDefinedTaskList[i].taskList_id) ) {
 						toggleClass(nextNode, 'selected');
-					}				   
+					}		
 
 			} // END FOR LOOP for building and adding UserDefined List to dropdown						
 			
@@ -4217,6 +4292,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		var currActiveListNode = getActiveTaskList();
 		var currActiveListName = appUIController.getActiveTaskListName();
+		
+		// ++++++ Added so I could use in buildAndDisplayUserDefinedTaskList() method
+		var currActiveListId = getListIdForActiveTaskList();
 
 		
 		// Find the "root" node of the modal page so that I can get ID of which modal fired 
@@ -4276,7 +4354,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
 				
 				// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
-				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, currActiveListNode, currActiveListName, formValidationObj[0].fieldsToValidate[0].fieldName.value);
+//				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, currActiveListNode, currActiveListName, formValidationObj[0].fieldsToValidate[0].fieldName.value);
+				
+				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
 				
 				
 				/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
@@ -4412,7 +4492,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			App is really a Single Page App (SPA) where parts of the app are displayed hidden
 				or shown as needed.
 
-	*****************************************************************************************/
+	****************allListsElem*************************************************************************/
 	var buildAndDisplayTaskItemForm = function () {
 		
 		// Build and Display the New task form  
@@ -4434,15 +4514,15 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			var currActiveListNode = getActiveTaskList();
 			var currActiveListName = appUIController.getActiveTaskListName();
 			
-			Array.prototype.contains = function(element) {
-				var i;
-				for (i = 0; i < this.length; i++) {
-					if (this[i] === element) {
-						return i; //Returns element position, so it exists
-					}
-				}
-					return -1;
-			}
+//			Array.prototype.contains = function(element) {
+//				var i;
+//				for (i = 0; i < this.length; i++) {
+//					if (this[i] === element) {
+//						return true; //Returns element position, so it exists
+//					}
+//				}
+//					return false;
+//			}
 			// Only perform actions in "if" statement when the app is first initialized
 			if (!appInitialized) {
 			
@@ -4484,9 +4564,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Update the taskListTable data structure with the latest list totals (listTotal & overDue count) 
 				appModelController.updateListTaskTotals();
 				
-				
+				// ++++++ Added so I could use in buildAndDisplayUserDefinedTaskList() method
+				var currActiveListId = getListIdForActiveTaskList();
+
 				// Build the HTML/DOM nodes for UserDefined Task List and insert in DOM for display on subMenuTaskList
-				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, currActiveListNode, currActiveListName, null);
+				appUIController.buildAndDisplayUserDefinedTaskList( currActiveListId );
 
 				// Update task list totals  for PreDefinedTaskListTotals and add them to DOM for display on subMenuTaskList 
 				appUIController.updateAndDisplayPreDefinedTaskListTotals(taskListTable);
