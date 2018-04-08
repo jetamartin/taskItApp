@@ -384,15 +384,6 @@ function resetUI2InitialState() {
 function getListIdForActiveTaskList() {
 	var activeTaskNode = document.querySelector(".selected");
 	return activeTaskNode.getAttribute('data-id');
-	
-	
-//	var activeTaskNode = getActiveTaskList();
-//	var listName = activeTaskNode.childNodes[1].textContent.trim();
-//	var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
-//		 return listItem.taskList_name === listName;
-//	 });
-//	return matchingListRecord[0].taskList_id;
-	
 }
 
 /***************************************************************************
@@ -2066,6 +2057,75 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		
+		/***********************************************************************************
+			MODULE:  appUIController???
+
+			FUNCTION validateFormUpdate - validates form input upon submission and if errors
+				it applies appropriate error messages & styling to errant fields 
+
+			Trigger: Only triggered when user hits submit button on form
+
+			Summary: 
+
+
+			UI Behavior: 
+
+
+
+		***********************************************************************************/
+	
+		validateFormInput: function( formValidationObject ) {
+			console.log("========> validateFormInput")
+
+			var validationObject = formValidationObject[0];
+			validationObject.formError = false;
+			// For each field on the form validate each field's input and 
+			// generate and style error messages
+			validationObject.fieldsToValidate.forEach (function(field) {
+
+				// Error found in input field - Set error message and error styling
+				if (field.isNotValid(field.fieldName.value)) {
+
+					// Set form validationObject to true to indicate that
+					// at least one error was found 
+					field.fieldInError = true;
+					validationObject.formError = true;
+
+					// If error message hasn't been set then add to form and style it
+					if (field.fieldErrorMsgLocation.innerHTML.trim() == "") {		
+
+						// Set error message for field on form
+						field.fieldErrorMsgLocation.innerHTML = '<i class="fa fa-times-circle"></i>' + '&nbsp;' + field.fieldErrMsg;
+
+						// Input box border red
+						toggleClass(field.fieldName, "formErrors");
+
+						// Error message text red
+	//					toggleClass(field.fieldErrorMsgLocation, "errorMsg");
+
+					} 
+					field.fieldName.focus();
+					if (field.fieldName.tagName === "TEXT") { 
+						// Keep focus on error field
+	//					field.fieldName.focus();
+						field.fieldName.setSelectionRange(0,0);
+					}
+
+				} else {  // No error was
+					field.fieldInError = false;
+					// Get rid of any preceding or trailing blanks and resave
+					field.fieldName.value = field.fieldName.value.trim();
+					// Change color of List name text to differentiate it from placeholder text
+					if (field.fieldName.value !== field.fieldDefaultValue) {
+						field.fieldName.classList.add("filled");
+					}
+				}
+
+			});
+
+		},
+		
 		setUpEditTaskListModal: function ( event ) {
 			console.log("setUpEditTaskListName");
 			var taskListId = event.dataset.id;
@@ -2260,41 +2320,65 @@ var appUIController = (function () {
 			
 			var matchedTaskListRecord = utilMethods.lookUpTaskListRecord(appModelController.getTaskListTable(), taskListId);
 			
-			matchedTaskListRecord.taskList_name = appUIController.getUIVars().inputEditListName.value;
+			// Find the "root" node of the modal page so that I can get ID of which modal fired 
+			var modalPageId = utilMethods.findAncestor(event.currentTarget, 'modal').id;
+
+			// Using the modal page ID look up the form validation object
+			var formValidationObj = appModelController.getFormValidationObject(modalPageId);
+
+
+			appUIController.validateFormInput(formValidationObj); 
 			
 			
-			var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
-			
-			// Sort the userDefinedTask List
-			appModelController.sortListByName(userDefinedTaskLists);
-			
-			var currActiveListNode = getActiveTaskList();
-			
-			// Added this because I may need to use currActiveListId rather than currActiveListName in buildAndDisplayUserDefinedTaskList() as currActiveListName can be changed whereas the id will not be changed. 
-			var currActiveListId = getListIdForActiveTaskList();
-			
-			var currActiveListName = appUIController.getActiveTaskListName();
-			
-			
-			// Remove existing UserDefined Task list from TaskListSubmenu
-//			appUIController.removeUserDefinedTaskLists(userDefinedTaskLists);
-			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList' );
-	
-			
+			// If all input was valid (e.g., formError = false)
+			if (!formValidationObj[0].formError) {
+				matchedTaskListRecord.taskList_name = appUIController.getUIVars().inputEditListName.value;
+
+
+				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
+
+				// Sort the userDefinedTask List
+				appModelController.sortListByName(userDefinedTaskLists);
+
+				var currActiveListNode = getActiveTaskList();
+
+				// Added this because I may need to use currActiveListId rather than currActiveListName in buildAndDisplayUserDefinedTaskList() as currActiveListName can be changed whereas the id will not be changed. 
+				var currActiveListId = getListIdForActiveTaskList();
+
+				var currActiveListName = appUIController.getActiveTaskListName();
+
+
+				// Remove existing UserDefined Task list from TaskListSubmenu
+	//			appUIController.removeUserDefinedTaskLists(userDefinedTaskLists);
+				appUIController.clearOutExistingScreenContent( appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList' );
+
+				// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
+				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
+
+
+				// Clearout prior TaskList cards  on the ManageTaskListPage
+				appUIController.clearOutExistingScreenContent( appUIController.getUIVars().manageTaskListsContent, "card" );
+
+				// Now rebuild the TaskList cards so that they will include any edits made to the the task List 
+				appUIController.buildAndDisplayTaskListCards(appUIController.getUIVars().manageTaskListContent, "card");  
+
+				var modalWindowIndex = appModelController.getModalWindowIndex(event.target.getAttribute('id'));
+				appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
 				
-			// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
-			appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
-			
-			
-			// Clearout prior TaskList cards  on the ManageTaskListPage
-			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().manageTaskListsContent, "card" );
-			
-			// Now rebuild the TaskList cards so that they will include any edits made to the the task List 
-			appUIController.buildAndDisplayTaskListCards(appUIController.getUIVars().manageTaskListContent, "card");  
-			
-			var modalWindowIndex = appModelController.getModalWindowIndex(event.target.getAttribute('id'));
-			appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
-			
+				
+			} else { 			
+				
+				console.log("Error was detected with Task List Entry ");
+				// Create log entry if failure
+				// TBD
+				
+				// Insert Submit Success Message
+				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].formSubmitErrorMsg;
+				
+				// Style the errorSubmitMsg
+				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
+			}	
+	
 		},
  		
 		
@@ -3661,6 +3745,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Form on ManageTaskLists Edit List Modal form
 		appUIController.getUIVars().manageListsEditListModalForm.addEventListener( "submit", function ( event ) { appUIController.editTaskList ( event )}, true);
 		
+		appUIController.getUIVars().inputEditListName.addEventListener('keydown', function(event) {
+			appUIController.clearTaskListModalFormErrors(event)
+		})
+		
+		
 		
 		//****************************************************************************		
 		// LIST MODAL FORM EVENT LISTENERS		
@@ -3885,7 +3974,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		var formValidationObj = appModelController.getFormValidationObject(pageId);
 		
 		// Validate the data entered on the form
-		validateFormInput(formValidationObj);
+		appUIController.validateFormInput(formValidationObj);
 		
 		// If all input was valid (e.g., formError = false)
 		if (!formValidationObj[0].formError) {
@@ -4010,7 +4099,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		var formValidationObj = appModelController.getFormValidationObject(pageId);
 		
 		// Validate the data entered on the form
-		validateFormInput(formValidationObj);
+		appUIController.validateFormInput(formValidationObj);
 		
 		// If all input was valid (e.g., formError = false)
 		if (!formValidationObj[0].formError) {
@@ -4171,80 +4260,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.displaySaveMessage(appUIController.getUIVars().newTaskSaveMessage, msg);
 
 	}
-	/***********************************************************************************
-		MODULE:  appUIController???
-		
-		FUNCTION validateFormUpdate - validates form input upon submission and if errors
-			it applies appropriate error messages & styling to errant fields 
-		
-		Trigger: Only triggered when user hits submit button on form
-		
-		Summary: 
 
-			
-		UI Behavior: 
-
-
-
-	***********************************************************************************/
-	
-	var validateFormInput = function(formValidationObject) {
-		console.log("========> validateFormInput")
-
-		var validationObject = formValidationObject[0];
-		validationObject.formError = false;
-		// For each field on the form validate each field's input and 
-		// generate and style error messages
-		validationObject.fieldsToValidate.forEach (function(field) {
-			
-			// Error found in input field - Set error message and error styling
-			if (field.isNotValid(field.fieldName.value)) {
-				
-				// Set form validationObject to true to indicate that
-				// at least one error was found 
-				field.fieldInError = true;
-				validationObject.formError = true;
-				
-				// If error message hasn't been set then add to form and style it
-				if (field.fieldErrorMsgLocation.innerHTML.trim() == "") {		
-					
-					// Set error message for field on form
-					field.fieldErrorMsgLocation.innerHTML = '<i class="fa fa-times-circle"></i>' + '&nbsp;' + field.fieldErrMsg;
-					
-					// Input box border red
-					toggleClass(field.fieldName, "formErrors");
-
-					// Error message text red
-//					toggleClass(field.fieldErrorMsgLocation, "errorMsg");
-					
-				} 
-				field.fieldName.focus();
-				if (field.fieldName.tagName === "TEXT") { 
-					// Keep focus on error field
-//					field.fieldName.focus();
-					field.fieldName.setSelectionRange(0,0);
-				}
-		
-			} else {  // No error was
-				field.fieldInError = false;
-				// Get rid of any preceding or trailing blanks and resave
-				field.fieldName.value = field.fieldName.value.trim();
-				// Change color of List name text to differentiate it from placeholder text
-				if (field.fieldName.value !== field.fieldDefaultValue) {
-					field.fieldName.classList.add("filled");
-				}
-			}
-			
-		});
-		
-//		if (formErrorCount > 0) {
-//			validationObject.formError = true;
-//		} else {
-//			validationObject.formError = false;
-//		}
-	
-
-	}
 	/***********************************************************************************
 		MODULE:  appController
 		
@@ -4307,7 +4323,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		var taskListTable = appModelController.getTaskListTable();
 
 
-		validateFormInput(formValidationObj); 
+		appUIController.validateFormInput(formValidationObj); 
 		
 		// If all input was valid (e.g., formError = false)
 		if (!formValidationObj[0].formError) {
