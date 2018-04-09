@@ -1509,7 +1509,7 @@ var appModelController = (function () {
 	return {
 		
 		getModalWindowIndex: function (modalFormName) {
-			switch(modalFormName.trim()) {
+			switch(modalFormName) {
 				case "navTaskListModalForm":
 					return 0;
 		
@@ -2333,6 +2333,16 @@ var appUIController = (function () {
 			// If all input was valid (e.g., formError = false)
 			if (!formValidationObj[0].formError) {
 				matchedTaskListRecord.taskList_name = appUIController.getUIVars().inputEditListName.value;
+				
+				// NEED TO REVSIT THIS AS IT IS SPECIFIC TO ONLY ONE FORM
+				// Style the newly added list selection input to reflect list selection had changed (add class="filled")
+				appUIController.getUIVars().inputEditFormListSelect.classList.add("filled");
+				
+				// Style the success message
+				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
+				
+				// Insert Submit Success Message
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + matchedTaskListRecord.taskList_name + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
 
 
 				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
@@ -2364,6 +2374,15 @@ var appUIController = (function () {
 
 				var modalWindowIndex = appModelController.getModalWindowIndex(event.target.getAttribute('id'));
 				appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
+				
+				
+				// After fadeout animation ends we need to reset message 
+				setTimeout(function () {
+					// Must remove the success-message class otherwise it will not appear on future saves 
+					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
+					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+			}, 5000);
 				
 				
 			} else { 			
@@ -3074,7 +3093,6 @@ var appUIController = (function () {
 		
 		// Builds and displays the UsrDefined Task Lists on taskList Submenu
 		
-//		buildAndDisplayUserDefinedTaskList: function (userDefinedTaskList, currActiveListNode, currActiveListName, newListName) {
 		buildAndDisplayUserDefinedTaskList: function (currActiveListId) {
 			var newNode; 
 			
@@ -3733,6 +3751,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		// Nav Bar Menu Update Button
 		appUIController.getUIVars().editFormUpdateTaskNavButton.addEventListener("click", function ( event ) {ctrlUpdateTaskItem(event)});
+		
 		//****************************************************************************		
 		// MANAGE TASK LIST FORM EVENT LISTENERS		
 		//*******************************************************************
@@ -3748,6 +3767,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputEditListName.addEventListener('keydown', function(event) {
 			appUIController.clearTaskListModalFormErrors(event)
 		})
+		
+		
 		
 		
 		
@@ -3871,46 +3892,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Assign event listener to form on all modal forms
 		addEventListenerByClass( 'addNewTaskListModal', 'submit', function(event) {ctrlAddTaskList(event)}); 
 
-
-		
-		/* &$&$ Added */
-//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("focusout", function(event) {appUIController.styleUserFormInput(event) }, true);
-		
-//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("focus", function(event) { appUIController.reEnableRepeatInputAndRemoveErrors (event) }, true);
-		
-//		appUIController.getUIVars().addDueDateBtn.addEventListener("click", function(event) { appUIController.reEnableRepeatInputAndRemoveErrors (event) }, true);
-
-//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("blur", function(event) { appUIController.reEnableRepeatInputAndRemoveErrors (event) }, true);
-		
-//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("mouseout", function(event) { appUIController.reEnableRepeatInputAndRemoveErrors (event) }, true);
-		
-//		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("focus", function(event) { appUIController.checkForDueDate(event) }, true);
-		
-		/* &$&$ Commented out -- There is no such event as a "hide" so don't think this would ever fire*/
-//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("hide", function(event) { appUIController.showHideDueDateField (event) }, true);
-		
-//		appUIController.getUIVars().inputNewTaskDateTime.addEventListener("mouseout", function(event) { appUIController.showHideDueDateField (event) }, true);
-		
-//		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("focus", function(event) { appUIController.checkForDueDate(event) }, true);
-		
-		
-		
-		/* 
-			If the NewTask Title on New Task Form field was has "error styling" you want to remove
-			that form's error styling once the user starts entering in a new value (keydown) in that field.   
-		*/
-		
-//		document.getElementById("newTaskTitle").addEventListener("keydown", appUIController.clearTaskItemError);
-		
-//----------------		
-//		document.getElementById("newTaskTitle").addEventListener("keydown", function(event) {appUIController.clearTaskItemError1(event)});
-		
-
-		// $$$$$ Maybe change to class rather than ID.
-		// For Task List Modal - Clear prior error messages that may exist when user starts to enter Task List Name in Task List Modal form  
-//		document.getElementById("navListModalListName").addEventListener("keydown", function(event) { appUIController.clearTaskListModalFormErrors(event)}, false);
-		
 		addEventListenerByClass('modalListInput', 'keydown', function(event) { appUIController.clearTaskListModalFormErrors(event)});
+		
+		addEventListenerByClass('newListCancelBtn', 'click', function(event) { appUIController.clearTaskListModalFormErrors(event)});
 	
 		
 		$(".form_datetime").datetimepicker({
