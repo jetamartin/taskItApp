@@ -2274,17 +2274,22 @@ var appUIController = (function () {
 			// Set cursor to TaskItemName field  (position 1)
 			appUIController.getUIVars().inputEditFormTaskItemName.focus();
 			appUIController.getUIVars().inputEditFormTaskItemName.setSelectionRange(0,0);
+			
 
 
 			// Hide the mainPage and show the editTaksPage
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
+			
+			//++++
+//			appUIController.resetTaskForm( event );
 		},
 		
 		exitEditTaskPage: function(event) {
 			console.log("exitEditTaskPage()");
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
+			
 			appUIController.resetTaskForm(event);
 			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
 			resetUI2InitialState();
@@ -3055,6 +3060,24 @@ var appUIController = (function () {
 			- Removes all error formating and error msgs
 			- Removes special user input formatting that might have been applied previously (via 'filled'CSS class)
 			- Resets value of all form fields
+			
+			Behavior: This method is executed for the TaskItemForms (New & Edit) under the following scenarios:
+			1) User has successfully created or edited a TaskItem and those changes have been successfully saved
+			2) The user decides they want to exit the taskItem form either by clicking the backbutton or clicking the
+				cancel button.
+				
+				
+			In any of these scenarios the applications current behavior is to take the user back to the mainPage. In the case of a successful result (i.e., new taskItem created or existing taskItem is successfully edited and saved to perm storage ) a "fadeout" success message is displayed at the top of the mainPage.
+			
+			In either of these scenarios you want to remove any styling changes that may have been applied to the form and clear out any error or success messages so that when the user displays the form again it will be "fresh" of any prior success or error messages and styling. 
+			
+			Since the success message is displayed on the mainPage we can't clear the success message immediately otherwise it will be cleared before the user can see it. So we must wait for the message to be displayed and fadeout before we remove it (hence the use of the timer (setTimeout) with clearing the success message.
+			
+			NOTE: A better approach might be to always clear the forms before they are initially displayed. This will 
+			avoid the issue of having to remember to reset the task form on one of the aformentioned exit scenarios and also avoid the complexity (and presumably performance penalty) of using setTimeou. 
+			
+			Unfortunately I can't just call resetTaskForm() as part of the display***Form () method because it 
+			depends on determining which form is in play using the findAncestor() method to get the pageId. And the findAncestor method depends on the use of the event.target to get the element that caused the event. It would appear that because I used an 'onclick' method to call the display***form() methods the event.target is undefined and this causes the findAncestor() method to err out and ultimately the resetTaskForm to fail as a result. To fix this I will either have to figure out another method of getting the element to the findAncestor (event.?) or I will have to refactor the resetTaskForm message so that it doesn't need to use the findAncestor() method. 
 		********************************************************************************/
 		
 		resetTaskForm: function(event) {
@@ -3076,13 +3099,22 @@ var appUIController = (function () {
 			var validationObject = formValidationObj[0];
 			validationObject.formError = false;
 			
+			validationObject.formSubmitErrorMsgLoc.innerHTML = ""; 
+			
+			/* This resetTaskForm() is executed on a number of events 
+			
+			
+			*/
+//			The success message is displayed on the TaskEditPage. I need to delay the clearing 
 			setTimeout(function () {
-				validationObject.formSubmitErrorMsgLoc.innerHTML = "";
-				validationObject.formSubmitSuccessMsgLoc.innerHTML = "";
+			validationObject.formSubmitSuccessMsgLoc.innerHTML = "";
            }, 5000); 
 		
+   
+					
 			// For each field on the form remove any error message & styling
 			validationObject.fieldsToValidate.forEach (function(field) {
+				
 				field.fieldErrorMsgLocation.innerHTML = "";
 				field.fieldName.classList.remove("filled");
 				field.fieldName.classList.remove("formErrors");
