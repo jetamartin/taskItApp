@@ -2080,12 +2080,30 @@ var appUIController = (function () {
 
 			var validationObject = formValidationObject[0];
 			validationObject.formError = false;
+			var firstField = true;
+			var firstFieldInError = true;
+			
+			
+			// Reset formSubmitError and formSubmit Success messages to ensure they will appear after validation completed
+			validationObject.formSubmitErrorMsgLoc.classList.remove("error-message");
+			validationObject.formSubmitSuccessMsgLoc.classList.remove("success-message");
+
+			
 			// For each field on the form validate each field's input and 
 			// generate and style error messages
 			validationObject.fieldsToValidate.forEach (function(field) {
 
 				// Error found in input field - Set error message and error styling
 				if (field.isNotValid(field.fieldName.value)) {
+					
+					if (firstField)  {
+						field.fieldName.focus();
+						field.fieldName.setSelectionRange(0,0);
+
+					} else if (firstFieldInError) {
+						field.fieldName.focus();
+						firstFieldInError = false;
+					}
 
 					// Set form validationObject to true to indicate that
 					// at least one error was found 
@@ -2105,12 +2123,14 @@ var appUIController = (function () {
 	//					toggleClass(field.fieldErrorMsgLocation, "errorMsg");
 
 					} 
-					field.fieldName.focus();
-					if (field.fieldName.tagName === "TEXT") { 
-						// Keep focus on error field
-	//					field.fieldName.focus();
-						field.fieldName.setSelectionRange(0,0);
-					}
+//					field.fieldName.focus();
+//					if (field.fieldName.tagName === "TEXT") { 
+//						// Keep focus on error field
+//						field.fieldName.focus();
+//						field.fieldName.setSelectionRange(0,0);
+//					}
+					
+					firstFieldInError = false;
 
 				} else {  // No error was
 					field.fieldInError = false;
@@ -2121,6 +2141,7 @@ var appUIController = (function () {
 						field.fieldName.classList.add("filled");
 					}
 				}
+				firstField = false;
 
 			});
 
@@ -2237,6 +2258,14 @@ var appUIController = (function () {
 
 			console.log("************** displayEditTaskPage");
 			
+			// This line added to test calling resetTaskForm before the editTaskPage is displayed 
+			
+			var formValidationObject = appModelController.getFormValidationObject ("editTaskPage"); 
+			appUIController.resetTaskForm1( formValidationObject[0] );
+			
+			
+
+			
 			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record. Note: taskItem_id was stored in a custom attribute (data-id) of span when the taskItem card was created
 			var taskItemId = event.dataset.id;
 			var selectedTaskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
@@ -2270,19 +2299,15 @@ var appUIController = (function () {
 			// Set the list select value
 			inputEditFormListSelect.value = appModelController.lookUpTaskListName(selectedTaskItemRecord.taskList_id); 
 
-			
-			// Set cursor to TaskItemName field  (position 1)
-			appUIController.getUIVars().inputEditFormTaskItemName.focus();
-			appUIController.getUIVars().inputEditFormTaskItemName.setSelectionRange(0,0);
-			
-
-
 			// Hide the mainPage and show the editTaksPage
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
 			
-			//++++
-//			appUIController.resetTaskForm( event );
+			// Set the focus on TaskItem field
+			appUIController.getUIVars().inputEditFormTaskItemName.focus();
+			
+			// Set the cursor position within the TaskItem field to the first positions
+			appUIController.getUIVars().inputEditFormTaskItemName.setSelectionRange(0,0);
 		},
 		
 		exitEditTaskPage: function(event) {
@@ -2290,10 +2315,12 @@ var appUIController = (function () {
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
 			
-			appUIController.resetTaskForm(event);
+			// Uncomment this line to get back to original reset taskForm
+//			appUIController.resetTaskForm(event);
+			
 			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
 			resetUI2InitialState();
-			
+
 			// Include method below into resetTaskForm
 //			removeNewTaskFormInputStyle();
 		},
@@ -2798,9 +2825,6 @@ var appUIController = (function () {
 			
 			// IS THIS STILL NEEDED.....Get the current "active" task list Node 
 			var currActiveList = getActiveTaskList();
-			
-			// Clear form error flag, error msgs/styling and values entered
-			appUIController.resetNewTaskForm(event);
 		
 			
 			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
@@ -2867,12 +2891,25 @@ var appUIController = (function () {
 			toggleClass(homePage, "hideIt");
 			toggleClass(addNewTaskPage, "hideIt");
 			
+			// Reset the New Task Form when displayed to remove any residual formatting / errors
 			
-			newTaskSaveMessage.classList.remove("success-message");
+			// First get the form validation object
+			var formValidationObj = appModelController.getFormValidationObject ( "newTaskPage");
+			
+			// Call method to reset the form 
+			appUIController.resetTaskForm1 ( formValidationObj[0] );
+			
+			// Now reset (clear) input fields to original values
+//			appUIController.getUIVars().formSaveNewTask.reset();
+			formSaveNewTask.reset();
+
+			
+			
+//			newTaskSaveMessage.classList.remove("success-message");
 			// Clear any prior form submit success or error messages
 			
-			newTaskSaveMessage.innerHTML = ""; // Form submit failure msg displayed @ top of newTaskForm
-			mainPageSuccessMsg.innerHTML = ""; // Form submit success msg displayed @top of mainPage
+//			newTaskSaveMessage.innerHTML = ""; // Form submit failure msg displayed @ top of newTaskForm
+//			mainPageSuccessMsg.innerHTML = ""; // Form submit success msg displayed @top of mainPage
 	
 			// When form opens you want the focus to be on newTaskTitle field with cursor at position 1
 			appUIController.getUIVars().inputNewTaskTitle.focus();
@@ -3010,13 +3047,42 @@ var appUIController = (function () {
 			}
 		},
 		/********************************************************************************
+			METHOD:  resetNewTaskForm1()  - called when user hits the reset button on new task form
+			- Retrieves the formValidation Object and then calls resetTaskForm1 method to:
+			- Removes/resets formValidation.formError flag and removes error formating error messages
+			- Removes special user input formatting that might have been applied previously (via 'filled'CSS class)
+			- Clears all values entered on form field
+		********************************************************************************/
+		
+		
+			resetNewTaskForm1: function (event) {
+
+			// Look up the page ID where this form is located so I can get associated validateObj
+			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+	
+			// Page Id is used to identify the appropirate validationObject
+			var formValidationObj = appModelController.getFormValidationObject(pageId);
+			
+			
+			// Remove error messages & styling (including "filled" class)
+			appUIController.resetTaskForm1( formValidationObj[0] );
+			
+
+			appUIController.getUIVars().inputNewTaskTitle.focus();
+			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0,0)
+
+			
+
+		},
+		
+		/********************************************************************************
 			METHOD:  resetNewTaskForm()  - called when user hits the reset button on new task form
 			- Removes resets formValidation.formError flag and removes error formating error messages
 			- Removes special user input formatting that might have been applied previously (via 'filled'CSS class)
 			- Clears all values entered on form field
 		********************************************************************************/
 		resetNewTaskForm: function (event) {
-//		   setTimeout(function(){
+
 			
 			
 			// Look up the page ID where this form is located so I can get associated validateObj
@@ -3055,6 +3121,42 @@ var appUIController = (function () {
 		},
 		
 		/********************************************************************************
+			METHOD:  resetTaskForm1() 
+			- clear form level items (e.g., formError, submit success/error messages) 
+			- clear field level items (e.g., field formatting, error msg& formatting)
+			- reset field level input
+			
+			This method would be called each time before the a taskForm is displayed (via 
+			displayAddNewTaskForm & displayEditTaskPage). 
+			
+			Questions:
+			1) Do I only formValidationObject and perform other actions (reset values via
+			call to form.reset() and setting focus to the caller of this method )
+			2) Alternatively pass the pageId as input and then let this method lookUp the appropriate validation and then use the pageId to determine which virtual reset needs to be used (form.reset())
+				
+			********************************************************************************/
+
+		
+		resetTaskForm1: function ( formValidationObj ) {
+			// Reset formError 
+			formValidationObj.formError = false;
+
+			//Clear out any prior success/error messages 
+			formValidationObj.formSubmitErrorMsgLoc.innerHTML = "";
+			formValidationObj.formSubmitSuccessMsgLoc.innerHTML = "";
+			
+
+			// For each field on the form remove any error messages/styling 
+			formValidationObj.fieldsToValidate.forEach (function(field) {
+				field.fieldErrorMsgLocation.innerHTML = "";
+				field.fieldName.classList.remove("filled");
+				field.fieldName.classList.remove("formErrors");
+			});
+			
+			
+			
+		},
+		/********************************************************************************
 			METHOD:  resetTaskForm()  - resets error and
 			success messages
 			- Removes all error formating and error msgs
@@ -3083,7 +3185,8 @@ var appUIController = (function () {
 		resetTaskForm: function(event) {
 			
 			console.log("*******>>> appUIController.resetTaskForm");
-			var pageId = utilMethods.findAncestor(event.currentTarget, "container-fluid").id;
+			
+//			var pageId = utilMethods.findAncestor(event.currentTarget, "container-fluid").id;
 			
 			/* $$$$ Need to make this if statement more generic so it works easily with both versions
 				of taskForm...if I had all fields in the validationObject I could just
@@ -3101,14 +3204,15 @@ var appUIController = (function () {
 			
 			validationObject.formSubmitErrorMsgLoc.innerHTML = ""; 
 			
-			/* This resetTaskForm() is executed on a number of events 
+
 			
-			
-			*/
-//			The success message is displayed on the TaskEditPage. I need to delay the clearing 
-			setTimeout(function () {
+//			The success message is displayed on the TaskEditPage. So I need to delay the clearing of the success submit msg 
+			// Uncomment this line to get back to original reset taskForm
+//			setTimeout(function () {
 			validationObject.formSubmitSuccessMsgLoc.innerHTML = "";
-           }, 5000); 
+			// Uncomment this line to get back to original reset taskForm
+
+//           }, 5000); 
 		
    
 					
@@ -3718,7 +3822,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		newTaskBackArrow.addEventListener("click", function(event) {appUIController.exitNewTaskPage(event)} );
 		
 		// Reset button on New Task Form
-		addTaskResetButton.addEventListener("click", function(event) { appUIController.resetNewTaskForm(event) });
+		addTaskResetButton.addEventListener("click", function(event) { appUIController.resetNewTaskForm1(event) });
 		
 		// Submit for Add New Task Form Save button at bottom of form	
 		formSaveNewTask.addEventListener("submit",function (event) {ctrlAddTaskItem1(event)}, true);
@@ -3773,10 +3877,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputEditFormListSelect.addEventListener('input',
         function(event) { appUIController.styleUserFormInput(event)
 		});
-		
-		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('keydown', function(event) {
-			appUIController.clearTaskListModalFormErrors(event)
-		})
+		// Don't know why I put in this call..unless it was to clear an error message if the user doesn't enter a name? 
+//		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('keydown', function(event) {
+//			appUIController.clearTaskListModalFormErrors(event)
+//		})
 		
 		// Submit button for editTaskPage
 		appUIController.getUIVars().formEditNewTask.addEventListener("submit", function (event) {ctrlUpdateTaskItem(event)});
@@ -4158,7 +4262,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				appUIController.refreshTaskListSubMenuTotals(taskListTable);
 				
 				//??????
-				appUIController.getUIVars().addTaskResetButton.click();
+//				appUIController.getUIVars().addTaskResetButton.click();
 								// ADDED
 				appUIController.exitNewTaskPage(event);
 				
