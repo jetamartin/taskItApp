@@ -3682,6 +3682,20 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 		});
 		
+		$('#editTaskItemListModal').on('hidden.bs.modal', function (e) {
+		  $(this)
+			.find("input,textarea,select")
+			   .val('')
+			   .end()
+			.find("input[type=checkbox], input[type=radio]")
+			   .prop("checked", "")
+			   .end();
+			// Clear any error messages and error formatting
+			var test = document.querySelector("div").closest(".modal");
+			appUIController.clearTaskListModalFormErrors(e);
+			
+		});
+		
 		/* Edit List Modal Form */
 		$('#manageListsAddNewListModal').on('hidden.bs.modal', function (e) {
 		  $(this)
