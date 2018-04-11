@@ -3620,15 +3620,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		appUIController.getUIVars().editFormCancelButton.addEventListener("click", function (event) { appUIController.exitEditTaskPage(event) } );
 		
-//		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('input',  function(event) { appUIController.styleTaskFormFieldAsChanged(event);
-//		});
-//		
-//		appUIController.getUIVars().inputEditFormRepeatSelect.addEventListener('input',  function(event) { appUIController.styleTaskFormFieldAsChanged(event);
-//		});
-//		
-//		appUIController.getUIVars().inputEditFormListSelect.addEventListener('input',
-//        function(event) { appUIController.styleTaskFormFieldAsChanged(event);
-//		});
+		// Clears any existing error formatting when user starts entering a new taskname
+		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener("keydown", function(event) {appUIController.clearTaskTitleError1(event)});
 		
 		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('input',  function(event) { appUIController.styleUserFormInput(event);
 		});
