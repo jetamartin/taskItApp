@@ -2399,7 +2399,6 @@ var appUIController = (function () {
 			if (inputNewTaskRepeat.value !== "1" && !inputNewTaskRepeat.classList.contains("formErrors")) {
 				// Set Error msg & formatting on Repeat field
 				appUIController.clearOrSetRepeatFieldErrors(event);
-//				disableRepeatInputAndSetErrors(event);
 			} 
 		}, 
 		
