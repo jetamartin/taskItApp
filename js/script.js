@@ -8,8 +8,7 @@
 
 // Holds the node of the previously selected list item. If value is null then previous list is "All List"
 var errorCount = 0;
-var appInitialized = false;
-//var formError = false; 
+var appInitialized = false; 
 var taskListId;
 var previouslySelectedList = null;
 var parentElem;
@@ -63,30 +62,6 @@ var listItemsToCategorize;
 function isEmpty(str){
     return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
 }
-
-/* Removes all taskItems on screen */
-
-//function clearoutTaskItemsDisplayed1 () {
-//	console.log("In clearOutCurrentTaskList");
-//	
-//	
-//	var children = mainPage.children; // Returns nodeList..not an array;
-//	// Convert nodeList (children) to true array so I can use .forEach()
-//	var childrenArray = Array.prototype.slice.call(children);
-//	childrenArray.forEach(function(item){
-//    	if (item.nodeName === "ARTICLE" || item.className === "card") {
-//			/* Two ways to delete nodes: Directly via .remove() or via it's parent;
-//				Directly is more intutive but it may have browser support limitations
-//				Via the parent is less intuitive but more widely supported
-//		 	*/
-//			// Delete Via parent
-//			//	item.parentNode.removeChild(item)
-//
-//			// Delete directly via .remove()
-//			item.remove();
-//		}
-//	});
-//}
 
 
 /* 
@@ -720,15 +695,6 @@ var exitSearch = function (event) {
 	resetUI2InitialState();
 };
 
-//TEST
-//var disableSearchSubmit = function (event) {
-//	console.log("----->DisableSearchSubmit");
-	//	blockUserClicks(searchSubmit);
-	//		toggleClass(searchSubmit, "noPointerEvents");
-	//			setTimeout(function () {
-	//				searchInput.focus();
-	//			}, 12);
-//};
 
 //**************************************************************************************************************************
 //
@@ -1938,11 +1904,7 @@ var appUIController = (function () {
 		return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
 	}
 	
-	function resetFormError() {
-		newTaskFormErrorMsg.innerHTML = "";
-		toggleClass(inputNewTaskTitle, "formErrors");
-		formError = false;
-	}
+
 	
 	function resetFormError1(formValidationObj) {
 		// Reset formError 
@@ -1960,22 +1922,6 @@ var appUIController = (function () {
 		});
 	} 
 
-	function setFormError() {
-		//Set Form error information
-
-		// Set error message
-		newTaskFormErrorMsg.innerHTML = '<i class="fa fa-times-circle"></i>' + '&nbsp;' + "Task Title is required/Cannot be blank";
-		// Format field to highlight error
-		toggleClass(inputNewTaskTitle, "formErrors");
-
-		// If non-valid entry detected put cursor inside and at beginning of input field so user can make needed changes.
-		inputNewTaskTitle.focus();
-		inputNewTaskTitle.setSelectionRange(0,0);
-
-		// Set error flag to true
-		formError = true;
-
-	}
 	
 	function removeNewTaskFormInputStyle() {
 		inputNewTaskTitle.classList.remove("filled");
@@ -2315,14 +2261,8 @@ var appUIController = (function () {
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
 			
-			// Uncomment this line to get back to original reset taskForm
-//			appUIController.resetTaskForm(event);
-			
 			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
 			resetUI2InitialState();
-
-			// Include method below into resetTaskForm
-//			removeNewTaskFormInputStyle();
 		},
 		
 		
@@ -2662,16 +2602,7 @@ var appUIController = (function () {
 			}
 
 		},
-		/*
-			If previous submit was unsuccessful because user didn't enter task title or entered all blanks then the error
-			formating (formError = true) for the task title field would still be present. We want to clear that error formatting when the user starts to enter a new task title. (Note: The new title will be re-validated when the user attempts to save the the form).  You only need to clear the error formatting if error formatting is currently applied (formError = true).
-			
-		*/
-		clearTaskItemError: function () {
-			if (formError ) {
-				resetFormError();
-			}
-		}, 
+
 		
 		clearTaskTitleError1: function (event) {
 			// Look up the page ID where this form is located so I can get associated validateObj
@@ -2961,7 +2892,7 @@ var appUIController = (function () {
 		},
 		
 		/***********************************************************************************
-			METHOD:  getTaskInput()  -- Get TaskItem data entered on form (New or Edit Task)
+			METHOD:  getNewTaskFormInput()  -- Get TaskItem data entered on form (New or Edit Task)
 			Potential replacement for getTaskItemInput() method 
 		***********************************************************************************/
 		getNewTaskFormUserInput: function () {
@@ -2974,36 +2905,7 @@ var appUIController = (function () {
 			}
 		},
 	
-		/********************************************************************************
-			METHOD:  getTaskItemInput()  -- Primary method 
-		********************************************************************************/
-		getTaskItemInput: function (event) {			
-			event.preventDefault();
-			event.stopPropagation();
-			console.log("-----------> appUIController.getTaskItemInput()");
-			console.log("Event: " + event);
-
-			/*  If errors had been set on prior save attempt then need to reset them before checking for errors on this save attempt */
-			if (formError) {
-				resetFormError();
-			}
-
-			var newTaskTitle = inputNewTaskTitle.value.trim();
-
-
-			if (isEmpty(newTaskTitle)) {
-				// Setup and apply error formatting/messaging on form
-				setFormError();
-				return null;
-			} else {
-				return {
-					newTaskTitle: inputNewTaskTitle.value.trim(),
-					newTaskDueDate: inputNewTaskDateTime.value,
-					newTaskRepeateOptionTxt: inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text,
-					newTaskListOptionTxt: inputNewTaskListSelection.options[inputNewTaskListSelection.selectedIndex].text
-				}			
-			}
-		},
+		
 		
 		/********************************************************************************
 			METHOD:  getTaskItemEditInput()  -- Primary method 
@@ -3019,33 +2921,7 @@ var appUIController = (function () {
 			}			
 		},
 		
-		/********************************************************************************
-			METHOD:  getTaskListInput()  -- Primary method 
-		********************************************************************************/
-		getTaskListInput: function (event) {			
-			event.preventDefault();
-			event.stopPropagation();
-			console.log("-----------> appUIController.getTaskListInput()");
-			console.log("Event: " + event);
-
-			/*  If errors had been set on prior save attempt then need to reset them before checking for errors on this save attempt */
-			if (formError) {
-				resetFormError();
-			}
-
-			var newTaskListName = inputNewTaskListName.value.trim();
-
-			if (isEmpty(newTaskListName)) {
-				// Setup and apply error formatting/messaging on form
-				setFormError();
-				return null;
-			} else {
-				return {
-					newTaskTitle: inputNewTaskListName.value.trim()
-
-				}			
-			}
-		},
+		
 		/********************************************************************************
 			METHOD:  resetNewTaskForm1()  - called when user hits the reset button on new task form
 			- Retrieves the formValidation Object and then calls resetTaskForm1 method to:
@@ -3075,51 +2951,7 @@ var appUIController = (function () {
 
 		},
 		
-		/********************************************************************************
-			METHOD:  resetNewTaskForm()  - called when user hits the reset button on new task form
-			- Removes resets formValidation.formError flag and removes error formating error messages
-			- Removes special user input formatting that might have been applied previously (via 'filled'CSS class)
-			- Clears all values entered on form field
-		********************************************************************************/
-		resetNewTaskForm: function (event) {
 
-			
-			
-			// Look up the page ID where this form is located so I can get associated validateObj
-			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
-	
-			// Page Id is used to identify the appropirate validationObject
-			var formValidationObj = appModelController.getFormValidationObject(pageId);
-			
-			
-			// Remove error messages & styling (including "filled" class)
-			resetFormError1(formValidationObj[0]);
-			
-			if (pageId === "newTaskPage") {
-				
-				// Clear values that may have been entered in form
-				formSaveNewTask.reset();
-	
-				//Focus the cursor on the New Task Title form
-				inputNewTaskTitle.focus();
-				
-			} else if ( pageId === "editTaskPage" ) {
-				
-				// Clear values that may have been entered in form
-				formEditNewTask.reset();
-	
-				//Focus the cursor on the New Task Title form
-				inputEditFormTaskItemName.focus();
-				
-			} else {
-				console.log ("ERROR::resetNewTaskForm: pageId = " + pageId + ": Didn't match accepted values of 'newTaskPage' or 'editTaskPage'");
-			}
-
-
-			
-
-		},
-		
 		/********************************************************************************
 			METHOD:  resetTaskForm1() 
 			- clear form level items (e.g., formError, submit success/error messages) 
@@ -3151,80 +2983,10 @@ var appUIController = (function () {
 				field.fieldErrorMsgLocation.innerHTML = "";
 				field.fieldName.classList.remove("filled");
 				field.fieldName.classList.remove("formErrors");
-			});
-			
-			
+			});	
 			
 		},
-		/********************************************************************************
-			METHOD:  resetTaskForm()  - resets error and
-			success messages
-			- Removes all error formating and error msgs
-			- Removes special user input formatting that might have been applied previously (via 'filled'CSS class)
-			- Resets value of all form fields
-			
-			Behavior: This method is executed for the TaskItemForms (New & Edit) under the following scenarios:
-			1) User has successfully created or edited a TaskItem and those changes have been successfully saved
-			2) The user decides they want to exit the taskItem form either by clicking the backbutton or clicking the
-				cancel button.
-				
-				
-			In any of these scenarios the applications current behavior is to take the user back to the mainPage. In the case of a successful result (i.e., new taskItem created or existing taskItem is successfully edited and saved to perm storage ) a "fadeout" success message is displayed at the top of the mainPage.
-			
-			In either of these scenarios you want to remove any styling changes that may have been applied to the form and clear out any error or success messages so that when the user displays the form again it will be "fresh" of any prior success or error messages and styling. 
-			
-			Since the success message is displayed on the mainPage we can't clear the success message immediately otherwise it will be cleared before the user can see it. So we must wait for the message to be displayed and fadeout before we remove it (hence the use of the timer (setTimeout) with clearing the success message.
-			
-			NOTE: A better approach might be to always clear the forms before they are initially displayed. This will 
-			avoid the issue of having to remember to reset the task form on one of the aformentioned exit scenarios and also avoid the complexity (and presumably performance penalty) of using setTimeou. 
-			
-			Unfortunately I can't just call resetTaskForm() as part of the display***Form () method because it 
-			depends on determining which form is in play using the findAncestor() method to get the pageId. And the findAncestor method depends on the use of the event.target to get the element that caused the event. It would appear that because I used an 'onclick' method to call the display***form() methods the event.target is undefined and this causes the findAncestor() method to err out and ultimately the resetTaskForm to fail as a result. To fix this I will either have to figure out another method of getting the element to the findAncestor (event.?) or I will have to refactor the resetTaskForm message so that it doesn't need to use the findAncestor() method. 
-		********************************************************************************/
-		
-		resetTaskForm: function(event) {
-			
-			console.log("*******>>> appUIController.resetTaskForm");
-			
-//			var pageId = utilMethods.findAncestor(event.currentTarget, "container-fluid").id;
-			
-			/* $$$$ Need to make this if statement more generic so it works easily with both versions
-				of taskForm...if I had all fields in the validationObject I could just
-				reset all of them (e.g., remove 'filled' class from all fields in loop below'*/
-			if(pageId === "editTaskPage") {
-				appUIController.getUIVars().inputEditFormTaskItemDueDate.classList.remove("filled");
-				inputEditFormTaskItemName.classList.remove("filled");
-				inputEditFormRepeatSelect.classList.remove("filled")
-				inputEditFormListSelect.classList.remove("filled");
-			}
-			
-			var formValidationObj = appModelController.getFormValidationObject(pageId);
-			var validationObject = formValidationObj[0];
-			validationObject.formError = false;
-			
-			validationObject.formSubmitErrorMsgLoc.innerHTML = ""; 
-			
 
-			
-//			The success message is displayed on the TaskEditPage. So I need to delay the clearing of the success submit msg 
-			// Uncomment this line to get back to original reset taskForm
-//			setTimeout(function () {
-			validationObject.formSubmitSuccessMsgLoc.innerHTML = "";
-			// Uncomment this line to get back to original reset taskForm
-
-//           }, 5000); 
-		
-   
-					
-			// For each field on the form remove any error message & styling
-			validationObject.fieldsToValidate.forEach (function(field) {
-				
-				field.fieldErrorMsgLocation.innerHTML = "";
-				field.fieldName.classList.remove("filled");
-				field.fieldName.classList.remove("formErrors");
-//				field.fieldName.classList.remove("errorMsg");
-			});
-		},
 		
 		
 		// Builds and displays the UsrDefined Task Lists on taskList Submenu
@@ -3998,23 +3760,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				$(this).find('input:text:visible:first').focus();
 		});
 		
-		
-		
-	
-		/* Event Listener for Save button in Nav Menu bar. Note pressing 
-			this Nav save button should yield the same exact results as pressing
-			the Save button at the bottom of the New Task Form
-		*/
-//		addTaskSaveMenuButton.addEventListener("click", appUIController.getTaskItemInput);
-
-	
-
-	
-		// NavBar Tasklist Modal
-		// $$$$  May need to make this more generic 
-		
-//		appUIController.getUIVars().formNavTaskListModal.addEventListener("submit", function(event) {ctrlAddTaskList(event)}); 
-		
 
 		
 		// Method to addEventListener to every item with className 
@@ -4296,90 +4041,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 
 		}
-		
-		// DisplaySaveMessage (success or failure message)
-//		appUIController.displaySaveMessage(appUIController.getUIVars().newTaskSaveMessage, msg);
 
 	}
 	
-	/***********************************************************************************
-		MODULE:  appController
-		
-		FUNCTION ctrlAddTaskItem - manages process of adding a new taskItem to the app
-		
-		Trigger: User hits submit button on New Task Form
-		
-		Summary: 
-			Validate user data and styles form as needed 
-			Create new task record
-			Add it to newTask table
-			Generate "new taskItem added" success message or failure message
-			Display success/failure message
-			
-		UI Behavior: 
-			User will remain on new task form until they explicitly navigate off of this page. This approach allows the
-			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
-
-	***********************************************************************************/
-
 	
-	var ctrlAddTaskItem = function(event) {
-		
-		var msg = new Object(); 
-		console.log("++++++++++++ ctrlAddTaskItem()");
-		var newTaskItemInput, newTaskItemObject;
-		var taskListTable = appModelController.getTaskListTable(); 
-		
-		//	Validate New Task Data
-		newTaskItemInput = appUIController.getTaskItemInput(event);
-		
-		if (newTaskItemInput != null ) {
-			console.log(newTaskItemInput);
-
-			// Create New Task Object  (create required fields for object e.g., unique taskItemId, assign taskListId, etc)
-			newTaskItemObject = appModelController.createNewTaskItem(newTaskItemInput);
-			
-			
-			// Add New task object to New TaskItem table
-			appModelController.getTaskItemsTable().push(newTaskItemObject);
-			
-			
-			// Save task object to local/Storage/DB			
-			// INSERT ---> DB call and or save to localStorage
-		
-
-//			if (saveWasSuccessful) {
-				
-				// Set success message 
-				msg.type = "success";
-				msg.text = '<i class="fa fa-check-circle"></i>' + '&nbsp;'+ '"' + newTaskItemObject.taskItem_title + '"' + " task created!";
-				
-				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
-				appModelController.updateListTaskTotals();		
-
-
-			// Reset values on new Task form but leave List selection to last list value selected by user
-			appUIController.resetNewTaskForm(newTaskItemInput.newTaskListOptionTxt); 
-			
-			// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
-			appUIController.refreshTaskListSubMenuTotals(taskListTable); 
-		
-			
-			
-		} else {  // newTaskItemInput = null.....i.e., Error nothing entered or only spaces entered
-
-				// Create error message object
-				msg.type = "error";
-				msg.text = '<i class="fa fa-times-circle-o"></i>' + '&nbsp;' + "Error Task NOT saved! Try again!";
-			
-				// Create log entry if failure
-				// Log Entry TBD
-		}
-		
-		// DisplaySaveMessage (success or failure message)
-		appUIController.displaySaveMessage(appUIController.getUIVars().newTaskSaveMessage, msg);
-
-	}
 
 	/***********************************************************************************
 		MODULE:  appController
@@ -4650,40 +4315,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			var currActiveListNode = getActiveTaskList();
 			var currActiveListName = appUIController.getActiveTaskListName();
 			
-//			Array.prototype.contains = function(element) {
-//				var i;
-//				for (i = 0; i < this.length; i++) {
-//					if (this[i] === element) {
-//						return true; //Returns element position, so it exists
-//					}
-//				}
-//					return false;
-//			}
+
 			// Only perform actions in "if" statement when the app is first initialized
 			if (!appInitialized) {
 			
 				appInitialized = true;
 				console.log('Application has started');
 				
-//				// ***Creation of taskListNames array HERE isn't needed unless taskListNamesArray is made a global variable
-//				// and we eliminate calls to getTaskListNames in other parts of the code e.g., define it once here and then 
-//				// use it everywhere else it is needed.
-//				var taskListNamesArray = appModelCtrl.getTaskListNames();
-//				console.log("TASK LIST NAMES: " + taskListNamesArray);
-				
-//				appModelController.updateListTaskTotals();
-				
-
-				
-//				populateNewTaskFormWithListNames ();
-				// Load data into app
-				// 1. Load task list
-				/********************************************************************************************************************************
-					*	First load "Pre-set" task lists into taskSubMenu. "New Tasks" already in taskSubMenu as it is already hard coded in html 
-					*	so it will occupy .childNodes[0] position initially. "Pre-set" lists will be added before "New task" item.	 
-				********************************************************************************************************************************/
-	
-
 				/********************************************************************************************************************************	
 				 Now we will add "Pre-configured"/"UserDefined" task lists that were previously saved by user (now retrieved from DB)  
 				 These items will be inserted/sandwiched between "Pre-set" lists. 1) "All Lists" 2) "Default" ...insert here... n) "Completed
@@ -4748,17 +4386,4 @@ document.addEventListener('keypress', function(event) {
 	}
 
 })
--- Event listener for button click would be as follows:
-document.querySelector('.add_btn').addEventListener('click', crlAddItem)
-
-====> Method to generate "unique id" https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-var uniqueId = Math.random().toString(36).substring(2) 
-               + (new Date()).getTime().toString(36);
-
 */
-// Return List names as an Array 
-//  var listNamesArray = taskListTable.reduce(function(namesList, listObj) {
-//    namesList.push(listObj.taskList_name);
-//    return namesList;
-//    
-//  }, [])
