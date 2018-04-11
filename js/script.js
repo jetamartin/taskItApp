@@ -2701,6 +2701,14 @@ var appUIController = (function () {
 				
 				var taskListModalFormObj = appModelController.getFormValidationObject(modalPageId);
 			
+
+				// When user enters data in list modal form (on 'input') style to show data is new/changed.
+				
+				// NOTE: This isn't really about clearing Form errors but I put it hear for now until I redesign form errors to be cleared when are launched. 
+				taskListModalFormObj[0].fieldsToValidate[0].fieldName.classList.add("filled");
+
+				
+				
 				/* If no matching taskModalFormObj record found then skip logic below...
 				In theory there should always be a match but for some reason this method is called
 				*/
@@ -2715,6 +2723,9 @@ var appUIController = (function () {
 						taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation.innerHTML = "";
 						// Input box border red
 						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldName, "formErrors");
+						
+						// When user enters data in list modal form (on 'input') style to show data is new/changed. 
+						taskListModalFormObject.fieldsToValidate[0].fieldName.classList.add("filled");
 
 						// Error message text red
 //						toggleClass(taskListModalFormObject.fieldsToValidate[0].fieldErrorMsgLocation, "errorMsg");
@@ -4242,7 +4253,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
 				// ????
-				formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+				formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");
+				
+				
+				// Remove the 'filled' styling on exit from form.
+				formValidationObj[0].fieldsToValidate[0].fieldName.classList.remove("filled");
 			}, 5000);
 			
 			// **************************************************************
