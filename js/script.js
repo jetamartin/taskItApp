@@ -2619,22 +2619,6 @@ var appUIController = (function () {
 				formValidationObj[0].fieldsToValidate[0].fieldErrorMsgLocation.innerHTML = "";		
 			}			
 			
-			
-//			if (appUIController.getUIVars().inputNewTaskTitle.classList.contains("formErrors")) {
-//				appUIController.getUIVars().inputNewTaskTitle.innerHTML = "";
-//				appUIController.getUIVars().inputNewTaskTitle.classList.remove("formErrors");
-//				appUIController.getUIVars().newTaskFormErrorMsg.innerHTML = "";
-//				appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0,0)
-//			}
-			
-//			appUIController.getUIVars().inputNewTaskTitle
-//			field.fieldName.classList.remove("filled");
-//			field.fieldName.classList.remove("formErrors");
-			
-			
-
-	
-			
 		},
 		
 		/*******************************************************************************************************
@@ -2995,6 +2979,10 @@ var appUIController = (function () {
 			var newNode; 
 			
 			var userDefinedTaskList = appModelController.getUserDefinedTaskList();
+			
+			// Sort the userDefinedTask List
+			appModelController.sortListByName(userDefinedTaskLists); 
+			
 //			var currActiveListId = getListIdForActiveTaskList();
 			// ++++++ 
 			var preDefinedTaskListIds = appModelController.getPreDefinedTaskListIds();
@@ -3632,10 +3620,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputEditFormListSelect.addEventListener('input',
         function(event) { appUIController.styleUserFormInput(event)
 		});
-		// Don't know why I put in this call..unless it was to clear an error message if the user doesn't enter a name? 
-//		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('keydown', function(event) {
-//			appUIController.clearTaskListModalFormErrors(event)
-//		})
+
 		
 		// Submit button for editTaskPage
 		appUIController.getUIVars().formEditNewTask.addEventListener("submit", function (event) {ctrlUpdateTaskItem(event)});
@@ -3779,11 +3764,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		pickerPosition: "bottom-left"
     	});
 		
-		// TEMP comment this out to try eventListner below
-//		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
-//			appUIController.styleTaskFormFieldAsChanged(e);
-//			console.log(e);	
-//		});
 		
 		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
 			appUIController.styleUserFormInput(e);
@@ -4116,8 +4096,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 			userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 			
-			// Sort the userDefinedTask List
-			appModelController.sortListByName(userDefinedTaskLists); 
+			// Sort the userDefinedTask List === DOESNT APPEAR THIS IS NEEDED
+//			appModelController.sortListByName(userDefinedTaskLists); 
 			
 			
 			// Save task object to local/Storage/DB			
@@ -4146,9 +4126,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 				// Remove existing UserDefined Task list from TaskListSubmenu
 				appUIController.removeUserDefinedTaskLists(userDefinedTaskLists); 
-				
-				// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
-//				appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskLists, currActiveListNode, currActiveListName, formValidationObj[0].fieldsToValidate[0].fieldName.value);
 				
 				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
 				
@@ -4187,7 +4164,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 				
-				
+				// Perform specific actions need based on Modal form involved 
+				// e.g., clear screen content, rebuild the list selection on the form, etc.
 				switch (modalPageId) {
 						
 					case "manageListsAddNewListModal":
@@ -4204,13 +4182,19 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						appUIController.setTaskListSelect(taskItemFormListSelect, newTaskListObject.taskList_name);
 						break;
 						
-					case "":
+					case "newTaskItemListModal":
 						taskItemFormListSelect = appUICtrl.getUIVars().inputNewTaskListSelection;
 						// Rebuild values in List selection on form
 						appUIController.populateFormWithListNames (taskItemFormListSelect)
 
 						// Make newly added list the "active" list selection on taskItem form
 						appUIController.setTaskListSelect(taskItemFormListSelect, newTaskListObject.taskList_name);											
+						break;
+						
+						case "navListModal":
+						
+							// Nothing extra to do here...the key stuff is done in ctrAddTaskList();
+						
 						break;
 						
 					default: 
