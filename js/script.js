@@ -4133,9 +4133,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			if (saveWasSuccessful) {
 				
 
-				// NEED TO REVSIT THIS AS IT IS SPECIFIC TO ONLY ONE FORM
 				// Style the newly added list selection input to reflect list selection had changed (add class="filled")
 				appUIController.getUIVars().inputEditFormListSelect.classList.add("filled");
+				appUIController.getUIVars().inputNewTaskListSelection.classList.add("filled");
+				
+				formValidationObj[0].fieldsToValidate[0].fieldName.classList.add("filled");
+				
 				
 				// Style the success message
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
