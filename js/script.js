@@ -1311,7 +1311,7 @@ var appModelController = (function () {
 		fieldDefaultValue: "",
 		formSubmitErrorMsgLoc : document.getElementById("manageListsEditListModalMsg"),
 		formSubmitSuccessMsgLoc : document.getElementById("manageTaskListsMsg"),
-		formSubmitSuccessMsg: "list created!",
+		formSubmitSuccessMsg: "list updated!",
 		formSubmitErrorMsg: "List NOT saved." + " Correct Error",
 
 		fieldsToValidate : [
@@ -2292,6 +2292,8 @@ var appUIController = (function () {
 			
 			var matchedTaskListRecord = utilMethods.lookUpTaskListRecord(appModelController.getTaskListTable(), taskListId);
 			
+			var listNamePriorToUpdate = matchedTaskListRecord.taskList_name;
+			
 			// Find the "root" node of the modal page so that I can get ID of which modal fired 
 			var modalPageId = utilMethods.findAncestor(event.currentTarget, 'modal').id;
 
@@ -2315,6 +2317,8 @@ var appUIController = (function () {
 				
 				// Insert Submit Success Message
 				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + matchedTaskListRecord.taskList_name + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + listNamePriorToUpdate + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
+
 
 
 				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
