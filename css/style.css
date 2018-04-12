@@ -554,6 +554,7 @@ nav ul li:hover ul li span.listTotal {
 		font-size: 1.25rem;
 		cursor: pointer;
 		letter-spacing: .2rem;
+		color: #34AFA9;
 	}
 
 	/* TaskItem and date text color to dark grey (but not dates for overdue items)	*/
