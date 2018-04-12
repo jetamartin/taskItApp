@@ -551,8 +551,9 @@ nav ul li:hover ul li span.listTotal {
 	}
 	
 	.card-subtitle {
-		font-size: 1.5rem;
+		font-size: 1.25rem;
 		cursor: pointer;
+		letter-spacing: .2rem;
 	}
 
 	/* TaskItem and date text color to dark grey (but not dates for overdue items)	*/
@@ -631,6 +632,7 @@ nav ul li:hover ul li span.listTotal {
 .taskDue {
 	margin-right: .5rem;
 	color: #adaaaa;
+	padding-top: .5rem;
 }
 .taskListName {
 	text-transform: uppercase;
@@ -783,8 +785,9 @@ nav ul li:hover ul li span.listTotal {
 	.taskCategory {
 		/*	margin-top: 2rem;*/
 		padding-left: 3rem;
-		font-size: 1.75rem;
+		font-size: 2rem;
 		color: #34AFA9;
+		letter-spacing: .4rem;
 	}
 	
 	.overDue {
