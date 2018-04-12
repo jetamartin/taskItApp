@@ -406,12 +406,22 @@ nav ul li:hover ul li span.listTotal {
 		font-size: 1.5rem;
 	}
 	
-	.searchIt input[type="text"]::placeholder {
+	nav .searchIt input[type="text"]::-webkit-input-placeholder {
 		color: white;
 		font-size: 1.5rem;
 	}
 	
-	.searchIt input[type="text"] {
+	nav .searchIt input[type="text"]:-ms-input-placeholder {
+		color: white;
+		font-size: 1.5rem;
+	}
+	
+	nav .searchIt input[type="text"]::placeholder {
+		color: white !important;
+		font-size: 1.5rem;
+	}
+	
+	nav .searchIt input[type="text"] {
 		height: 50px;
 		font-size: 1.5rem;
 		display: inline-block;
@@ -421,6 +431,7 @@ nav ul li:hover ul li span.listTotal {
 		outline: none;
 		/*	color: #555;*/
 		color: #fff;
+		color: white !important;
 		padding: 3px;
 		padding-right: 60px;
 		width: 0px;
