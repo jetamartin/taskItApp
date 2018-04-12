@@ -644,7 +644,7 @@ var detectSearchInput = function (event) {
 	matchingTaskItems = searchForMatchingTask(searchInput.value);	
 		
 	// Clear any existing task that are currently displayed
-	clearOutExistingScreenContent ( appUIController.getUIVars().mainPage, "dueTimeFrameLabel", "card" );
+	appUIController.clearOutExistingScreenContent ( appUIController.getUIVars().mainPage, "dueTimeFrameLabel", "card" );
 	
 	// Display matching task items. 
 	appUIController.buildAndDisplayTaskItems("mainPage", matchingTaskItems);
