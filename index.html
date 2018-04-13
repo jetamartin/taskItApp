@@ -223,11 +223,11 @@
 						<label for="inRepeatOption" class="form-control-label">Repeat:</label>
 						<div class="row col-12">
 							<select class="form-control" id="newTaskRepeatOption" >
-							<option value="1">None</option>
-							<option value="2">Daily</option>
-							<option value="3">Weekly</option>
-							<option value="4">Monthly</option>
-							<option value="5">Yearly</option>
+							<option value="none">None</option>
+							<option value="daily">Daily</option>
+							<option value="weekly">Weekly</option>
+							<option value="monthly">Monthly</option>
+							<option value="yearly">Yearly</option>
 						</select>
 						</div>
 						<!-- Error msg inserted via JS						-->
@@ -259,8 +259,8 @@
 						</a>
 						
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
-						<div class="" id="newTaskListCreateMsg">
-						</div>
+						<div class="" id="newTaskListCreateMsg"></div>
+						
 						<div class="errorMsg" id="newTaskListSelectErrorMsg"></div>
 
 					</div>
@@ -270,6 +270,10 @@
 						
 						<button type="button" class="btn btn-default" id="addTaskResetButton">Reset</button>
 					</div>
+					<!-- Alternative placement of success message for creating a new list					-->
+<!--					<div class="" id="newTaskListCreateMsg"></div>-->
+					
+
 				</form>
 				
 				

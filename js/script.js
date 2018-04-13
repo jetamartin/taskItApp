@@ -785,8 +785,10 @@ return {
 		taskItemObject.taskItem_due_date = inputTaskObject.taskDueDate;
 		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat.toLowerCase();
 		taskItemObject.taskItem_isCompleted = inputTaskObject.taskFinished;
+	},
+	
+
 	}
-}
 })();
 
 
@@ -1337,7 +1339,7 @@ var appModelController = (function () {
 		formSubmitErrorMsgLoc: document.getElementById("newTaskSaveMsg"),
 	//		formSubmitSuccessMsgLoc : document.getElementById("editTaskSaveMsg"),
 		formSubmitSuccessMsgLoc: document.getElementById("mainPageSuccessMsg"),
-		formSubmitSuccessMsg: "Task Successfully Created!",
+		formSubmitSuccessMsg: "Task Created!",
 		formSubmitErrorMsg: "Task Update Failed" + " See Form Error(s)",
 
 		fieldsToValidate : [
@@ -1373,7 +1375,7 @@ var appModelController = (function () {
 				fieldErrMsg: "Must have a due date to make a task repeatable",
 				isNotValid: function(str) {
 					var dateValue = document.getElementById("newTaskDateTime").value;
-					if (str !== "1" && !dateValue.replace(/^\s+/g, '').length) {
+					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
 						return true;
 					} else {
 						return false;
@@ -1399,7 +1401,7 @@ var appModelController = (function () {
 		formSubmitErrorMsgLoc : document.getElementById("editTaskSaveMsg"),
 //		formSubmitSuccessMsgLoc : document.getElementById("editTaskSaveMsg"),
 	  	formSubmitSuccessMsgLoc : document.getElementById("mainPageSuccessMsg"),
-		formSubmitSuccessMsg: "Task Successfully Updated!",
+		formSubmitSuccessMsg: "Task Updated!",
 		formSubmitErrorMsg: "Task Update Failed" + " See Form Error(s)",
 
 		fieldsToValidate : [
@@ -1473,6 +1475,35 @@ var appModelController = (function () {
 	/****************************************************************************/
 	
 	return {
+		wereChangesMadeToTaskItem: function (obj1, obj2) {
+			if ((obj1.dueDate === obj2.dueDate) &&
+				(obj1.taskFinished === obj2.taskFinished) &&
+				(obj1.taskId === obj2.taskId) &&
+				(obj1.taskList === obj2.taskList) &&
+				(obj1.taskRepeat === obj2.taskRepeat) &&
+				(obj1.taskTitle === obj2.taskTitle )) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		
+		extractCoreTaskItemValues: function (fullTaskItemRecord) {
+			
+			if (fullTaskItemRecord.taskItem_isCompleted === "") {
+				fullTaskItemRecord.taskItem_isCompleted = false;
+			}
+			return coreTaskItemRecord = {
+				taskDueDate: fullTaskItemRecord.taskItem_due_date,
+				taskFinished: fullTaskItemRecord.taskItem_isCompleted,
+				taskId: fullTaskItemRecord.taskItem_id,
+				taskList: appModelController.lookUpTaskListName(fullTaskItemRecord.taskList_id),
+				taskRepeat: fullTaskItemRecord.taskItem_repeat,
+				taskTitle: fullTaskItemRecord.taskItem_title
+			}
+			
+		},
+		
 		
 		getModalWindowIndex: function (modalFormName) {
 			switch(modalFormName) {
@@ -1839,6 +1870,7 @@ var appUIController = (function () {
 	var inputEditFormListSelect = document.getElementById("editTaskFormListSelect");
 	var editFormCancelButton = document.getElementById("editFormCancelButton");
 	var editFormUpdateTaskNavButton = document.getElementById("updateTaskNavBtn");
+	var editTaskSaveMessage = document.getElementById("editTaskSaveMsg");
 
 	/* Manage Task Lists Page elements */
 	var manageTaskListsIcon = document.getElementById("manageTaskListsIcon");
@@ -1860,7 +1892,7 @@ var appUIController = (function () {
 	
 	var newTaskFormErrorMsg = document.getElementById("newTaskFormErrorMsg");
 	var newTaskSaveMessage = document.querySelector("#newTaskSaveMsg");				 
-	var editTaskSaveMessage = document.querySelector("#editTaskSaveMsg");
+	var addTaskResetButton = document.querySelector("#addTaskResetButton");
 	var navTaskListModalMessage = document.querySelector("#navTaskListModalMsg");
 	var newTaskFormListModalMessage = document.querySelector("#newTaskFormListModalMsg");
 	var editTaskFormListModalMessage = document.querySelector("#editTaskFormListModalMsg");
@@ -2209,9 +2241,6 @@ var appUIController = (function () {
 			var formValidationObject = appModelController.getFormValidationObject ("editTaskPage"); 
 			appUIController.resetTaskForm1( formValidationObject[0] );
 			
-			
-
-			
 			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record. Note: taskItem_id was stored in a custom attribute (data-id) of span when the taskItem card was created
 			var taskItemId = event.dataset.id;
 			var selectedTaskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
@@ -2358,7 +2387,7 @@ var appUIController = (function () {
 					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
 					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
 					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
-			}, 5000);
+			}, 3000);
 				
 				
 			} else { 			
@@ -2427,7 +2456,7 @@ var appUIController = (function () {
 //				if (!repeatOptionFormGroup.nextElementSibling.classList.contains("hideIt")) {
 ////					setTimeout(function () {
 //					repeatOptionFormGroup.nextElementSibling.classList.add("hideIt");
-////					}, 1000);
+////					}, 3000);
 //				}
 //			} 
 //			
@@ -2589,7 +2618,7 @@ var appUIController = (function () {
 					msgLocation.classList.remove("success-message");
 					// Also must clear out the message otherwise the message will reappear after fadeout animation ends
 					msgLocation.innerHTML = "";
-				}, 5000);
+				}, 3000);
 
 			} else { // msg.type = "error"
 				msgLocation.innerHTML = msg.text;
@@ -2601,7 +2630,7 @@ var appUIController = (function () {
 					msgLocation.classList.remove("error-message");
 					// Also must clear out the message otherwise the message will reappear after fadeout animation ends
 					msgLocation.innerHTML = "";
-				}, 5000);
+				}, 3000);
 			}
 
 		},
@@ -2647,16 +2676,16 @@ var appUIController = (function () {
 			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
 			switch ( pageId ) {
 				case "newTaskPage":
-					if (inputNewTaskRepeat.value !== "1" && appUIController.getUIVars().inputNewTaskDateTime.value === "") {	
+					if (inputNewTaskRepeat.value !== "none" && appUIController.getUIVars().inputNewTaskDateTime.value === "") {	
 						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = '<i class="fa fa-times-circle"></i>' + " Must enter Due Date to make repeatable";
 						if (!appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
 							appUIController.getUIVars().inputNewTaskRepeat.classList.add("formErrors");	
 						}
-					} else if (appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors") && inputNewTaskRepeat.value === "1") {
+					} else if (appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors") && inputNewTaskRepeat.value === "none") {
 						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("formErrors");
 						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
 						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("filled");
-					} else if (inputNewTaskRepeat.value !== "1" && inputNewTaskDateTime !== "" && 		appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
+					} else if (inputNewTaskRepeat.value !== "none" && inputNewTaskDateTime !== "" && 		appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
 						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("formErrors");
 						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
 					}
@@ -2816,29 +2845,24 @@ var appUIController = (function () {
 		displayAddNewTaskForm: function () {
 			console.log("************** appUIController.displayAddNewTaskForm()");
 			
-			// Hide the main page and display the addTaskForm page
-			toggleClass(homePage, "hideIt");
-			toggleClass(addNewTaskPage, "hideIt");
-			
 			// Reset the New Task Form when displayed to remove any residual formatting / errors
 			
 			// First get the form validation object
 			var formValidationObj = appModelController.getFormValidationObject ( "newTaskPage");
 			
+			
 			// Call method to reset the form 
 			appUIController.resetTaskForm1 ( formValidationObj[0] );
 			
-			// Now reset (clear) input fields to original values
-//			appUIController.getUIVars().formSaveNewTask.reset();
-			formSaveNewTask.reset();
+			
+			// Hide the main page and display the addTaskForm page
+			toggleClass(homePage, "hideIt");
+			toggleClass(addNewTaskPage, "hideIt");
+			
 
-			
-			
-//			newTaskSaveMessage.classList.remove("success-message");
-			// Clear any prior form submit success or error messages
-			
-//			newTaskSaveMessage.innerHTML = ""; // Form submit failure msg displayed @ top of newTaskForm
-//			mainPageSuccessMsg.innerHTML = ""; // Form submit success msg displayed @top of mainPage
+
+			// Now reset (clear) input fields to original values
+			formSaveNewTask.reset();
 	
 			// When form opens you want the focus to be on newTaskTitle field with cursor at position 1
 			appUIController.getUIVars().inputNewTaskTitle.focus();
@@ -2914,8 +2938,8 @@ var appUIController = (function () {
 				taskTitle: inputEditFormTaskItemName.value.trim(),
 				taskFinished: inputEditFormCompletedSetting.checked,  
 				taskDueDate: inputEditFormTaskItemDueDate.value,
-				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].text,
-				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].text
+				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].value,
+				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].value
 			}			
 		},
 		
@@ -2941,7 +2965,7 @@ var appUIController = (function () {
 			// Remove error messages & styling (including "filled" class)
 			appUIController.resetTaskForm1( formValidationObj[0] );
 			
-
+			appUIController.getUIVars().inputNewTaskTitle.value = "";
 			appUIController.getUIVars().inputNewTaskTitle.focus();
 			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0,0)
 
@@ -2971,11 +2995,12 @@ var appUIController = (function () {
 			// Reset formError 
 			formValidationObj.formError = false;
 
-			//Clear out any prior success/error messages 
+			//Clear out any prior success/error messages and styling 
 			formValidationObj.formSubmitErrorMsgLoc.innerHTML = "";
 			formValidationObj.formSubmitSuccessMsgLoc.innerHTML = "";
+			formValidationObj.formSubmitSuccessMsgLoc.classList.remove("success-message");
+			formValidationObj.formSubmitErrorMsgLoc.classList.remove("error-message");
 			
-
 			// For each field on the form remove any error messages/styling 
 			formValidationObj.fieldsToValidate.forEach (function(field) {
 				field.fieldErrorMsgLocation.innerHTML = "";
@@ -3540,7 +3565,7 @@ var appUIController = (function () {
 			});
 	
 
-		}, 
+		} 
 	}
 })();
 
@@ -3848,80 +3873,99 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			// Find the taskItem in memory object (using Id in hidden input field) and update it with values	
 			var taskItemRecord = appModelController.lookUpTaskItemRecord(appUIController.getUIVars().inputEditFormTaskItemId.value);
 			
-			// Update the TaskItem record with values input on editTaskItem form
-			utilMethods.equateTaskItemObjects(taskItemRecord, taskItemInputRecord);
+			var coreTaskItemRecordValues = appModelController.extractCoreTaskItemValues(taskItemRecord);
 			
-			// Save the updated taskItem record to the DB (or local storage)
+			/* If the data entered on the editTaskForm differs from the original taskItem record then save the updates otherwise no need to save just create a message telling user not updates were detected nor saved.
+		
+			*/
+			if (appModelController.wereChangesMadeToTaskItem(coreTaskItemRecordValues, taskItemInputRecord)) {
+				
 			
-			// Set saveToPermStorageWasSuccessful based on return code from save operation
+				// Update the TaskItem record with values input on editTaskItem form
+				utilMethods.equateTaskItemObjects(taskItemRecord, taskItemInputRecord);
+
+				// Save the updated taskItem record to the DB (or local storage)
+
+				// Set saveToPermStorageWasSuccessful based on return code from save operation
+
+				if (saveToPermStorageWasSuccessful) {
+
+					// Style the success message
+					formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
+
+					// Insert Submit Success Message
+		//				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + newTaskListObject.taskList_name + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
+
+					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' +  formValidationObj[0].formSubmitSuccessMsg;
+
+					// Refresh the TaskItem List
+					var activeTaskId = getListIdForActiveTaskList();
+					updateTaskListDisplayed (activeTaskId);
+
+					// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
+					var taskListTable = appModelController.updateListTaskTotals();		
+
+
+					// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
+					appUIController.refreshTaskListSubMenuTotals(taskListTable); 
+
+					// ADDED
+					appUIController.getUIVars().editFormCancelButton.click();
+
+					//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+		//				setTimeout(function () {
+		//					appUIController.getUIVars().editFormCancelButton.click();
+		//					
+		//					// Must remove the success-message class otherwise it will not appear on future saves 
+		//					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
+		//					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+		//				
+		//					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+		//				}, 5000);
+					//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
+
+				} else {
+					// Log an error message "Update could not be saved to permananent storage and try again
+					// If this is the first time it failed then
+					// -- create error message asking user to try again
+					// else if this is second or greater time this has failed
+					// -- Log an error code in system log
+					// -- Based on error code make some recommendations on how they could fix the problem
+					// -- Ask user if they would like to send their log info to app creator for diagnosis
+					// -- If they agree and user has registered app (we have their email)
+					// ---- Collect log info and send it via email
+					// ---- Confirm email has been sent and let them know I will follow up
+					// -- else (we don't have their email address)
+					// ---- present dialog to prompt them for their email & register them
+					// ---- Confirm email has been sent and let them know someone will follow up
+					// -- endIf
+				}
+			} else { // Nothing was actually updated on the field
 			
-			if (saveToPermStorageWasSuccessful) {
+				// Update the success message to indicate "No updates detected"
 				
 				// Style the success message
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
-				
+
 				// Insert Submit Success Message
-//				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + newTaskListObject.taskList_name + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' +  "No updates detected";
 				
-				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' +  formValidationObj[0].formSubmitSuccessMsg;
-				
-				// Refresh the TaskItem List
-				var activeTaskId = getListIdForActiveTaskList();
-				updateTaskListDisplayed (activeTaskId);
-				
-				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
-				var taskListTable = appModelController.updateListTaskTotals();		
-
-
-				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
-				appUIController.refreshTaskListSubMenuTotals(taskListTable); 
-				
-				// ADDED
 				appUIController.getUIVars().editFormCancelButton.click();
-				
-				//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
-//				setTimeout(function () {
-//					appUIController.getUIVars().editFormCancelButton.click();
-//					
-//					// Must remove the success-message class otherwise it will not appear on future saves 
-//					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
-//					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
-//				
-//					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
-//				}, 5000);
-				//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
-				
-			} else {
-				// Log an error message "Update could not be saved to permananent storage and try again
-				// If this is the first time it failed then
-				// -- create error message asking user to try again
-				// else if this is second or greater time this has failed
-				// -- Log an error code in system log
-				// -- Based on error code make some recommendations on how they could fix the problem
-				// -- Ask user if they would like to send their log info to app creator for diagnosis
-				// -- If they agree and user has registered app (we have their email)
-				// ---- Collect log info and send it via email
-				// ---- Confirm email has been sent and let them know I will follow up
-				// -- else (we don't have their email address)
-				// ---- present dialog to prompt them for their email & register them
-				// ---- Confirm email has been sent and let them know someone will follow up
-				// -- endIf
-			}
 			
+		}
+
 		} else {  // Some form input was found in error formValidationObj[0].formError = true
 			console.log("Error was detected Updating TaskItem ");
 				// Create log entry if failure
 				// TBD
-				
+
 				// Insert Failsure Message
 				formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].formSubmitErrorMsg;
-				
+
 				// Style the errorSubmitMsg
 				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 		}
 
-		
-		
 	}
 	/***********************************************************************************
 		MODULE:  appController
@@ -4265,7 +4309,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				// Remove the 'filled' styling on exit from form.
 				formValidationObj[0].fieldsToValidate[0].fieldName.classList.remove("filled");
-			}, 5000);
+			}, 3000);
 			
 			// **************************************************************
 			// --->$$$$ - Don't think call to below method (refreshTaskListSubmenuTotals) is necessary in this
