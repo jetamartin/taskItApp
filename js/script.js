@@ -1476,7 +1476,7 @@ var appModelController = (function () {
 	
 	return {
 		wereChangesMadeToTaskItem: function (obj1, obj2) {
-			if ((obj1.dueDate === obj2.dueDate) &&
+			if ((obj1.taskDueDate === obj2.taskDueDate) &&
 				(obj1.taskFinished === obj2.taskFinished) &&
 				(obj1.taskId === obj2.taskId) &&
 				(obj1.taskList === obj2.taskList) &&
