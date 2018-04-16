@@ -990,7 +990,8 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_createTime": ""	
+			"taskItem_completedTime": "",
+			"taskItem_createTime": ""
 		},
 		{
 			"taskItem_id" : "2",
@@ -1006,6 +1007,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1022,6 +1024,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1038,7 +1041,9 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_createTime": ""	
+			"taskItem_completedTime": "",
+			"taskItem_createTime": ""
+			
 		},
 		{
 			"taskItem_id" : "5",
@@ -1054,6 +1059,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1070,6 +1076,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1086,6 +1093,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1102,6 +1110,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1118,6 +1127,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1134,6 +1144,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1150,6 +1161,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1166,6 +1178,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1182,6 +1195,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1198,6 +1212,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
+			"taskItem_completedTime": "",
 			"taskItem_createTime": ""	
 		}
 	];
