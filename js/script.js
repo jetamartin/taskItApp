@@ -780,11 +780,12 @@ return {
 	
 	
 	equateTaskItemObjects: function(taskItemObject, inputTaskObject) {
+		
 		taskItemObject.taskList_id = appModelController.lookUpTaskListId(inputTaskObject.taskList);
 		taskItemObject.taskItem_title = inputTaskObject.taskTitle;
 		taskItemObject.taskItem_due_date = inputTaskObject.taskDueDate;
 		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat.toLowerCase();
-		taskItemObject.taskItem_isCompleted = inputTaskObject.taskFinished;
+		taskItemObject.taskItem_completedDate = inputTaskObject.taskCompletedDate;
 	},
 	
 
@@ -990,7 +991,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
 		},
 		{
@@ -1007,7 +1008,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1024,7 +1025,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1041,7 +1042,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
 			
 		},
@@ -1059,7 +1060,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1076,7 +1077,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1093,7 +1094,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1110,7 +1111,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1127,7 +1128,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1144,7 +1145,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1161,7 +1162,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1178,7 +1179,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1195,7 +1196,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		},
 		{
@@ -1212,7 +1213,7 @@ var appModelController = (function () {
 			"taskItem_isArchived": "",
 			"taskItem_notification": "",
 			"taskItem_calendar": "",
-			"taskItem_completedTime": "",
+			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
 		}
 	];
@@ -1490,9 +1491,26 @@ var appModelController = (function () {
 	/****************************************************************************/
 	
 	return {
+		
+
+		
 		wereChangesMadeToTaskItem: function (obj1, obj2) {
+			
+			var obj1TaskCompletedDatePresent = false; 
+			var obj2TaskCompletedDatePresent = false;
+			
+			/* If user changes the completed status by unchecking completed checkbox and then rechecking it again before updating the taskItem it will result in a new taskCompletedDate being generated thus making it appear that the taskItem had been changed resulting in an unnecessary save of taskItem to DB an an incorrect status message to user ("Task updated"). To prevent this from happening we only check to whether the DB version of the record and the form input both indicate that a completedDate is present...hence the "present" variables an the if test to set the "present" values. 
+			*/ 
+			if (obj1.taskCompletedDate) {
+				obj1TaskCompletedDatePresent = true;
+			}
+			if (obj2.taskCompletedDate) {
+				obj2TaskCompletedDatePresent = true;
+			}
+			
+			
 			if ((obj1.taskDueDate === obj2.taskDueDate) &&
-				(obj1.taskFinished === obj2.taskFinished) &&
+				(obj1TaskCompletedDatePresent === obj2TaskCompletedDatePresent) &&
 				(obj1.taskId === obj2.taskId) &&
 				(obj1.taskList === obj2.taskList) &&
 				(obj1.taskRepeat === obj2.taskRepeat) &&
@@ -1505,18 +1523,15 @@ var appModelController = (function () {
 		
 		extractCoreTaskItemValues: function (fullTaskItemRecord) {
 			
-			if (fullTaskItemRecord.taskItem_isCompleted === "") {
-				fullTaskItemRecord.taskItem_isCompleted = false;
-			}
+
 			return coreTaskItemRecord = {
 				taskDueDate: fullTaskItemRecord.taskItem_due_date,
-				taskFinished: fullTaskItemRecord.taskItem_isCompleted,
+				taskCompletedDate: fullTaskItemRecord.taskItem_completedDate,			
 				taskId: fullTaskItemRecord.taskItem_id,
 				taskList: appModelController.lookUpTaskListName(fullTaskItemRecord.taskList_id),
 				taskRepeat: fullTaskItemRecord.taskItem_repeat,
 				taskTitle: fullTaskItemRecord.taskItem_title
-			}
-			
+			}	
 		},
 		
 		
@@ -1880,6 +1895,7 @@ var appUIController = (function () {
 	var inputEditFormTaskItemId = 
 	document.getElementById("editFormTaskItemId");
 	var inputEditFormCompletedSetting = document.getElementById("editFormCompletedSetting");
+	var inputEditCompletedDate = document.getElementById("completedDate");
 	var inputEditFormTaskItemDueDate = document.getElementById("editTaskItemDueDate");
 	var inputEditFormRepeatSelect = document.getElementById("editFormRepeatSelect");
 	var inputEditFormListSelect = document.getElementById("editTaskFormListSelect");
@@ -2204,8 +2220,13 @@ var appUIController = (function () {
 			console.log("markTaskAsCompleted()");
 			var taskItemId = event.dataset.id;
 			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
-			taskItemRecord.taskItem_isCompleted = event.firstElementChild.firstElementChild.checked
-			
+			/* If user is marking item as completed then get system time stamp and assign that
+				value to the taskItem_completedDate value 
+			*/
+			if (event.firstElementChild.firstElementChild.checked) {
+				var completeDate = new Date();
+				taskItemRecord.taskItem_completedDate = completeDate;
+			}
 		},
 		showHideTaskActions: function (event) {
 			console.log("showHideTaskActions()");
@@ -2268,8 +2289,17 @@ var appUIController = (function () {
 			// Item Id is stored in a hidden field on TaskItem editForm
 			inputEditFormTaskItemId.value = taskItemId;
 			
-			// Set the Completed value
-			inputEditFormCompletedSetting.checked = selectedTaskItemRecord.taskItem_isCompleted;
+			
+			// Set the Completed checkbox based on whether a completedDate exist
+
+			if (selectedTaskItemRecord.taskItem_completedDate !== "") {
+				inputEditFormCompletedSetting.checked = true;
+			} else {
+				inputEditFormCompletedSetting.checked = false;
+			}
+	
+			// Set completedDate in the hidden field 
+			inputEditCompletedDate.value = selectedTaskItemRecord.taskItem_completedDate;
 			
 			// Set the dueDate value
 			inputEditFormTaskItemDueDate.value = selectedTaskItemRecord.taskItem_due_date;
@@ -2609,6 +2639,7 @@ var appUIController = (function () {
 				inputEditFormTaskItemId:
 				inputEditFormTaskItemId,
 				inputEditFormCompletedSetting: inputEditFormCompletedSetting,
+				inputEditCompletedDate: inputEditCompletedDate,
 				inputEditFormTaskItemDueDate: inputEditFormTaskItemDueDate,
 				inputEditFormRepeatSelect: inputEditFormRepeatSelect,
 				inputEditFormListSelect: inputEditFormListSelect,
@@ -2947,11 +2978,13 @@ var appUIController = (function () {
 		/********************************************************************************
 			METHOD:  getTaskItemEditInput()  -- Primary method 
 		********************************************************************************/
-		getTaskItemEditInput: function (event) {
+
+		getTaskItemEditInput: function (event) 	{	
 			return {		
 				taskId: inputEditFormTaskItemId.value.trim(),
 				taskTitle: inputEditFormTaskItemName.value.trim(),
-				taskFinished: inputEditFormCompletedSetting.checked,  
+				taskCompletedCheckbox: inputEditFormCompletedSetting.checked,
+				taskCompletedDate: inputEditCompletedDate.value,
 				taskDueDate: inputEditFormTaskItemDueDate.value,
 				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].value,
 				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].value
@@ -3303,7 +3336,7 @@ var appUIController = (function () {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', repeatSymbol);
 				}
 				
-				if ( taskItemList[i].taskItem_isCompleted) {
+				if ( taskItemList[i].taskItem_completedDate !== "") {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%checkedValue%', "checked")
 				} else {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%checkedValue%', "");
@@ -3866,6 +3899,22 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		event.stopPropagation();
 		
 		var taskItemInputRecord = appUIController.getTaskItemEditInput(event);
+		
+		// If the task has been newly marked as completed then we need to populate the taskItemInput record with a completed date
+		if (taskItemInputRecord.taskCompletedCheckbox && taskItemInputRecord.taskCompletedDate === "") {
+			
+//			var newCompletedDate = new Date();
+			// Create a CompletedDate
+			taskItemInputRecord.taskCompletedDate = new Date();
+			
+			
+		// If the task is marked as not completed but it had been marked complete before then we need to change the value of the taskItemInputRecord completedDate to ""
+			
+		} else if ( !taskItemInputRecord.taskCompletedCheckbox && 
+		taskItemInputRecord.taskCompletedDate !== "" ) {
+			taskItemInputRecord.taskCompletedDate = "";
+		}
+		
 		
 		// Indicates whether update was successfully save to perm storage. Value set based on return code from save operation
 		var saveToPermStorageWasSuccessful = true;
