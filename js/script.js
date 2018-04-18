@@ -706,6 +706,10 @@ var utilMethods = (function () {
 	
 return {
 	
+	buildDate: function (date) {
+		
+	},
+	
 	contains: function ( element ) {
 		Array.prototype.contains = function ( element ) {
 		var i;
@@ -1508,7 +1512,7 @@ var appModelController = (function () {
 				obj2TaskCompletedDatePresent = true;
 			}
 			
-			
+			// Check to see if values on input match to determine whether there have been any changes and hence whether the task really needs to be save to local/remote storage
 			if ((obj1.taskDueDate === obj2.taskDueDate) &&
 				(obj1TaskCompletedDatePresent === obj2TaskCompletedDatePresent) &&
 				(obj1.taskId === obj2.taskId) &&
@@ -1520,6 +1524,10 @@ var appModelController = (function () {
 				return true;
 			}
 		},
+		
+		/* 
+			A taskItem Record has more values then are in the editTaskPage form (e.g., createTime). You want to extract only the core values (ones that will be input on editTaskPage form) so that we can later compare the input on the editTaskPage form so that we can compare those core values to the input values to determine if the taskItem has been "updated" and therefore needs to be saved to storage
+		*/
 		
 		extractCoreTaskItemValues: function (fullTaskItemRecord) {
 			
@@ -1880,6 +1888,8 @@ var appUIController = (function () {
 	/* MainPage Elements */
 	var mainPage = document.querySelector("#mainPage");
 	var subMenuListDOMNode = document.querySelector(".taskListsSubMenu");
+	var completedDateStyling = document.querySelector(".completedDateStyling");
+	var completedDateHeader = document.querySelector(".completedDateHeader");
 	
 	/* New Task Form Elements*/
 	var inputNewTaskListName = document.getElementById("newTaskListName");
@@ -2216,17 +2226,32 @@ var appUIController = (function () {
 		},
 
 		
-		markTaskAsCompleted: function ( event ) {
+		markTaskAsCompleted: function ( event ) {	
 			console.log("markTaskAsCompleted()");
 			var taskItemId = event.dataset.id;
+			var completeDate = "";
+			
+			// Get the location of the span where completed date will be inserted
+			var completedDateLoc = utilMethods.findAncestor(event, "card").firstChild.firstChild.firstChild; 
+			
+			// Get the location of the div that contains the completeDate span
+			var completedDateHeaderLoc = utilMethods.findAncestor(event, "card").firstChild.firstChild;
+			
 			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
 			/* If user is marking item as completed then get system time stamp and assign that
 				value to the taskItem_completedDate value 
 			*/
 			if (event.firstElementChild.firstElementChild.checked) {
-				var completeDate = new Date();
+				completeDate = new Date().toLocaleString();
 				taskItemRecord.taskItem_completedDate = completeDate;
+				completedDateLoc.innerHTML = "COMPLETED: " + completeDate;
+				toggleClass(completedDateHeaderLoc, "hideIt"); 
+			} else {
+				completedDateLoc.innerHTML= "";
+				taskItemRecord.taskItem_completedDate = "";
+				toggleClass(completedDateHeaderLoc, "hideIt"); 
 			}
+
 		},
 		showHideTaskActions: function (event) {
 			console.log("showHideTaskActions()");
@@ -2592,8 +2617,10 @@ var appUIController = (function () {
 			return {
 				/* Main Page Elements */
 				mainPage: mainPage,
-				subMenuListDOMNode: subMenuListDOMNode, 
-				
+				subMenuListDOMNode: subMenuListDOMNode,
+				completedDateHeader: completedDateHeader,
+				completedDateStyling: completedDateStyling,
+
 				/* New Task Form Elements */
 				inputNewTaskListName: inputNewTaskListName,
 				inputNewTaskTitle: inputNewTaskTitle,
@@ -3313,12 +3340,23 @@ var appUIController = (function () {
 //			var mainPage = document.getElementById("mainPage"); 
 			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
 	
-			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label> </a> </div><div class="col"><a onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%"><label><input class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span>Completed</span></label></a></div><div class="col"><a class="floatRight" data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
+			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label> </a> </div><div class="col"><a onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%"><label><input class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span>Completed</span></label></a></div><div class="col"><a class="floatRight" data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
 				// Insert the record ID in the special data attribute data-id="recordId"
 				specificTaskItemHtml = genericTaskItemHtml.replace(/%taskItemId%/g, taskItemList[i].taskItem_id);
+				
+				if (taskItemList[i].taskItem_completedDate) {
+					specificTaskItemHtml = specificTaskItemHtml.replace('%completedDate%',"COMPLETED: " +  taskItemList[i].taskItem_completedDate);
+					specificTaskItemHtml = specificTaskItemHtml.replace('%hideIt%', '');
+				} else { //No completed date so "hideIt" completedDateHeader make sure completed date that may have been present previously is cleared
+					
+					specificTaskItemHtml = specificTaskItemHtml.replace('%completedDate%',"")
+					;
+					specificTaskItemHtml = specificTaskItemHtml.replace('%hideIt%',"hideIt");
+				}
+
 
 				// Insert the list name in HTML
 				specificTaskItemHtml = specificTaskItemHtml.replace('%taskTitle%', taskItemList[i].taskItem_title);
@@ -3905,7 +3943,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 //			var newCompletedDate = new Date();
 			// Create a CompletedDate
-			taskItemInputRecord.taskCompletedDate = new Date();
+			taskItemInputRecord.taskCompletedDate = new Date().toLocaleString();
 			
 			
 		// If the task is marked as not completed but it had been marked complete before then we need to change the value of the taskItemInputRecord completedDate to ""

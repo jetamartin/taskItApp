@@ -566,6 +566,22 @@ nav ul li:hover ul li span.listTotal {
 		/*	margin-bottom: -.375rem;*/
 		color: #636c72;
 	}
+
+	.completedDateHeader {
+		text-align: center;
+	}
+
+	.completedDateStyling {
+		color: white;
+		font-style: italic;
+		background-color: #adaaaa;
+		padding-top: .4rem;
+		padding-right: .4rem;
+		padding-bottom: .4rem;
+		padding-left: .4rem;
+		border-radius: .5rem;
+	
+	}
 	
 	.card-subtitle {
 		font-size: 1.25rem;
