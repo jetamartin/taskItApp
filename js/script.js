@@ -108,7 +108,9 @@ function updateTaskListDisplayed (taskListId) {
 			break;
 		case "Completed":
 			// Display No task items in the list message
-			appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<i class="fa fa-info-circle"></i>' + '&nbsp;' + "Currently there are no 'Completed' task items." + "<br /><br />" + '<i class="fa fa-bullseye"></i>' + '&nbsp;' + "Each time you mark a task item as 'Completed' it'll be added to this list." 
+//			appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<i class="fa fa-info-circle"></i>' + '&nbsp;' + "Currently there are no 'Complete' task items." + "<br /><br />" + '<i class="fa fa-bullseye"></i>' + '&nbsp;' + "Each time you mark a task item as 'Complete' it'll be added to this list."
+			appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div><i class="fa fa-info-circle"></i> &nbsp; Currently there are no Complete task items<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Each time you mark a task item as Complete it will be added to this list.</div>'
+			
 			break;
 		default:
 			// Display No task items in the list message
@@ -1699,6 +1701,12 @@ var appModelController = (function () {
 	
 		}, 
 		
+		lookupTaskListRecordByListId: function (listId) {
+			var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
+			return listItem.taskList_id === listId;
+			});
+			return matchingListRecord[0]
+		},
 		/****************************************************************************************
 			MODULE: Model Controller
 			METHOD: lookUpTaskItemRecord
@@ -2308,6 +2316,7 @@ var appUIController = (function () {
 			console.log("markTaskAsCompleted()");
 			var taskItemId = event.dataset.id;
 			var completeDate = "";
+			var options = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
 			
 			// Get the location of the span where completed date will be inserted
 			var completedDateLoc = utilMethods.findAncestor(event, "card").firstChild.firstChild.firstChild; 
@@ -2316,21 +2325,72 @@ var appUIController = (function () {
 			var completedDateHeaderLoc = utilMethods.findAncestor(event, "card").firstChild.firstChild;
 			
 			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
+//			appModelController.updateListTaskTotals ();
+//			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
+			
+			
+			
 			/* If user is marking item as completed then get system time stamp and assign that
 				value to the taskItem_completedDate value 
 			*/
 			if (event.firstElementChild.firstElementChild.checked) {
-				completeDate = new Date().toLocaleString();
+				completeDate = new Date().toLocaleString('en-US', options);
 				taskItemRecord.taskItem_completedDate = completeDate;
 				completedDateLoc.innerHTML = "<i class='far fa-calendar-check'></i>" + completeDate;
 				toggleClass(completedDateHeaderLoc, "hideIt"); 
+				mainPageSuccessMsg.innerHTML = "Congrats! Moved to Completed folder";
+				mainPageSuccessMsg.classList.add("success-message");
+				
+				
 			} else {
+
 				completedDateLoc.innerHTML= "";
 				taskItemRecord.taskItem_completedDate = "";
 				toggleClass(completedDateHeaderLoc, "hideIt"); 
+				mainPageSuccessMsg.innerHTML = "Task 'Re-activated'";
+				mainPageSuccessMsg.classList.add("success-message");
+				
+				// If user is currently on the "Completed" list page and there are no more complete tasks left then display the standard Completed list is empty message.
+			
+				
+				var activeTaskListPage = appUIController.getActiveTaskListName();
+				if (activeTaskListPage === "Completed") {
+					// Get it's taskListId so we can get it's record 
+					var taskListId = appModelController.lookUpTaskListId(activeTaskListPage);
+					// Retrieve the associated taskList record
+					
+					var taskListRecord = appModelController.lookupTaskListRecordByListId(taskListId)
+					
+					if ((taskListRecord.taskList_totalCount - 1) === 0 ) {
+						
+						appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i> &nbsp; Currently there are no Complete task items<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Each time you mark a task item as Complete it will be added to this list.</div>';
+						var emptyPageMsg = document.getElementById("emptyPageMessage");
+						setTimeout(function () {
+							emptyPageMsg.classList.add("fadeIn");
+
+						}, 900);
+						
+
+
+					}
+					
+						
+				}
+					
 			}
+			
 			appModelController.updateListTaskTotals ();
 			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
+
+				
+
+			var cardNode = utilMethods.findAncestor(event, "card");
+			toggleClass(cardNode, "vanish");
+			
+			setTimeout(function () {
+				mainPageSuccessMsg.innerHTML = "";
+				mainPageSuccessMsg.classList.remove("success-message")
+			}, 1000);
 
 		},
 		showHideTaskActions: function (event) {
@@ -3420,7 +3480,7 @@ var appUIController = (function () {
 //			var mainPage = document.getElementById("mainPage"); 
 			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
 	
-			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label> </a> </div><div class="col"><a onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%"><label><input class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span>Completed</span></label></a></div><div class="col"><a class="floatRight" data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
+			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label> </a> </div><div class="col"><a onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%"><label><input class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span>Complete</span></label></a></div><div class="col"><a class="floatRight" data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
