@@ -70,20 +70,36 @@ function isEmpty(str){
 function updateTaskListDisplayed (taskListId) {
 	
 	var listName;
+	var taskList2Display;
+	var thereAreNoTaskItems2Display = true;
 	
 	// Clear the screen of any task previously displayed
 	appUIController.clearOutExistingScreenContent(appUIController.getUIVars().mainPage, "dueTimeFrameLabel", "card");
 	
-	// Gather all taskItems related to the user selected list
-	var taskList2Display = getMatchingTaskItemsWithID (taskListId); 
+	listName = utilMethods.lookUpTaskName(appModelController.getTaskListTable(), taskListId);
 	
-	if (taskList2Display.length > 0 ) {	
-		appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = "";
-		// Group and display all tasks items and their Group header (e.g, overdue, tomorrow, etc)
-		appUIController.groupAndDisplayTaskItems(taskList2Display);
+	if (listName === "Completed") {
+		taskList2Display = appUIController.getTaskItemsMarkedAsComplete ();
+		if (taskList2Display.length > 0 ) {
+			thereAreNoTaskItems2Display = false;
+			appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = "";
+			appUIController.buildAndDisplayTaskItems("mainPage", taskList2Display);
+		}
 	} else {
+		// Gather all taskItems related to the user selected list
+		taskList2Display = getAllActiveMatchingTaskItemsWithId (taskListId);
 		
-		listName = utilMethods.lookUpTaskName(appModelController.getTaskListTable(), taskListId);
+		if (taskList2Display.length > 0 ) {		
+			thereAreNoTaskItems2Display = false;
+			appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = "";
+			// Group and display all tasks items and their Group header (e.g, overdue, tomorrow, etc)
+			appUIController.groupAndDisplayTaskItems(taskList2Display);	
+		}
+	}
+
+	
+	if (thereAreNoTaskItems2Display) {
+		
 		
 		switch(listName) {
 		case "All Lists":
@@ -101,11 +117,44 @@ function updateTaskListDisplayed (taskListId) {
 	}
 }
 
+function getAllActiveMatchingTaskItemsWithId (taskList_id) {
+	var listItemsToCategorize = appModelController.getTaskItemsTable().filter(function(taskItem){
+		if (taskList_id === "1" && taskItem.taskItem_completedDate === "") {
+			return taskItem;
+		} else if (taskItem.taskList_id === taskList_id && taskItem.taskItem_completedDate === "") {		
+			return taskItem;
+		}
+	});
+
+	console.log("Returned listItemsToCategorize: ")
+	console.log( listItemsToCategorize );
+	console.log("number of taskItems: " + listItemsToCategorize.length);
+	return listItemsToCategorize;
+}
+
+function getAllNonActiveMatchingTaskItemsWithId (taskList_id) {
+	var listItemsToCategorize = appModelController.getTaskItemsTable().filter(function(taskItem){
+		if (taskList_id === "1" && taskItem.taskItem_completedDate !== "") {
+			return taskItem;
+		} else if (taskItem.taskList_id === taskList_id && taskItem.taskItem_completedDate !== "") {		
+			return taskItem;
+		}
+	});
+
+	console.log("Returned listItemsToCategorize: ")
+	console.log( listItemsToCategorize );
+	console.log("number of taskItems: " + listItemsToCategorize.length);
+	return listItemsToCategorize;
+}
+
+
+
 /* 
 	Collect all task items of list the user selected  
 */
 function getMatchingTaskItemsWithID (taskList_id) {
 	console.log("In getMatchingTaskItemsWithID");
+
 
 	var listItemsToCategorize = appModelController.getTaskItemsTable().filter(function(taskItem){
 		if (taskList_id === "1") {
@@ -199,6 +248,10 @@ function getMatchingTaskItemsWithID (taskList_id) {
 //
 //
 //**************************************************************************************
+function getAllActiveTasks() {
+	return getAllActiveMatchingTaskItemsWithId ("1");
+}
+
 
 //**************************************************************************************
 // Retrieve all task 
@@ -391,6 +444,7 @@ var handleSubMenuClick = function (event) {
 	// Get the current "active" task list Node 
 	var currActiveList = getActiveTaskList();
 
+	appModelController.updateListTaskTotals();
 		
 	// Get name of submenu list selected
 	var listNameSelected = event.target.childNodes[1].textContent.trim();
@@ -824,12 +878,13 @@ var appModelController = (function () {
 		this.taskList_isArchived = taskListIsArchived;
 	}
 	
-	var TaskItem = function(id, listId, title, dueDate, repeat, createTime) {
+	var TaskItem = function(id, listId, title, dueDate, repeat, completedDate, createTime) {
 		this.taskItem_id = id;
 		this.taskList_id = listId;
 		this.taskItem_title = title;
 		this.taskItem_due_date = dueDate;
-		this.taskItem_repeat = repeat; 
+		this.taskItem_repeat = repeat;
+		this.taskItem_completedDate = completedDate;
 		this.taskItem_createTime = createTime;
 	}
 	/******************************************************************************************************************************
@@ -1692,14 +1747,17 @@ var appModelController = (function () {
 			
 			// 3. Generate createTime
 			var createTime = getTimeStamp();
-				
 			
+			var taskCompletedDate = "";
+				
+//			id, listId, title, dueDate, repeat, completedDate, createTime
 			return newTaskItem = new TaskItem(
 				taskItemId, 
 				taskListId,
 				taskItemInput.newTaskTitle,
 				taskItemInput.newTaskDueDate,
 				taskItemInput.newTaskRepeateOptionTxt,
+				taskCompletedDate, 
 				createTime
 			) 
 			
@@ -1814,8 +1872,9 @@ var appModelController = (function () {
 
 			taskListNames.forEach(function(taskListName) {
 				taskListId = appModelController.lookUpTaskListId(taskListName);
-				matchingTaskItems = getMatchingTaskItemsWithID(taskListId);
-				overDueCount = matchingTaskItems.reduce(function (overDue, taskItem) {
+				if (taskListName !== 'Completed' ) {
+					matchingTaskItems = getAllActiveMatchingTaskItemsWithId (taskListId);
+					overDueCount = matchingTaskItems.reduce(function (overDue, taskItem) {
 					if (taskItem.taskItem_due_date !== "") {
 						taskDueDateYMD = convertDateString2DateObject(taskItem.taskItem_due_date);
 						currDateYMD	= convertDateString2DateObject(new Date());
@@ -1826,6 +1885,12 @@ var appModelController = (function () {
 					} 
 					return overDue;
 				}, 0);
+					
+				} else { // listname = 'Complete'  
+					matchingTaskItems = appUIController.getTaskItemsMarkedAsComplete ();
+					overDueCount = 0;
+				}
+
 
 
 				console.log("Task: " + taskListName + " OverDueCount: " + overDueCount + " Total List Count " + matchingTaskItems.length );
@@ -2076,7 +2141,20 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		getTaskItemsMarkedAsComplete: function () {
+			console.log ("getTaskItemsMarkedAsComplete");
 		
+//			var matchingTaskItems = [];
+
+			var allTaskItems = appModelController.getTaskItemsTable();
+			// Return all task items where the task Title contains the search input character
+			return matchingTaskItems = allTaskItems.filter(function (taskItem) {
+				if (taskItem.taskItem_completedDate !== "") {
+					return taskItem;
+				}
+			});
+
+		},
 		/***********************************************************************************
 			MODULE:  appUIController???
 
@@ -2193,7 +2271,7 @@ var appUIController = (function () {
 		*		parentNode: in this case that happens to be the node containing the pageId;
 		*		className(s): used to identify the child node(s) under parentNode to remove
 		*     		note: the classNames are passed in arguments. This method can be called   
-		*			with multiple 
+		*			with multiple arguments 
 		*
 		* Note: Two ways to delete nodes: Directly via .remove() or via it's parent;
 		*		Directly is more intutive but it may have browser support limitations
@@ -2205,7 +2283,7 @@ var appUIController = (function () {
 		clearOutExistingScreenContent: function ( parentNode ) {
 			console.log("ClearOutExistingScreenContent()");
 
-			// Identifying class names are passed in by via arguments..Need to convert those
+			// Identifying class names are passed in by via arguments list..Need to convert those
 			//   arguments to a "true" array so they can be used in a loop. 
 			var nodeClassNames = Array.prototype.slice.call(arguments);
 
@@ -2251,6 +2329,8 @@ var appUIController = (function () {
 				taskItemRecord.taskItem_completedDate = "";
 				toggleClass(completedDateHeaderLoc, "hideIt"); 
 			}
+			appModelController.updateListTaskTotals ();
+			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
 
 		},
 		showHideTaskActions: function (event) {
@@ -2600,7 +2680,7 @@ var appUIController = (function () {
 			
 			console.log("===========LIST NAME: " + listName );
 
-			if (listName === "All Lists") {
+			if (listName === "All Lists" || listName === 'Completed') {
 				taskItemFormListSelect.value = "Default"
 
 			} else {
@@ -3347,13 +3427,17 @@ var appUIController = (function () {
 				// Insert the record ID in the special data attribute data-id="recordId"
 				specificTaskItemHtml = genericTaskItemHtml.replace(/%taskItemId%/g, taskItemList[i].taskItem_id);
 				
+				
+				/* Determines whether task is completed & if so it shows the completed date otherwise div is hidden */
+				
 				if (taskItemList[i].taskItem_completedDate) {
+					
 					specificTaskItemHtml = specificTaskItemHtml.replace('%completedDate%',"COMPLETED: " +  taskItemList[i].taskItem_completedDate);
 					specificTaskItemHtml = specificTaskItemHtml.replace('%hideIt%', '');
+					
 				} else { //No completed date so "hideIt" completedDateHeader make sure completed date that may have been present previously is cleared
 					
-					specificTaskItemHtml = specificTaskItemHtml.replace('%completedDate%',"")
-					;
+					specificTaskItemHtml = specificTaskItemHtml.replace('%completedDate%',"");
 					specificTaskItemHtml = specificTaskItemHtml.replace('%hideIt%',"hideIt");
 				}
 
@@ -3370,13 +3454,18 @@ var appUIController = (function () {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatOption%', "");
 
 				} else {
+					
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatOption%', utilMethods.titleCase(taskItemList[i].taskItem_repeat));
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', repeatSymbol);
 				}
 				
+				// if task Item is complete (has complete date ) then make sure completed checkbox is checked
 				if ( taskItemList[i].taskItem_completedDate !== "") {
-					specificTaskItemHtml = specificTaskItemHtml.replace('%checkedValue%', "checked")
-				} else {
+					
+					specificTaskItemHtml = specificTaskItemHtml.replace('%checkedValue%', "checked");
+					
+				} else {  // No complete date so the item is not completed so make sure Completed checkbox is not checked. 
+					
 					specificTaskItemHtml = specificTaskItemHtml.replace('%checkedValue%', "");
 				}
 
@@ -3395,8 +3484,14 @@ var appUIController = (function () {
 					newNode.querySelector('.card-subtitle').classList.add('overDue');
 				}
 				
-				insertNodeLocation.appendChild(newNode);
-
+			
+				var activeListName = appUIController.getActiveTaskListName();
+				
+				/* If you attempting to view the "Completed" list then you only want to display items in that list that have a completed date Otherwise if you are viewing any other list you only want to see taskItems that are not marked as complete 
+				*/
+				if ((activeListName === "Completed" && taskItemList[i].taskItem_completedDate !== "") || (activeListName !== "Completed" && taskItemList[i].taskItem_completedDate === "")) {
+					insertNodeLocation.appendChild(newNode);
+				}
 			}
 
 		}, //END buildAndDisplayTaskItems()
@@ -4514,7 +4609,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Use taskId to gather and display all task with that ID
 				var taskList_id = updateTaskListDisplayed (taskListId);
 
-				var taskList2Display = getMatchingTaskItemsWithID (taskList_id); 
+				var taskList2Display = getAllActiveMatchingTaskItemsWithId (taskList_id); 
 				appUIController.groupAndDisplayTaskItems(taskList2Display);
 				setupEventListeners();
 			}

@@ -551,12 +551,25 @@ nav ul li:hover ul li span.listTotal {
 		-webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1), 0 2px 5px 0 rgba(0, 0, 0, 0.05);
 		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1), 0 2px 10px 0 rgba(0, 0, 0, 0.05);
 	}
+
+	/* Make sure there is enough space between last tasks and footer */
+	/* Not this also creates between last card in dueDate category and next dueDate category...which is not really what I wanted but it seems to be the only thing that also provides spacing at bottom of Completed list.
+	article:last-of-type {} below doesn't work for Completed list so I went with this.
+	*/
+	section .card:last-of-type {
+		margin-bottom: 6rem;
+
+	}
+
 	/* Make sure there is enough space between last tasks and footer */
 	
+/*
 	#mainPage article:last-of-type {
 		margin-bottom: 8rem;
 	}
+*/
 	
+
 	.card:hover {
 		-webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1), 0 2px 20px 0 rgba(0, 0, 0, 0.05);
 		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1), 0 5px 20px 0 rgba(0, 0, 0, 0.10);
