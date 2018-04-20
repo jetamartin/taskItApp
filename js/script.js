@@ -2322,7 +2322,7 @@ var appUIController = (function () {
 			if (event.firstElementChild.firstElementChild.checked) {
 				completeDate = new Date().toLocaleString();
 				taskItemRecord.taskItem_completedDate = completeDate;
-				completedDateLoc.innerHTML = "COMPLETED: " + completeDate;
+				completedDateLoc.innerHTML = "<i class='far fa-calendar-check'></i>" + completeDate;
 				toggleClass(completedDateHeaderLoc, "hideIt"); 
 			} else {
 				completedDateLoc.innerHTML= "";
@@ -3432,7 +3432,7 @@ var appUIController = (function () {
 				
 				if (taskItemList[i].taskItem_completedDate) {
 					
-					specificTaskItemHtml = specificTaskItemHtml.replace('%completedDate%',"COMPLETED: " +  taskItemList[i].taskItem_completedDate);
+					specificTaskItemHtml = specificTaskItemHtml.replace('%completedDate%',"<i class='far fa-calendar-check'></i>" +  taskItemList[i].taskItem_completedDate);
 					specificTaskItemHtml = specificTaskItemHtml.replace('%hideIt%', '');
 					
 				} else { //No completed date so "hideIt" completedDateHeader make sure completed date that may have been present previously is cleared

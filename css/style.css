@@ -22,6 +22,17 @@
 		visibility: hidden;
 	}
 
+	.fa-calendar-check:before {
+		content: "\f274";
+		font-family: "FontAwesome";
+		font-weight: 100;
+		font-size: 1rem;
+		font-style: normal;
+		margin-right: .5rem;
+		margin-left: .5rem;
+
+	}
+
 	#mainPageSuccessMsg, #manageTaskListsMsg {
 		width: 90%;
 		height: 3rem;
@@ -589,7 +600,7 @@ nav ul li:hover ul li span.listTotal {
 		font-style: italic;
 		background-color: #adaaaa;
 		padding-top: .4rem;
-		padding-right: .4rem;
+		padding-right: .75rem;
 		padding-bottom: .4rem;
 		padding-left: .4rem;
 		border-radius: .5rem;
