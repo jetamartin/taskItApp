@@ -2360,21 +2360,17 @@ var appUIController = (function () {
 					// Retrieve the associated taskList record
 					
 					var taskListRecord = appModelController.lookupTaskListRecordByListId(taskListId)
-					
+					// 
 					if ((taskListRecord.taskList_totalCount - 1) === 0 ) {
 						
 						appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i> &nbsp; Currently there are no Complete task items<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Each time you mark a task item as Complete it will be added to this list.</div>';
 						var emptyPageMsg = document.getElementById("emptyPageMessage");
 						setTimeout(function () {
 							emptyPageMsg.classList.add("fadeIn");
-
-						}, 900);
-						
-
-
+						}, 3000);
+	
 					}
-					
-						
+	
 				}
 					
 			}
@@ -2387,10 +2383,11 @@ var appUIController = (function () {
 			var cardNode = utilMethods.findAncestor(event, "card");
 			toggleClass(cardNode, "vanish");
 			
+			// Must remove success-message class so that animation will occur each time a message is generated..otherwise message will not be displayed 
 			setTimeout(function () {
 				mainPageSuccessMsg.innerHTML = "";
 				mainPageSuccessMsg.classList.remove("success-message")
-			}, 1000);
+			}, 3001);
 
 		},
 		showHideTaskActions: function (event) {
@@ -4170,15 +4167,15 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					appUIController.getUIVars().editFormCancelButton.click();
 
 					//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
-		//				setTimeout(function () {
-		//					appUIController.getUIVars().editFormCancelButton.click();
-		//					
-		//					// Must remove the success-message class otherwise it will not appear on future saves 
-		//					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
-		//					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
-		//				
-		//					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
-		//				}, 5000);
+						setTimeout(function () {
+							//							appUIController.getUIVars().editFormCancelButton.click();
+							
+							// Must remove the success-message class otherwise it will not appear on future saves 
+							formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
+							formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+						
+							//							formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+						}, 5000);
 					//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
 
 				} else {
@@ -4312,6 +4309,16 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 //				appUIController.getUIVars().addTaskResetButton.click();
 								// ADDED
 				appUIController.exitNewTaskPage(event);
+				
+				setTimeout(function () {
+					//							appUIController.getUIVars().editFormCancelButton.click();
+
+					// Must remove the success-message class otherwise it will not appear on future saves 
+					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
+					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+
+					//							formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+				}, 5000);
 				
 			} else {
 				// Log an error message "Update could not be saved to permananent storage and try again
