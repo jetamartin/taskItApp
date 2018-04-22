@@ -656,6 +656,13 @@ nav ul li:hover ul li span.listTotal {
 		border: none;
 		margin: 0 auto;
 	}
+	.card .taskTitleDiv {
+		white-space: nowrap;
+		width: 100%;                
+  		overflow: hidden;  /* "overflow" value must be different from "visible" */           
+  		text-overflow: ellipsis;
+		
+	}
 
 	.card-taskList-text {
 		/*	margin-bottom: -.375rem;*/
