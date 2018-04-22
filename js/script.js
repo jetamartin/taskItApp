@@ -2311,11 +2311,16 @@ var appUIController = (function () {
 			});
 		},
 
+		/* 
+		
+		
+		*/
 		
 		markTaskAsCompleted: function ( event ) {	
 			console.log("markTaskAsCompleted()");
 			var taskItemId = event.dataset.id;
 			var completeDate = "";
+			
 			var options = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
 			
 			// Get the location of the span where completed date will be inserted
@@ -2334,15 +2339,41 @@ var appUIController = (function () {
 				value to the taskItem_completedDate value 
 			*/
 			if (event.firstElementChild.firstElementChild.checked) {
+				
 				completeDate = new Date().toLocaleString('en-US', options);
+				
 				taskItemRecord.taskItem_completedDate = completeDate;
+				
 				completedDateLoc.innerHTML = "<i class='far fa-calendar-check'></i>" + completeDate;
 				toggleClass(completedDateHeaderLoc, "hideIt"); 
-				mainPageSuccessMsg.innerHTML = "Congrats! Moved to Completed folder";
+				mainPageSuccessMsg.innerHTML = '<i class="fa fa-thumbs-up"></i> Moved to Complete';
 				mainPageSuccessMsg.classList.add("success-message");
 				
+				// If the taskItem is the last one in a dueDate category then remove the dueDate label.
 				
-			} else {
+				var parentArticleNode = event.closest("article"); 
+				
+				/* When there is only one taskItem left in a dueDate category
+				there will be two child elements present...dueDate header and the last taskItem and since we are hiding the last taskItem in this method we want to remove the dueDate header also.
+				*/
+				
+				if (parentArticleNode.childElementCount === 2) {
+					var dueDateNode = parentArticleNode.firstChild;
+					parentArticleNode.removeChild(dueDateNode);
+					
+					// Now that the page is empty display the empty taskList message
+					
+					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.</div>';
+					
+					var emptyPageMsg = document.getElementById("emptyPageMessage");
+					setTimeout(function () {
+						emptyPageMsg.classList.add("fadeIn");
+					}, 1000);
+				}
+				
+				
+				
+			} else {  // User is "re-activating" the task item
 
 				completedDateLoc.innerHTML= "";
 				taskItemRecord.taskItem_completedDate = "";
@@ -2367,7 +2398,7 @@ var appUIController = (function () {
 						var emptyPageMsg = document.getElementById("emptyPageMessage");
 						setTimeout(function () {
 							emptyPageMsg.classList.add("fadeIn");
-						}, 3000);
+						}, 1000);
 	
 					}
 	
