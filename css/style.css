@@ -724,6 +724,16 @@ nav ul li:hover ul li span.listTotal {
 	.taskActionRowCompletCheckbox {
 		text-align: center;
 	}
+	.taskActionCompleteLabel {
+		color: #2cb5a3;
+    	cursor: pointer;
+	}	
+
+	.taskActionCompleteLabel:hover {
+		color: #2cb5a3;
+    	cursor: pointer;
+		color: #2C9893;
+	}	
 	
 	.checkBoxLabel {
 		float: right;
