@@ -660,8 +660,7 @@ nav ul li:hover ul li span.listTotal {
 		white-space: nowrap;
 		width: 100%;                
   		overflow: hidden;  /* "overflow" value must be different from "visible" */           
-  		text-overflow: ellipsis;
-		
+  		text-overflow: ellipsis;		
 	}
 
 	.card-taskList-text {
@@ -720,6 +719,10 @@ nav ul li:hover ul li span.listTotal {
 		cursor: pointer;
 		-webkit-filter: invert(3.9%) hue-rotate(320deg) brightness(1);
 		filter: invert(3.9%) hue-rotate(320deg) brightness(1);
+	}
+
+	.taskActionRowCompletCheckbox {
+		text-align: center;
 	}
 	
 	.checkBoxLabel {
