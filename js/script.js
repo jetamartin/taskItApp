@@ -2180,6 +2180,14 @@ var appUIController = (function () {
 			var vanishPresent = cardNode2Remove.classList.contains("vanish");
 			
 			$('#deleteTaskItemModal').modal('hide');
+			
+			mainPageSuccessMsg.classList.remove("success-message");
+			mainPageSuccessMsg.innerHTML = '<i class="fa fa-thumbs-up"></i>&nbsp;Task Deleted';
+			mainPageSuccessMsg.classList.add("success-message");					
+			setTimeout(function () {
+				mainPageSuccessMsg.classList.remove("success-message");
+			}, 3000);
+
 
 			
 		},
@@ -2394,7 +2402,9 @@ var appUIController = (function () {
 				taskItemRecord.taskItem_completedDate = completeDate;
 				
 				completedDateLoc.innerHTML = "<i class='far fa-calendar-check'></i>" + completeDate;
-				toggleClass(completedDateHeaderLoc, "hideIt"); 
+				toggleClass(completedDateHeaderLoc, "hideIt");
+				
+				mainPageSuccessMsg.classList.remove("success-message");
 				mainPageSuccessMsg.innerHTML = '<i class="fa fa-thumbs-up"></i> Moved to Complete';
 				mainPageSuccessMsg.classList.add("success-message");
 				
