@@ -766,6 +766,13 @@ return {
 		
 	},
 	
+	deleteTaskItem: function (taskItemId) {
+		var taskItems = appModelController.getTaskItemsTable();
+		taskItems.splice(taskItems.findIndex(function(item){
+		return item.taskItem_id === taskItemId;
+		}), 1);	
+	}, 
+	
 	contains: function ( element ) {
 		Array.prototype.contains = function ( element ) {
 		var i;
@@ -2017,6 +2024,9 @@ var appUIController = (function () {
 	var navListModalListNameErrorMsg = document.querySelector("#navListModalListNameErrorMsg");
 	var addNewTaskListModal = document.querySelector("addNewTaskListModal");
 	var inputEditListName = document.getElementById("manageListsEditListModalFormListName")
+	var deleteTaskItemId = document.getElementById("deleteTaskItemId");
+	var deleteModalTaskItemName = document.getElementById("deleteModalTaskItemName");
+	var deleteTaskItemModalForm = document.getElementById("deleteTaskItemModalForm");
 	
 	
 	
@@ -2149,6 +2159,31 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		
+		deleteTaskItem: function (event) {
+			event.preventDefault();
+			event.stopPropagation;
+			
+			console.log("confirmDelete()"); 
+			var taskItemId = appUIController.getUIVars().deleteTaskItemId.value;
+			utilMethods.deleteTaskItem(taskItemId);
+			
+			var querySearchStrTemplate = ".card[data-id='%taskItemId%']";
+			
+			var querySearchStrWithTaskItemId = querySearchStrTemplate.replace('%taskItemId%', taskItemId);
+			
+			
+			// Get the DOM node of the card that will be removed
+			var cardNode2Remove = document.querySelector(querySearchStrWithTaskItemId);
+			
+			cardNode2Remove.classList.add("vanish");
+			var vanishPresent = cardNode2Remove.classList.contains("vanish");
+			
+			$('#deleteTaskItemModal').modal('hide');
+
+			
+		},
+		
 		getTaskItemsMarkedAsComplete: function () {
 			console.log ("getTaskItemsMarkedAsComplete");
 		
@@ -2257,14 +2292,28 @@ var appUIController = (function () {
 			var taskListId = event.dataset.id;
 			
 			appUIController.getUIVars().modalFormEditTaskListId.value = taskListId;
-			
+
 			var listName = utilMethods.lookUpTaskName(appModelController.getTaskListTable(), taskListId);
 			appUIController.getUIVars().inputEditListName.value = listName;
 			
-			
-			
 		}, 
 		
+		
+		setUpDeleteTaskItemModal: function ( event ) {
+			console.log("setUpDeleteTaskItemModal");
+			
+			var taskItemId = event.dataset.id;
+			
+			appUIController.getUIVars().deleteTaskItemId.value = taskItemId;
+			
+			var taskItemName = appModelController.lookUpTaskItemRecord(taskItemId).taskItem_title;
+			
+			appUIController.getUIVars().deleteModalTaskItemName.innerHTML = taskItemName;
+			
+			var taskitemcard = utilMethods.findAncestor (event, "card");
+		 
+			
+		}, 
 		/****************************************************************************
 		* METHOD:  clearOutExistingScreenContent ()
 		*
@@ -2338,7 +2387,7 @@ var appUIController = (function () {
 			/* If user is marking item as completed then get system time stamp and assign that
 				value to the taskItem_completedDate value 
 			*/
-			if (event.checked) {
+			if (event.checked) {  // event is checkbox
 				
 				completeDate = new Date().toLocaleString('en-US', options);
 				
@@ -2843,7 +2892,10 @@ var appUIController = (function () {
 				expandTaskActions: expandTaskActions, 
 				
 				// Modal Form Fields
-				modalFormEditTaskListId: modalFormEditTaskListId
+				modalFormEditTaskListId: modalFormEditTaskListId,
+				deleteTaskItemId: deleteTaskItemId,
+				deleteModalTaskItemName: deleteModalTaskItemName,
+				deleteTaskItemModalForm: deleteTaskItemModalForm
 			}
 
 		}, 
@@ -3508,7 +3560,8 @@ var appUIController = (function () {
 //			var mainPage = document.getElementById("mainPage"); 
 			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
 	
-			var genericTaskItemHtml = '<div class="card"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div class="taskTitleDiv"><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label></a></div><div class="col taskActionRowCompletCheckbox"><label><input onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%" class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span class="taskActionCompleteLabel">Complete</span></label></div><div class="col"><a class="floatRight" data-toggle="modal" data-target="markToDelete"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
+//			var genericTaskItemHtml = '<div class="card" data-id="%taskItemId%"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div class="taskTitleDiv"><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label></a></div><div class="col taskActionRowCompletCheckbox"><label><input onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%" class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span class="taskActionCompleteLabel">Complete</span></label></div><div class="col"><a onclick="appUIController.setUpDeleteTaskItemModal(this)" class="floatRight" data-toggle="modal" data-target="#deleteTaskItemModal" data-id="%taskItemId%"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
+			var genericTaskItemHtml = '<div class="card" data-id="%taskItemId%"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div class="taskTitleDiv"><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label></a></div><div class="col taskActionRowCompletCheckbox"><label><input onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%" class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span class="taskActionCompleteLabel">Complete</span></label></div><div class="col"><a onclick="appUIController.setUpDeleteTaskItemModal(this)" class="floatRight" data-toggle="modal" data-target="#deleteTaskItemModal" data-id="%taskItemId%"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
@@ -3580,6 +3633,7 @@ var appUIController = (function () {
 				if ((activeListName === "Completed" && taskItemList[i].taskItem_completedDate !== "") || (activeListName !== "Completed" && taskItemList[i].taskItem_completedDate === "")) {
 					insertNodeLocation.appendChild(newNode);
 				}
+			
 			}
 
 		}, //END buildAndDisplayTaskItems()
@@ -4076,6 +4130,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		addEventListenerByClass('modalListInput', 'keydown', function(event) { appUIController.clearTaskListModalFormErrors(event)});
 		
 		addEventListenerByClass('newListCancelBtn', 'click', function(event) { appUIController.clearTaskListModalFormErrors(event)});
+		
+		// Submit of Delete confirmation form 
+		addEventListenerByClass('deleteTaskItemModalForm', 'submit', function(event) { appUIController.deleteTaskItem(event)});
 	
 		
 		$(".form_datetime").datetimepicker({

@@ -478,35 +478,30 @@ nav ul li:hover ul li span.listTotal {
 		background-color: transparent;
 	}
 
-	
-	.searchIt input[type="text"]::-webkit-input-placeholder {
-		color: white;
-		font-size: 1.2rem;
-	}
-	
-	.searchIt input[type="text"]:-ms-input-placeholder {
-		color: white;
-		font-size: 1.5rem;
-	}
+
 	
 	nav .searchIt input[type="text"]::-webkit-input-placeholder {
-		color: white;
-		font-size: 1.5rem;
+		color: white !important;
+		font-size: 1.25rem;
 	}
+
+
 	
 	nav .searchIt input[type="text"]:-ms-input-placeholder {
-		color: white;
-		font-size: 1.5rem;
+		color: white !important;
+		font-size: 1.25rem;
 	}
+
+
 	
 	nav .searchIt input[type="text"]::placeholder {
 		color: white !important;
-		font-size: 1.5rem;
+		font-size: 1.25rem;
 	}
 	
 	nav .searchIt input[type="text"] {
 		height: 50px;
-		font-size: 1.5rem;
+		font-size: 1.25rem;
 		display: inline-block;
 		font-family: "Lato";
 		font-weight: 100;
