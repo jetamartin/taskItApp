@@ -2496,14 +2496,10 @@ var appUIController = (function () {
 			// Get the location of the div that contains the completeDate span
 			var completedDateHeaderLoc = utilMethods.findAncestor(event, "card").firstChild.firstChild;
 			
-			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
-//			appModelController.updateListTaskTotals ();
-//			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
+			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);			
 			
 			
-			
-			/* If user is marking item as completed then get system time stamp and assign that
-				value to the taskItem_completedDate value 
+			/* If user is marking item as completed then get system time stamp and assign that value to the taskItem_completedDate value 
 			*/
 			if (event.checked) {  // event is checkbox
 				
@@ -2518,15 +2514,34 @@ var appUIController = (function () {
 				mainPageSuccessMsg.innerHTML = '<i class="fa fa-thumbs-up"></i> Moved to Complete';
 				mainPageSuccessMsg.classList.add("success-message");
 				
-				// If the taskItem is the last one in a dueDate category then remove the dueDate label.
-				
+
+				// Get the Parent Node of card that was marked as complete (i.e., the event)
 				var parentArticleNode = event.closest("article"); 
 				
-				/* When there is only one taskItem left in a dueDate category
-				there will be two child elements present...dueDate header and the last taskItem and since we are hiding the last taskItem in this method we want to remove the dueDate header also.
+				// Make the card that was marked as complete "vanish" (via animation) 
+				var cardNode = utilMethods.findAncestor(event, "card");
+				toggleClass(cardNode, "vanish");
+				
+				/* After marking the task as completed determine if there are any more
+					cards left in the due date category. 
 				*/
 				
-				if (parentArticleNode.childElementCount === 2) {
+				var activeTaskInDueDateCategory = false;
+				parentArticleNode.childNodes.forEach(function (childNode) {
+					// Due date category is not a card so skip it
+					if (!childNode.classList.contains("card")) {
+						return;
+						
+					// The node is a task card	
+					} else if (!childNode.classList.contains("vanish")){
+						// If the card doesn't contain "vanish" then it's still an active task
+						activeTaskInDueDateCategory = true;
+					}
+				});
+				
+				// If there are no more active task in that dueDate category (e.g., every card has class 'vanish') then delete the dueDate header 
+				
+				if (!activeTaskInDueDateCategory) {
 					var dueDateNode = parentArticleNode.firstChild;
 					parentArticleNode.removeChild(dueDateNode);
 					
@@ -2537,7 +2552,7 @@ var appUIController = (function () {
 					var emptyPageMsg = document.getElementById("emptyPageMessage");
 					setTimeout(function () {
 						emptyPageMsg.classList.add("fadeIn");
-					}, 1000);
+					}, 1);
 				}
 				
 				
@@ -2580,8 +2595,8 @@ var appUIController = (function () {
 
 				
 
-			var cardNode = utilMethods.findAncestor(event, "card");
-			toggleClass(cardNode, "vanish");
+//			var cardNode = utilMethods.findAncestor(event, "card");
+//			toggleClass(cardNode, "vanish");
 			
 			// Must remove success-message class so that animation will occur each time a message is generated..otherwise message will not be displayed 
 			setTimeout(function () {
