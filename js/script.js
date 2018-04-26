@@ -2009,6 +2009,7 @@ var appUIController = (function () {
 	var editTaskSaveMessage = document.getElementById("editTaskSaveMsg");
 
 	/* Manage Task Lists Page elements */
+	var manageTaskListsMsg = document.getElementById("manageTaskListsMsg")
 	var manageTaskListsIcon = document.getElementById("manageTaskListsIcon");
 	var manageTaskListsBackArrow = document.getElementById("manageTaskListsBackArrow");
 	var manageTaskListsContent = document.getElementById("manageTaskListsContent");
@@ -2216,11 +2217,14 @@ var appUIController = (function () {
 			
 			$('#manageListsDeleteListModal').modal('hide');
 			
-			mainPageSuccessMsg.classList.remove("success-message");
-			mainPageSuccessMsg.innerHTML = '<i class="fa fa-thumbs-up"></i>&nbsp;Task List Deleted';
-			mainPageSuccessMsg.classList.add("success-message");					
+			appUIController.getUIVars().manageTaskListsMsg.innerHTML = '<i class="fa fa-thumbs-o-up"></i>&nbsp;Task List deleted';
+		
+			appUIController.getUIVars().manageTaskListsMsg.classList.add("success-message");
+			
+			
 			setTimeout(function () {
-				mainPageSuccessMsg.classList.remove("success-message");
+				appUIController.getUIVars().manageTaskListsMsg.classList.remove("success-message");
+				
 			}, 3000);
 			
 		},
@@ -2968,6 +2972,7 @@ var appUIController = (function () {
 				newListCancelBtn: newListCancelBtn,
 				
 				// Manage Task List Form Vars
+				manageTaskListsMsg: manageTaskListsMsg,
 				manageTaskListsIcon: manageTaskListsIcon,
 				manageTaskListsBackArrow: manageTaskListsBackArrow,
 				manageTaskListsContent: manageTaskListsContent,
