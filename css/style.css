@@ -1296,7 +1296,7 @@ span.newList.fa-stack {
 	/*****************************************************************/
 	#manageTaskListsPage .card {
 		width: 100%;
-		padding: .5rem .75rem;
+/*		padding: .5rem .75rem;*/
 	}
 
 	#manageTaskListsPage .card-taskList-subtitle {
