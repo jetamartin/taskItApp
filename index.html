@@ -574,21 +574,26 @@
 		</div>
 		
 		<!--	Delete List Modal for Manage Task Lists Page	-->
-		<!-- Edit List Modal for Manage Task Lists Page-->
-
 		<div class="modal" id="manageListsDeleteListModal">
 			<div class="modal-dialog modal-sm" role="document">
 				<!-- Modal content-->
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title">Are you sure?</h4>
+						<h4 class="modal-title">Delete Task List:</h4>
 					</div>
 					<div class="modal-body">
-						<p class="errorMsg">WARNING!!!</p>All tasks from this list will also be deleted! 
-					</div>
-					<div class="modal-footer button-group">
-						<button type="button" class="btn btn-default newListCancelBtn" data-dismiss="modal" >Cancel</button>
-						<button type="submit" class="btn btn-default takeActionBtn" >Delete</button>
+						<form class="modalForm deleteTaskListModalForm"  id="deleteTaskListModalForm" data-listid="">
+							<div>
+								<p >Task List: "<span id="deleteListModalListName"></span>" has <span id="deleteListModalTotalTaskItemCount"></span> associated Task(s).</p>
+								<p class="errorMsg"><i class="fa fa-exclamation-circle"></i>&nbsp;Deleting a List will also delete <span>ANY</span> associated Tasks!</p>
+								<p>Not what you want? Click cancel and move any associated task item(s) you want to preserve to another list before deleting the List.</p>
+								<p>Otherwise, Delete away!&nbsp;<span class="iconGreen"><i class="fa fa-smile-o filled"></i></span></p>
+							</div>
+							<div class="modal-footer button-group">
+								<button type="button" class="btn btn-default newListCancelBtn" data-dismiss="modal" >Cancel</button>
+								<button type="submit" class="btn btn-default takeActionBtn" >Delete</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>

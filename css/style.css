@@ -22,6 +22,10 @@
 		visibility: hidden;
 	}
 
+	.iconGreen {
+		color: #34AFA9;
+	}
+
 	.fa-calendar-check:before {
 		content: "\f274";
 		font-family: "FontAwesome";

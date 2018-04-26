@@ -766,12 +766,6 @@ return {
 		
 	},
 	
-	deleteTaskItem: function (taskItemId) {
-		var taskItems = appModelController.getTaskItemsTable();
-		taskItems.splice(taskItems.findIndex(function(item){
-		return item.taskItem_id === taskItemId;
-		}), 1);	
-	}, 
 	
 	contains: function ( element ) {
 		Array.prototype.contains = function ( element ) {
@@ -1561,6 +1555,27 @@ var appModelController = (function () {
 	return {
 		
 
+		getAllTaskItemsForTaskList: function (taskListId) {
+			var allTaskItems = appModelController.getTaskItemsTable(); 
+			var taskItemsAssociatesWithTaskList = allTaskItems.filter(function(taskList) {
+				return taskList.taskList_id === taskListId;
+			})
+			return taskItemsAssociatesWithTaskList;	
+		},
+
+		deleteTaskItem: function (taskItemId) {
+			var taskItems = appModelController.getTaskItemsTable();
+			taskItems.splice(taskItems.findIndex(function(item){
+			return item.taskItem_id === taskItemId;
+			}), 1);	
+		}, 
+		
+		deleteTaskList: function (taskListId) {
+			var taskLists = appModelController.getTaskListTable();
+			taskLists.splice( taskLists.findIndex ( function ( list ) {
+				return list.taskList_id === taskListId;
+			}), 1);
+		},
 		
 		wereChangesMadeToTaskItem: function (obj1, obj2) {
 			
@@ -2159,14 +2174,72 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		deleteTaskList: function (event) {
+			console.log("deleteTaskList"); 
+			event.preventDefault();
+			event.stopPropagation();
+			// Get taskListId stored in form tag
+			var taskListId = event.target.dataset.listid;
+			// Get all TaskItems associated with the taskList
+			var taskItemsAssociatedWithTaskList = appModelController.getAllTaskItemsForTaskList(taskListId);
+			
+			taskItemsAssociatedWithTaskList.forEach (function (taskItemRecord) {
+				appModelController.deleteTaskItem(taskItemRecord.taskItem_id);
+			});
+			
+			var taskListRecord = appModelController.lookupTaskListRecordByListId(taskListId)
+			appModelController.deleteTaskList ( taskListId );
+			
+			
+			
+			// $$$$$ NEED TO Clearout TaskListSubmenu of userDefinedLists and rebuild them to reflect changes
+			
+			var currActiveListId = getListIdForActiveTaskList();
+
+			
+			var currActiveListName = appUIController.getActiveTaskListName();
+
+
+			// Remove existing UserDefined Task list from TaskListSubmenu
+			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList' );
+
+			// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
+			appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
+			
+			
+//			appModelController.updateListTaskTotals ();
+//			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
+			
+			
+			var querySearchStrTemplate = ".card[data-listid='%taskListId%']";
+			
+			var querySearchStrWithTaskItemId = querySearchStrTemplate.replace('%taskListId%', taskListId);
+			
+			
+			// Get the DOM node of the card that will be removed
+			var cardListNode2Remove = document.querySelector(querySearchStrWithTaskItemId);
+			
+			cardListNode2Remove.classList.add("vanish");
+			var vanishPresent = cardListNode2Remove.classList.contains("vanish");
+			
+			$('#manageListsDeleteListModal').modal('hide');
+			
+			mainPageSuccessMsg.classList.remove("success-message");
+			mainPageSuccessMsg.innerHTML = '<i class="fa fa-thumbs-up"></i>&nbsp;Task List Deleted';
+			mainPageSuccessMsg.classList.add("success-message");					
+			setTimeout(function () {
+				mainPageSuccessMsg.classList.remove("success-message");
+			}, 3000);
+			
+		},
+		
 		
 		deleteTaskItem: function (event) {
 			event.preventDefault();
-			event.stopPropagation;
 			
 			console.log("confirmDelete()"); 
 			var taskItemId = appUIController.getUIVars().deleteTaskItemId.value;
-			utilMethods.deleteTaskItem(taskItemId);
+			appModelController.deleteTaskItem(taskItemId);
 			
 			var querySearchStrTemplate = ".card[data-id='%taskItemId%']";
 			
@@ -2322,6 +2395,25 @@ var appUIController = (function () {
 		 
 			
 		}, 
+		setUpDeleteTaskListModal: function ( event ) {
+			console.log("setUpDeleteTaskListModal");
+			
+			var taskListId = event.dataset.id;
+			
+			document.getElementById("deleteTaskListModalForm").dataset.listid = taskListId; 
+			
+//			appUIController.getUIVars().manageListModalDeleteTaskListId.value = taskListId;
+			
+			var taskListName = appModelController.lookUpTaskListName(taskListId).toUpperCase();
+			
+			var taskListRecord = appModelController.lookupTaskListRecordByListId(taskListId);
+			var associatedTaskItemCount = taskListRecord.taskList_totalCount; 
+			
+			document.getElementById("deleteListModalListName").innerHTML = taskListName;
+			
+			document.getElementById("deleteListModalTotalTaskItemCount").innerHTML = associatedTaskItemCount;
+			
+		},
 		/****************************************************************************
 		* METHOD:  clearOutExistingScreenContent ()
 		*
@@ -2661,7 +2753,6 @@ var appUIController = (function () {
 
 
 				// Remove existing UserDefined Task list from TaskListSubmenu
-	//			appUIController.removeUserDefinedTaskLists(userDefinedTaskLists);
 				appUIController.clearOutExistingScreenContent( appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList' );
 
 				// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
@@ -3424,8 +3515,8 @@ var appUIController = (function () {
 			// Sort the userDefinedTask List
 			appModelController.sortListByName(userDefinedTaskLists); 
 			
-			// Template to create ListName elements for nav's listSubmenu
-			var genericTaskListsCardHtml = '<div class="card card-taskList"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a onclick="appUIController.setUpEditTaskListModal(this)" data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p></div></div>';
+			// Template to build TaskList Cards for manageTaskLists page
+			var genericTaskListsCardHtml = '<div class="card card-taskList" data-listid="%taskListId%"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a onclick="appUIController.setUpEditTaskListModal(this)" data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a onclick="appUIController.setUpDeleteTaskListModal(this)"data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p></div></div>';
 			
 			var specificTaskListsCardHtml;
 			
@@ -4141,8 +4232,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		addEventListenerByClass('newListCancelBtn', 'click', function(event) { appUIController.clearTaskListModalFormErrors(event)});
 		
-		// Submit of Delete confirmation form 
+		// Submit of Delete TaskItem confirmation form 
 		addEventListenerByClass('deleteTaskItemModalForm', 'submit', function(event) { appUIController.deleteTaskItem(event)});
+		
+		// Submit of Delete Task List confirmation form 
+		addEventListenerByClass('deleteTaskListModalForm', 'submit', function(event) { appUIController.deleteTaskList(event)});
+		
 	
 		
 		$(".form_datetime").datetimepicker({
