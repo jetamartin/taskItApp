@@ -2175,6 +2175,8 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		
+		
 		deleteTaskList: function (event) {
 			console.log("deleteTaskList"); 
 			event.preventDefault();
@@ -2188,9 +2190,21 @@ var appUIController = (function () {
 				appModelController.deleteTaskItem(taskItemRecord.taskItem_id);
 			});
 			
+			
+			var currActiveListId = getListIdForActiveTaskList();
+			
+			/* If the list you want to delete is the current active task list then you'll need to reset the active task list to another list as you'll be deleting the now current list that you know will be present (PreDefinedTaskList)...as a default I chose
+			to make the new ActiveList the "All List"
+			*/
+			if (currActiveListId === taskListId) {
+				// Set the active list to "All List ("1")
+				toggleClass(appUIController.getUIVars().allListsElem,"selected");
+				
+			}
+			
 			appModelController.deleteTaskList ( taskListId );
 	
-			var currActiveListId = getListIdForActiveTaskList();
+
 			
 			// Remove existing UserDefined Task list from TaskListSubmenu
 			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList' );
@@ -2237,11 +2251,6 @@ var appUIController = (function () {
 			var taskItemId = appUIController.getUIVars().deleteTaskItemId.value;
 			appModelController.deleteTaskItem(taskItemId);
 			
-//			appModelController.updateListTaskTotals();
-//			var currActiveListId = getListIdForActiveTaskList();
-			
-			// Remove existing UserDefined Task list from TaskListSubmenu
-//			appUIController.clearOutExistingScreenContent( appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList' );
 			
 			// Update the List Task Totals in the Model
 			appModelController.updateListTaskTotals();
@@ -2249,8 +2258,6 @@ var appUIController = (function () {
 			// Now update the UI (subMenu list dropdown) list totals
 			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
 			
-			// Now rebuild the UserDefined Task List subMenu drop down
-//			appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
 			
 			var querySearchStrTemplate = ".card[data-id='%taskItemId%']";
 			
