@@ -2268,8 +2268,49 @@ var appUIController = (function () {
 			var cardNode2Remove = document.querySelector(querySearchStrWithTaskItemId);
 			
 			cardNode2Remove.classList.add("vanish");
+			// Not sure I need line below
 			var vanishPresent = cardNode2Remove.classList.contains("vanish");
 			
+			
+			/*$$$$$$--------------- New stuff added below */
+			
+			// Get the Parent Node of card that was marked as complete (i.e., the event)
+			var parentArticleNode = cardNode2Remove.closest("article"); 
+			
+			var moreActiveTaskInDueDateCategory = false;
+			
+			parentArticleNode.childNodes.forEach(function (childNode) {
+				// Due date category is not a card so skip it
+				if (!childNode.classList.contains("card")) {
+					return;
+
+				// The node is a task card	
+				} else if (!childNode.classList.contains("vanish")){
+					// If the card doesn't contain "vanish" then it's still an active task
+					moreActiveTaskInDueDateCategory = true;
+				}
+			});
+
+			// If there are no more active task in that dueDate category (e.g., every card has class 'vanish') then delete the dueDate header 
+
+			if (!moreActiveTaskInDueDateCategory) {
+				var dueDateNode = parentArticleNode.firstChild;
+				parentArticleNode.removeChild(dueDateNode);
+
+				// Now that the page is empty display the empty taskList message
+
+				appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or if you do not need the list anymore you can delete it via "Manage Lists" feature (see NavBar menu).</div>';
+
+				var emptyPageMsg = document.getElementById("emptyPageMessage");
+				setTimeout(function () {
+					emptyPageMsg.classList.add("fadeIn");
+				}, 1);
+			}
+			
+			
+			/*$$$$$$--------------- New stuff added ABOVE */
+			
+	
 			$('#deleteTaskItemModal').modal('hide');
 			
 			mainPageSuccessMsg.classList.remove("success-message");
@@ -2496,7 +2537,10 @@ var appUIController = (function () {
 			// Get the location of the div that contains the completeDate span
 			var completedDateHeaderLoc = utilMethods.findAncestor(event, "card").firstChild.firstChild;
 			
-			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);			
+			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);				// Make the card that was marked as complete "vanish" (via animation) 
+			var cardNode = utilMethods.findAncestor(event, "card");
+			toggleClass(cardNode, "vanish");
+
 			
 			
 			/* If user is marking item as completed then get system time stamp and assign that value to the taskItem_completedDate value 
@@ -2518,10 +2562,7 @@ var appUIController = (function () {
 				// Get the Parent Node of card that was marked as complete (i.e., the event)
 				var parentArticleNode = event.closest("article"); 
 				
-				// Make the card that was marked as complete "vanish" (via animation) 
-				var cardNode = utilMethods.findAncestor(event, "card");
-				toggleClass(cardNode, "vanish");
-				
+
 				/* After marking the task as completed determine if there are any more
 					cards left in the due date category. 
 				*/
@@ -2547,7 +2588,7 @@ var appUIController = (function () {
 					
 					// Now that the page is empty display the empty taskList message
 					
-					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.</div>';
+					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><i class="fa fa-bullseye"></i>&nbsp;Or if you do not need the list anymore you can delete it via "Manage Lists" feature (see NavBar menu).</div>';
 					
 					var emptyPageMsg = document.getElementById("emptyPageMessage");
 					setTimeout(function () {
