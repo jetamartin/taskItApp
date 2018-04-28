@@ -871,12 +871,13 @@ var appModelController = (function () {
 	var taskListTable1 = [];
 	var taskItemsTable1 = [];
 	
-	var TaskList = function(listId, listName, userId, totalItemCount, overDueItemCount, listCreateTime, taskListIsArchived) {
+	var TaskList = function(listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived) {
 		this.taskList_id = listId; 
 		this.taskList_name = listName;
 		this.user_id = userId;
 		this.taskList_totalCount = totalItemCount;
 		this.taskList_overDueCount = overDueItemCount;
+		this.taskList_completedCount = completedCount;
 		this.taskList_createTime = listCreateTime;	
 		this.taskList_isArchived = taskListIsArchived;
 	}
@@ -929,8 +930,9 @@ var appModelController = (function () {
 			"taskList_name" : "Shopping", 
 			"taskList_totalCount" : 0,
 			"taskList_overDueCount" : 0, 
+			"taskList_completedCount": 0, 
 			"overDue"  : 5, 
-			"totalTasks": 8		
+			"totalTasks": 8
 		},
 		{
 			"taskList_id" : "6",
@@ -938,6 +940,8 @@ var appModelController = (function () {
 			"taskList_name" : "Work",
 			"taskList_totalCount" : 0,
 			"taskList_overDueCount" : 0, 
+			"taskList_completedCount": 0, 
+
 			"overDue"  : 2, 
 			"totalTasks": 19			
 		},
@@ -947,6 +951,7 @@ var appModelController = (function () {
 			"taskList_name" : "School",
 			"taskList_totalCount" : 0,
 			"taskList_overDueCount" : 0, 
+			"taskList_completedCount": 0, 
 			"overDue"  : 3, 
 			"totalTasks": 6			
 		},
@@ -955,7 +960,8 @@ var appModelController = (function () {
 			"user_id" : "1",
 			"taskList_name" :	"Wish List",
 			"taskList_totalCount" : 0,
-			"taskList_overDueCount" : 0, 
+			"taskList_overDueCount" : 0,
+			"taskList_completedCount": 0
 		}
 //		{
 //			"listName" : "Home Projects",
@@ -978,7 +984,8 @@ var appModelController = (function () {
 			"user_id" : "1",
 			"taskList_name" :	"All Lists",
 			"taskList_totalCount" : 0,
-			"taskList_overDueCount" : 0, 
+			"taskList_overDueCount" : 0,
+			"taskList_completedCount": 0,
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		},
@@ -988,6 +995,7 @@ var appModelController = (function () {
 			"taskList_name" :	"Default",
 			"taskList_totalCount" : 0,
 			"taskList_overDueCount" : 0, 
+			"taskList_completedCount": 0,
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		},
@@ -996,7 +1004,8 @@ var appModelController = (function () {
 			"user_id" : "1",
 			"taskList_name" :	"School",
 			"taskList_totalCount" : 0,
-			"taskList_overDueCount" : 0, 
+			"taskList_overDueCount" : 0,
+			"taskList_completedCount": 0,
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		},
@@ -1005,7 +1014,8 @@ var appModelController = (function () {
 			"user_id" : "1",
 			"taskList_name" :	"Shopping",
 			"taskList_totalCount" : 0,
-			"taskList_overDueCount" : 0, 
+			"taskList_overDueCount" : 0,
+			"taskList_completedCount": 0,
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		}, 
@@ -1015,6 +1025,7 @@ var appModelController = (function () {
 			"taskList_name" :	"Wish List",
 			"taskList_totalCount" : 0,
 			"taskList_overDueCount" : 0, 
+			"taskList_completedCount": 0,
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		},
@@ -1023,7 +1034,8 @@ var appModelController = (function () {
 			"user_id" : "1",
 			"taskList_name" :	"Work",
 			"taskList_totalCount" : 0,
-			"taskList_overDueCount" : 0, 
+			"taskList_overDueCount" : 0,
+			"taskList_completedCount": 0,
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		},
@@ -1032,7 +1044,8 @@ var appModelController = (function () {
 			"user_id" : "",
 			"taskList_name" :	"Completed",
 			"taskList_totalCount" : 0,
-			"taskList_overDueCount" : 0, 
+			"taskList_overDueCount" : 0,
+			"taskList_completedCount": 0,
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		}
@@ -1812,6 +1825,7 @@ var appModelController = (function () {
 		createNewTaskList: function (taskListInput ) {
 			var overDueCount = 0;
 			var totalListCount = 0;
+			var completedCount = 0; 
 			console.log("*************** createNewTaskList()");
 			console.log("TaskListInput", taskListInput);
 
@@ -1835,6 +1849,7 @@ var appModelController = (function () {
 				userId,
 				overDueCount,
 				totalListCount,
+				completedCount,
 				createTime,
 				taskListIsArchived
 			); 
@@ -1936,6 +1951,9 @@ var appModelController = (function () {
 				}
 
 			})
+	
+			// Create a count of "complete" task in each list and update that lists complete count 
+			
 			return taskListTable;
 		},
 		
@@ -2270,9 +2288,7 @@ var appUIController = (function () {
 			cardNode2Remove.classList.add("vanish");
 			// Not sure I need line below
 			var vanishPresent = cardNode2Remove.classList.contains("vanish");
-			
-			
-			/*$$$$$$--------------- New stuff added below */
+		
 			
 			// Get the Parent Node of card that was marked as complete (i.e., the event)
 			var parentArticleNode = cardNode2Remove.closest("article"); 
@@ -2299,7 +2315,7 @@ var appUIController = (function () {
 
 				// Now that the page is empty display the empty taskList message
 
-				appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or if you do not need the list anymore you can delete it via "Manage Lists" feature (see NavBar menu).</div>';
+				appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or delete it via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
 
 				var emptyPageMsg = document.getElementById("emptyPageMessage");
 				setTimeout(function () {
@@ -2307,8 +2323,6 @@ var appUIController = (function () {
 				}, 1);
 			}
 			
-			
-			/*$$$$$$--------------- New stuff added ABOVE */
 			
 	
 			$('#deleteTaskItemModal').modal('hide');
@@ -2466,11 +2480,16 @@ var appUIController = (function () {
 			var taskListName = appModelController.lookUpTaskListName(taskListId).toUpperCase();
 			
 			var taskListRecord = appModelController.lookupTaskListRecordByListId(taskListId);
-			var associatedTaskItemCount = taskListRecord.taskList_totalCount; 
+			var associatedTaskItemCount = taskListRecord.taskList_totalCount + taskListRecord.taskList_completedCount; 
 			
 			document.getElementById("deleteListModalListName").innerHTML = taskListName;
 			
 			document.getElementById("deleteListModalTotalTaskItemCount").innerHTML = associatedTaskItemCount;
+			
+			document.getElementById("deleteListModalActiveItemCount").innerHTML = taskListRecord.taskList_totalCount;
+
+			
+			document.getElementById("deleteListModalNonActiveItemCount").innerHTML = taskListRecord.taskList_completedCount
 			
 		},
 		/****************************************************************************
@@ -2537,10 +2556,14 @@ var appUIController = (function () {
 			// Get the location of the div that contains the completeDate span
 			var completedDateHeaderLoc = utilMethods.findAncestor(event, "card").firstChild.firstChild;
 			
-			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);				// Make the card that was marked as complete "vanish" (via animation) 
+			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);					
+			// Make the card that was marked as complete "vanish" (via animation) 
 			var cardNode = utilMethods.findAncestor(event, "card");
 			toggleClass(cardNode, "vanish");
-
+			
+			// Get the taskList record so I can increment/decrement taskList_completedCount as needed
+			var taskListId = taskItemRecord.taskList_id;
+			var taskListRecord = appModelController.lookupTaskListRecordByListId(taskListId);
 			
 			
 			/* If user is marking item as completed then get system time stamp and assign that value to the taskItem_completedDate value 
@@ -2549,7 +2572,10 @@ var appUIController = (function () {
 				
 				completeDate = new Date().toLocaleString('en-US', options);
 				
+				// Update the completed total count for the current list
+				
 				taskItemRecord.taskItem_completedDate = completeDate;
+				taskListRecord.taskList_completedCount++;
 				
 				completedDateLoc.innerHTML = "<i class='far fa-calendar-check'></i>" + completeDate;
 				toggleClass(completedDateHeaderLoc, "hideIt");
@@ -2588,7 +2614,7 @@ var appUIController = (function () {
 					
 					// Now that the page is empty display the empty taskList message
 					
-					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><i class="fa fa-bullseye"></i>&nbsp;Or if you do not need the list anymore you can delete it via "Manage Lists" feature (see NavBar menu).</div>';
+					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><i class="fa fa-bullseye"></i>&nbsp;Or delete it via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
 					
 					var emptyPageMsg = document.getElementById("emptyPageMessage");
 					setTimeout(function () {
@@ -2601,6 +2627,7 @@ var appUIController = (function () {
 			} else {  // User is "re-activating" the task item
 
 				completedDateLoc.innerHTML= "";
+				taskListRecord.taskList_completedCount--;
 				taskItemRecord.taskItem_completedDate = "";
 				toggleClass(completedDateHeaderLoc, "hideIt"); 
 				mainPageSuccessMsg.innerHTML = "Task 'Re-activated'";

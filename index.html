@@ -575,7 +575,7 @@
 		
 		<!--	Delete List Modal for Manage Task Lists Page	-->
 		<div class="modal" id="manageListsDeleteListModal">
-			<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-dialog modal-lg" role="document">
 				<!-- Modal content-->
 				<div class="modal-content">
 					<div class="modal-header">
@@ -584,9 +584,9 @@
 					<div class="modal-body">
 						<form class="modalForm deleteTaskListModalForm"  id="deleteTaskListModalForm" data-listid="">
 							<div>
-								<p >Task List: "<span id="deleteListModalListName"></span>" has <span id="deleteListModalTotalTaskItemCount"></span> associated Task(s).</p>
+								<p >Task List: "<span id="deleteListModalListName"></span>" has <span id="deleteListModalTotalTaskItemCount"></span> associated Task. ( <span id="deleteListModalActiveItemCount"></span> Active and <span id= "deleteListModalNonActiveItemCount"></span> Non-active (Completed) ))</p>
 								<p class="errorMsg"><i class="fa fa-exclamation-circle"></i>&nbsp;Deleting a List will also delete <span>ANY</span> associated Tasks!</p>
-								<p>Not what you want? Click cancel and move any associated task item(s) you want to preserve to another list before deleting the List.</p>
+								<p>Not what you want? <br /><br />Click cancel and move any associated task item(s) you want to preserve to another list (e.g., DEFAULT) before deleting the List.</p>
 								<p>Otherwise, Delete away!&nbsp;<span class="iconGreen"><i class="fa fa-smile-o filled"></i></span></p>
 							</div>
 							<div class="modal-footer button-group">
