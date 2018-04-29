@@ -1307,9 +1307,6 @@ span.newList.fa-stack {
 		letter-spacing: .2rem;
 	}
 
-
-	
-
 	#manageTaskListsPage p.taskListTotalsLine {
 		font-size: .85rem;
 		letter-spacing: .15rem;
@@ -1342,7 +1339,7 @@ span.newList.fa-stack {
 	}
 
 	#manageTaskListsPage .card:last-of-type {
-		margin-bottom: 6rem;
+		margin-bottom: 7rem;
 	}
 	
 	#emptyPageMessage {
