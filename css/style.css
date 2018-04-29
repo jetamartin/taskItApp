@@ -1053,7 +1053,7 @@ input[name=taskCompleteStatus] {
 		-webkit-transform: translateX(-50%);
 		transform: translateX(-50%);
 		font-weight: bold;
-		font-size: 1.5rem;
+/*		font-size: 1.5rem;*/
 	}
 	
 	nav .screenTitle {

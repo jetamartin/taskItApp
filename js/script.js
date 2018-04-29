@@ -2612,14 +2612,19 @@ var appUIController = (function () {
 					var dueDateNode = parentArticleNode.firstChild;
 					parentArticleNode.removeChild(dueDateNode);
 					
-					// Now that the page is empty display the empty taskList message
+					// If there are no active taskItems on the page then display the empty taskList message
 					
-					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><i class="fa fa-bullseye"></i>&nbsp;Or delete it via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
+					if (taskListRecord.taskList_totalCount === 0 ) {
 					
-					var emptyPageMsg = document.getElementById("emptyPageMessage");
-					setTimeout(function () {
-						emptyPageMsg.classList.add("fadeIn");
-					}, 1);
+						// Now that the page is empty display the empty taskList message
+
+						appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><i class="fa fa-bullseye"></i>&nbsp;Or delete it via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
+
+						var emptyPageMsg = document.getElementById("emptyPageMessage");
+						setTimeout(function () {
+							emptyPageMsg.classList.add("fadeIn");
+						}, 1);
+					}
 				}
 				
 				
@@ -3618,7 +3623,7 @@ var appUIController = (function () {
 			appModelController.sortListByName(userDefinedTaskLists); 
 			
 			// Template to build TaskList Cards for manageTaskLists page
-			var genericTaskListsCardHtml = '<div class="card card-taskList" data-listid="%taskListId%"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a onclick="appUIController.setUpEditTaskListModal(this)" data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a onclick="appUIController.setUpDeleteTaskListModal(this)"data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p></div></div>';
+			var genericTaskListsCardHtml = '<div class="card card-taskList" data-listid="%taskListId%"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a onclick="appUIController.setUpEditTaskListModal(this)" data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a onclick="appUIController.setUpDeleteTaskListModal(this)"data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p><p class="text-muted taskListTotalsLine">Completed:  <span id="nonActiveTaskItemCount">%nonActiveTaskCount%</span></p></div></div>';
 			
 			var specificTaskListsCardHtml;
 			
@@ -3640,6 +3645,8 @@ var appUIController = (function () {
 				specificTaskListsCardHtml = specificTaskListsCardHtml.replace('%taskTotalCount%', userDefinedTaskLists[i].taskList_totalCount);
 				
 				specificTaskListsCardHtml = specificTaskListsCardHtml.replace('%taskOverDueCount%', userDefinedTaskLists[i].taskList_overDueCount);
+				
+				specificTaskListsCardHtml = specificTaskListsCardHtml.replace('%nonActiveTaskCount%', userDefinedTaskLists[i].taskList_completedCount);
 				
 				//* Convert completed HTML string into DOM node so it can be inserted
 				newNode = document.createRange().createContextualFragment(specificTaskListsCardHtml);
