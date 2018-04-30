@@ -1103,6 +1103,10 @@ input[name=taskCompleteStatus] {
 /*		margin-right: 1px;*/
 	}
 
+	.deleteNotificationIcon {
+		margin-left: .5rem;
+	}
+
 /*
 	.notificationUnits {
 		color: aquamarine;
