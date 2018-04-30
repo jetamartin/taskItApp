@@ -26,6 +26,10 @@
 		color: #34AFA9;
 	}
 
+	.selectable {
+		cursor: pointer;
+	}
+
 	.fa-calendar-check:before {
 		content: "\f274";
 		font-family: "FontAwesome";
@@ -996,7 +1000,7 @@ input[name=taskCompleteStatus] {
 	
 	.button-group {
 		text-align: center;
-		margin-top: 6rem;
+		margin-top: 1rem;
 	}
 	
 	button {
@@ -1094,8 +1098,27 @@ input[name=taskCompleteStatus] {
 		to {opacity: 0;}
 	}
 
+	.notification {
+		display: inline-block;
+	}
+
+/*
+	.notificationUnits {
+		color: aquamarine;
+		border: solid 1px grey;
+	}
+*/
+
+
+
+	input[type=number]::-webkit-inner-spin-button, 
+	input[type=number]::-webkit-outer-spin-button {  
+   		opacity: 1;
+	}
+
 	input[type="text"],
 	input[type="date"],
+	input[type="number"],
 	select {
 		color: #76d6d1 !important;
 		font-style: italic; 
@@ -1132,12 +1155,15 @@ input[name=taskCompleteStatus] {
 	}
 
 
+
 	input:not([type=range]), label, select, summary, textarea {
 		-ms-touch-action: manipulation;
 		touch-action: manipulation;
 		border: none;
 	}
-
+	input[type=number] {
+		border: 1px solid #ced4da;
+	}
 
 	/* form calendar icon styling */
 .errorMsg {
@@ -1173,7 +1199,7 @@ input[name=taskCompleteStatus] {
 }
 
 
-.fa-remove:before, .fa-close:before, .fa-times:before {
+.dueDateDelete.fa-remove:before, .dueDateDelete.fa-close:before, .dueDateDelete.fa-times:before {
     content: "\f00d";
     font-size: 1.25rem;
 /*    padding: .4rem;*/
@@ -1188,12 +1214,43 @@ input[name=taskCompleteStatus] {
 /*    border: 1px solid #ced4da;*/
 	border-left: 1px solid #ccd4da;
 	border-right: 1px solid #ccd4da;
+	border-top: none;
+	border-bottom: none;
+	border-radius: 0;
+	
+}
+.notification .fa-remove:before, .fa-close:before, .fa-times:before {
+    content: "\f00d";
+    font-size: 1.25rem;
+	padding-top: .39rem;
+    padding-right: .85rem;
+    padding-left: .7rem;
+    padding-bottom: .55rem;
+    color: #34AFA9;
+/*	margin-left: -1.5rem;*/
+    background-color: #f2f2f2;
+	border: 1px solid #ccd4da;
+	border-radius: .25rem;
 	
 }
 
-.addDueDateBtn, .clearDueDateBtn {
-	float: right;
-}
+	#addNotification {
+		display: inline-block;
+		border: 1px solid #ced4da;
+		border-radius: .25rem;
+		padding: .4rem;
+	}
+
+	 .addNotification.fa-plus {
+		content: "\f067";
+		font-size: 1rem;
+	}
+
+
+	.addDueDateBtn, .clearDueDateBtn {
+		float: right;
+	}
+
 
 	/* Make form controls appear in a row rather than as a column */
 	

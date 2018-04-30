@@ -210,7 +210,7 @@
 							<div class="input-append date form_datetime form-control" id="datetimepicker" data-date-format="2012-12-21T15:25:00Z">
 								<input id="newTaskDateTime" type="text" value="" readonly placeholder="Click to set date/time">	
 								<span class="add-on  clearDueDateBtn">
-									<i class="fa fa-times" aria-hidden="true"></i>
+									<i class="dueDateDelete fa fa-times" aria-hidden="true"></i>
 								</span>
 								<span class="add-on addDueDateBtn">
 									<i class="fa fa-calendar" aria-hidden="true"></i>
@@ -261,13 +261,47 @@
 								
 						</span>
 						</a>
-						
+					</div>
+					<div class="errorMsg" id="newTaskListSelectErrorMsg"></div>
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
 						<div class="" id="newTaskListCreateMsg"></div>
 						
-						<div class="errorMsg" id="newTaskListSelectErrorMsg"></div>
+						<!--	Select ListName			-->
 
+					<div class="form-group" >
+						<label for="">Notification:</label><br />
+						<div class="row col-5 notification">
+							<select class="form-control" name="notification"id="">
+							<option value="notificiation">Notification</option>
+									<option value="email">Email</option>
+							</select>
+						</div>
+						
+						<div class= "row col-3 notification">
+							<input class="form-control notificationUnits" type="number" name="units" min="1" max="999" value="10">	
+						</div>
+						
+						<div class="row col-4 notification">
+							<select class="form-control" name="unitType"id="">
+								<option value="minutes">Minutes</option>
+								<option value="hours">Hours</option>
+								<option value="days">Days</option>
+								<option value="weeks">Weeks</option>
+							</select>
+						</div>
+						<div class="row col-2 notification">
+							<i class="fa fa-times" aria-hidden="true"></i>
+						</div>
 					</div>
+					<div class="iconGreen selectable" id="addNotification">
+						<i class="addNotification fa fa-plus"></i>
+						<span>Notification</span>
+						
+					</div>
+						
+
+
+
 					<div class="button-group">
 
 						<button type="submit" class="btn btn-default takeActionBtn" id="addTaskSaveButton">Save</button>
@@ -301,7 +335,6 @@
 
 								<form class="modalForm addNewTaskListModal" id="newTaskListModalForm">
 									<div class="form-group">
-										<!--										<label for="recipient-name" class="form-control-label">Recipient:</label>-->
 										<input type="text" class="form-control modalListInput" id="newTaskFormListName" placeholder="Enter new list name" required autofocus>
 									</div>
 									<!-- Location of field Error Msg added via JS -->
