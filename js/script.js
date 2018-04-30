@@ -4753,6 +4753,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				formValidationObj[0].fieldsToValidate[0].fieldName.classList.add("filled");
 				
+				// First we need to unhide the success message so it will appear
+				toggleClass(formValidationObj[0].formSubmitSuccessMsgLoc, "hideIt");
+				
 				
 				// Style the success message
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
@@ -4865,12 +4868,16 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				// Close the form by virtually clicking on cancel button
 				appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
+				
 
 				// Must remove the success-message class otherwise it will not appear on future saves 
 				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
 				// ????
 				formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");
+				
+				// Rehide the success message so it doesn't obstruct input on the newTask or editTask forms
+				toggleClass(formValidationObj[0].formSubmitSuccessMsgLoc, "hideIt");
 				
 				
 				// Remove the 'filled' styling on exit from form.
