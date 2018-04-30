@@ -1100,6 +1100,7 @@ input[name=taskCompleteStatus] {
 
 	.notification {
 		display: inline-block;
+/*		margin-right: 1px;*/
 	}
 
 /*
@@ -1239,6 +1240,7 @@ input[name=taskCompleteStatus] {
 		border: 1px solid #ced4da;
 		border-radius: .25rem;
 		padding: .4rem;
+		margin-bottom: 1rem;
 	}
 
 	 .addNotification.fa-plus {

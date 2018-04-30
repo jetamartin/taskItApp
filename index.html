@@ -266,13 +266,14 @@
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
 						<div class="hideIt" id="newTaskListCreateMsg"></div>
 						
-						<!--	Select ListName			-->
+					<!--	Add New Notification			-->
 
+<!--
 					<div class="form-group" >
 						<label for="">Notification:</label><br />
-						<div class="row col-5 notification">
+						<div class="row col-4 notification">
 							<select class="form-control" name="notification"id="">
-							<option value="notificiation">Notification</option>
+							<option value="notification">Notification</option>
 									<option value="email">Email</option>
 							</select>
 						</div>
@@ -281,8 +282,8 @@
 							<input class="form-control notificationUnits" type="number" name="units" min="1" max="999" value="10">	
 						</div>
 						
-						<div class="row col-4 notification">
-							<select class="form-control" name="unitType"id="">
+						<div class="row col-3 notification">
+							<select class="form-control" name="unitType" id="">
 								<option value="minutes">Minutes</option>
 								<option value="hours">Hours</option>
 								<option value="days">Days</option>
@@ -293,14 +294,15 @@
 							<i class="fa fa-times" aria-hidden="true"></i>
 						</div>
 					</div>
-					<div class="iconGreen selectable" id="addNotification">
-						<i class="addNotification fa fa-plus"></i>
-						<span>Notification</span>
-						
+-->
+					
+					<!--	Click to add more notifications				-->
+					<div id="notificationArea">
+						<div class="iconGreen selectable" id="addNotification">
+							<i class="addNotification fa fa-plus"></i>
+							<span>Notification</span>				
+						</div>
 					</div>
-						
-
-
 
 					<div class="button-group">
 

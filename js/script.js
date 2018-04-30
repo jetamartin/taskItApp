@@ -2010,6 +2010,9 @@ var appUIController = (function () {
 	var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
 	var inputNewTaskListSelection = document.querySelector("#newTaskListNameSelect");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
+	var addNotification = document.querySelector("#addNotification");
+	var notificationArea = document.querySelector("#notificationArea");
+//	var deleteNotification = document.querySelector(".deleteNotificationIcon")
 	
 	
 	/* Edit Task Form Elements*/
@@ -2192,7 +2195,30 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
+		deleteNotification: function (event) {
+			console.log("deleteNotification");
+			var parentNode = 
+				event.parentElement;
+			parentNode.remove();
+			
+		},
 		
+		
+		addNewNotification: function (event) {
+			console.log("addNewNotification()");
+			var insertNodeLocation = appUIController.getUIVars().notificationArea;
+			
+			var newNotificationHTML = '<div class="form-group"><div class="row col-4 notification"><select class="form-control" name="notification" id=""><option value="notification">Notification</option><option value="email">Email</option></select></div><div class="row col-3 notification"><input class="form-control notificationUnits" type="number" name="units" min="1" max="999" value="10"></div><div class="row col-3 notification"><select class="form-control" name="unitType" id=""><option value="minutes">Minutes</option><option value="hours">Hours</option><option value="days">Days</option><option value="weeks">Weeks</option></select></div><div class="row col-2 notification deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-times" aria-hidden="true"></i></div></div>' 
+			//* Convert completed HTML string into DOM node so it can be inserted
+			newNode = document.createRange().createContextualFragment(newNotificationHTML);
+
+			insertNodeLocation.append(newNode);
+			
+//			var deleteNotification = document.querySelector(".deleteNotificationIcon");
+//			
+//			deleteNotification.addEventListener("click", function(event) {appUIController.deleteNotification(event)});
+			
+		},
 		
 		
 		deleteTaskList: function (event) {
@@ -3055,6 +3081,9 @@ var appUIController = (function () {
 				newTaskFormErrorMsg: newTaskFormErrorMsg, 
 				newTaskSaveMessage: newTaskSaveMessage,
 				navListModalListNameErrorMsg: navListModalListNameErrorMsg,
+				addNotification: addNotification,
+				notificationArea: notificationArea,
+//				deleteNotification: deleteNotification, 
 				
 				editTaskSaveMessage: editTaskSaveMessage,
 				formNavTaskListModal: formNavTaskListModal,
@@ -4158,6 +4187,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
 		
+		appUIController.getUIVars().addNotification.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
+		
+//		appUIController.getUIVars().deleteNotification.addEventListener("click", function(event) {appUIController.deleteNotification(event)});
 		
 		//*******************************************************
 		// "Input" events on all fields on newTask Form
