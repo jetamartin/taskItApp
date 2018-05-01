@@ -870,6 +870,7 @@ var appModelController = (function () {
 	var userTable1 = [];		
 	var taskListTable1 = [];
 	var taskItemsTable1 = [];
+	var taskItemNotificationsTable = []; 
 	
 	var TaskList = function(listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived) {
 		this.taskList_id = listId; 
@@ -890,6 +891,15 @@ var appModelController = (function () {
 		this.taskItem_repeat = repeat;
 		this.taskItem_completedDate = completedDate;
 		this.taskItem_createTime = createTime;
+	}
+	
+	var TaskItemNotification = function(id, taskItemId, notificationType, notificationUnits, notificationUnitType, notificationCreateTime ) {
+		this.notification_id = id;
+		this.taskItem_id = taskItemId;
+		this.notification_type = notificationType;
+		this.notification_units = notificationUnits;
+		this.notification_unitType = notificationUnitType;
+		this.notification_createTime = notificationCreateTime;
 	}
 	/******************************************************************************************************************************
 		getUniqueId():  Used to generate unique ID's for various objects (e.g., taskItems)
@@ -1064,7 +1074,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1081,7 +1091,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1098,7 +1108,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "weekly", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1115,7 +1125,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1133,7 +1143,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1150,7 +1160,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1167,7 +1177,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "daily", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1184,7 +1194,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "monthly", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1201,7 +1211,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1218,7 +1228,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1235,7 +1245,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1252,7 +1262,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1269,7 +1279,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1286,7 +1296,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "", 
 			"taskItem_isArchived": "",
-			"taskItem_notification": "",
+			"taskItem_notifications": "",
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1681,6 +1691,10 @@ var appModelController = (function () {
 			return taskItemsTable;
 		},
 		
+		getTaskItemNotificationsTable: function () {
+			return taskItemNotificationsTable; 
+		},
+		
 		getTaskListTable: function() {
 			return taskListTable;
 		},
@@ -1811,6 +1825,28 @@ var appModelController = (function () {
 //			return newTaskItem; 
 		
 		},
+		
+		createNewNotificationObject: function( newTaskNotification, taskItemId ) {
+			console.log("createNewNotificationObject");
+			// Generate a uniqued Id for the notification
+			var notificationId = getUniqueId();
+				
+			
+			// Generate createTime
+			var createTime = getTimeStamp();
+					
+			
+
+			return newTaskNotification = new TaskItemNotification (
+				notificationId, 
+				taskItemId, 
+				newTaskNotification.notificationType,
+				newTaskNotification.notificationUnits,
+				newTaskNotification.notificationUnitType,
+				createTime
+			) 
+		}, 
+		
 		/****************************************************************************************
 			MODULE: Model Controller
 			
@@ -2208,7 +2244,7 @@ var appUIController = (function () {
 			console.log("addNewNotification()");
 			var insertNodeLocation = appUIController.getUIVars().notificationArea;
 			
-			var newNotificationHTML = '<div class="form-group"><div class="row col-4 notification"><select class="form-control" name="notification" id=""><option value="notification">Notification</option><option value="email">Email</option></select></div><div class="row col-3 notification"><input class="form-control notificationUnits" type="number" name="units" min="1" max="999" value="10"></div><div class="row col-3 notification"><select class="form-control" name="unitType" id=""><option value="minutes">Minutes</option><option value="hours">Hours</option><option value="days">Days</option><option value="weeks">Weeks</option></select></div><div class="row col-2 notification deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-times" aria-hidden="true"></i></div></div>' 
+			var newNotificationHTML = '<div class="form-group notification"><div class="row col-4 notificationComponent"><select class="form-control notificationType" name="notificationType" id=""><option value="notification">Notification</option><option value="email">Email</option></select></div><div class="row col-3 notificationComponent"><input class="form-control notificationUnits" type="number" name="notificationUnits" min="1" max="999" value="10"></div><div class="row col-3 notificationComponent"><select class="form-control" name="notificationUnitType" id=""><option value="minutes">Minutes</option><option value="hours">Hours</option><option value="days">Days</option><option value="weeks">Weeks</option></select></div><div class="row col-2 notificationComponent deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-trash-o"></i></div></div>' 
 			//* Convert completed HTML string into DOM node so it can be inserted
 			newNode = document.createRange().createContextualFragment(newNotificationHTML);
 
@@ -3449,11 +3485,42 @@ var appUIController = (function () {
 		***********************************************************************************/
 		getNewTaskFormUserInput: function () {
 			// Event should indicate which form we are dealing with.
+			var notificationChildNodes; 
+			var notificationType, notificationUnits, notificationUnitType;
+			var notifications = [];	
+			var Notification = function (notificationType, notificationUnits, notificationUnitType) {
+				this.notificationType = notificationType;
+				this.notificationUnits = notificationUnits;
+				this.notificationUnitType = notificationUnitType;
+			}
+			
+			var notificationNodes = document.getElementsByClassName('notification');
+			
+			if (notificationNodes.length >= 0) {
+				Array.prototype.forEach.call(notificationNodes, function(notificationNode, index ) {
+					
+					notificationChildNodes = notificationNode.childNodes;				
+					var notificationTypeNode = notificationChildNodes[0].firstElementChild;
+					var notificationUnitsNode = notificationChildNodes[1].firstElementChild;
+					var notificationUnitTypeNode = notificationChildNodes[2].firstElementChild;
+					
+					notificationType = notificationTypeNode.options[notificationTypeNode.selectedIndex].value;
+					notificationUnits = notificationUnitsNode.value;
+					notificationUnitType = notificationUnitTypeNode.options[notificationUnitTypeNode.selectedIndex].value;
+					
+					var notification = new Notification (notificationType, notificationUnits, notificationUnitType);
+					
+					notifications[index] = notification; 
+				})
+							
+			} 
+			
 			return {
 				newTaskTitle: inputNewTaskTitle.value.trim(),
 				newTaskDueDate: inputNewTaskDateTime.value,
 				newTaskRepeateOptionTxt: inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text,
-				newTaskListOptionTxt: inputNewTaskListSelection.options[inputNewTaskListSelection.selectedIndex].text
+				newTaskListOptionTxt: inputNewTaskListSelection.options[inputNewTaskListSelection.selectedIndex].text,
+				newTaskNotifications: notifications
 			}
 		},
 	
@@ -4613,6 +4680,17 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 			// Add New task object to New TaskItem table
 			appModelController.getTaskItemsTable().push(newTaskItemObject);
+			
+			if ( newTaskItemInput.newTaskNotifications.length > 0 ) {
+				newTaskItemInput.newTaskNotifications.forEach(function (newTaskNotification) {
+					
+					newNotificationObject = appModelController.createNewNotificationObject(newTaskNotification, newTaskItemObject.taskItem_id);
+					
+					appModelController.getTaskItemNotificationsTable().push(newNotificationObject);
+					
+				})
+				
+			}
 			
 			
 			// Save task object to local/Storage/DB			

@@ -1098,7 +1098,7 @@ input[name=taskCompleteStatus] {
 		to {opacity: 0;}
 	}
 
-	.notification {
+	.notificationComponent {
 		display: inline-block;
 /*		margin-right: 1px;*/
 	}
@@ -1224,8 +1224,7 @@ input[name=taskCompleteStatus] {
 	border-radius: 0;
 	
 }
-.notification .fa-remove:before, .fa-close:before, .fa-times:before {
-    content: "\f00d";
+.notificationComponent .fa-trash-o:before, .fa-close:before, .fa-times:before {
     font-size: 1.25rem;
 	padding-top: .39rem;
     padding-right: .85rem;
