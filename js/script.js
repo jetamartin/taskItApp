@@ -1601,6 +1601,13 @@ var appModelController = (function () {
 			}), 1);	
 		}, 
 		
+		deleteTaskItemNotificationRecord: function (taskItemNotificationId) {
+			var taskItemNotifications = appModelController.getTaskItemNotificationsTable(); 
+			taskItemNotifications.splice(taskItemNotifications.findIndex(function ( notification ) {
+				return notification.notification_id === taskItemNotificationId;
+			}), 1);
+		}, 
+		
 		deleteTaskList: function (taskListId) {
 			var taskLists = appModelController.getTaskListTable();
 			taskLists.splice( taskLists.findIndex ( function ( list ) {
@@ -2240,8 +2247,77 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
+		
+		
+		buildAndDisplayTaskItemNotifications: function (taskItemNotifications) {
+			var genericTaskItemNotificationHTML, specificTaskItemNotificationHTML;
+			var newNode; 
+			var insertNodeLocation = appUIController.getUIVars().addEditFormNotifications.parentNode;
+
+			taskItemNotifications.forEach (function (taskItemNotification) {
+				
+				var genericTaskItemNotificationHTML = '<div class="form-group notification" data-id="%notificationId%"><div class="row col-4 notificationComponent"><select class="form-control notificationType" name="notificationType" id=""><option value="notification" %notificationOption%>Notification</option><option value="email" %emailOption%>Email</option></select></div><div class="row col-3 notificationComponent"><input class="form-control notificationUnits" type="number" name="notificationUnits" min="1" max="999" value="%notificationUnits%"></div><div class="row col-3 notificationComponent"><select class="form-control" name="notificationUnitType" id=""><option value="minutes" %minutesOption%>Minutes</option><option value="hours" %hoursOption%>Hours</option><option value="days" %daysOption%>Days</option><option value="weeks" %weeksOption%>Weeks</option></select></div><div class="row col-2 notificationComponent deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-trash-o"></i></div></div>';
+				
+				specificTaskItemNotificationHTML = genericTaskItemNotificationHTML.replace("%notificationId%", taskItemNotification.notification_id);
+
+				
+				switch(taskItemNotification.notification_type) {
+					case "notification":
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%notificationOption%", "selected");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%emailOption%", "");
+						break;
+					case "email":
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%notificationOption%", "");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%emailOption%", "selected");
+						break;
+					default:
+						console.log("Error: No matching notification type");
+				}
+
+				specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%notificationUnits%", taskItemNotification.notification_units);
+
+				
+				switch(taskItemNotification.notification_unitType) {
+					case "minutes":
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%minutesOption%", "selected");	
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%hoursOption%", "");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%daysOption%", "");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%weeksOption%", "");
+						break;
+					case "hours":
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%minutesOption%", "");	
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%hoursOption%", "selected");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%daysOption%", "");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%weeksOption%", "");	
+						break;
+					case "days":
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%minutesOption%", "");	
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%hoursOption%", "");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%daysOption%", "selected");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%weeksOption%", "");
+						break;
+					case "weeks":
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%minutesOption%", "");	
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%hoursOption%", "");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%daysOption%", "");
+						specificTaskItemNotificationHTML = specificTaskItemNotificationHTML.replace("%weeksOption%", "selected");
+						break;
+					default:
+						console.log("Error: No matching notification Unit Type");		
+				}
+				newNode = document.createRange().createContextualFragment(specificTaskItemNotificationHTML);
+				insertNodeLocation.append(newNode);
+			})
+			
+		}, 
+		
 		deleteNotification: function (event) {
 			console.log("deleteNotification");
+			
+			// If the parentNode has an ID for the taskNotification we need to delete the notification from the table also
+			if (event.parentNode.dataset.id !== "") {
+				appModelController.deleteTaskItemNotificationRecord(event.parentNode.dataset.id);
+			}
 			var parentNode = 
 				event.parentElement;
 			parentNode.remove();
@@ -2848,9 +2924,10 @@ var appUIController = (function () {
 			inputEditFormListSelect.value = appModelController.lookUpTaskListName(selectedTaskItemRecord.taskList_id); 
 			
 			// Get the notifications associated with this taskItem
-			var taskItemNotifications = appModelController.getMatchingTaskNotifications(taskItemId);
+			var currentTaskItemNotifications = appModelController.getMatchingTaskNotifications(taskItemId);
 			
 			// Build And Display Existing Task Notifications 
+			appUIController.buildAndDisplayTaskItemNotifications(currentTaskItemNotifications);
 			
 
 			// Hide the mainPage and show the editTaksPage
