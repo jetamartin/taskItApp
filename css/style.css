@@ -1238,9 +1238,11 @@ input[name=taskCompleteStatus] {
 	
 }
 
-	#addNotification {
+	#addNewFormNotification,
+	#addEditFormNotifications
+	{
 		display: inline-block;
-		border: 1px solid #ced4da;
+		border: 1px solid #34AFA9;
 		border-radius: .25rem;
 		padding: .4rem;
 		margin-bottom: 1rem;

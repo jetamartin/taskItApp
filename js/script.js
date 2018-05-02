@@ -1577,6 +1577,14 @@ var appModelController = (function () {
 	
 	return {
 		
+		getMatchingTaskNotifications: function (taskItemId) {
+			var allTaskNotifications = appModelController.getTaskItemNotificationsTable();
+			var matchingTaskNotifications = allTaskNotifications.filter(function ( notification ) {
+				return notification.taskItem_id === taskItemId;
+			})
+			return matchingTaskNotifications;
+		}, 
+		
 
 		getAllTaskItemsForTaskList: function (taskListId) {
 			var allTaskItems = appModelController.getTaskItemsTable(); 
@@ -2046,7 +2054,7 @@ var appUIController = (function () {
 	var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
 	var inputNewTaskListSelection = document.querySelector("#newTaskListNameSelect");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
-	var addNotification = document.querySelector("#addNotification");
+	var addNewFormNotification = document.querySelector("#addNewFormNotification");
 	var notificationArea = document.querySelector("#notificationArea");
 //	var deleteNotification = document.querySelector(".deleteNotificationIcon")
 	
@@ -2064,6 +2072,7 @@ var appUIController = (function () {
 	var editFormCancelButton = document.getElementById("editFormCancelButton");
 	var editFormUpdateTaskNavButton = document.getElementById("updateTaskNavBtn");
 	var editTaskSaveMessage = document.getElementById("editTaskSaveMsg");
+	var addEditFormNotifications = document.getElementById("addEditFormNotifications");
 
 	/* Manage Task Lists Page elements */
 	var manageTaskListsMsg = document.getElementById("manageTaskListsMsg")
@@ -2242,7 +2251,14 @@ var appUIController = (function () {
 		
 		addNewNotification: function (event) {
 			console.log("addNewNotification()");
-			var insertNodeLocation = appUIController.getUIVars().notificationArea;
+			
+			// Need to get the div's node that wraps the icon & span 
+			var divNode = event.target.closest('div');
+			
+			// Now need to get parent node for the notificationArea
+			var insertNodeLocation = divNode.parentNode;
+			
+//			var insertNodeLocation = appUIController.getUIVars().notificationArea;
 			
 			var newNotificationHTML = '<div class="form-group notification"><div class="row col-4 notificationComponent"><select class="form-control notificationType" name="notificationType" id=""><option value="notification">Notification</option><option value="email">Email</option></select></div><div class="row col-3 notificationComponent"><input class="form-control notificationUnits" type="number" name="notificationUnits" min="1" max="999" value="10"></div><div class="row col-3 notificationComponent"><select class="form-control" name="notificationUnitType" id=""><option value="minutes">Minutes</option><option value="hours">Hours</option><option value="days">Days</option><option value="weeks">Weeks</option></select></div><div class="row col-2 notificationComponent deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-trash-o"></i></div></div>' 
 			//* Convert completed HTML string into DOM node so it can be inserted
@@ -2830,6 +2846,12 @@ var appUIController = (function () {
 			
 			// Set the list select value
 			inputEditFormListSelect.value = appModelController.lookUpTaskListName(selectedTaskItemRecord.taskList_id); 
+			
+			// Get the notifications associated with this taskItem
+			var taskItemNotifications = appModelController.getMatchingTaskNotifications(taskItemId);
+			
+			// Build And Display Existing Task Notifications 
+			
 
 			// Hide the mainPage and show the editTaksPage
 			toggleClass(homePage, "hideIt");
@@ -3117,10 +3139,11 @@ var appUIController = (function () {
 				newTaskFormErrorMsg: newTaskFormErrorMsg, 
 				newTaskSaveMessage: newTaskSaveMessage,
 				navListModalListNameErrorMsg: navListModalListNameErrorMsg,
-				addNotification: addNotification,
+				addNewFormNotification: addNewFormNotification,
 				notificationArea: notificationArea,
 //				deleteNotification: deleteNotification, 
 				
+				// Edit Task Form Elements
 				editTaskSaveMessage: editTaskSaveMessage,
 				formNavTaskListModal: formNavTaskListModal,
 				navTaskListModalMessage: navTaskListModalMessage,
@@ -3130,6 +3153,7 @@ var appUIController = (function () {
 				completedListElem: completedListElem, 
 				defaultListElem: defaultListElem,
 				newListCancelBtn: newListCancelBtn,
+				addEditFormNotifications: addEditFormNotifications,
 				
 				// Manage Task List Form Vars
 				manageTaskListsMsg: manageTaskListsMsg,
@@ -4266,7 +4290,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
 		
-		appUIController.getUIVars().addNotification.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
+		appUIController.getUIVars().addNewFormNotification.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
 		
 //		appUIController.getUIVars().deleteNotification.addEventListener("click", function(event) {appUIController.deleteNotification(event)});
 		
@@ -4303,6 +4327,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputEditFormListSelect.addEventListener('input',
         function(event) { appUIController.styleUserFormInput(event)
 		});
+		
+		appUIController.getUIVars().addEditFormNotifications.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
 
 		
 		// Submit button for editTaskPage
