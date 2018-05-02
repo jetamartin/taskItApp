@@ -3567,6 +3567,8 @@ var appUIController = (function () {
 			appUIController.getUIVars().inputNewTaskTitle.value = "";
 			appUIController.getUIVars().inputNewTaskTitle.focus();
 			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0,0)
+			
+			// Remove any notification nodes that may be present
 
 			
 
@@ -3591,6 +3593,8 @@ var appUIController = (function () {
 
 		
 		resetTaskForm1: function ( formValidationObj ) {
+			var notificationNodes;
+			var numberOfNotificationNodes;
 			// Reset formError 
 			formValidationObj.formError = false;
 
@@ -3607,6 +3611,14 @@ var appUIController = (function () {
 				field.fieldName.classList.remove("formErrors");
 			});	
 			
+			// Remove any residiual notification nodes that might 
+			notificationNodes = document.getElementsByClassName('notification');
+			
+			if (notificationNodes.length > 0) {	
+				while (notificationNodes.length > 0) {
+					notificationNodes[notificationNodes.length-1].remove()	
+				}
+			}
 		},
 
 		
