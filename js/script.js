@@ -1757,6 +1757,15 @@ var appModelController = (function () {
 			return listNamesArray;	
 		},
 		
+		lookupTaskItemNotification: function (notificationId) {
+			var matchingNotificationRecord = null;
+			var taskNotifications = appModelController.getTaskItemNotificationsTable();
+		 matchingNotificationRecord = taskNotifications.filter(function ( notification ) {
+				return notification.notification_id === notificationId;
+			});
+			return matchingNotificationRecord[0];
+		}, 
+		
 		lookUpTaskListId: function(listName) {
 		var matchingListRecord = appModelController.getTaskListTable().filter(function (listItem) {
 			return listItem.taskList_name === listName;
@@ -1771,6 +1780,7 @@ var appModelController = (function () {
 			});
 			return matchingListRecord[0]
 		},
+		
 		/****************************************************************************************
 			MODULE: Model Controller
 			METHOD: lookUpTaskItemRecord
@@ -3589,7 +3599,8 @@ var appUIController = (function () {
 			var notificationChildNodes; 
 			var notificationType, notificationUnits, notificationUnitType;
 			var notifications = [];	
-			var Notification = function (notificationType, notificationUnits, notificationUnitType) {
+			var Notification = function (notificationId, notificationType, notificationUnits, notificationUnitType) {
+				this.notification_id = notificationId; 
 				this.notificationType = notificationType;
 				this.notificationUnits = notificationUnits;
 				this.notificationUnitType = notificationUnitType;
@@ -3599,7 +3610,7 @@ var appUIController = (function () {
 			
 			if (notificationNodes.length >= 0) {
 				Array.prototype.forEach.call(notificationNodes, function(notificationNode, index ) {
-					
+					notificationId = null;
 					notificationChildNodes = notificationNode.childNodes;				
 					var notificationTypeNode = notificationChildNodes[0].firstElementChild;
 					var notificationUnitsNode = notificationChildNodes[1].firstElementChild;
@@ -3609,7 +3620,7 @@ var appUIController = (function () {
 					notificationUnits = notificationUnitsNode.value;
 					notificationUnitType = notificationUnitTypeNode.options[notificationUnitTypeNode.selectedIndex].value;
 					
-					var notification = new Notification (notificationType, notificationUnits, notificationUnitType);
+					var notification = new Notification (notificationId, notificationType, notificationUnits, notificationUnitType);
 					
 					notifications[index] = notification; 
 				})
@@ -3631,15 +3642,60 @@ var appUIController = (function () {
 			METHOD:  getTaskItemEditInput()  -- Primary method 
 		********************************************************************************/
 
-		getTaskItemEditInput: function (event) 	{	
+		getTaskItemEditInput: function (event) 	{
+			// Event should indicate which form we are dealing with.
+			var notificationChildNodes; 
+			var notificationId, notificationType, notificationUnits, notificationUnitType;
+			var notifications = [];	
+			var Notification = function (notificationId, notificationType, notificationUnits, notificationUnitType) {
+				this.notificationId = notificationId;
+				this.notificationType = notificationType;
+				this.notificationUnits = notificationUnits;
+				this.notificationUnitType = notificationUnitType;
+			}
+			
+			var notificationNodes = document.getElementsByClassName('notification');
+			
+			
+			
+			if (notificationNodes.length >= 0) {
+				Array.prototype.forEach.call(notificationNodes, function(notificationNode, index ) {
+					/* If it is a new notification we want to set the value to null so we can test for that
+						later otherwise it will contain the notificationId that was previously assigned to
+						it upon creation
+					*/
+					notificationId = null;
+					notificationChildNodes = notificationNode.childNodes;
+					var notificationTypeNode = notificationChildNodes[0].firstElementChild;
+					var notificationUnitsNode = notificationChildNodes[1].firstElementChild;
+					var notificationUnitTypeNode = notificationChildNodes[2].firstElementChild;
+					
+					// Want to set the notificationId to null if not present for future checks
+					if (notificationNode.dataset.id === undefined) {
+						notificationId = null;
+					} else {
+						notificationId = notificationNode.dataset.id;
+					}
+					
+					notificationType = notificationTypeNode.options[notificationTypeNode.selectedIndex].value;
+					notificationUnits = notificationUnitsNode.value;
+					notificationUnitType = notificationUnitTypeNode.options[notificationUnitTypeNode.selectedIndex].value;
+					
+					var notification = new Notification (notificationId, notificationType, notificationUnits, notificationUnitType);
+					
+					notifications[index] = notification; 
+				})
+							
+			} 
 			return {		
-				taskId: inputEditFormTaskItemId.value.trim(),
+				taskItemId: inputEditFormTaskItemId.value.trim(),
 				taskTitle: inputEditFormTaskItemName.value.trim(),
 				taskCompletedCheckbox: inputEditFormCompletedSetting.checked,
 				taskCompletedDate: inputEditCompletedDate.value,
 				taskDueDate: inputEditFormTaskItemDueDate.value,
 				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].value,
-				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].value
+				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].value,
+				taskNotifications: notifications
 			}			
 		},
 		
@@ -4599,6 +4655,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	***********************************************************************************/
 	var ctrlUpdateTaskItem = function(event) {
+		var taskNotificationObject, taskNotificationRecord;
 		console.log("*=======> ctrlUpdateTaskItem");
 		
 		event.preventDefault();
@@ -4621,7 +4678,32 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			taskItemInputRecord.taskCompletedDate = "";
 		}
 		
+		//=================================================
 		
+		if ( taskItemInputRecord.taskNotifications.length > 0 ) {
+			taskItemInputRecord.taskNotifications.forEach(function (taskNotification, index) {
+				
+				// Check to see if notification is newly added (i.e. notification_id = null)
+				if (taskNotification.notificationId === null ) {
+					taskNotificationObject = appModelController.createNewNotificationObject(taskNotification, taskItemInputRecord.taskItemId);		
+					appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
+				} else { // Otherwise if taskNotification already exist it will have a notificationId != null
+					// Retrieve the existing notification record that we need to change
+					taskNotificationRecord = appModelController.lookupTaskItemNotification(taskNotification.notificationId)
+					taskNotificationRecord.notification_type = taskNotification.notificationType;
+					taskNotificationRecord.notification_units = taskNotification.notificationUnits;
+					taskNotificationRecord.notification_unitType = taskNotification.notificationUnitType;
+				}				
+
+			})
+
+		}
+
+		
+		
+		
+		
+		//============================
 		// Indicates whether update was successfully save to perm storage. Value set based on return code from save operation
 		var saveToPermStorageWasSuccessful = true;
 		
