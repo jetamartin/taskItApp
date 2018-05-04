@@ -666,6 +666,16 @@ nav ul li:hover ul li span.listTotal {
   		text-overflow: ellipsis;		
 	}
 
+	.fa.fa-bell-o:before {
+		margin-top: .6rem;
+		margin-right: .4rem;
+		color: #adaaaa;
+	}
+	.notificationIconPosition {
+		margin-top: .6rem;
+	
+	}
+
 	.card-taskList-text {
 		/*	margin-bottom: -.375rem;*/
 		color: #636c72;

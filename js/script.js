@@ -847,6 +847,7 @@ return {
 		taskItemObject.taskItem_due_date = inputTaskObject.taskDueDate;
 		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat.toLowerCase();
 		taskItemObject.taskItem_completedDate = inputTaskObject.taskCompletedDate;
+		taskItemObject.taskItem_notifications =	inputTaskObject.taskNotificationsPresent;
 	},
 	
 
@@ -883,7 +884,7 @@ var appModelController = (function () {
 		this.taskList_isArchived = taskListIsArchived;
 	}
 	
-	var TaskItem = function(id, listId, title, dueDate, repeat, completedDate, createTime) {
+	var TaskItem = function(id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent) {
 		this.taskItem_id = id;
 		this.taskList_id = listId;
 		this.taskItem_title = title;
@@ -891,6 +892,7 @@ var appModelController = (function () {
 		this.taskItem_repeat = repeat;
 		this.taskItem_completedDate = completedDate;
 		this.taskItem_createTime = createTime;
+		this.taskItem_notifications = notificationsPresent; 
 	}
 	
 	var TaskItemNotification = function(id, taskItemId, notificationType, notificationUnits, notificationUnitType, notificationCreateTime ) {
@@ -1074,7 +1076,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1091,7 +1093,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1108,7 +1110,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "weekly", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1125,7 +1127,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1143,7 +1145,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1160,7 +1162,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1177,7 +1179,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "daily", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1194,7 +1196,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "monthly", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1211,7 +1213,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1228,7 +1230,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "none", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1245,7 +1247,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1262,7 +1264,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1279,7 +1281,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1296,7 +1298,7 @@ var appModelController = (function () {
 			"taskItem_isCompleted": "",
 			"taskItem_repeat": "", 
 			"taskItem_isArchived": "",
-			"taskItem_notifications": "",
+			"taskItem_notifications": false,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""	
@@ -1635,7 +1637,8 @@ var appModelController = (function () {
 				(obj1.taskId === obj2.taskId) &&
 				(obj1.taskList === obj2.taskList) &&
 				(obj1.taskRepeat === obj2.taskRepeat) &&
-				(obj1.taskTitle === obj2.taskTitle )) {
+				(obj1.taskTitle === obj2.taskTitle ) &&
+				(obj1.taskNotifications === obj2.taskNotificationsPresent)) {
 				return false;
 			} else {
 				return true;
@@ -1655,7 +1658,8 @@ var appModelController = (function () {
 				taskId: fullTaskItemRecord.taskItem_id,
 				taskList: appModelController.lookUpTaskListName(fullTaskItemRecord.taskList_id),
 				taskRepeat: fullTaskItemRecord.taskItem_repeat,
-				taskTitle: fullTaskItemRecord.taskItem_title
+				taskTitle: fullTaskItemRecord.taskItem_title,
+				taskNotifications: fullTaskItemRecord.taskItem_notifications
 			}	
 		},
 		
@@ -1818,6 +1822,8 @@ var appModelController = (function () {
 		createNewTaskItem: function (taskItemInput ) {
 			console.log("*************** createNewTaskItem()");
 			console.log("TaskItemInput", taskItemInput);
+			
+			var notificationsPresent = false;
 
 			
 			// 1. Generate taskItem_Id and assign
@@ -1831,8 +1837,12 @@ var appModelController = (function () {
 			var createTime = getTimeStamp();
 			
 			var taskCompletedDate = "";
-				
-//			id, listId, title, dueDate, repeat, completedDate, createTime
+			// 
+			if (taskItemInput.newTaskNotifications.length > 0 ) {
+				notificationsPresent = true;
+			}
+
+			
 			return newTaskItem = new TaskItem(
 				taskItemId, 
 				taskListId,
@@ -1840,7 +1850,8 @@ var appModelController = (function () {
 				taskItemInput.newTaskDueDate,
 				taskItemInput.newTaskRepeateOptionTxt,
 				taskCompletedDate, 
-				createTime
+				createTime,
+				notificationsPresent
 			) 
 			
 
@@ -2258,6 +2269,24 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		displayNotificationIcon: function (taskItemId) {
+			
+			var matchingCardNode;
+			var notificationNode;
+			var cardNodes;
+			console.log("displayNotficationIcon");
+			
+			cardNodes = document.getElementsByClassName("card");
+			
+			// Get the task card for the taskItem
+	   		matchingCardNode = Array.prototype.filter.call(cardNodes,function(cardNode) {
+				if (cardNode.dataset.id === taskItemId ) {
+					return cardNode
+				}
+			});
+			notificationNode = matchingCardNode[0].childNodes[0].childNodes[2];
+			notificationNode.classList.remove("hideIt"); 
+		}, 
 		
 		buildAndDisplayTaskItemNotifications: function (taskItemNotifications) {
 			var genericTaskItemNotificationHTML, specificTaskItemNotificationHTML;
@@ -3653,12 +3682,13 @@ var appUIController = (function () {
 				this.notificationUnits = notificationUnits;
 				this.notificationUnitType = notificationUnitType;
 			}
-			
+			var notificationsPresent = false;
 			var notificationNodes = document.getElementsByClassName('notification');
 			
 			
 			
-			if (notificationNodes.length >= 0) {
+			if (notificationNodes.length > 0) {
+				notificationsPresent = true; 
 				Array.prototype.forEach.call(notificationNodes, function(notificationNode, index ) {
 					/* If it is a new notification we want to set the value to null so we can test for that
 						later otherwise it will contain the notificationId that was previously assigned to
@@ -3695,7 +3725,9 @@ var appUIController = (function () {
 				taskDueDate: inputEditFormTaskItemDueDate.value,
 				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].value,
 				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].value,
-				taskNotifications: notifications
+				taskNotifications: notifications,
+				taskNotificationsPresent: notificationsPresent
+				
 			}			
 		},
 		
@@ -4036,7 +4068,7 @@ var appUIController = (function () {
 			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
 	
 //			var genericTaskItemHtml = '<div class="card" data-id="%taskItemId%"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div class="taskTitleDiv"><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label></a></div><div class="col taskActionRowCompletCheckbox"><label><input onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%" class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span class="taskActionCompleteLabel">Complete</span></label></div><div class="col"><a onclick="appUIController.setUpDeleteTaskItemModal(this)" class="floatRight" data-toggle="modal" data-target="#deleteTaskItemModal" data-id="%taskItemId%"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
-			var genericTaskItemHtml = '<div class="card" data-id="%taskItemId%"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div class="taskTitleDiv"><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label></a></div><div class="col taskActionRowCompletCheckbox"><label><input onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%" class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span class="taskActionCompleteLabel">Complete</span></label></div><div class="col"><a onclick="appUIController.setUpDeleteTaskItemModal(this)" class="floatRight" data-toggle="modal" data-target="#deleteTaskItemModal" data-id="%taskItemId%"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
+			var genericTaskItemHtml = '<div class="card" data-id="%taskItemId%"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div class="taskTitleDiv"><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><div class="%notificationsPresent% notificationIcon"><i class="notificationIconPosition floatLeft fa fa-bell-o"></i></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label></a></div><div class="col taskActionRowCompletCheckbox"><label><input onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%" class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span class="taskActionCompleteLabel">Complete</span></label></div><div class="col"><a onclick="appUIController.setUpDeleteTaskItemModal(this)" class="floatRight" data-toggle="modal" data-target="#deleteTaskItemModal" data-id="%taskItemId%"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
 
 			for (var i = 0; i < taskItemList.length; i++) {
 				
@@ -4060,6 +4092,16 @@ var appUIController = (function () {
 
 				// Insert the list name in HTML
 				specificTaskItemHtml = specificTaskItemHtml.replace('%taskTitle%', taskItemList[i].taskItem_title);
+				
+				//Display the displayNotificationIcon if notifications are present for taskItem
+				
+				// Notifications present so remove %notificationsPresent% 
+				if (taskItemList[i].taskItem_notifications) {
+					specificTaskItemHtml = specificTaskItemHtml.replace("%notificationsPresent%","");
+				} else { // Notifications not present so we want to hide notificationIcon
+					specificTaskItemHtml = specificTaskItemHtml.replace("%notificationsPresent%","hideIt");
+
+				}
 
 				specificTaskItemHtml = specificTaskItemHtml.replace('%date%', taskItemList[i].taskItem_due_date);
 				specificTaskItemHtml = specificTaskItemHtml.replace('%time%', taskItemList[i].taskItem_due_time);
@@ -4655,8 +4697,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	***********************************************************************************/
 	var ctrlUpdateTaskItem = function(event) {
-		var taskNotificationObject, taskNotificationRecord;
+		
 		console.log("*=======> ctrlUpdateTaskItem");
+		var taskNotificationObject, taskNotificationRecord;
+		
+		// Get the taskItemId that was stored in a hiddenInput field on edit form
+		var taskItemId = appUIController.getUIVars().inputEditFormTaskItemId.value
+
 		
 		event.preventDefault();
 		event.stopPropagation();
@@ -4681,13 +4728,19 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		//=================================================
 		
 		if ( taskItemInputRecord.taskNotifications.length > 0 ) {
+			// Display the notification Icon on mainPage taskItem card
+			appUIController.displayNotificationIcon(taskItemId);
+			
 			taskItemInputRecord.taskNotifications.forEach(function (taskNotification, index) {
 				
 				// Check to see if notification is newly added (i.e. notification_id = null)
 				if (taskNotification.notificationId === null ) {
+					
 					taskNotificationObject = appModelController.createNewNotificationObject(taskNotification, taskItemInputRecord.taskItemId);		
 					appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
+					
 				} else { // Otherwise if taskNotification already exist it will have a notificationId != null
+					
 					// Retrieve the existing notification record that we need to change
 					taskNotificationRecord = appModelController.lookupTaskItemNotification(taskNotification.notificationId)
 					taskNotificationRecord.notification_type = taskNotification.notificationType;
@@ -4847,7 +4900,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		console.log("++++++++++++ ctrlAddTaskItem1()");
 		var newTaskItemInput, newTaskItemObject;
-		var taskListTable = appModelController.getTaskListTable(); 
+		var taskListTable = appModelController.getTaskListTable();
+		
+
 		
 		// ----------------- New ----------------------
 		
@@ -4875,10 +4930,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			newTaskItemObject = appModelController.createNewTaskItem(newTaskItemInput);
 			
 			
-			// Add New task object to New TaskItem table
-			appModelController.getTaskItemsTable().push(newTaskItemObject);
-			
 			if ( newTaskItemInput.newTaskNotifications.length > 0 ) {
+				
+				// Display the notification Icon on mainPage taskItem card
+				newTaskItemObject.taskItem_notifications = true;
+				
 				newTaskItemInput.newTaskNotifications.forEach(function (newTaskNotification) {
 					
 					newNotificationObject = appModelController.createNewNotificationObject(newTaskNotification, newTaskItemObject.taskItem_id);
@@ -4888,6 +4944,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				})
 				
 			}
+			
+			
+			// Add New task object to New TaskItem table
+			appModelController.getTaskItemsTable().push(newTaskItemObject);
+			
+
 			
 			
 			// Save task object to local/Storage/DB			
