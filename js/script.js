@@ -1508,7 +1508,7 @@ var appModelController = (function () {
 						return false;
 					}
 				}
-			},
+			}
 		]
 	},	  
 	  /* Edit Task Form Validation Object */
@@ -1562,6 +1562,21 @@ var appModelController = (function () {
 				fieldErrorMsgLocation: document.getElementById("editTaskListSelectErrorMsg"),
 				fieldErrMsg: null,
 				isNotValid: function(str) {
+				}
+			},
+			{	// Notification 
+				fieldName: document.getElementById("editTaskFormNotificationArea"),
+				fieldInError: false,
+				fieldDefaultValue: "",
+				fieldErrorMsgLocation: document.getElementById("editTaskNotificationError"),
+				fieldErrMsg: "Must set Due Date to use Notifications",
+				isNotValid: function(str) {
+					var dateValue = document.getElementById("editTaskItemDueDate").value;
+					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
+						return true;
+					} else {
+						return false;
+					}
 				}
 			}
 		]
