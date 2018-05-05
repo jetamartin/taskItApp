@@ -1494,6 +1494,21 @@ var appModelController = (function () {
 				isNotValid: function(str) {
 				}
 			},
+			{	// Notification 
+				fieldName: document.getElementById("newTaskFormNotificationArea"),
+				fieldInError: false,
+				fieldDefaultValue: "",
+				fieldErrorMsgLocation: document.getElementById("newTaskNotificationError"),
+				fieldErrMsg: "Must set Due Date to use Notifications",
+				isNotValid: function(str) {
+					var dateValue = document.getElementById("newTaskDateTime").value;
+					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			},
 		]
 	},	  
 	  /* Edit Task Form Validation Object */
@@ -2082,8 +2097,8 @@ var appUIController = (function () {
 	var inputNewTaskDateTime = document.querySelector("#newTaskDateTime");
 	var inputNewTaskListSelection = document.querySelector("#newTaskListNameSelect");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
-	var addNewFormNotification = document.querySelector("#addNewFormNotification");
-	var notificationArea = document.querySelector("#notificationArea");
+	var addNewFormNotifications = document.querySelector("#addNewFormNotifications");
+	var addEditFormNotification = document.querySelector("#addEditFormNotification");
 //	var deleteNotification = document.querySelector(".deleteNotificationIcon")
 	
 	
@@ -2268,7 +2283,7 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
-		
+		// DELETE THIS METHOD -- ENDED UP NOT NEEDING IT
 		displayNotificationIcon: function (taskItemId) {
 			
 			var matchingCardNode;
@@ -2352,6 +2367,7 @@ var appUIController = (function () {
 		
 		deleteNotification: function (event) {
 			console.log("deleteNotification");
+			var pageId = utilMethods.findAncestor(event, 'container-fluid').id
 			
 			// If the parentNode has an ID for the taskNotification we need to delete the notification from the table also
 			if (event.parentNode.dataset.id !== "") {
@@ -2360,6 +2376,19 @@ var appUIController = (function () {
 			var parentNode = 
 				event.parentElement;
 			parentNode.remove();
+			
+			/* If the notification validation object shows there is an error (no due date was 		entered) and the user has deleted the last notfication on the page 
+			*/
+			
+
+			var validationObj = appModelController.getFormValidationObject(pageId)
+			var notificationsOnPage = document.getElementsByClassName("notification").length;
+			if ((validationObj[0].fieldsToValidate[4].fieldInError) && (notificationsOnPage === 0)) {
+				validationObj[0].fieldsToValidate[4].fieldName.classList.remove("formErrors");
+				validationObj[0].fieldsToValidate[4].fieldErrorMsgLocation.innerHTML = "";
+				validationObj[0].fieldsToValidate[4].fieldInError = false;
+				
+			}
 			
 		},
 		
@@ -3255,8 +3284,7 @@ var appUIController = (function () {
 				newTaskFormErrorMsg: newTaskFormErrorMsg, 
 				newTaskSaveMessage: newTaskSaveMessage,
 				navListModalListNameErrorMsg: navListModalListNameErrorMsg,
-				addNewFormNotification: addNewFormNotification,
-				notificationArea: notificationArea,
+				addNewFormNotifications: addNewFormNotifications,
 //				deleteNotification: deleteNotification, 
 				
 				// Edit Task Form Elements
@@ -4465,7 +4493,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
 		
-		appUIController.getUIVars().addNewFormNotification.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
+		appUIController.getUIVars().addNewFormNotifications.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
 		
 //		appUIController.getUIVars().deleteNotification.addEventListener("click", function(event) {appUIController.deleteNotification(event)});
 		
