@@ -1502,7 +1502,8 @@ var appModelController = (function () {
 				fieldErrMsg: "Must set Due Date to use Notifications",
 				isNotValid: function(str) {
 					var dateValue = document.getElementById("newTaskDateTime").value;
-					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
+					var notifications = document.getElementsByClassName("notification").length;
+					if (notifications !== 0 && !dateValue.replace(/^\s+/g, '').length) {
 						return true;
 					} else {
 						return false;
@@ -2665,12 +2666,16 @@ var appUIController = (function () {
 
 				} else {  // No error was
 					field.fieldInError = false;
-					// Get rid of any preceding or trailing blanks and resave
-					field.fieldName.value = field.fieldName.value.trim();
-					// Change color of List name text to differentiate it from placeholder text
-					if (field.fieldName.value !== field.fieldDefaultValue) {
-						field.fieldName.classList.add("filled");
+					if (field.fieldName.nodeName !== 'DIV') {
+						// Get rid of any preceding or trailing blanks and resave
+						field.fieldName.value = field.fieldName.value.trim();
+						// Change color of List name text to differentiate it from placeholder text
+						if (field.fieldName.value !== field.fieldDefaultValue) {
+							field.fieldName.classList.add("filled");
+						}
+						
 					}
+
 				}
 				firstField = false;
 
