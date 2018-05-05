@@ -1573,7 +1573,8 @@ var appModelController = (function () {
 				fieldErrMsg: "Must set Due Date to use Notifications",
 				isNotValid: function(str) {
 					var dateValue = document.getElementById("editTaskItemDueDate").value;
-					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
+					var notifications = document.getElementsByClassName("notification").length;
+					if (notifications !== 0 && !dateValue.replace(/^\s+/g, '').length) {
 						return true;
 					} else {
 						return false;
