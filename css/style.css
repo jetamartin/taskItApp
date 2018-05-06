@@ -14,6 +14,17 @@
 		/*	color: #9a9696;*/
 	}
 
+/*
+	formControl.filled {
+		color: blue !important; 
+	}
+*/
+
+	input[type="text"].filled, input[type="date"].filled, input[type="number"].filled, select.filled {
+		color: #76d6d1 !important;
+		font-style: italic;
+	}
+
 	.hideIt {
 		display: none; 	
 	}
@@ -1135,8 +1146,8 @@ input[name=taskCompleteStatus] {
 	input[type="date"],
 	input[type="number"],
 	select {
-		color: #76d6d1 !important;
-		font-style: italic; 
+		color: #9b9fa2 !important;
+/*		font-style: italic; */
 	}
 
 
@@ -1166,6 +1177,7 @@ input[name=taskCompleteStatus] {
 	input[type="date"]::placeholder,
 	select::placeholder {
 		color: #76d6d1 !important;
+		color: #9b9fa2 !important;
 		font-style: italic; 
 	}
 
@@ -1242,6 +1254,7 @@ input[name=taskCompleteStatus] {
     color: #34AFA9;
 	margin-left: -.9rem;
     background-color: #f2f2f2;
+	background-color: transparent;
 	border-left: 1px solid #ccd4da;
 	border-top-right-radius: .25rem;
 	border-bottom-right-radius: .25rem;
@@ -1272,6 +1285,7 @@ input[name=taskCompleteStatus] {
 		border-radius: .25rem;
 		padding: .4rem;
 		margin-bottom: 1rem;
+		margin-top: .5rem;
 	}
 
 	 .addNotification.fa-plus {

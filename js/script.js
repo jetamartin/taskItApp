@@ -2115,7 +2115,9 @@ var appUIController = (function () {
 	var inputNewTaskListSelection = document.querySelector("#newTaskListNameSelect");
 	var inputNewTaskRepeat = document.querySelector("#newTaskRepeatOption");
 	var addNewFormNotifications = document.querySelector("#addNewFormNotifications");
-	var addEditFormNotification = document.querySelector("#addEditFormNotification");
+	var newTaskFormNotificationArea = document.querySelector("#newTaskFormNotificationArea");
+	var newTaskNotificationError = document.querySelector("#newTaskNotificationError");
+//	var addEditFormNotification = document.querySelector("#addEditFormNotification");
 //	var deleteNotification = document.querySelector(".deleteNotificationIcon")
 	
 	
@@ -2133,6 +2135,9 @@ var appUIController = (function () {
 	var editFormUpdateTaskNavButton = document.getElementById("updateTaskNavBtn");
 	var editTaskSaveMessage = document.getElementById("editTaskSaveMsg");
 	var addEditFormNotifications = document.getElementById("addEditFormNotifications");
+	var editTaskFormNotificationArea = document.getElementById("editTaskFormNotificationArea");
+	var editTaskNotificationError = document.getElementById("editTaskNotificationError");
+
 
 	/* Manage Task Lists Page elements */
 	var manageTaskListsMsg = document.getElementById("manageTaskListsMsg")
@@ -2300,6 +2305,52 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
+		
+		clearFormRepeatAndNotificationErrors: function (validationObj) {
+			
+			// Clear error styling from Repeat field
+			validationObj[0].fieldsToValidate[2].fieldName.classList.remove("formErrors");
+			validationObj[0].fieldsToValidate[2].fieldErrorMsgLocation.innerHTML = "";
+			
+			// Clear error styling from Notfication area 
+			validationObj[0].fieldsToValidate[4].fieldName.classList.remove("formErrors");
+			validationObj[0].fieldsToValidate[4].fieldErrorMsgLocation.innerHTML = "";
+			
+		},
+		
+		/* This method is called anytime there is an actual change in the datetime. This change could be the result of the user clicking on the addDueDateBtn or clicking on the input area to make a change...but in either case the event isn't triggered unless the dateTime is actually changed or set regardless of what they clicked on. 
+		
+		The event listener is set via the following jQuery statement:
+		
+			$('.form_datetime').datetimepicker().on('changeDate', function(e) {
+				appUIController.dueDateUpdate(e);
+				console.log(e);	
+			});
+		Eventually I want to convert this to a JS call rather than jQuery.
+		
+		This method handles styling the field (change font-style & color to show user changed the field in some way) and clearing error messages that occured on the form upon submission. Specifically a user must set a Due Date in order to make a task "repeating" (repeat set to something other than none) and a Due date must be present to set notifications. After submission if the user sets a Due Date then we will immediately clear these error messages on the form.  
+
+		*/
+		dueDateUpdate: function(event) { 
+			console.log("dueDateUpdate"); 
+			// Calendar Entry fields (addCalendarBtn or inputArea)
+			
+			// For calendar events (event.type = "changeDate") event.target doesn't give you the specific field to apply styling to show user changed something (add 'filled' class) so pageId must be derived to determine specific field	
+			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+			
+			var validationObj = appModelController.getFormValidationObject(pageId);
+			
+			// Change the DueDate field styling to show user changed it. 
+			validationObj[0].fieldsToValidate[1].fieldName.classList.add("filled");	
+			
+			// Now a DueDate has been added we need to clear any error messages were caused when the form was submitted without a dueDate (e.g., repeat & notifications set)
+
+			appUIController.clearFormRepeatAndNotificationErrors(validationObj);
+			
+			
+		}, 
+		
+		
 		// DELETE THIS METHOD -- ENDED UP NOT NEEDING IT
 		displayNotificationIcon: function (taskItemId) {
 			
@@ -2394,13 +2445,14 @@ var appUIController = (function () {
 				event.parentElement;
 			parentNode.remove();
 			
-			/* If the notification validation object shows there is an error (no due date was 		entered) and the user has deleted the last notfication on the page 
+			/* If the notification validation object shows there is an error (no due date was entered) and the user has deleted the last notfication on the page 
 			*/
 			
 
 			var validationObj = appModelController.getFormValidationObject(pageId)
 			var notificationsOnPage = document.getElementsByClassName("notification").length;
-			if ((validationObj[0].fieldsToValidate[4].fieldInError) && (notificationsOnPage === 0)) {
+//			if ((validationObj[0].fieldsToValidate[4].fieldInError) && (notificationsOnPage === 0)) {
+			if (notificationsOnPage === 0) {
 				validationObj[0].fieldsToValidate[4].fieldName.classList.remove("formErrors");
 				validationObj[0].fieldsToValidate[4].fieldErrorMsgLocation.innerHTML = "";
 				validationObj[0].fieldsToValidate[4].fieldInError = false;
@@ -2930,35 +2982,35 @@ var appUIController = (function () {
 			toggleClass(taskActionsRowToShowHide, "materialize");
 //			toggleClass(nodeContainingIconToRotate, "rotateIt");
 		},
-		styleTaskFormFieldAsChanged: function (event) {
-			var pageId;
-			console.log("************** styleTaskFormFieldAsChanged");
-			switch(event.target.id) {
-				case "editFormTaskItemName":
-					inputEditFormTaskItemName.classList.add("filled");
-					break;
-				case "editFormRepeatSelect":
-					inputEditFormRepeatSelect.classList.add("filled");
-					break;
-				case "editTaskFormListSelect":
-					inputEditFormListSelect.classList.add("filled");
-					break;
-				case "datetimepicker":
-					console.log("DateTimePicker Event");
-					pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
-					if (pageId === "newTaskPage") {
-						console.log("Page where clicked: ", pageId);
-						inputNewTaskDateTime.classList.add("filled");
-						appUIController.clearOrSetRepeatFieldErrors();
-					} else { // "editTaskPage"
-						console.log("Page where clicked: ", pageId);
-						inputEditFormTaskItemDueDate.classList.add("filled");
-					}	
-					break;
-				default:
-					console.log("No matching event found");
-			}
-		},
+//		styleTaskFormFieldAsChanged: function (event) {
+//			var pageId;
+//			console.log("************** styleTaskFormFieldAsChanged");
+//			switch(event.target.id) {
+//				case "editFormTaskItemName":
+//					inputEditFormTaskItemName.classList.add("filled");
+//					break;
+//				case "editFormRepeatSelect":
+//					inputEditFormRepeatSelect.classList.add("filled");
+//					break;
+//				case "editTaskFormListSelect":
+//					inputEditFormListSelect.classList.add("filled");
+//					break;
+//				case "datetimepicker":
+//					console.log("DateTimePicker Event");
+//					pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+//					if (pageId === "newTaskPage") {
+//						console.log("Page where clicked: ", pageId);
+//						inputNewTaskDateTime.classList.add("filled");
+//						appUIController.clearOrSetRepeatFieldErrors();
+//					} else { // "editTaskPage"
+//						console.log("Page where clicked: ", pageId);
+//						inputEditFormTaskItemDueDate.classList.add("filled");
+//					}	
+//					break;
+//				default:
+//					console.log("No matching event found");
+//			}
+//		},
 		
 		
 		displayEditTaskPage: function (event) {
@@ -3170,14 +3222,14 @@ var appUIController = (function () {
 				
 		},
 		
-		clearDueDateBtnClicked: function (event) {
-			
-			// If the repeat value not set to "none" (value="1") then set  
-			if (inputNewTaskRepeat.value !== "1" && !inputNewTaskRepeat.classList.contains("formErrors")) {
-				// Set Error msg & formatting on Repeat field
-				appUIController.clearOrSetRepeatFieldErrors(event);
-			} 
-		}, 
+//		clearDueDateBtnClicked: function (event) {
+//			
+//			// If the repeat value not set to "none" (value="1") then set  
+//			if (inputNewTaskRepeat.value !== "1" && !inputNewTaskRepeat.classList.contains("formErrors")) {
+//				// Set Error msg & formatting on Repeat field
+//				appUIController.clearOrSetRepeatFieldErrors(event);
+//			} 
+//		}, 
 		
 		//%%%%%%%% NOT USED NOW --- DELETE this function
 //		hideRepeatOption: function (event) {
@@ -3306,6 +3358,8 @@ var appUIController = (function () {
 				newTaskSaveMessage: newTaskSaveMessage,
 				navListModalListNameErrorMsg: navListModalListNameErrorMsg,
 				addNewFormNotifications: addNewFormNotifications,
+				newTaskFormNotificationArea: newTaskFormNotificationArea,
+				newTaskNotificationError: newTaskNotificationError, 
 //				deleteNotification: deleteNotification, 
 				
 				// Edit Task Form Elements
@@ -3319,6 +3373,8 @@ var appUIController = (function () {
 				defaultListElem: defaultListElem,
 				newListCancelBtn: newListCancelBtn,
 				addEditFormNotifications: addEditFormNotifications,
+				editTaskFormNotificationArea: editTaskFormNotificationArea,
+				editTaskNotificationError: editTaskNotificationError, 
 				
 				// Manage Task List Form Vars
 				manageTaskListsMsg: manageTaskListsMsg,
@@ -3423,48 +3479,12 @@ var appUIController = (function () {
 		2) If the repeat field is already in error (due date empty but repeat value other than "none" ) and user now enters value of "none" remove error formatting and msg;
 		
 		3) If the user had entered a repeat value and there is no due date (so repeat is marked with an error (formErrors class present) but now a due date has been entered then remove the errors on the repeat field because now having a repeat value other than none is valid;
+		
+		4) If the user has entered notifications but no due date is on form...if a dueDate is entered then we need to clear the notificationArea error messages. 
 	
 		********************************************************************************************************/
-//		clearOrSetRepeatFieldErrors: function (event) {	
-			clearOrSetRepeatFieldErrors: function (event) {
-			
-			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
-			switch ( pageId ) {
-				case "newTaskPage":
-					if (inputNewTaskRepeat.value !== "none" && appUIController.getUIVars().inputNewTaskDateTime.value === "") {	
-						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = '<i class="fa fa-times-circle"></i>' + " Must enter Due Date to make repeatable";
-						if (!appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
-							appUIController.getUIVars().inputNewTaskRepeat.classList.add("formErrors");	
-						}
-					} else if (appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors") && inputNewTaskRepeat.value === "none") {
-						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("formErrors");
-						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
-						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("filled");
-					} else if (inputNewTaskRepeat.value !== "none" && inputNewTaskDateTime !== "" && 		appUIController.getUIVars().inputNewTaskRepeat.classList.contains("formErrors")) {
-						appUIController.getUIVars().inputNewTaskRepeat.classList.remove("formErrors");
-						appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = "";
-					}
-					break;
-				case "editTaskPage":
-					if (inputEditFormRepeatSelect.value !== "none" && appUIController.getUIVars().inputEditFormTaskItemDueDate.value === "") {	
-						appUIController.getUIVars().editRepeatErrorMsgDiv.innerHTML = '<i class="fa fa-times-circle"></i>' + " Must enter Due Date to make repeatable";
-						if (!appUIController.getUIVars().inputEditFormRepeatSelect.classList.contains("formErrors")) {
-							appUIController.getUIVars().inputEditFormRepeatSelect.classList.add("formErrors");	
-						}
-					} else if (appUIController.getUIVars().inputEditFormRepeatSelect.classList.contains("formErrors") && appUIController.getUIVars().inputEditFormRepeatSelect.value === "none") {
-						appUIController.getUIVars().inputEditFormRepeatSelect.classList.remove("formErrors");
-						appUIController.getUIVars().editRepeatErrorMsgDiv.innerHTML = "";
-						appUIController.getUIVars().inputEditFormRepeatSelect.classList.remove("filled");
-					} else if (inputEditFormRepeatSelect.value !== "none" && inputEditFormTaskItemDueDate !== "" && 		appUIController.getUIVars().inputEditFormRepeatSelect.classList.contains("formErrors")) {
-						appUIController.getUIVars().inputEditFormRepeatSelect.classList.remove("formErrors");
-						appUIController.getUIVars().editRepeatErrorMsgDiv.innerHTML = "";
-					}
-					break;
-				default:
-					console.log("clearOrSetRepeatFieldErrors(): No matching ID" );	
-		
-			}				   	
-		},
+
+
 		
 		/* $$$$ WILL NEED TO MAKE THIS METHOD MORE GENERIC 
 		
@@ -3644,26 +3664,7 @@ var appUIController = (function () {
 				event.target.classList.remove("filled");  //event.target gives you specific field of form
 				if (event.target.value !== "") {
 					event.target.classList.add("filled");
-					appUIController.clearOrSetRepeatFieldErrors(event);
 				}
-				
-			// Calendar Entry fields (addCalendarBtn or inputArea)
-			// For calendar events (event.type = "changeDate") event.target doesn't give you the specific field to apply filled class so pageId must be derived to determine specific field	
-				
-			} else if (event.type === "changeDate") {  
-				var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
-				if (pageId === "newTaskPage") {
-					inputNewTaskDateTime.classList.add("filled");
-					appUIController.clearOrSetRepeatFieldErrors(event);
-				} else if (pageId === "editTaskPage") {
-					inputEditFormTaskItemDueDate.classList.add("filled");
-					// If I make method below I can use it here as well
-					appUIController.clearOrSetRepeatFieldErrors(event);
-				} else {
-					console.log ("StyleUserFormatInput() no matching pageId");
-				}
-			} else { // No match
-				console.log ("StyleUserFormatInput() no matching eventtype");
 			}
 	
 		},
@@ -4511,8 +4512,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputNewTaskTitle.addEventListener("keydown", function(event) {appUIController.clearTaskTitleError1(event)});
 			
 		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
-					
-		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
+		
+		//DEEP 6 this one?		
+//		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
 		
 		appUIController.getUIVars().addNewFormNotifications.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
 		
@@ -4708,8 +4710,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Submit of Delete Task List confirmation form 
 		addEventListenerByClass('deleteTaskListModalForm', 'submit', function(event) { appUIController.deleteTaskList(event)});
 		
-	
-		
+		// Date Time Picker from :https://www.malot.fr/bootstrap-datetimepicker/	
 		$(".form_datetime").datetimepicker({
         format: "mm/dd/yyyy  H:ii P",
         showMeridian: true,
@@ -4720,7 +4721,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		
 		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
-			appUIController.styleUserFormInput(e);
+			appUIController.dueDateUpdate(e);
 			console.log(e);	
 		});
 
