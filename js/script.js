@@ -2306,6 +2306,46 @@ var appUIController = (function () {
 	/****************************************************************************************************************/
 	return {
 		
+		styleNotificationInput: function (event) {
+			console.log("styleNotficationInput"); 
+			
+			
+			switch(event.target.nodeName) {
+				case "INPUT":
+				case "SELECT":
+					if (event.target.classList.contains("notificationType")) {
+						if (event.target.value != "notification") {
+							event.target.classList.add("filled");
+						}
+						
+					} else if (event.target.classList.contains("notificationUnits")) {
+						if (event.target.value != "10") {
+							event.target.classList.add("filled");
+						}
+						
+					} else if (event.target.classList.contains("notificationUnitType")) {
+						if (event.target.value != "minutes") {
+							event.target.classList.add("filled");
+						}
+					}
+					
+				default:
+					console.log("Didn't click on input field")
+			}
+				
+//			event.target.classList
+//			event.target.nodeName
+//			event.target.value
+//			event.target.classList.contains("notificationType")
+//			event.target.classList.contains("notificationUnits")
+//			event.target.classList.contains("notificationUnits")
+//			event.target.classList.contains("notificationUnitType")
+
+
+
+			
+		}, 
+		
 		clearFormRepeatAndNotificationErrors: function (validationObj) {
 			
 			// Clear error styling from Repeat field
@@ -2378,7 +2418,7 @@ var appUIController = (function () {
 
 			taskItemNotifications.forEach (function (taskItemNotification) {
 				
-				var genericTaskItemNotificationHTML = '<div class="form-group notification" data-id="%notificationId%"><div class="row col-4 notificationComponent"><select class="form-control notificationType" name="notificationType" id=""><option value="notification" %notificationOption%>Notification</option><option value="email" %emailOption%>Email</option></select></div><div class="row col-3 notificationComponent"><input class="form-control notificationUnits" type="number" name="notificationUnits" min="1" max="999" value="%notificationUnits%"></div><div class="row col-3 notificationComponent"><select class="form-control" name="notificationUnitType" id=""><option value="minutes" %minutesOption%>Minutes</option><option value="hours" %hoursOption%>Hours</option><option value="days" %daysOption%>Days</option><option value="weeks" %weeksOption%>Weeks</option></select></div><div class="row col-2 notificationComponent deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-trash-o"></i></div></div>';
+				var genericTaskItemNotificationHTML = '<div class="form-group notification" data-id="%notificationId%"><div class="row col-4 notificationComponent"><select class="form-control notificationType" name="notificationType" id="notificationType"><option value="notification" %notificationOption%>Notification</option><option value="email" %emailOption%>Email</option></select></div><div class="row col-3 notificationComponent"><input class="form-control notificationUnits" id="notificationUnits" type="number" name="notificationUnits" min="1" max="999" value="%notificationUnits%"></div><div class="row col-3 notificationComponent"><select class="form-control notificationUnitType" id="notificationUnitType" name="notificationUnitType"><option value="minutes" %minutesOption%>Minutes</option><option value="hours" %hoursOption%>Hours</option><option value="days" %daysOption%>Days</option><option value="weeks" %weeksOption%>Weeks</option></select></div><div class="row col-2 notificationComponent deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-trash-o"></i></div></div>';
 				
 				specificTaskItemNotificationHTML = genericTaskItemNotificationHTML.replace("%notificationId%", taskItemNotification.notification_id);
 
@@ -2473,7 +2513,7 @@ var appUIController = (function () {
 			
 //			var insertNodeLocation = appUIController.getUIVars().notificationArea;
 			
-			var newNotificationHTML = '<div class="form-group notification"><div class="row col-4 notificationComponent"><select class="form-control notificationType" name="notificationType" id=""><option value="notification">Notification</option><option value="email">Email</option></select></div><div class="row col-3 notificationComponent"><input class="form-control notificationUnits" type="number" name="notificationUnits" min="1" max="999" value="10"></div><div class="row col-3 notificationComponent"><select class="form-control" name="notificationUnitType" id=""><option value="minutes">Minutes</option><option value="hours">Hours</option><option value="days">Days</option><option value="weeks">Weeks</option></select></div><div class="row col-2 notificationComponent deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-trash-o"></i></div></div>' 
+			var newNotificationHTML = '<div class="form-group notification"><div class="row col-4 notificationComponent"><select class="form-control notificationType" name="notificationType" id=""><option value="notification">Notification</option><option value="email">Email</option></select></div><div class="row col-3 notificationComponent"><input class="form-control notificationUnits" type="number" name="notificationUnits" min="1" max="999" value="10"></div><div class="row col-3 notificationComponent"><select class="form-control notificationUnitType" name="notificationUnitType" id=""><option value="minutes">Minutes</option><option value="hours">Hours</option><option value="days">Days</option><option value="weeks">Weeks</option></select></div><div class="row col-2 notificationComponent deleteNotificationIcon" onclick="appUIController.deleteNotification(this)"><i class="fa fa-trash-o"></i></div></div>' 
 			//* Convert completed HTML string into DOM node so it can be inserted
 			newNode = document.createRange().createContextualFragment(newNotificationHTML);
 
@@ -4513,12 +4553,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
 		
-		//DEEP 6 this one?		
-//		appUIController.getUIVars().clearDueDateBtn.addEventListener("click", function(event) { appUIController.clearOrSetRepeatFieldErrors(event)}, true);
-		
 		appUIController.getUIVars().addNewFormNotifications.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
 		
-//		appUIController.getUIVars().deleteNotification.addEventListener("click", function(event) {appUIController.deleteNotification(event)});
 		
 		//*******************************************************
 		// "Input" events on all fields on newTask Form
@@ -4556,12 +4592,18 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		appUIController.getUIVars().addEditFormNotifications.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
 
+		// Event Listener to style notifications input
+		appUIController.getUIVars().editTaskFormNotificationArea.addEventListener("click",
+		function(event) {appUIController.styleNotificationInput(event)}, true);
+		
 		
 		// Submit button for editTaskPage
 		appUIController.getUIVars().formEditNewTask.addEventListener("submit", function (event) {ctrlUpdateTaskItem(event)});
 		
 		// Nav Bar Menu Update Button
 		appUIController.getUIVars().editFormUpdateTaskNavButton.addEventListener("click", function ( event ) {ctrlUpdateTaskItem(event)});
+		
+		
 		
 		//****************************************************************************		
 		// MANAGE TASK LIST FORM EVENT LISTENERS		

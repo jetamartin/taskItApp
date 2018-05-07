@@ -1254,12 +1254,18 @@ input[name=taskCompleteStatus] {
     color: #34AFA9;
 	margin-left: -.9rem;
     background-color: #f2f2f2;
-	background-color: transparent;
+	
 	border-left: 1px solid #ccd4da;
 	border-top-right-radius: .25rem;
 	border-bottom-right-radius: .25rem;
 	
 }
+
+	#manageTaskListsPage .fa-trash-o:before  {
+		background-color: transparent;
+		border-left: 1px solid #ccd4da;
+	
+	}
 .notificationComponent .fa-trash-o:before, 
 .notificationComponent .fa-close:before,
 .notificationComponent .fa-times:before {
@@ -1275,6 +1281,8 @@ input[name=taskCompleteStatus] {
 	border-radius: .25rem;
 	
 }
+
+
 
 	
 	#addNewFormNotifications,
