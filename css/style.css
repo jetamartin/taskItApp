@@ -1344,6 +1344,16 @@ input[name=taskCompleteStatus] {
 	
 }
 
+.taskActionRow .fa-trash-o:before, 
+.taskActionRow .fa-close:before,
+.taskActionRow .fa-times:before {
+	border: none;
+	background: transparent;
+	margin: 0;
+	padding-right: 0;
+
+}
+
 .dueDateDelete.fa-remove:before, .dueDateDelete.fa-close:before, .dueDateDelete.fa-times:before
 .taskActionRow .fa-trash-o:before {
 	padding: 0;
@@ -1356,18 +1366,12 @@ input[name=taskCompleteStatus] {
 .notificationComponent .fa-close:before,
 .notificationComponent .fa-times:before {
 	font-size: 1.25rem;
-/*
-	padding-top: .39rem;
-    padding-right: .85rem;
-    padding-left: .7rem;
-    padding-bottom: .55rem;
-*/
     color: #34AFA9;
-/*	margin-left: -1.5rem;*/
+	margin-left: -1.5rem;
     background-color: #f2f2f2;
 /*	border: 1px solid #ccd4da;*/
 	border-radius: .25rem;
-	margin-left: 0;
+/*	margin-left: 0;*/
 	
 }
 
@@ -1431,22 +1435,11 @@ input[name=taskCompleteStatus] {
 		float: right;
 		margin-top: -2.35rem;
 		color: #34AFA9;
-/*		left: -3.5rem;*/
-/*		left: -1.95rem;*/
-/*		left: -18%;*/
-		
 		background-color: #f2f2f2;
-/*		background-color: transparent;*/
 		border-top-right-radius: 4px;
 		border-bottom-right-radius: 5px;
 		padding-right: 2px;
 		border: solid 1px;
-/*
-		border-left: 1px solid #ccd4da;
-		border-right: 1px solid #ccd4da;
-*/
-/*		margin-top: -2.5rem;*/
-/*		margin-right: 2.5rem;*/
 	}
 /* Allow new list stack to fit inside list input area on newTask and editTask forms*/
 span.newList.fa-stack {
