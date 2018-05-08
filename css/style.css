@@ -1306,6 +1306,16 @@ input[name=taskCompleteStatus] {
 	border-radius: 0;
 	
 }
+/**/
+
+.addTaskPage .dueDateDelete.fa-remove:before, 
+.addTaskPage .dueDateDelete.fa-close:before,
+.editTaskPage .dueDateDelete.fa-times:before {
+	margin-left: 0;	
+}
+
+/**/
+
 .fa-trash-o:before, .fa-close:before, .fa-times:before {
     font-size: 1.25rem;
 	padding-top: .4rem;
@@ -1325,6 +1335,7 @@ input[name=taskCompleteStatus] {
 	
 }
 
+.dueDateDelete.fa-remove:before, .dueDateDelete.fa-close:before, .dueDateDelete.fa-times:before
 .taskActionRow .fa-trash-o:before {
 	padding: 0;
 	margin: 0;
@@ -1413,7 +1424,7 @@ input[name=taskCompleteStatus] {
 		color: #34AFA9;
 /*		left: -3.5rem;*/
 /*		left: -1.95rem;*/
-		left: 1.4%;
+		left: -18%;
 		
 		background-color: #f2f2f2;
 /*		background-color: transparent;*/
