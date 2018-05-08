@@ -6,7 +6,9 @@
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
 	}
-	
+	* {
+		border-radius: 0;
+	}
 	body,
 	html {
 		height: 100%;
@@ -1060,6 +1062,27 @@ input[name=taskCompleteStatus] {
 	/*****************************************************************/
 	/* Edit & New Task List Page */
 	/*****************************************************************/
+
+	.editTaskPage .form-control,
+	.newTaskPage .form-control,
+	select.form-control,
+	 select.form-control, 
+	.editTaskPage input,
+	.newTaskPage input
+	{
+		border: solid 1px #34AFA9;
+/*
+		border-bottom-right-radius: 0;
+		border-top-right-radius: 0;
+*/
+	
+	}
+
+.editTaskPage select#editTaskFormListSelect.form-control,
+.newTaskPage select#newTaskFormListSelect.form-control {
+	border-radius: 0 !important;
+}
+
 	/* Make sure footer doesn't block content of Edit Task Screen */
 	
 	.editTaskPage,
@@ -1151,6 +1174,40 @@ input[name=taskCompleteStatus] {
 	}
 
 
+/*******************TEST CSS FOR MOVING SELECT CONTROL TO BEGINNING OF FIELD ********************/
+
+/*
+.styled-select #editTaskFormListSelect {
+  background: transparent;
+  width: 90%;
+  padding: 5px 5px 5px 1rem;
+  font-size: 16px;
+  line-height: 1;
+  border: 0;
+  border-radius: 0;
+  height: 34px;
+  -webkit-appearance: none;
+  margin-left: -10px;
+}
+.styled-select {
+  width: 95%;
+  height: 2.4rem;
+  overflow: hidden;
+  background: url(resources/1ba24923-79f4-4712-a0c6-4e907f8ccc65.svg) no-repeat 3px white;
+	background-size: .8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-left: .0000001%;
+}
+*/
+
+
+/*******************TEST CSS********************/
+
+
+
+
+
 	input[type="text"]::-webkit-input-placeholder,
 	input[type="date"]::-webkit-input-placeholder,
 	select::-webkit-input-placeholder {
@@ -1205,15 +1262,17 @@ input[name=taskCompleteStatus] {
 
 .form_datetime {
     border-radius: .25rem;
-    border: solid 1px #ced4da;
+    border: solid 1px #34AFA9;
     padding: 6px 12px;
 	background-color: white;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0; 
 }
 .fa-calendar:before {
     content: "\f271";
-    margin-left: -2.7rem;
+    margin-left: 2.5rem;
 /*    padding: .36rem;*/
-	padding-top: .4rem;
+	padding-top: .41rem;
     padding-right: .65rem;
     padding-left: .81rem;
 /*    padding-bottom: .65rem;*/
@@ -1222,7 +1281,9 @@ input[name=taskCompleteStatus] {
     color: #34AFA9;
     background-color: #f2f2f2;
     border-left: 1px solid #ced4da;
-/*	border-radius: 0 .25rem .25rem 0;*/
+	border: solid 1px;
+	border-sizing: border-box;
+	border-radius: 0 .25rem .25rem 0;
 }
 
 
@@ -1230,7 +1291,7 @@ input[name=taskCompleteStatus] {
     content: "\f00d";
     font-size: 1.25rem;
 /*    padding: .4rem;*/
-	padding-top: .39rem;
+	padding-top: .41rem;
     padding-right: .85rem;
     padding-left: .7rem;
     padding-bottom: .55rem;
@@ -1238,7 +1299,7 @@ input[name=taskCompleteStatus] {
 	margin-left: -.9rem;
     background-color: #f2f2f2;
 /*    border: 1px solid #ced4da;*/
-	border-left: 1px solid #ccd4da;
+	border-left: 1px solid #34AFA9;
 	border-right: 1px solid #ccd4da;
 	border-top: none;
 	border-bottom: none;
@@ -1252,20 +1313,25 @@ input[name=taskCompleteStatus] {
     padding-left: .7rem;
     padding-bottom: .55rem;
     color: #34AFA9;
-	margin-left: -.9rem;
+	margin-left: 4.2rem;
     background-color: #f2f2f2;
 	
 	border-left: 1px solid #ccd4da;
 	border-top-right-radius: .25rem;
 	border-bottom-right-radius: .25rem;
+	border: solid 1px;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 	
 }
 
-	#manageTaskListsPage .fa-trash-o:before  {
-		background-color: transparent;
-		border-left: 1px solid #ccd4da;
+.taskActionRow .fa-trash-o:before {
+	padding: 0;
+	margin: 0;
+	border: 0;
 	
-	}
+}
+
 .notificationComponent .fa-trash-o:before, 
 .notificationComponent .fa-close:before,
 .notificationComponent .fa-times:before {
@@ -1340,20 +1406,27 @@ input[name=taskCompleteStatus] {
 	.editTaskPage span.newList, .newTaskPage span.newList {
 		position: relative;
 		float: right;
-		margin-top: -2.3rem;
+		margin-top: -2.35rem;
 		color: #34AFA9;
 /*		left: -3.5rem;*/
-		left: -1.95rem;
+/*		left: -1.95rem;*/
+		left: 1.4%;
+		
 		background-color: #f2f2f2;
+/*		background-color: transparent;*/
 		border-top-right-radius: 4px;
 		border-bottom-right-radius: 5px;
 		padding-right: 2px;
-		border-left: 1px solid #ccd4da; 
+		border: solid 1px;
+/*
+		border-left: 1px solid #ccd4da;
+		border-right: 1px solid #ccd4da;
+*/
 /*		margin-top: -2.5rem;*/
 	}
 /* Allow new list stack to fit inside list input area on newTask and editTask forms*/
 span.newList.fa-stack {
-	height: 1.8em !important;
+	height: 1.9em !important;
 }
 	
 	i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
@@ -1439,6 +1512,20 @@ span.newList.fa-stack {
 	#manageTaskListsPage .deleteTaskIcon {
     	margin-right: 1rem;
     	margin-top: -.05rem;
+	}
+
+	#manageTaskListsPage .fa-trash-o:before
+	{
+		background-color: transparent;
+		border: none;
+		border-left: 1px solid #ccd4da;
+		margin-left: 0;
+		padding-left: 1rem;
+	
+	}
+	#manageTaskListsPage .editTaskIcon {
+		margin-right: .5rem;
+	
 	}
 
 	.taskTotalCount {

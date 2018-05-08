@@ -415,13 +415,15 @@
 						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
 						<div class="row col-12">
 							<div class="input-append date form_datetime form-control" id="datetimepicker" data-date-format="2012-12-21T15:25:00Z">
-								<input id="editTaskItemDueDate" type="text" placeholder="Click to set date/time" readonly >	
+								<input id="editTaskItemDueDate" type="text" placeholder="Click to set date/time" readonly >
+
 								<span class="add-on  clearDueDateBtn">
 									<i class="fa fa-times" aria-hidden="true"></i>
 								</span>
 								<span class="add-on addDueDateBtn">
 									<i class="fa fa-calendar" aria-hidden="true"></i>
-								</span> 					
+								</span> 
+					
 							</div>
 						</div>
 						<div class="errorMsg" id="editTaskDueDateErrorMsg"></div>
@@ -444,7 +446,7 @@
 					
 					<div class="form-group">
 						<label for="listName" class="form-control-label">List:</label>
-						<div class="row col-12">
+						<div class="styled-select row col-12">
 							<select class="form-control" id="editTaskFormListSelect">
 								<!--	Option values populated dynamically via JS -->
 							</select>
