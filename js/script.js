@@ -3844,6 +3844,11 @@ var appUIController = (function () {
 			appUIController.resetTaskForm1( formValidationObj[0] );
 			
 			appUIController.getUIVars().inputNewTaskTitle.value = "";
+			appUIController.getUIVars().inputNewTaskDateTime.value = "";
+			appUIController.getUIVars().inputNewTaskRepeat.value = "none";
+			appUIController.getUIVars().inputNewTaskListSelection.value = "Default";
+				
+
 			appUIController.getUIVars().inputNewTaskTitle.focus();
 			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0,0)
 			
@@ -4555,6 +4560,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		appUIController.getUIVars().addNewFormNotifications.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
 		
+		// Event Listener to style notifications input
+		appUIController.getUIVars().newTaskFormNotificationArea.addEventListener("click",
+		function(event) {appUIController.styleNotificationInput(event)}, true);
 		
 		//*******************************************************
 		// "Input" events on all fields on newTask Form
