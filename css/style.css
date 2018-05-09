@@ -1582,6 +1582,10 @@ span.newList.fa-stack {
 		padding-left: 1rem;
 	
 	}
+
+#manageTaskListsPage .fa-trash-o:hover:before {
+	color: red;
+}
 	#manageTaskListsPage .editTaskIcon {
 		margin-right: .5rem;
 	
