@@ -836,6 +836,27 @@ nav ul li:hover ul li span.listTotal {
 	transition: transform .7s ease-in-out, -webkit-transform .7s ease-in-out;
 }
 
+/*
+.card a.deleteAction label:hover {
+	color: red;
+}
+*/
+
+/*
+.card a.deleteAction label .fa-trash-o:hover:before,
+.card a.deleteAction label:hover
+{
+	color: red;
+}
+*/
+
+.card .taskActionRow a.deleteAction label i.fa.fa-trash-o:hover:before,
+.card .taskActionRow a.deleteAction label:hover
+{
+	color: red;
+}
+
+
 .taskActionRow {
 /*
 	overflow: hidden;
@@ -1500,7 +1521,21 @@ span.newList.fa-stack {
 	.col-11 {
 		max-width: 95%;
 	}
-	/*****************************************************************/
+
+	#addTaskResetButton {
+		border: solid 1px #34AFA9;
+		color: #34AFA9;
+	
+	}
+	#addTaskResetButton:hover {
+		background-color: lightgray;
+		background-color: red;
+		color: red;
+		color: white;
+	}
+
+	
+/*****************************************************************/
 	/* Manage Tasks List Page */
 	/*****************************************************************/
 	#manageTaskListsPage .card {
