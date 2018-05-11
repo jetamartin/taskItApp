@@ -7,6 +7,7 @@
 	<title>TaskIt v1.0</title>
 	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	
 
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
 		
@@ -204,6 +205,7 @@
 
 					<!--	Enter Due Date				-->
 <!--					<div>-->
+<!--
 					<div class="form-group">
 						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
 						<div class="row col-12">
@@ -219,6 +221,53 @@
 							</div>
 						</div>
 						<div class="errorMsg" id="newTaskDueDateErrorMsg"></div>
+					</div>
+-->
+					<div class="form-group">
+						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
+						<div class="row col-12">
+							<div class="input-group date form_datetime" id="datetimepicker4" data-target-input="nearest">
+<!--							<div class="input-append date form_datetime form-control" id="datetimepicker" data-date-format="2012-12-21T15:25:00Z">-->
+								<input type="text" class="form-control datetimepicker-input" id="newTaskDateTime" data-target="#datetimepicker4"/>
+								<div class="input-group-append">
+									<div class="input-group-text add-on ">
+										<span data-target="#datetimepicker4" data-toggle="datetimepicker"><i class="fa fa-calendar"></i></span>
+										<span class="clearDueDateBtn"><i class="dueDateDelete fa fa-times" aria-hidden="true"></i></span>
+									</div>
+<!--
+									<div class="add-on  clearDueDateBtn">
+										<i class="dueDateDelete fa fa-times" aria-hidden="true"></i>
+									</div>
+-->
+								</div>
+							</div>
+
+						</div>
+						<div class="errorMsg" id="newTaskDueDateErrorMsg"></div>
+					</div>
+					
+					
+					
+					<!--	Enter Due Time				-->
+					
+					<div class="form-group">
+						<label for="newTaskDueTime" class="form-control-label">Due Time:</label>
+						<div class="row col-12">
+							<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                    			<input type="text" class="form-control datetimepicker-input" id="newTaskDueTime" data-target="#datetimepicker3"/>
+                    			<div class="input-group-append">
+                        			<div class="input-group-text">
+										<span  data-target="#datetimepicker3" data-toggle="datetimepicker">
+											<i class="fa fa-clock-o"></i>
+										</span>				
+										<span>
+											<i class="clearDueTimeBtn dueTimeDelete fa fa-times"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+                		</div>
+						<div class="errorMsg" id="newTaskDueTimeErrorMsg"></div>
 					</div>
 
 
@@ -245,15 +294,31 @@
 					<div class="form-group" >
 						<label for="inListNameSelection">List:</label>
 						<div class="row col-12">
-							<!--	Will need to build list dynamically based on user input						-->
-							<select class="form-control" id="newTaskListNameSelect">
+							<div class="input-group">
+								<select class="form-control" id="newTaskListNameSelect">
+									<!--	Option values populated dynamically via JS -->
+								</select>		
+								<div class="listSelect input-group-append " >
+								   <a data-toggle="modal" data-target="#newTaskItemListModal">
+										<label class="input-group-text" for="newTaskListNameSelect">
 
-								<!--	Option values populated dynamically via JS -->
-							</select>
+											<span class="newList fa-stack">
+												<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
+												<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
+											</span>
+											   
+					
+										</label>
+									</a>   
+								</div>
+							</div>
+							<!--	Will need to build list dynamically based on user input						-->
+
 						</div>
 						<div class="errorMsg" id="editTaskListSelectErrorMsg"></div>
 
 
+<!--
 						<a data-toggle="modal" data-target="#newTaskItemListModal">
 							<span class="newList fa-stack">
 							<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
@@ -261,40 +326,13 @@
 								
 						</span>
 						</a>
+-->
 					</div>
 					<div class="errorMsg" id="newTaskListSelectErrorMsg"></div>
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
 						<div class="hideIt" id="newTaskListCreateMsg"></div>
 						
-					<!--	Add New Notification			-->
 
-<!--
-					<div class="form-group" >
-						<label for="">Notification:</label><br />
-						<div class="row col-4 notification">
-							<select class="form-control" name="notification"id="">
-							<option value="notification">Notification</option>
-									<option value="email">Email</option>
-							</select>
-						</div>
-						
-						<div class= "row col-3 notification">
-							<input class="form-control notificationUnits" type="number" name="units" min="1" max="999" value="10">	
-						</div>
-						
-						<div class="row col-3 notification">
-							<select class="form-control" name="unitType" id="">
-								<option value="minutes">Minutes</option>
-								<option value="hours">Hours</option>
-								<option value="days">Days</option>
-								<option value="weeks">Weeks</option>
-							</select>
-						</div>
-						<div class="row col-2 notification">
-							<i class="fa fa-times" aria-hidden="true"></i>
-						</div>
-					</div>
--->
 					
 					<!--	Click to add more notifications				-->
 
@@ -656,34 +694,46 @@
 		<p>A simple, clean looking dropdown menu effect achieved using pure CSS. Simple functionality, method can be extended to create a secondary dropdown block with few edits.</p>
 	</footer>
 
-
-
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 	
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 	
+	<!-- Following 4 lines for  Tempus Dominus Date Time Picker	-->
+	
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/locale/en-ca.js"></script>
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+  	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+
+	
+	
 	<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
 	
-	<script src="js/bootstrap-datetimepicker.js"></script>
+	<!-- Java script for https://www.malot.fr/bootstrap-datetimepicker/		-->
+	<!--	<script src="js/bootstrap-datetimepicker.js"></script>-->
+	
+	<!-- Java script for https://tempusdominus.github.io/bootstrap-4/Usage/
+	-->
 	<script src="js/script.js"></script>
-
-	
 	<script type="text/javascript">
-//    	$(".form_datetime").datetimepicker({
-//        format: "mm/dd/yyyy  H:ii P",
-//        showMeridian: true,
-//        autoclose: true,
-//        todayBtn: true,
-//		pickerPosition: "bottom-left"
-//    	});
-//		
-//		$('.form_datetime').datetimepicker().on('changeDate', function(e) {alert("A Date has changed")});
-
-	</script> 
-
+		$(function () {
+			$('#datetimepicker3').datetimepicker({
+				format: 'LT'
+			});
+		});
+	</script>
+	<script type="text/javascript">
+            $(function () {
+                $('#datetimepicker4').datetimepicker({
+                    format: 'L'
+                });
+            });
+	</script>
 	
+
 
 
 </body>

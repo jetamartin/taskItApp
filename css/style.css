@@ -6,9 +6,11 @@
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
 	}
+/*
 	* {
 		border-radius: 0;
 	}
+*/
 	body,
 	html {
 		height: 100%;
@@ -1103,6 +1105,12 @@ input[name=taskCompleteStatus] {
 .editTaskPage select#editTaskFormListSelect 
 {
 	margin-right: .5rem;
+	margin-right: -.19rem;
+}
+
+.listSelect.input-group-append {
+	margin-top: 1.72rem;
+	z-index: 3;
 }
 
 .editTaskPage select#editTaskFormListSelect.form-control,
@@ -1287,6 +1295,7 @@ input[name=taskCompleteStatus] {
 	
 }
 
+/*
 .form_datetime {
     border-radius: .25rem;
     border: solid 1px #34AFA9;
@@ -1295,6 +1304,7 @@ input[name=taskCompleteStatus] {
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0; 
 }
+*/
 .fa-calendar:before {
     content: "\f271";
     margin-left: 2.5rem;
@@ -1313,6 +1323,41 @@ input[name=taskCompleteStatus] {
 /*	border-radius: 0 .25rem .25rem 0;*/
 }
 
+#newTaskPage .fa.fa-calendar {
+	padding-top: .5rem
+}
+
+#newTaskPage .fa-calendar:before {
+    content: "\f271";
+	margin-left: 0;
+	padding-top: .41rem;
+    padding-right: .65rem;
+    padding-left: .81rem;
+    padding-bottom: .55rem;
+    font-size: 1.25rem;
+    color: #34AFA9;
+	border: solid 1px #34AFA9;
+/*	border-radius: 0 .25rem .25rem 0;*/
+	border-left: 0;
+}
+#newTaskPage .fa.fa-clock-o {
+	padding-top: .5rem
+}
+
+#newTaskPage .fa-clock-o:before {
+    content: "\f017";
+	margin-left: 0;
+	padding-top: .41rem;
+    padding-right: .65rem;
+    padding-left: .81rem;
+    padding-bottom: .55rem;
+    font-size: 1.25rem;
+    color: #34AFA9;
+	border: solid 1px #34AFA9;
+	border-radius: 0 .25rem .25rem 0;
+	border-left: 0;
+}
+
 
 .dueDateDelete.fa-remove:before, .dueDateDelete.fa-close:before, .dueDateDelete.fa-times:before {
     content: "\f00d";
@@ -1323,22 +1368,28 @@ input[name=taskCompleteStatus] {
     padding-left: .7rem;
     padding-bottom: .55rem;
     color: #34AFA9;
-	margin-left: -.9rem;
+	margin-left: -.5rem;
     background-color: #f2f2f2;
 /*    border: 1px solid #ced4da;*/
 	border-left: 1px solid #34AFA9;
-	border-right: 1px solid #ccd4da;
+/*	border-right: 1px solid #ccd4da;*/
+/*
 	border-top: none;
 	border-bottom: none;
-	border-radius: 0;
+*/
+	border-radius: 0 .25rem .25rem 0;
 	
 }
 /**/
 
 .newTaskPage .dueDateDelete.fa-remove:before, 
 .newTaskPage .dueDateDelete.fa-close:before,
-.newTaskPage .dueDateDelete.fa-times:before {
-	margin-left: 4.2rem;
+.newTaskPage .dueDateDelete.fa-times:before
+.newTaskPage .dueTimeDelete.fa-remove:before, 
+.newTaskPage .dueTimeDelete.fa-close:before,
+.newTaskPage .dueTimeDelete.fa-times:before
+{
+/*	margin-left: 4.2rem;*/
 	border: solid 1px;
 	border-top-right-radius: 4px;
 	border-bottom-right-radius: 4px;
@@ -1348,12 +1399,13 @@ input[name=taskCompleteStatus] {
 
 .fa-trash-o:before, .fa-close:before, .fa-times:before {
     font-size: 1.25rem;
-	padding-top: .4rem;
+	padding-top: .45rem;
     padding-right: .65em;
     padding-left: .7rem;
     padding-bottom: .55rem;
     color: #34AFA9;
-	margin-left: 4.2rem;
+/*	margin-left: 4.2rem;*/
+	margin-left: -.5rem;
     background-color: #f2f2f2;
 	
 	border-left: 1px solid #ccd4da;
@@ -1416,9 +1468,11 @@ input[name=taskCompleteStatus] {
 	}
 
 
+/*
 	.addDueDateBtn, .clearDueDateBtn {
 		float: right;
 	}
+*/
 
 
 	/* Make form controls appear in a row rather than as a column */
@@ -1474,19 +1528,31 @@ span.newList.fa-stack {
 }
 */
 	
-	i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
+	#newTaskPage i.fa.fa-plus-circle.fa-stack-1x,
+	#editTaskPage i.fa.fa-plus-circle.fa-stack-1x,
+	{
 		position: relative;
 		font-size: 1.3rem;
-		top: .5rem;
-		left: .8rem;
+		top: .35rem;
+		left: .7rem;
 		border-radius: 100%;
 		background-color: #f5f2f2;
 	}
+	#newTaskPage .fa-list-ul,
+	#editTaskPage .fa-list-ul {
+		left: 0;
+		top: -4px;
+	}
+	
+
+	
 	
 /* &&&&&&&& New entry of above &&&&&&&*/
 	i.fa.fa-plus-circle.fa-stack-1x.newSymbol {
 		position: relative;
 		font-size: 1rem;
+		top: .4rem;
+		left: .7rem;
 /*		top: -1.95rem;*/
 		border-radius: 100%;
 		background-color: transparent; 

@@ -1509,7 +1509,25 @@ var appModelController = (function () {
 						return false;
 					}
 				}
+			},
+			
+			{	// Date Time Field
+				fieldName: document.getElementById("newTaskDueTime"),
+				fieldInError: false,
+				fieldDefaultValue: "",
+				fieldErrorMsgLocation: document.getElementById("newTaskDueTimeErrorMsg"),
+				fieldErrMsg: "Must set Due Time to use Notifications",
+				isNotValid: function(str) {
+					var timeValue = document.getElementById("newTaskDateTime").value;
+					var notifications = document.getElementsByClassName("notification").length;
+					if (notifications !== 0 && !timeValue.replace(/^\s+/g, '').length) {
+						return true;
+					} else {
+						return false;
+					}
+				}
 			}
+			
 		]
 	},	  
 	  /* Edit Task Form Validation Object */
@@ -2152,7 +2170,8 @@ var appUIController = (function () {
 	
 	//$$$$$
 	var addDueDateBtn = document.querySelector(".addDueDateBtn");
-	var clearDueDateBtn = document.querySelector(".clearDueDateBtn"); 
+	var clearDueDateBtn = document.querySelector(".clearDueDateBtn");
+	var clearDueTimeBtn = document.querySelector(".clearDueTimeBtn");
 	
 	var inputNavListModalListName = document.querySelector("#navListModalListName");
 	var modalListInput = document.querySelector(".modalListInput");
@@ -2305,7 +2324,28 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/	
 	/****************************************************************************************************************/
 	return {
-		
+		clearDueDate: function (event) {
+			console.log("clearDueDate");
+			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+			
+			var validationObj = appModelController.getFormValidationObject(pageId);
+			
+			// Change the DueDate field styling to show user changed it. 
+			validationObj[0].fieldsToValidate[1].fieldName.value = "";
+			
+			
+		}, 
+		clearDueTime: function (event) {
+			console.log("clearDueTime");
+			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
+			
+			var validationObj = appModelController.getFormValidationObject(pageId);
+			
+			// Change the DueDate field styling to show user changed it. 
+			validationObj[0].fieldsToValidate[5].fieldName.value = "";
+			
+			
+		}, 
 		styleNotificationInput: function (event) {
 			console.log("styleNotficationInput"); 
 			
@@ -3427,6 +3467,7 @@ var appUIController = (function () {
 				listMenuTitle: listMenuTitle,
 				addDueDateBtn: addDueDateBtn,
 				clearDueDateBtn: clearDueDateBtn,
+				clearDueTimeBtn: clearDueTimeBtn, 
 				formDatetimeInputBox: formDatetimeInputBox,
 				repeatErrorMsgDiv: repeatErrorMsgDiv,
 				editRepeatErrorMsgDiv: editRepeatErrorMsgDiv,
@@ -3877,32 +3918,32 @@ var appUIController = (function () {
 
 		
 		resetTaskForm1: function ( formValidationObj ) {
-			var notificationNodes;
-			var numberOfNotificationNodes;
-			// Reset formError 
-			formValidationObj.formError = false;
-
-			//Clear out any prior success/error messages and styling 
-			formValidationObj.formSubmitErrorMsgLoc.innerHTML = "";
-			formValidationObj.formSubmitSuccessMsgLoc.innerHTML = "";
-			formValidationObj.formSubmitSuccessMsgLoc.classList.remove("success-message");
-			formValidationObj.formSubmitErrorMsgLoc.classList.remove("error-message");
-			
-			// For each field on the form remove any error messages/styling 
-			formValidationObj.fieldsToValidate.forEach (function(field) {
-				field.fieldErrorMsgLocation.innerHTML = "";
-				field.fieldName.classList.remove("filled");
-				field.fieldName.classList.remove("formErrors");
-			});	
-			
-			// Remove any residiual notification nodes that might 
-			notificationNodes = document.getElementsByClassName('notification');
-			
-			if (notificationNodes.length > 0) {	
-				while (notificationNodes.length > 0) {
-					notificationNodes[notificationNodes.length-1].remove()	
-				}
-			}
+//			var notificationNodes;
+//			var numberOfNotificationNodes;
+//			// Reset formError 
+//			formValidationObj.formError = false;
+//
+//			//Clear out any prior success/error messages and styling 
+//			formValidationObj.formSubmitErrorMsgLoc.innerHTML = "";
+//			formValidationObj.formSubmitSuccessMsgLoc.innerHTML = "";
+//			formValidationObj.formSubmitSuccessMsgLoc.classList.remove("success-message");
+//			formValidationObj.formSubmitErrorMsgLoc.classList.remove("error-message");
+//			
+//			// For each field on the form remove any error messages/styling 
+//			formValidationObj.fieldsToValidate.forEach (function(field) {
+//				field.fieldErrorMsgLocation.innerHTML = "";
+//				field.fieldName.classList.remove("filled");
+//				field.fieldName.classList.remove("formErrors");
+//			});	
+//			
+//			// Remove any residiual notification nodes that might 
+//			notificationNodes = document.getElementsByClassName('notification');
+//			
+//			if (notificationNodes.length > 0) {	
+//				while (notificationNodes.length > 0) {
+//					notificationNodes[notificationNodes.length-1].remove()	
+//				}
+//			}
 		},
 
 		
@@ -4576,6 +4617,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
 		
+		appUIController.getUIVars().clearDueDateBtn.addEventListener('click', function(event) {appUIController.clearDueDate(event)});
+		
+		appUIController.getUIVars().clearDueTimeBtn.addEventListener('click', function(event) {appUIController.clearDueTime(event)});
+		
 		
 		//****************************************************************************		
 		// EDIT TASK FORM EVENT LISTENERS  		
@@ -4728,7 +4773,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			
 		});
 		
-		
+
+//		$('.clearDueDateBtn').on( "click", function( event ) {	
+//  			$('#datetimepicker3').datetimepicker('clear');
+//			console.log("Clear Due Date input")
+//			
+//		});
 		
 		
 		// Got the following solution from stackoverflow:
@@ -4761,19 +4811,19 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		addEventListenerByClass('deleteTaskListModalForm', 'submit', function(event) { appUIController.deleteTaskList(event)});
 		
 		// Date Time Picker from :https://www.malot.fr/bootstrap-datetimepicker/	
-		$(".form_datetime").datetimepicker({
-        format: "mm/dd/yyyy  H:ii P",
-        showMeridian: true,
-        autoclose: true,
-        todayBtn: true,
-		pickerPosition: "bottom-left"
-    	});
+//		$(".form_datetime").datetimepicker({
+//        format: "mm/dd/yyyy  H:ii P",
+//        showMeridian: true,
+//        autoclose: true,
+//        todayBtn: true,
+//		pickerPosition: "bottom-left"
+//    	});
 		
 		
-		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
-			appUIController.dueDateUpdate(e);
-			console.log(e);	
-		});
+//		$('.form_datetime').datetimepicker().on('changeDate', function(e) {
+//			appUIController.dueDateUpdate(e);
+//			console.log(e);	
+//		});
 
 	}
 	
