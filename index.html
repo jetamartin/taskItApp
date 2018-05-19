@@ -226,19 +226,14 @@
 					<div class="form-group">
 						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
 						<div class="row col-12">
-							<div class="input-group date form_datetime" id="datetimepicker4" data-target-input="nearest">
-<!--							<div class="input-append date form_datetime form-control" id="datetimepicker" data-date-format="2012-12-21T15:25:00Z">-->
-								<input type="text" class="form-control datetimepicker-input" id="newTaskDateTime" data-target="#datetimepicker4"/>
-								<div class="input-group-append">
+							<div class="input-group date form_datetime" id="newTaskDatePicker" data-target-input="nearest">
+
+								<input type="text" class="form-control datetimepicker-input" id="newTaskDateTime" data-target="#newTaskDatePicker" placeholder="Click &nbsp;&#xf271 &nbsp;to set Due Date"/>
+								<div class="input-group-append" >	
 									<div class="input-group-text add-on ">
-										<span data-target="#datetimepicker4" data-toggle="datetimepicker"><i class="fa fa-calendar"></i></span>
+										<span data-target="#newTaskDatePicker" data-toggle="datetimepicker"><i class="fa fa-calendar"></i></span>
 										<span class="clearDueDateBtn"><i class="dueDateDelete fa fa-times" aria-hidden="true"></i></span>
 									</div>
-<!--
-									<div class="add-on  clearDueDateBtn">
-										<i class="dueDateDelete fa fa-times" aria-hidden="true"></i>
-									</div>
--->
 								</div>
 							</div>
 
@@ -250,14 +245,15 @@
 					
 					<!--	Enter Due Time				-->
 					
+<!--
 					<div class="form-group">
 						<label for="newTaskDueTime" class="form-control-label">Due Time:</label>
 						<div class="row col-12">
-							<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-                    			<input type="text" class="form-control datetimepicker-input" id="newTaskDueTime" data-target="#datetimepicker3"/>
+							<div class="input-group date" id="newTaskTimePicker" data-target-input="nearest">
+                    			<input type="text" class="form-control datetimepicker-input" id="newTaskDueTime" data-target="#newTaskTimePicker" placeholder="Click &nbsp;&#xf017 &nbsp;to set Due Time"/>
                     			<div class="input-group-append">
                         			<div class="input-group-text">
-										<span  data-target="#datetimepicker3" data-toggle="datetimepicker">
+										<span  data-target="#newTaskTimePicker" data-toggle="datetimepicker">
 											<i class="fa fa-clock-o"></i>
 										</span>				
 										<span>
@@ -269,6 +265,7 @@
                 		</div>
 						<div class="errorMsg" id="newTaskDueTimeErrorMsg"></div>
 					</div>
+-->
 
 
 					<!--	Select Repeat			-->
@@ -316,18 +313,9 @@
 
 						</div>
 						<div class="errorMsg" id="editTaskListSelectErrorMsg"></div>
-
-
-<!--
-						<a data-toggle="modal" data-target="#newTaskItemListModal">
-							<span class="newList fa-stack">
-							<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
-							<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
-								
-						</span>
-						</a>
--->
 					</div>
+					
+					
 					<div class="errorMsg" id="newTaskListSelectErrorMsg"></div>
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
 						<div class="hideIt" id="newTaskListCreateMsg"></div>
@@ -449,6 +437,8 @@
 						<input type="hidden" id="completedDate">
 					</div>
 					
+					<!--	OLD EDIT TASK DATE				-->
+<!--
 					<div class="form-group">
 						<label for="newTaskDueDate" class="form-control-label">Due Date:</label>
 						<div class="row col-12">
@@ -466,7 +456,30 @@
 						</div>
 						<div class="errorMsg" id="editTaskDueDateErrorMsg"></div>
 					</div>
+-->
+					
+					
+					<!--	EDIT TASK DATE/TIME PICKER				-->
+					
 
+					<div class="form-group">
+						<label for="editTaskDueDate" class="form-control-label">Due Date:</label>
+						<div class="row col-12">
+							<div class="input-group date form_datetime" id="editTaskDatePicker" data-target-input="nearest">
+								<input type="text" class="form-control datetimepicker-input" id="editTaskDateTime" data-target="#editTaskDatePicker" placeholder="Click &nbsp;&#xf271 &nbsp;to set Due Date"/>
+								<div class="input-group-append" >	
+									<div class="input-group-text add-on ">
+										<span data-target="#editTaskDatePicker" data-toggle="datetimepicker"><i class="fa fa-calendar"></i></span>
+										<span class="clearDueDateBtn"><i class="dueDateDelete fa fa-times" aria-hidden="true"></i></span>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<div class="errorMsg" id="editTaskDueDateErrorMsg"></div>
+					</div>	
+					
+					<!--  Edit Task List Input					-->
 
 					<div class="form-group">
 						<label for="exampleSelect1">Repeat:</label>
@@ -483,27 +496,32 @@
 					</div>
 					
 					<div class="form-group">
-						<label for="listName" class="form-control-label">List:</label>
-						<div class="styled-select row col-12">
-							<select class="form-control" id="editTaskFormListSelect">
-								<!--	Option values populated dynamically via JS -->
-							</select>
-						</div>
-
-
-						<a data-toggle="modal" data-target="#editTaskItemListModal">
-							<span class="newList fa-stack">
-							<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
-							<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
-								
-						</span>
-						</a>
+						<label for="listName">List:</label>
+						<div class="row col-12">
+							<div class="input-group">
+								<select class="form-control" id="editTaskFormListSelect">
+									<!--	Option values populated dynamically via JS -->
+								</select>
+								<div class="listSelect input-group-append " >
+						
+									<a data-toggle="modal" data-target="#editTaskItemListModal">
+										<label class="input-group-text" for="editTaskFormListSelect">
+											<span class="newList fa-stack">
+												<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
+												<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
+											</span>
+										</label>
+									</a>
+								</div>
+							</div>
 						
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
 						<div class="hideIt" id="editTaskListCreateMsg">
 						</div>
 
+						</div>
 					</div>
+
 					
 					<!--	Click to add more notifications				-->
 					<div id="editTaskFormNotificationArea">
@@ -718,22 +736,41 @@
 	<!-- Java script for https://tempusdominus.github.io/bootstrap-4/Usage/
 	-->
 	<script src="js/script.js"></script>
+<!--
 	<script type="text/javascript">
 		$(function () {
-			$('#datetimepicker3').datetimepicker({
+			$('#newTaskTimePicker').datetimepicker({
 				format: 'LT'
 			});
 		});
 	</script>
+-->
 	<script type="text/javascript">
             $(function () {
-                $('#datetimepicker4').datetimepicker({
-                    format: 'L'
-                });
-            });
+                $('#newTaskDatePicker').datetimepicker({
+					icons: {
+							time: "fa fa-clock-o",
+							date: "fa fa-calendar-plus-o",
+							up: "fa fa-arrow-up",
+							down: "fa fa-arrow-down"
+					}
+				});
+		});
 	</script>
 	
-
+	<script type="text/javascript">
+		$(function () {
+			$('#editTaskDatePicker').datetimepicker(
+				{
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar-plus-o",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down"
+                }
+            });
+		});
+	</script>
 
 
 </body>

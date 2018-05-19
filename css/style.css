@@ -1086,6 +1086,12 @@ input[name=taskCompleteStatus] {
 	/* Edit & New Task List Page */
 	/*****************************************************************/
 
+
+
+
+	input, select {
+		font-family: "FontAwesome";	
+	}
 	.editTaskPage .form-control,
 	.newTaskPage .form-control,
 	select.form-control,
@@ -1117,6 +1123,10 @@ input[name=taskCompleteStatus] {
 .newTaskPage select#newTaskFormListSelect.form-control {
 	border-radius: 0 !important;
 }
+
+	#editTaskPage .listSelect label {
+		margin-bottom: .45rem;
+	}
 
 	/* Make sure footer doesn't block content of Edit Task Screen */
 	
@@ -1305,14 +1315,15 @@ input[name=taskCompleteStatus] {
 	border-bottom-right-radius: 0; 
 }
 */
+/*
 .fa-calendar:before {
     content: "\f271";
     margin-left: 2.5rem;
-/*    padding: .36rem;*/
+
 	padding-top: .41rem;
     padding-right: .65rem;
     padding-left: .81rem;
-/*    padding-bottom: .65rem;*/
+
     padding-bottom: .59rem;
     font-size: 1.25rem;
     color: #34AFA9;
@@ -1320,14 +1331,19 @@ input[name=taskCompleteStatus] {
     border-left: 1px solid #ced4da;
 	border: solid 1px;
 	border-sizing: border-box;
-/*	border-radius: 0 .25rem .25rem 0;*/
-}
 
-#newTaskPage .fa.fa-calendar {
+}
+*/
+
+#newTaskPage .fa.fa-calendar,
+#editTaskPage .fa.fa-calendar
+{
 	padding-top: .5rem
 }
 
-#newTaskPage .fa-calendar:before {
+#newTaskPage .fa-calendar:before,
+#editTaskPage .fa-calendar:before
+{
     content: "\f271";
 	margin-left: 0;
 	padding-top: .41rem;
@@ -1340,10 +1356,13 @@ input[name=taskCompleteStatus] {
 /*	border-radius: 0 .25rem .25rem 0;*/
 	border-left: 0;
 }
+/*
 #newTaskPage .fa.fa-clock-o {
 	padding-top: .5rem
 }
+*/
 
+/*
 #newTaskPage .fa-clock-o:before {
     content: "\f017";
 	margin-left: 0;
@@ -1357,6 +1376,7 @@ input[name=taskCompleteStatus] {
 	border-radius: 0 .25rem .25rem 0;
 	border-left: 0;
 }
+*/
 
 
 .dueDateDelete.fa-remove:before, .dueDateDelete.fa-close:before, .dueDateDelete.fa-times:before {
@@ -1600,6 +1620,12 @@ span.newList.fa-stack {
 		color: white;
 	}
 
+/* Icons for calendar modal */
+    .fa-clock-o, 
+	.fa-calendar-plus-o {
+	 color: #34AFA9;
+	 font-size: 1.5rem;
+	}
 	
 /*****************************************************************/
 	/* Manage Tasks List Page */
