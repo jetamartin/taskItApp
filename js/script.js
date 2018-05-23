@@ -3901,8 +3901,10 @@ var appUIController = (function () {
 				
 			appUIController.getUIVars().inputNewTaskTitle.value = "";
 			appUIController.getUIVars().inputNewTaskDateTime.value = "";
-			appUIController.getUIVars().inputNewTaskDueTime.value = "";		
-			appUIController.getUIVars().inputNewTaskRepeat.value = "none";
+				
+			// **** DELETED REPEAT FIELD so no need for this for now
+//			appUIController.getUIVars().inputNewTaskRepeat.value = "none";
+				
 			appUIController.getUIVars().inputNewTaskListSelection.value = "Default";
 				
 
