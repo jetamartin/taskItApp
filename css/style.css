@@ -1121,7 +1121,7 @@ input[name=taskCompleteStatus] {
 
 .editTaskPage select#editTaskFormListSelect.form-control,
 .newTaskPage select#newTaskFormListSelect.form-control {
-	border-radius: 0 !important;
+/*	border-radius: 0 !important;*/
 }
 
 	#editTaskPage .listSelect label {
