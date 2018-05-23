@@ -845,7 +845,7 @@ return {
 		taskItemObject.taskList_id = appModelController.lookUpTaskListId(inputTaskObject.taskList);
 		taskItemObject.taskItem_title = inputTaskObject.taskTitle;
 		taskItemObject.taskItem_due_date = inputTaskObject.taskDueDate;
-		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat.toLowerCase();
+//		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat.toLowerCase();
 		taskItemObject.taskItem_completedDate = inputTaskObject.taskCompletedDate;
 		taskItemObject.taskItem_notifications =	inputTaskObject.taskNotificationsPresent;
 	},
@@ -1470,21 +1470,21 @@ var appModelController = (function () {
 				}
 			},
 			
-			{	// Repeat Option
-				fieldName: document.getElementById("newTaskRepeatOption"),
-				fieldInError: false,
-				fieldDefaultValue: "1",
-				fieldErrorMsgLocation: document.getElementById("repeatErrorMsgDiv"),
-				fieldErrMsg: "Must have a due date to make a task repeatable",
-				isNotValid: function(str) {
-					var dateValue = document.getElementById("newTaskDateTime").value;
-					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-			},
+//			{	// Repeat Option
+//				fieldName: document.getElementById("newTaskRepeatOption"),
+//				fieldInError: false,
+//				fieldDefaultValue: "1",
+//				fieldErrorMsgLocation: document.getElementById("repeatErrorMsgDiv"),
+//				fieldErrMsg: "Must have a due date to make a task repeatable",
+//				isNotValid: function(str) {
+//					var dateValue = document.getElementById("newTaskDateTime").value;
+//					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
+//						return true;
+//					} else {
+//						return false;
+//					}
+//				}
+//			},
 			{	// List Selection Option
 				fieldName: document.getElementById("newTaskListNameSelect"),
 				fieldInError: false,
@@ -1561,19 +1561,19 @@ var appModelController = (function () {
 				isNotValid: function(str) {
 				}
 			},
-			{	// Repeat Option
-				fieldName: document.getElementById("editFormRepeatSelect"),
-				fieldErrorMsgLocation: document.getElementById("editRepeatErrorMsgDiv"),
-				fieldErrMsg: "Must have a due date to make a task repeatable",
-				isNotValid: function(str) {
-					var dateValue = document.getElementById("editTaskDateTime").value;
-					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-			},
+//			{	// Repeat Option
+//				fieldName: document.getElementById("editFormRepeatSelect"),
+//				fieldErrorMsgLocation: document.getElementById("editRepeatErrorMsgDiv"),
+//				fieldErrMsg: "Must have a due date to make a task repeatable",
+//				isNotValid: function(str) {
+//					var dateValue = document.getElementById("editTaskDateTime").value;
+//					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
+//						return true;
+//					} else {
+//						return false;
+//					}
+//				}
+//			},
 			{	// List Selection Option
 				fieldName: document.getElementById("editTaskFormListSelect"),
 				fieldInError: false,
@@ -2387,15 +2387,17 @@ var appUIController = (function () {
 			
 		}, 
 		
+		// **** COMMENTED OUT BECAUSE I REMOVED REPEAT OPTION
+		// ***** NOTE: ALSO CHANGED fieldsToValidate index from 4 to 3 given i removed 
 		clearFormRepeatAndNotificationErrors: function (validationObj) {
 			
 			// Clear error styling from Repeat field
-			validationObj[0].fieldsToValidate[2].fieldName.classList.remove("formErrors");
-			validationObj[0].fieldsToValidate[2].fieldErrorMsgLocation.innerHTML = "";
+//			validationObj[0].fieldsToValidate[2].fieldName.classList.remove("formErrors");
+//			validationObj[0].fieldsToValidate[2].fieldErrorMsgLocation.innerHTML = "";
 			
 			// Clear error styling from Notfication area 
-			validationObj[0].fieldsToValidate[4].fieldName.classList.remove("formErrors");
-			validationObj[0].fieldsToValidate[4].fieldErrorMsgLocation.innerHTML = "";
+			validationObj[0].fieldsToValidate[3].fieldName.classList.remove("formErrors");
+			validationObj[0].fieldsToValidate[3].fieldErrorMsgLocation.innerHTML = "";
 			
 		},
 		
@@ -2430,7 +2432,7 @@ var appUIController = (function () {
 //				validationObj[0].fieldsToValidate[5].fieldName.classList.add("filled");
 //			}
 	
-			
+//			 **** COMMENTED OUT BECAUSE I ELIMINATED REPEAT OPTION 
 			// Now a DueDate has been added we need to clear any error messages were caused when the form was submitted without a dueDate (e.g., repeat & notifications set)
 
 			appUIController.clearFormRepeatAndNotificationErrors(validationObj);
@@ -2540,10 +2542,12 @@ var appUIController = (function () {
 			var validationObj = appModelController.getFormValidationObject(pageId)
 			var notificationsOnPage = document.getElementsByClassName("notification").length;
 //			if ((validationObj[0].fieldsToValidate[4].fieldInError) && (notificationsOnPage === 0)) {
+			
+			// ***** MODIFIED BECAUSE I ELIMINATED REPEAT OPTION CHANGED fieldsToValidate Index from 4 to 3
 			if (notificationsOnPage === 0) {
-				validationObj[0].fieldsToValidate[4].fieldName.classList.remove("formErrors");
-				validationObj[0].fieldsToValidate[4].fieldErrorMsgLocation.innerHTML = "";
-				validationObj[0].fieldsToValidate[4].fieldInError = false;
+				validationObj[0].fieldsToValidate[3].fieldName.classList.remove("formErrors");
+				validationObj[0].fieldsToValidate[3].fieldErrorMsgLocation.innerHTML = "";
+				validationObj[0].fieldsToValidate[3].fieldInError = false;
 				
 			}
 			
@@ -3140,11 +3144,11 @@ var appUIController = (function () {
 			// Set the repeat value
 			
 			// Some test records may have "" instead of "none"
-			if (selectedTaskItemRecord.taskItem_repeat === "") {
-				inputEditFormRepeatSelect.value = "none"
-			} else { // values on form input are all lower case
-				inputEditFormRepeatSelect.value = selectedTaskItemRecord.taskItem_repeat.toLowerCase();
-			}
+//			if (selectedTaskItemRecord.taskItem_repeat === "") {
+//				inputEditFormRepeatSelect.value = "none"
+//			} else { // values on form input are all lower case
+//				inputEditFormRepeatSelect.value = selectedTaskItemRecord.taskItem_repeat.toLowerCase();
+//			}
 
 			// Populate the list select on the Edit Task Page
 			appUIController.populateFormWithListNames (inputEditFormListSelect);
@@ -3799,7 +3803,8 @@ var appUIController = (function () {
 			return {
 				newTaskTitle: inputNewTaskTitle.value.trim(),
 				newTaskDueDate: inputNewTaskDateTime.value,
-				newTaskRepeateOptionTxt: inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text,
+				// ***** DISABLED REPEAT OPTION
+//				newTaskRepeateOptionTxt: inputNewTaskRepeat.options[inputNewTaskRepeat.selectedIndex].text,
 				newTaskListOptionTxt: inputNewTaskListSelection.options[inputNewTaskListSelection.selectedIndex].text,
 				newTaskNotifications: notifications
 			}
@@ -3863,7 +3868,7 @@ var appUIController = (function () {
 				taskCompletedCheckbox: inputEditFormCompletedSetting.checked,
 				taskCompletedDate: inputEditCompletedDate.value,
 				taskDueDate: inputEditFormTaskItemDueDate.value,
-				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].value,
+//				taskRepeat: inputEditFormRepeatSelect.options[inputEditFormRepeatSelect.selectedIndex].value,
 				taskList: inputEditFormListSelect.options[inputEditFormListSelect.selectedIndex].value,
 				taskNotifications: notifications,
 				taskNotificationsPresent: notificationsPresent
@@ -4253,16 +4258,17 @@ var appUIController = (function () {
 				specificTaskItemHtml = specificTaskItemHtml.replace('%date%', taskItemList[i].taskItem_due_date);
 				specificTaskItemHtml = specificTaskItemHtml.replace('%time%', taskItemList[i].taskItem_due_time);
 
+				// **** DISABLED REPEAT OPTION
 				// Insert the repeat option selected
-				if (taskItemList[i].taskItem_repeat.toLowerCase() === "none" || taskItemList[i].taskItem_repeat  === "") {
+//				if (taskItemList[i].taskItem_repeat.toLowerCase() === "none" || taskItemList[i].taskItem_repeat  === "") {
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', "");
 					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatOption%', "");
 
-				} else {
-					
-					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatOption%', utilMethods.titleCase(taskItemList[i].taskItem_repeat));
-					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', repeatSymbol);
-				}
+//				} else {
+//					
+//					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatOption%', utilMethods.titleCase(taskItemList[i].taskItem_repeat));
+//					specificTaskItemHtml = specificTaskItemHtml.replace('%repeatSymbol%', repeatSymbol);
+//				}
 				
 				// if task Item is complete (has complete date ) then make sure completed checkbox is checked
 				if ( taskItemList[i].taskItem_completedDate !== "") {
@@ -4607,8 +4613,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		addTaskSaveMenuButton.addEventListener("click", function (event) {ctrlAddTaskItem1(event)});
 		
 		appUIController.getUIVars().inputNewTaskTitle.addEventListener("keydown", function(event) {appUIController.clearTaskTitleError1(event)});
-			
-		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
+		
+		
+		// ***** DISABLED REPEAT OPTION
+//			
+//		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
 		
 		appUIController.getUIVars().addNewFormNotifications.addEventListener("click", function(event) {appUIController.addNewNotification(event)});
 		
@@ -4625,8 +4634,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 		appUIController.getUIVars().inputNewTaskListSelection.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
 
-		
-		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
+		// **** DISABLED REPEAT OPTION
+//		appUIController.getUIVars().inputNewTaskRepeat.addEventListener("input", function(event) {appUIController.styleUserFormInput(event)});
 		
 		
 		
@@ -4647,8 +4656,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		appUIController.getUIVars().inputEditFormTaskItemName.addEventListener('input',  function(event) { appUIController.styleUserFormInput(event);
 		});
 		
-		appUIController.getUIVars().inputEditFormRepeatSelect.addEventListener('input',  function(event) { appUIController.styleUserFormInput(event)
-		});
+		
+		// Need to re-enable this event listener if I turn on Repeat option
+		
+		
+//		appUIController.getUIVars().inputEditFormRepeatSelect.addEventListener('input',  function(event) { appUIController.styleUserFormInput(event)
+//		});
 		
 		appUIController.getUIVars().inputEditFormListSelect.addEventListener('input',
         function(event) { appUIController.styleUserFormInput(event)

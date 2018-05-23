@@ -228,7 +228,7 @@
 						<div class="row col-12">
 							<div class="input-group date form_datetime" id="newTaskDatePicker" data-target-input="nearest">
 
-								<input type="text" class="form-control datetimepicker-input" id="newTaskDateTime" data-target="#newTaskDatePicker" placeholder="Click &nbsp;&#xf271 &nbsp;to set Due Date"/>
+								<input type="text" class="form-control datetimepicker-input" id="newTaskDateTime" data-target="#newTaskDatePicker" placeholder="Click &nbsp;&#xf271;&nbsp;|&nbsp;&#xf017; &nbsp;to set Due Date|Time"/>
 								<div class="input-group-append" >	
 									<div class="input-group-text add-on ">
 										<span data-target="#newTaskDatePicker" data-toggle="datetimepicker"><i class="fa fa-calendar"></i></span>
@@ -269,6 +269,8 @@
 
 
 					<!--	Select Repeat			-->
+					<!-- DISABLE REPEAT OPTION					-->
+<!--
 					<div class="form-group" id="newTaskRepeatGroup">
 						<label for="inRepeatOption" class="form-control-label">Repeat:</label>
 						<div class="row col-12">
@@ -280,10 +282,11 @@
 							<option value="yearly">Yearly</option>
 						</select>
 						</div>
-						<!-- Error msg inserted via JS						-->
+						 Error msg inserted via JS						
 						<div class="errorMsg" id="repeatErrorMsgDiv"></div>
 
 					</div>
+-->
 
 
 					<!--	Select ListName			-->
@@ -466,7 +469,7 @@
 						<label for="editTaskDueDate" class="form-control-label">Due Date:</label>
 						<div class="row col-12">
 							<div class="input-group date form_datetime" id="editTaskDatePicker" data-target-input="nearest">
-								<input type="text" class="form-control datetimepicker-input" id="editTaskDateTime" data-target="#editTaskDatePicker" placeholder="Click &nbsp;&#xf271 &nbsp;to set Due Date"/>
+								<input type="text" class="form-control datetimepicker-input" id="editTaskDateTime" data-target="#editTaskDatePicker" placeholder="Click &nbsp;&#xf271;&nbsp;|&nbsp;&#xf017; &nbsp;to set Due Date|Time"/>
 								<div class="input-group-append" >	
 									<div class="input-group-text add-on ">
 										<span data-target="#editTaskDatePicker" data-toggle="datetimepicker"><i class="fa fa-calendar"></i></span>
@@ -479,8 +482,10 @@
 						<div class="errorMsg" id="editTaskDueDateErrorMsg"></div>
 					</div>	
 					
-					<!--  Edit Task List Input					-->
+					<!--  Edit Task REPEAT					-->
+					<!--  Temporarily Disable				-->
 
+<!--
 					<div class="form-group">
 						<label for="exampleSelect1">Repeat:</label>
 						<div class="row col-12">
@@ -494,6 +499,7 @@
 						</div>
 						<div class="errorMsg" id="editRepeatErrorMsgDiv"></div>
 					</div>
+-->
 					
 					<div class="form-group">
 						<label for="listName">List:</label>
@@ -755,6 +761,7 @@
 							down: "fa fa-arrow-down"
 					}
 				});
+				
 		});
 	</script>
 	
