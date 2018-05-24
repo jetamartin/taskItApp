@@ -1611,6 +1611,8 @@ span.newList.fa-stack {
 	#addTaskResetButton {
 		border: solid 1px #34AFA9;
 		color: #34AFA9;
+		color: red;
+		border: solid 1px red;
 	
 	}
 	#addTaskResetButton:hover {
