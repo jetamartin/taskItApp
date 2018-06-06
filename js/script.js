@@ -1314,42 +1314,358 @@ var appModelController = (function () {
 	
 	
 	
-	//*******************************************
-	
-	// Tables used to build Pouch DB Databases 
-	
+//*******************************************
 
-	//*******************************************
+// Tables used to build Pouch DB Databases 
+
+
+//*******************************************
+
 	
 	
 	
+	var userTableDb = [
+		{
+			"_id": "01",
+			"user_id": "Jet Martin",
+			"user_password": "123"
+		}
+	];
 	
 	
+	var systemDefinedTaskListTableDb = [
+		{
+			"_id": "01",
+			"user_id": "01",
+			"taskList_name": "All Lists",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		{
+			"_id": "02",
+			"user_id": "01",
+			"taskList_name": "Default",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		
+		{
+			"_id": "07",
+			"user_id": "01",
+			"taskList_name": "Completed",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		}
+		
+	];
 	
+	var taskListTableDb = [
+
+		{
+			"_id": "03",
+			"user_id": "01",
+			"taskList_name": "School",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		{
+			"_id": "04",
+			"user_id": "01",
+			"taskList_name": "Shopping",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		{
+			"_id": "05",
+			"user_id": "01",
+			"taskList_name": "Wish List",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		{
+			"_id": "06",
+			"user_id": "01",
+			"taskList_name": "Work",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		}
+//		,
+//		{
+//			"_id": "07",
+//			"user_id": "01",
+//			"taskList_name": "Completed",
+//			"taskList_totalCount": 0,
+//			"taskList_overDueCount": 0,
+//			"taskList_completedCount": 0,
+//			"taskList_createTime": "",
+//			"taskList_isArchived": ""
+//		}
+
+	];
+	var taskItemsTableDb = [
+		{
+			"_id": "01",
+			"taskList_id": "06",
+			"taskItem_title": "Task item 1.0",
+			"taskItem_description": "",
+			"taskItem_due_date": "2018-03-01 15:30",
+			"taskItem_due_time": "5:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "02",
+			"taskList_id": "03",
+			"taskItem_title": "Task item 2",
+			"taskItem_description": "",
+			"taskItem_due_date": "",
+			"taskItem_due_time": "12:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "03",
+			"taskList_id": "04",
+			"taskItem_title": "Task item 2.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-21 23:55",
+			"taskItem_due_time": "5:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "weekly",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "04",
+			"taskList_id": "03",
+			"taskItem_title": "Task item 2.2",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-25 11:00",
+			"taskItem_due_time": "9:00am",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+
+		},
+		{
+			"_id": "05",
+			"taskList_id": "05",
+			"taskItem_title": "Task item 3",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-14 12:00",
+			"taskItem_due_time": "2:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "06",
+			"taskList_id": "06",
+			"taskItem_title": "Task item 3.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-17 14:00",
+			"taskItem_due_time": "4:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "07",
+			"taskList_id": "06",
+			"taskItem_title": "Task item 4",
+			"taskItem_description": "",
+			"taskItem_due_date": "2018-01-12 17:00",
+			"taskItem_due_time": "12:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "daily",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "08",
+			"taskList_id": "06",
+			"taskItem_title": "Task item 4.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-12-12 17:00",
+			"taskItem_due_time": "7:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "monthly",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "09",
+			"taskList_id": "02",
+			"taskItem_title": "Task item 5",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-12-15 17:00",
+			"taskItem_due_time": "6:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "10",
+			"taskList_id": "05",
+			"taskItem_title": "Task item 5.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-16 17:00",
+			"taskItem_due_time": "3:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "11",
+			"taskList_id": "03",
+			"taskItem_title": "Task item 6",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-17 17:00",
+			"taskItem_due_time": "5:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "12",
+			"taskList_id": "05",
+			"taskItem_title": "Task item 6.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-22 17:30",
+			"taskItem_due_time": "",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "13",
+			"taskList_id": "02",
+			"taskItem_title": "Task item 7",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-23 17:30",
+			"taskItem_due_time": "",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"_id": "14",
+			"taskList_id": "02",
+			"taskItem_title": "Task item 7.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-30 10:30",
+			"taskItem_due_time": "",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		}
+	];
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	//*******  END Table Definition for DBs ******
 
 	var formValidationObject = [
   	//***********************************
@@ -1662,8 +1978,147 @@ var appModelController = (function () {
 		}
 		return false;
 	}
+	
+	// 
+	
+	function initializeAndIndexDBs( userDb, taskListDb, taskItemDb  ) {
+		console.log(" Start initializeUserDb");
+
+		userTableDb.forEach( function (user, index){
+			userDb.put(user).then( function (result ) {
+				console.log("Users: ", result);
+			})
+
+		});	
+
+		// System Defined TaskList 
+		systemDefinedTaskListTableDb.forEach(function (taskList, index )	{
+			taskListDb.put(taskList).then( function ( result ) {
+				console.log("PreTaskList Items: ", result);
+			});
+
+		});
+					
+//				taskItemsTable.forEach(function (taskItem, index){
+//					taskItemDb.put(taskItem).then(function (result ) {
+//						console.log("TaskItems: ", result);
+//					});
+//				});
+		
+		
+		 // Create Index for UserDb
+		userDb.createIndex({
+
+			index: {
+				fields: ['user_name']
+			}
+		})
+
+		taskListDb.createIndex({
+
+			index: {
+				fields: ['taskList_name']
+			}
+		})
+
+		taskItemDb.createIndex({
+
+			index: {
+				fields: ['taskList_id', 'taskItem_name']
+			}
+		})
 
 
+		console.log("Show all DB records");
+
+
+
+		console.log(" End initializeUserDb");	
+
+
+	}
+	
+	function addUserSeedDataToDbs(taskListDb, taskItemDb) {	
+
+		taskListTableDb.forEach(function (taskList, index )	{
+			taskListDb.put(taskList).then( function ( result ) {
+				console.log("TaskList Items: ", result);
+				})
+			.catch(function (err) {
+				console.log("TaskList Index: " + index + " Error: " + err);
+			});
+		});
+					
+		taskItemsTableDb.forEach(function (taskItem, index) {
+			taskItemDb.put(taskItem).then(function (result ) {
+				console.log("TaskItems: ", result);
+			})
+			.catch(function (err) {
+  				console.log("TaskItem Index: " + index + " Error: " + err);
+			});
+		})
+	}
+
+	return {
+		
+		
+		
+		initializeDBs: function (addSeedData) {
+			var userDb, taskListDb, taskItemDb, taskNotificationDb;
+			
+
+			/* If a 'taskIt' DB already exist this will return pointer to that DB otherwise
+				a new empty DB will be returned.	
+			*/
+			userDb = new PouchDB('userDb');
+			
+
+			/* Determine if DB already exist and if not then initialize it */
+			/* If the DB is empty then we know this is the first time DB was
+				created and therefore we need to initialiaze it. */
+			
+			userDb.info().then(function (details) {
+				if (details.doc_count == 0 && details.update_seq == 0) {
+					return userDb.destroy().then(function ( ) {
+						console.log('test db removed');
+
+						// Create a new Databases
+						userDb = new PouchDB('userDb');
+						
+						taskListDb = new PouchDB('taskListDb');
+					
+						taskItemDb = new PouchDB('taskItemDb');
+						
+						taskNotificationDb = new PouchDB ('taskNotificationDb')
+						
+						console.log('created new databases');
+						
+						// Create indexes for Db and add system data to DBs
+						initializeAndIndexDBs(userDb, taskListDb, taskItemDb );
+						
+						
+						// Adds user seed data 
+						if (addUserSeedData) {
+							addUserSeedDataToDbs(taskListDb, taskItemDb);	
+						}
+						
+					});
+				} else {
+					console.log('database already exists');
+				}
+			})
+			.catch(function (err) {
+				console.log('error: ' + err);
+			});
+			
+
+
+		}, // END initializedDBs
+		
+		
+		
+		
+		
 		getMatchingTaskNotifications: function (taskItemId) {
 			var allTaskNotifications = appModelController.getTaskItemNotificationsTable();
 			var matchingTaskNotifications = allTaskNotifications.filter(function (notification) {
@@ -5604,6 +6059,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
 			var currActiveListNode = getActiveTaskList();
 			var currActiveListName = appUIController.getActiveTaskListName();
+			var addSeedData = true;
 
 
 
@@ -5613,9 +6069,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				appInitialized = true;
 				console.log('Application has started');
 
-				// if 'taskIt' DB doesn't already exist it then initialize it
-
-//				appModelController.initializeDBs();
+				/* 
+					Checks if DataBases have been initialized and if not it creates them,
+					generates indexes and adds seedData 
+				*/
+				appModelController.initializeDBs(addSeedData);
 
 
 
