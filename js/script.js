@@ -121,7 +121,7 @@ function updateTaskListDisplayed(taskListId) {
 
 function getAllActiveMatchingTaskItemsWithId(taskList_id) {
 	var listItemsToCategorize = appModelController.getTaskItemsTable().filter(function (taskItem) {
-		if (taskList_id === "1" && taskItem.taskItem_completedDate === "") {
+		if (taskList_id === "01" && taskItem.taskItem_completedDate === "") {
 			return taskItem;
 		} else if (taskItem.taskList_id === taskList_id && taskItem.taskItem_completedDate === "") {
 			return taskItem;
@@ -866,7 +866,7 @@ var utilMethods = (function () {
 //**************************************************************************************************************************
 
 var appModelController = (function () {
-	var db;
+	var userDb, taskListDb, taskItemDb, taskNotificationDb;
 	var userDefinedTaskListInfo1 = [];
 	var userTable1 = [];
 	var taskListTable1 = [];
@@ -998,79 +998,85 @@ var appModelController = (function () {
 	];
 
 	var taskListTable = [
-		{
-			"taskList_id": "1",
-			"user_id": "1",
-			"taskList_name": "All Lists",
-			"taskList_totalCount": 0,
-			"taskList_overDueCount": 0,
-			"taskList_completedCount": 0,
-			"taskList_createTime": "",
-			"taskList_isArchived": ""
-		},
-		{
-			"taskList_id": "2",
-			"user_id": "1",
-			"taskList_name": "Default",
-			"taskList_totalCount": 0,
-			"taskList_overDueCount": 0,
-			"taskList_completedCount": 0,
-			"taskList_createTime": "",
-			"taskList_isArchived": ""
-		},
-		{
-			"taskList_id": "3",
-			"user_id": "1",
-			"taskList_name": "School",
-			"taskList_totalCount": 0,
-			"taskList_overDueCount": 0,
-			"taskList_completedCount": 0,
-			"taskList_createTime": "",
-			"taskList_isArchived": ""
-		},
-		{
-			"taskList_id": "4",
-			"user_id": "1",
-			"taskList_name": "Shopping",
-			"taskList_totalCount": 0,
-			"taskList_overDueCount": 0,
-			"taskList_completedCount": 0,
-			"taskList_createTime": "",
-			"taskList_isArchived": ""
-		},
-		{
-			"taskList_id": "5",
-			"user_id": "1",
-			"taskList_name": "Wish List",
-			"taskList_totalCount": 0,
-			"taskList_overDueCount": 0,
-			"taskList_completedCount": 0,
-			"taskList_createTime": "",
-			"taskList_isArchived": ""
-		},
-		{
-			"taskList_id": "6",
-			"user_id": "1",
-			"taskList_name": "Work",
-			"taskList_totalCount": 0,
-			"taskList_overDueCount": 0,
-			"taskList_completedCount": 0,
-			"taskList_createTime": "",
-			"taskList_isArchived": ""
-		},
-		{
-			"taskList_id": "7",
-			"user_id": "",
-			"taskList_name": "Completed",
-			"taskList_totalCount": 0,
-			"taskList_overDueCount": 0,
-			"taskList_completedCount": 0,
-			"taskList_createTime": "",
-			"taskList_isArchived": ""
-		}
 
 	];
-	var taskItemsTable = [
+	
+	var taskListTable1 = [
+	{
+		"taskList_id": "1",
+		"user_id": "1",
+		"taskList_name": "All Lists",
+		"taskList_totalCount": 0,
+		"taskList_overDueCount": 0,
+		"taskList_completedCount": 0,
+		"taskList_createTime": "",
+		"taskList_isArchived": ""
+	},
+	{
+		"taskList_id": "2",
+		"user_id": "1",
+		"taskList_name": "Default",
+		"taskList_totalCount": 0,
+		"taskList_overDueCount": 0,
+		"taskList_completedCount": 0,
+		"taskList_createTime": "",
+		"taskList_isArchived": ""
+	},
+	{
+		"taskList_id": "3",
+		"user_id": "1",
+		"taskList_name": "School",
+		"taskList_totalCount": 0,
+		"taskList_overDueCount": 0,
+		"taskList_completedCount": 0,
+		"taskList_createTime": "",
+		"taskList_isArchived": ""
+	},
+	{
+		"taskList_id": "4",
+		"user_id": "1",
+		"taskList_name": "Shopping",
+		"taskList_totalCount": 0,
+		"taskList_overDueCount": 0,
+		"taskList_completedCount": 0,
+		"taskList_createTime": "",
+		"taskList_isArchived": ""
+	},
+	{
+		"taskList_id": "5",
+		"user_id": "1",
+		"taskList_name": "Wish List",
+		"taskList_totalCount": 0,
+		"taskList_overDueCount": 0,
+		"taskList_completedCount": 0,
+		"taskList_createTime": "",
+		"taskList_isArchived": ""
+	},
+	{
+		"taskList_id": "6",
+		"user_id": "1",
+		"taskList_name": "Work",
+		"taskList_totalCount": 0,
+		"taskList_overDueCount": 0,
+		"taskList_completedCount": 0,
+		"taskList_createTime": "",
+		"taskList_isArchived": ""
+	},
+	{
+		"taskList_id": "7",
+		"user_id": "",
+		"taskList_name": "Completed",
+		"taskList_totalCount": 0,
+		"taskList_overDueCount": 0,
+		"taskList_completedCount": 0,
+		"taskList_createTime": "",
+		"taskList_isArchived": ""
+	}
+
+];
+	var taskItemsTable = [];
+	
+	var taskItemsTable1 = [
 		{
 			"taskItem_id": "1",
 			"taskList_id": "6",
@@ -1981,91 +1987,157 @@ var appModelController = (function () {
 	
 	// 
 	
-	function initializeAndIndexDBs( userDb, taskListDb, taskItemDb  ) {
+	function initializeSystemDBs( userDb, taskListDb ) {
 		console.log(" Start initializeUserDb");
-
-		userTableDb.forEach( function (user, index){
-			userDb.put(user).then( function (result ) {
-				console.log("Users: ", result);
+		var promises = [];
+		var promises1 = [];
+		var dbInitializations = [];
+		
+		var userDbInitialization = userTableDb.map( function (user, index){
+			return userDb.put(user).then( function ( users ) {
+				console.log("initializeSystemDBs::inside promise = Users: ", users);
+				return users;
 			})
+			.catch(function (err) {
+				console.log("Error: " + err);
+			});
 
 		});	
-
-		// System Defined TaskList 
-		systemDefinedTaskListTableDb.forEach(function (taskList, index )	{
-			taskListDb.put(taskList).then( function ( result ) {
-				console.log("PreTaskList Items: ", result);
+		
+		console.log("initializeSystemDBs::UserDbInitialization: ", userDbInitialization);
+		
+		var systemTaskListDbInitialization = systemDefinedTaskListTableDb.map(function (taskList, index )	{
+			return taskListDb.put(taskList).then( function ( systemDefinedTaskList ) {
+				console.log("initializeSystemDBs::inside promise = System Defined Task Lists: ", systemDefinedTaskList);
+				return systemDefinedTaskList;
+			})
+			.catch(function (err) {
+				console.log("Error: " + err);
 			});
 
 		});
+		
+		console.log("initializeSystemDBs::SystemTaskListDbInitialization ", systemTaskListDbInitialization);
+		
+	
+		console.log("initializeSystemDBs::userDbInitializations: ",  userDbInitialization);
+
+		console.log(" initializeSystemDBs::End initializeUserDb");
+		dbInitializations = userDbInitialization.concat(systemTaskListDbInitialization);
+		
+		console.log ("initializeSystemDBs::dbInitializations:::", dbInitializations);
+		return dbInitializations; 
+
+	}
+		
+
+//		userTableDb.forEach( function (user, index){
+//			return userDb.put(user).then( function ( users ) {
+//				console.log("Users: ", users);
+//				return users;
+//			})
+//			.catch(function (err) {
+//				console.log("Error: " + err);
+//			});
+//
+//		});	
+
+		// System Defined TaskList 
+//		systemDefinedTaskListTableDb.forEach(function (taskList, index )	{
+//			taskListDb.put(taskList).then( function ( systemDefinedTaskList ) {
+//				console.log("System Defined Task Lists: ", systemDefinedTaskList);
+//				return systemDefinedTaskList;
+//			})
+//			.catch(function (err) {
+//				console.log("Error: " + err);
+//			});
+//
+//		});
 					
-//				taskItemsTable.forEach(function (taskItem, index){
-//					taskItemDb.put(taskItem).then(function (result ) {
-//						console.log("TaskItems: ", result);
-//					});
-//				});
-		
-		
-		 // Create Index for UserDb
-		userDb.createIndex({
+function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
+	var indexPromises = []
+
+	var userDbIndex = userDb.createIndex({
 
 			index: {
 				fields: ['user_name']
 			}
 		})
-
-		taskListDb.createIndex({
+	console.log("createDbIndexes::userDbIndex: ", userDbIndex);
+	
+	var taskListIndex =	taskListDb.createIndex({
 
 			index: {
 				fields: ['taskList_name']
 			}
 		})
+	
+	console.log("createDbIndexes::taskListIndex: ", taskListIndex);
 
-		taskItemDb.createIndex({
+	var taskItemIndex =	taskItemDb.createIndex({
 
 			index: {
 				fields: ['taskList_id', 'taskItem_name']
 			}
 		})
+	
+	console.log("createDbIndexes::taskItemIndex: ", taskItemIndex);
+	
+	indexPromises = [userDbIndex, taskListIndex, taskItemIndex ];
+	
+	console.log("createDbIndexes::indexPromises: ", indexPromises);
+
+	return indexPromises;
+}
+		
+		
 
 
-		console.log("Show all DB records");
 
-
-
-		console.log(" End initializeUserDb");	
-
-
-	}
 	
 	function addUserSeedDataToDbs(taskListDb, taskItemDb) {	
+		var seedDataPromises = []
+		var allPromises = [];
 
-		taskListTableDb.forEach(function (taskList, index )	{
-			taskListDb.put(taskList).then( function ( result ) {
-				console.log("TaskList Items: ", result);
+		var seedTaskListPromises = taskListTableDb.map(function (taskList, index )	{
+			return taskListDb.put(taskList).then( function ( result ) {
+				console.log("addUserSeedDataToDbs::insidePromise::TaskList Items: ", result);
+				return result;
 				})
 			.catch(function (err) {
 				console.log("TaskList Index: " + index + " Error: " + err);
 			});
 		});
 					
-		taskItemsTableDb.forEach(function (taskItem, index) {
-			taskItemDb.put(taskItem).then(function (result ) {
-				console.log("TaskItems: ", result);
+		var seedTaskItemPromises = taskItemsTableDb.map(function (taskItem, index) {
+			return taskItemDb.put(taskItem).then( function (result ) {
+				console.log("addUserSeedDataToDbs::inside promise:TaskItems: ", result);
+				return result;
 			})
 			.catch(function (err) {
   				console.log("TaskItem Index: " + index + " Error: " + err);
 			});
 		})
+			
+		
+		seedDataPromises = seedTaskListPromises.concat(seedTaskItemPromises);
+		console.log("addUserSeedDataToDbs::All Seed Promises: ", seedDataPromises);
+		
+		return seedDataPromises;
+
+		
 	}
 
 	return {
 		
 		
 		
-		initializeDBs: function (addSeedData) {
-			var userDb, taskListDb, taskItemDb, taskNotificationDb;
+		initializeDBs: function (addUserSeedData) {
+//			var userDb, taskListDb, taskItemDb, taskNotificationDb;
+			var initializeSystemDbPromises, createIndexPromises, userSeedPromises = [];
+			addUserSeedData = true;
 			
+			var initializeDbs, createIndexes, seedUserData, allPromises = []; 
 
 			/* If a 'taskIt' DB already exist this will return pointer to that DB otherwise
 				a new empty DB will be returned.	
@@ -2078,9 +2150,11 @@ var appModelController = (function () {
 				created and therefore we need to initialiaze it. */
 			
 			userDb.info().then(function (details) {
-				if (details.doc_count == 0 && details.update_seq == 0) {
-					return userDb.destroy().then(function ( ) {
-						console.log('test db removed');
+				if (details.doc_count === 0 && details.update_seq === 0) {
+					userDb.destroy().then(function ( results ) {
+						
+						
+						console.log('test db removed', results);
 
 						// Create a new Databases
 						userDb = new PouchDB('userDb');
@@ -2091,26 +2165,85 @@ var appModelController = (function () {
 						
 						taskNotificationDb = new PouchDB ('taskNotificationDb')
 						
-						console.log('created new databases');
+						console.log('initializeDBs::created new databases');
 						
 						// Create indexes for Db and add system data to DBs
-						initializeAndIndexDBs(userDb, taskListDb, taskItemDb );
+						var initializeSystemDbPromises = initializeSystemDBs(userDb, taskListDb);
 						
+						console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
+						
+						var createIndexPromises = createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb)
+
+						
+						console.log("initializeDBs::$$$createIndexPromises: ", createIndexPromises);
+
 						
 						// Adds user seed data 
-						if (addUserSeedData) {
-							addUserSeedDataToDbs(taskListDb, taskItemDb);	
+						if (addUserSeedData) {						
+							userSeedPromises = addUserSeedDataToDbs(taskListDb, taskItemDb);
 						}
+	
+						
+						allPromises = initializeSystemDbPromises.concat(createIndexPromises,userSeedPromises);
+						
+						console.log("initializeDBs::$$$allPromises: ", allPromises);
+						
+						Promise.all(allPromises)
+							.then( function (results) {	
+								console.log("!!!!!!! initializeDBs::allDBInitializePromises from then()", results);
+								// Load Data from DB and Display UI 
+							
+								//XXX++++ loadDataFromDbAndUpdateDisplay(taskListDb, taskItemDb); 
+							
+							
+								appModelController.loadDataFromDb(taskListDb, taskItemDb)
+									.then( function ( results ){
+										var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
+										
+										// Sort the userDefinedTask List
+										appModelController.sortListByName(userDefinedTaskLists);
+
+
+										// Update the taskListTable data structure with the latest list totals (listTotal & overDue count) 
+										appModelController.updateListTaskTotals();
+
+										// ++++++ Added so I could use in buildAndDisplayUserDefinedTaskList() method
+										var currActiveListId = getListIdForActiveTaskList();
+
+										// Build the HTML/DOM nodes for UserDefined Task List and insert in DOM for display on subMenuTaskList
+										appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
+
+										var taskListTable = appModelController.getTaskListTable(taskListDb);
+
+										// Update task list totals  for PreDefinedTaskListTotals and add them to DOM for display on subMenuTaskList 
+										appUIController.updateAndDisplayPreDefinedTaskListTotals(taskListTable);
+
+
+										// 2. Load task items
+
+										// Find the listId of the "active" list
+										var taskListId = getListIdForActiveTaskList();
+
+										// Use taskId to gather and display all task with that ID
+										var taskList_id = updateTaskListDisplayed(taskListId);
+
+										var taskList2Display = getAllActiveMatchingTaskItemsWithId(taskList_id);
+										appUIController.groupAndDisplayTaskItems(taskList2Display);
+									
+								}); 
+						})	 
 						
 					});
+				
+
 				} else {
 					console.log('database already exists');
 				}
 			})
+
 			.catch(function (err) {
 				console.log('error: ' + err);
 			});
-			
 
 
 		}, // END initializedDBs
@@ -2255,7 +2388,82 @@ var appModelController = (function () {
 		},
 
 		getTaskListTable: function () {
+//			var taskList = appModelController.taskListDb.allDocs({include_docs: true})
+//				.then(function (result) {
+//					console.log(result);
+//					return result;
+//				})
 			return taskListTable;
+		},
+		
+		loadTaskListDataFromDb: function (taskListDb) {
+			var listId, listName, totalItemCount, overDueItemCount, completedCount, listCreateTime, userId, taskListIsArchived;
+			var taskListAttributes;  
+			return taskListPromise = taskListDb.allDocs({include_docs: true})
+				.then(function (results) {
+					var taskListTable = appModelController.getTaskListTable(); 
+					results.rows.map(function (taskList, index) {
+						if (taskList.doc.taskList_name !== undefined) {
+									
+							
+							listId = taskList.doc._id;
+							listName = taskList.doc.taskList_name;
+							totalItemCount = taskList.doc.taskList_completedCount;
+							overDueItemCount = taskList.doc.taskList_overDueCount
+							completedCount = taskList.doc.taskList_completedCount;	
+							listCreateTime = getTimeStamp();
+							userId = taskList.doc.user_id;
+							taskListIsArchived = false;
+							
+							taskListAttributes = new TaskList(listId, listName, totalItemCount, overDueItemCount, completedCount, listCreateTime, userId, taskListIsArchived);
+							taskListTable.push(taskListAttributes);
+						}
+					})
+					return results;
+			})
+		},
+		
+		loadTaskItemDataFromDb: function (taskItemDb) {
+			var id, listId, title, description, dueDate, dueTime, priority, status, isComplete, repeat, isArchived, notificationsPresent, calendar, completedDate, createTime;
+			var taskItemAttributes; 
+			
+			return taskItemPromise = taskItemDb.allDocs({include_docs: true})
+				.then(function (results) {
+				var taskItemsTable = appModelController.getTaskItemsTable();
+				results.rows.map(function (taskItem, index ) {
+					if (taskItem.doc.taskItem_title != undefined) {
+						id = taskItem.doc._id
+						listId = taskItem.doc.taskList_id
+						title = taskItem.doc.taskItem_title 
+						description = taskItem.doc.taskItem_description
+						dueDate = taskItem.doc.taskItem_due_date
+						dueTime = taskItem.doc.taskItem_due_time
+						priority = taskItem.doc.taskItem_priority
+						status = taskItem.doc.taskItem_status
+						isComplete = taskItem.doc.taskItem_isCompleted
+						repeat = taskItem.doc.taskItem_repeat
+						isArchived = taskItem.doc.taskItem_isArchived
+						notificationsPresent = taskItem.doc.taskItem_notifications
+						calendar = taskItem.doc.taskItem_calendar
+						completedDate = taskItem.doc.taskItem_completedDate
+						createTime = getTimeStamp();
+						
+						taskItemAttributes = new TaskItem (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent);
+						taskItemsTable.push(taskItemAttributes);
+					}
+				})
+				return results;
+			});
+		}, 
+	
+		loadDataFromDb: function (taskListDb, taskItemDb) {
+			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(taskListDb);
+			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(taskItemDb);
+			return Promise.all([loadTaskListPromises, loadTaskItemPromises]).then( function ( updateResults ){
+				console.log(">>>>>>>Update Results from loadDataFromDb: ", updateResults);
+				return updateResults;
+				
+			})
 		},
 
 		/* Returns an array containing just the User defined Task table entries from TaskListTable.
@@ -6052,38 +6260,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Initialize data objects and set up all event listeners
 
 
-
-
-		init: function () {
-
-			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
-			var currActiveListNode = getActiveTaskList();
-			var currActiveListName = appUIController.getActiveTaskListName();
-			var addSeedData = true;
-
-
-
-			// Only perform actions in "if" statement when the app is first initialized
-			if (!appInitialized) {
-
-				appInitialized = true;
-				console.log('Application has started');
-
-				/* 
-					Checks if DataBases have been initialized and if not it creates them,
-					generates indexes and adds seedData 
-				*/
-				appModelController.initializeDBs(addSeedData);
-
-
-
-				/********************************************************************************************************************************	
-				 Now we will add "Pre-configured"/"UserDefined" task lists that were previously saved by user (now retrieved from DB)  
-				 These items will be inserted/sandwiched between "Pre-set" lists. 1) "All Lists" 2) "Default" ...insert here... n) "Completed
-				 Specifically they are added after the "Default" task list item, which is now .childNodes[2] node.
-				********************************************************************************************************************************/
-
-				var taskListTable = appModelController.getTaskListTable();
+		loadAndDisplayDataOnStartup: function (taskListDb, taskItemDb) {
+			
+			appModelController.loadDataFromDb(taskListDb, taskItemDb)
+				.then( function ( results ){
 				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 
 				// Sort the userDefinedTask List
@@ -6099,6 +6279,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Build the HTML/DOM nodes for UserDefined Task List and insert in DOM for display on subMenuTaskList
 				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
 
+				var taskListTable = appModelController.getTaskListTable(taskListDb);
+
 				// Update task list totals  for PreDefinedTaskListTotals and add them to DOM for display on subMenuTaskList 
 				appUIController.updateAndDisplayPreDefinedTaskListTotals(taskListTable);
 
@@ -6113,8 +6295,129 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				var taskList2Display = getAllActiveMatchingTaskItemsWithId(taskList_id);
 				appUIController.groupAndDisplayTaskItems(taskList2Display);
+
+			}); 
+		
+		}, 
+
+		init: function () {
+
+			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
+			var currActiveListNode = getActiveTaskList();
+			var currActiveListName = appUIController.getActiveTaskListName();
+			var userDb, taskListDb, taskItemDb;
+			var addSeedData = true;
+			var dbInitializationResults;			
+			var initializeDbs, createIndexes, seedUserData, allPromises = []; 
+			
+			console.log('Application has started');
+
+			/* If a 'taskIt' DB already exist this will return pointer to that DB otherwise
+				a new empty DB will be returned.	
+			*/
+			userDb = new PouchDB('userDb');
+			
+
+			/* Determine if DB already exist and if not then initialize it */
+			/* If the DB is empty then we know this is the first time DB was
+				created and therefore we need to initialiaze it. */
+			
+			userDb.info().then(function (details) {
+		
+				// if there is no data in the user DB then the DB has never been started
+				if (details.doc_count === 0 && details.update_seq === 0) {	
+					userDb.destroy().then(function ( results ) {
+						
+						
+					console.log('test db removed', results);
+
+					// Create/get pointers to Databases 
+					userDb = new PouchDB('userDb');
+
+					taskListDb = new PouchDB('taskListDb');
+
+					taskItemDb = new PouchDB('taskItemDb');
+
+					taskNotificationDb = new PouchDB ('taskNotificationDb')
+
+					console.log('initializeDBs::created new databases');
+
+					// Create indexes for Db and add system data to DBs
+					var initializeSystemDbPromises = initializeSystemDBs(userDb, taskListDb);
+
+					console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
+
+					var createIndexPromises = createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb)
+
+
+					console.log("initializeDBs::$$$createIndexPromises: ", createIndexPromises);
+
+
+					// Adds user seed data 
+					if (addUserSeedData) {						
+						userSeedPromises = addUserSeedDataToDbs(taskListDb, taskItemDb);
+					}
+
+
+					allPromises = initializeSystemDbPromises.concat(createIndexPromises,userSeedPromises);
+
+					console.log("initializeDBs::$$$allPromises: ", allPromises);
+
+					Promise.all(allPromises)
+						.then( function (results) {	
+							console.log("!!!!!!! initializeDBs::allDBInitializePromises from then()", results);
+						
+
+							// Load Data from DB and Display UI 
+							appController.loadAndDisplayDataOnStartup(taskListDb, taskItemDb);
+
+						})	 
+						
+					})
+					
+				} else {
+					
+					console.log('database already exists');
+					
+					// Create/get pointers to Databases 
+					userDb = new PouchDB('userDb');
+
+					taskListDb = new PouchDB('taskListDb');
+
+					taskItemDb = new PouchDB('taskItemDb');
+
+					taskNotificationDb = new PouchDB ('taskNotificationDb')
+
+					appController.loadAndDisplayDataOnStartup(taskListDb, taskItemDb);
+					
+				}
+			})
+            ////////////////////////////////////////////////////////////////////////////
+			// Only perform actions in "if" statement when the app is first initialized
+//			if (!appInitialized) {
+//
+//				appInitialized = true;
+//				console.log('Application has started');
+//
+//				/* 
+//					Checks if DataBases have been initialized and if not it creates them,
+//					generates indexes and adds seedData 
+//				*/
+//				
+//				
+//				appModelController.initializeDBs(addSeedData);
+//				console.log("^^^^dbInitializationResults = ", dbInitializationResults);
+				
+
+
+
+				/********************************************************************************************************************************	
+				 Now we will add "Pre-configured"/"UserDefined" task lists that were previously saved by user (now retrieved from DB)  
+				 These items will be inserted/sandwiched between "Pre-set" lists. 1) "All Lists" 2) "Default" ...insert here... n) "Completed
+				 Specifically they are added after the "Default" task list item, which is now .childNodes[2] node.
+				*/
 				setupEventListeners();
-			}
+//			}
 		}
 	}
 })(appModelController, appUIController, utilMethods);
