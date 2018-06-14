@@ -866,7 +866,7 @@ var utilMethods = (function () {
 //**************************************************************************************************************************
 
 var appModelController = (function () {
-	var userDb, taskListDb, taskItemDb, taskNotificationDb;
+	var userDb, taskListDb, taskItemDb, taskItemNotificationDb;
 	var userDefinedTaskListInfo1 = [];
 	var userTable1 = [];
 	var taskListTable1 = [];
@@ -2066,7 +2066,7 @@ var appModelController = (function () {
 		},
 
 		
-		createDbIndexes: function (userDb, taskListDb, taskItemDb, taskNotificationDb) {
+		createDbIndexes: function (userDb, taskListDb, taskItemDb, taskItemNotificationDb) {
 			var indexPromises = []
 
 			var userDbIndex = userDb.createIndex({
@@ -2092,10 +2092,16 @@ var appModelController = (function () {
 						fields: ['taskList_id', 'taskItem_name']
 					}
 				})
+			
+			var taskItemNotificationIndex = taskItemNotificationDb.createIndex({
+				
+				index: {
+					fields: ['taskItem_id']
+				}
+			})
 
-			console.log("createDbIndexes::taskItemIndex: ", taskItemIndex);
 
-			indexPromises = [userDbIndex, taskListIndex, taskItemIndex ];
+			indexPromises = [userDbIndex, taskListIndex, taskItemIndex, taskItemNotificationIndex ];
 
 			console.log("createDbIndexes::indexPromises: ", indexPromises);
 
@@ -2143,127 +2149,7 @@ var appModelController = (function () {
 			console.log ("initializeSystemDBs::dbInitializations:::", dbInitializations);
 			return dbInitializations; 
 
-	},
-		
-		
-		initializeDBs: function (addUserSeedData) {
-//			var userDb, taskListDb, taskItemDb, taskNotificationDb;
-			var initializeSystemDbPromises, createIndexPromises, userSeedPromises = [];
-			addUserSeedData = true;
-			
-			var initializeDbs, createIndexes, seedUserData, allPromises = []; 
-
-			/* If a 'taskIt' DB already exist this will return pointer to that DB otherwise
-				a new empty DB will be returned.	
-			*/
-			userDb = new PouchDB('userDb');
-			
-
-			/* Determine if DB already exist and if not then initialize it */
-			/* If the DB is empty then we know this is the first time DB was
-				created and therefore we need to initialiaze it. */
-			
-			userDb.info().then(function (details) {
-				if (details.doc_count === 0 && details.update_seq === 0) {
-					userDb.destroy().then(function ( results ) {
-						
-						
-						console.log('test db removed', results);
-
-						// Create a new Databases
-						userDb = new PouchDB('userDb');
-						
-						taskListDb = new PouchDB('taskListDb');
-					
-						taskItemDb = new PouchDB('taskItemDb');
-						
-						taskNotificationDb = new PouchDB ('taskNotificationDb')
-						
-						console.log('initializeDBs::created new databases');
-						
-						// Create indexes for Db and add system data to DBs
-						var initializeSystemDbPromises = appModelController.initializeSystemDBs(userDb, taskListDb);
-						
-						console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
-						
-						var createIndexPromises = createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb)
-
-						
-						console.log("initializeDBs::$$$createIndexPromises: ", createIndexPromises);
-
-						
-						// Adds user seed data 
-						if (addUserSeedData) {						
-							userSeedPromises = appModelController.addUserSeedDataToDbs(taskListDb, taskItemDb);
-						}
-	
-						
-						allPromises = initializeSystemDbPromises.concat(createIndexPromises,userSeedPromises);
-						
-						console.log("initializeDBs::$$$allPromises: ", allPromises);
-						
-						Promise.all(allPromises)
-							.then( function (results) {	
-								console.log("!!!!!!! initializeDBs::allDBInitializePromises from then()", results);
-								// Load Data from DB and Display UI 
-							
-								//XXX++++ loadDataFromDbAndUpdateDisplay(taskListDb, taskItemDb); 
-							
-							
-								appModelController.loadDataFromDb(taskListDb, taskItemDb)
-									.then( function ( results ){
-										var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
-										
-										// Sort the userDefinedTask List
-										appModelController.sortListByName(userDefinedTaskLists);
-
-
-										// Update the taskListTable data structure with the latest list totals (listTotal & overDue count) 
-										appModelController.updateListTaskTotals();
-
-										// ++++++ Added so I could use in buildAndDisplayUserDefinedTaskList() method
-										var currActiveListId = getListIdForActiveTaskList();
-
-										// Build the HTML/DOM nodes for UserDefined Task List and insert in DOM for display on subMenuTaskList
-										appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
-
-										var taskListTable = appModelController.getTaskListTable(taskListDb);
-
-										// Update task list totals  for PreDefinedTaskListTotals and add them to DOM for display on subMenuTaskList 
-										appUIController.updateAndDisplayPreDefinedTaskListTotals(taskListTable);
-
-
-										// 2. Load task items
-
-										// Find the listId of the "active" list
-										var taskListId = getListIdForActiveTaskList();
-
-										// Use taskId to gather and display all task with that ID
-										var taskList_id = updateTaskListDisplayed(taskListId);
-
-										var taskList2Display = getAllActiveMatchingTaskItemsWithId(taskList_id);
-										appUIController.groupAndDisplayTaskItems(taskList2Display);
-									
-								}); 
-						})	 
-						
-					});
-				
-
-				} else {
-					console.log('database already exists');
-				}
-			})
-
-			.catch(function (err) {
-				console.log('error: ' + err);
-			});
-
-
-		}, // END initializedDBs
-		
-		
-		
+		},
 		
 		
 		getMatchingTaskNotifications: function (taskItemId) {
@@ -2463,6 +2349,7 @@ var appModelController = (function () {
 						createTime = getTimeStamp();
 						
 						taskItemAttributes = new TaskItem (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent);
+						
 						taskItemsTable.push(taskItemAttributes);
 					}
 				})
@@ -2470,10 +2357,49 @@ var appModelController = (function () {
 			});
 		}, 
 	
-		loadDataFromDb: function (taskListDb, taskItemDb) {
+		loadTaskItemNotificationsDataFromDb: function (taskItemNotificationDb) {
+			var taskItemNotificationAttributes;
+			var notificationId, taskItemId, notificationType, notificationUnits, notificationUnitType, createTime;
+			
+			
+			return taskItemNotificationPromise = taskItemNotificationDb.allDocs({include_docs: true})
+				.then(function (results) {
+				
+				var taskItemNotificationsTable = appModelController.getTaskItemNotificationsTable();
+				
+				results.rows.map(function (taskItemNotification) {
+					
+					if (taskItemNotification.doc.notification_type != undefined) {
+						
+						createTime = taskItemNotification.doc.notification_createTime;
+						notificationType = taskItemNotification.doc.notification_type;
+						notificationUnitType = taskItemNotification.doc.notification_unitType;
+						notificationUnits = taskItemNotification.doc.notification_units;
+						taskItemId = taskItemNotification.doc.taskItem_id;
+						notificationId = taskItemNotification.doc._id;
+
+						taskItemNotificationAttributes = new TaskItemNotification (
+							notificationId,
+							taskItemId,
+							notificationType,
+							notificationUnits,
+							notificationUnitType,
+							createTime );
+
+						taskItemNotificationsTable.push(taskItemNotificationAttributes);
+					}
+				})
+				return results;
+			});
+		}, 		
+		
+
+
+		loadDataFromDb: function (taskListDb, taskItemDb, taskItemNotificationDb) {
 			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(taskListDb);
 			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(taskItemDb);
-			return Promise.all([loadTaskListPromises, loadTaskItemPromises]).then( function ( updateResults ){
+			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(taskItemNotificationDb); 
+			return Promise.all([loadTaskListPromises, loadTaskItemPromises, loadTaskItemNotificationsPromises]).then( function ( updateResults ){
 				console.log(">>>>>>>Update Results from loadDataFromDb: ", updateResults);
 				return updateResults;
 				
@@ -2631,7 +2557,7 @@ var appModelController = (function () {
 				"taskItem_notifications": false,
 				"taskItem_calendar": "",
 				"taskItem_completedDate": "",
-				"taskItem_createTime": ""
+				"taskItem_createTime": createTime.toString()
 				
 				
 			}).then(function (response) {
@@ -2660,7 +2586,21 @@ var appModelController = (function () {
 			// Generate createTime
 			var createTime = getTimeStamp();
 
+			appModelController.taskItemNotificationDb.put({
+				"_id": notificationId,
+				"taskItem_id": taskItemId,
+				"notification_type": newTaskNotification.notificationType,
+				"notification_units": newTaskNotification.notificationUnits,
+				"notification_unitType": newTaskNotification.notificationUnitType,
+				"notification_createTime": createTime
 
+				
+				
+			}).then(function (response) {
+				console.log("TaskItemNotification response: ", response)
+			}).catch(function (err) {
+				console.log(err);
+			});
 
 			return newTaskNotification = new TaskItemNotification(
 				notificationId,
@@ -6324,9 +6264,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Initialize data objects and set up all event listeners
 
 
-		loadAndDisplayDataOnStartup: function (taskListDb, taskItemDb) {
+		loadAndDisplayDataOnStartup: function (taskListDb, taskItemDb, taskItemNotificationDb) {
 			
-			appModelController.loadDataFromDb(taskListDb, taskItemDb)
+			appModelController.loadDataFromDb(taskListDb, taskItemDb, taskItemNotificationDb)
 				.then( function ( results ){
 				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 
@@ -6369,7 +6309,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
 			var currActiveListNode = getActiveTaskList();
 			var currActiveListName = appUIController.getActiveTaskListName();
-			var userDb, taskListDb, taskItemDb;
+
 			var addUserSeedData = true;
 			var dbInitializationResults;			
 			var initializeDbs, createIndexes, seedUserData, allPromises = []; 
@@ -6379,39 +6319,39 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			/* If a 'taskIt' DB already exist this will return pointer to that DB otherwise
 				a new empty DB will be returned.	
 			*/
-			userDb = new PouchDB('userDb');
+			appModelController.userDb = new PouchDB('userDb');
 			
 
 			/* Determine if DB already exist and if not then initialize it */
 			/* If the DB is empty then we know this is the first time DB was
 				created and therefore we need to initialiaze it. */
 			
-			userDb.info().then(function (details) {
+			appModelController.userDb.info().then(function (details) {
 		
 				// if there is no data in the user DB then the DB has never been started
 				if (details.doc_count === 0 && details.update_seq === 0) {	
-					userDb.destroy().then(function ( results ) {
+					appModelController.userDb.destroy().then(function ( results ) {
 						
 						
 					console.log('test db removed', results);
 
 					// Create/get pointers to Databases 
-					userDb = new PouchDB('userDb');
+					appModelController.userDb = new PouchDB('userDb');
 
-					taskListDb = new PouchDB('taskListDb');
+					appModelController.taskListDb = new PouchDB('taskListDb');
 
-					taskItemDb = new PouchDB('taskItemDb');
+					appModelController.taskItemDb = new PouchDB('taskItemDb');
 
-					taskNotificationDb = new PouchDB ('taskNotificationDb')
+					appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
 
 					console.log('initializeDBs::created new databases');
 
 					// Create indexes for Db and add system data to DBs
-					var initializeSystemDbPromises = appModelController.initializeSystemDBs(userDb, taskListDb);
+					var initializeSystemDbPromises = appModelController.initializeSystemDBs(appModelController.userDb, appModelController.taskListDb);
 
 					console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
 
-					var createIndexPromises = appModelController.createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb)
+					var createIndexPromises = appModelController.createDbIndexes(appModelController.userDb, appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 
 
 					console.log("initializeDBs::$$$createIndexPromises: ", createIndexPromises);
@@ -6419,7 +6359,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 					// Adds user seed data 
 					if (addUserSeedData) {						
-						userSeedPromises = appModelController.addUserSeedDataToDbs(taskListDb, taskItemDb);
+						userSeedPromises = appModelController.addUserSeedDataToDbs(appModelController.taskListDb, appModelController.taskItemDb);
 					}
 
 
@@ -6433,7 +6373,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						
 
 							// Load Data from DB and Display UI 
-							appController.loadAndDisplayDataOnStartup(taskListDb, taskItemDb);
+							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
 
 						})	 
 						
@@ -6452,9 +6392,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 					appModelController.taskItemDb = new PouchDB('taskItemDb');
 
-					appModelController.taskNotificationDb = new PouchDB ('taskNotificationDb')
+					appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
 
-					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb);
+					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
 					
 				}
 			})
