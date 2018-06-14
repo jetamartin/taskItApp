@@ -251,7 +251,7 @@ var taskListsSubMenuContainer = document.querySelector(".taskListsSubMenu");
 //
 //**************************************************************************************
 function getAllActiveTasks() {
-	return getAllActiveMatchingTaskItemsWithId("1");
+	return getAllActiveMatchingTaskItemsWithId("01");
 }
 
 
@@ -887,7 +887,17 @@ var appModelController = (function () {
 	}
 
 	var TaskItem = function (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent) {
-		this.taskItem_id = id;
+		this._id = id;
+		this.taskList_id = listId;
+		this.taskItem_title = title;
+		this.taskItem_due_date = dueDate;
+		this.taskItem_repeat = repeat;
+		this.taskItem_completedDate = completedDate;
+		this.taskItem_createTime = createTime;
+		this.taskItem_notifications = notificationsPresent;
+	}
+	
+	var TaskItemDbRecord = function (listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent) {
 		this.taskList_id = listId;
 		this.taskItem_title = title;
 		this.taskItem_due_date = dueDate;
@@ -1987,48 +1997,7 @@ var appModelController = (function () {
 	
 	// 
 	
-	function initializeSystemDBs( userDb, taskListDb ) {
-		console.log(" Start initializeUserDb");
-		var promises = [];
-		var promises1 = [];
-		var dbInitializations = [];
-		
-		var userDbInitialization = userTableDb.map( function (user, index){
-			return userDb.put(user).then( function ( users ) {
-				console.log("initializeSystemDBs::inside promise = Users: ", users);
-				return users;
-			})
-			.catch(function (err) {
-				console.log("Error: " + err);
-			});
 
-		});	
-		
-		console.log("initializeSystemDBs::UserDbInitialization: ", userDbInitialization);
-		
-		var systemTaskListDbInitialization = systemDefinedTaskListTableDb.map(function (taskList, index )	{
-			return taskListDb.put(taskList).then( function ( systemDefinedTaskList ) {
-				console.log("initializeSystemDBs::inside promise = System Defined Task Lists: ", systemDefinedTaskList);
-				return systemDefinedTaskList;
-			})
-			.catch(function (err) {
-				console.log("Error: " + err);
-			});
-
-		});
-		
-		console.log("initializeSystemDBs::SystemTaskListDbInitialization ", systemTaskListDbInitialization);
-		
-	
-		console.log("initializeSystemDBs::userDbInitializations: ",  userDbInitialization);
-
-		console.log(" initializeSystemDBs::End initializeUserDb");
-		dbInitializations = userDbInitialization.concat(systemTaskListDbInitialization);
-		
-		console.log ("initializeSystemDBs::dbInitializations:::", dbInitializations);
-		return dbInitializations; 
-
-	}
 		
 
 //		userTableDb.forEach( function (user, index){
@@ -2054,82 +2023,127 @@ var appModelController = (function () {
 //
 //		});
 					
-function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
-	var indexPromises = []
 
-	var userDbIndex = userDb.createIndex({
-
-			index: {
-				fields: ['user_name']
-			}
-		})
-	console.log("createDbIndexes::userDbIndex: ", userDbIndex);
-	
-	var taskListIndex =	taskListDb.createIndex({
-
-			index: {
-				fields: ['taskList_name']
-			}
-		})
-	
-	console.log("createDbIndexes::taskListIndex: ", taskListIndex);
-
-	var taskItemIndex =	taskItemDb.createIndex({
-
-			index: {
-				fields: ['taskList_id', 'taskItem_name']
-			}
-		})
-	
-	console.log("createDbIndexes::taskItemIndex: ", taskItemIndex);
-	
-	indexPromises = [userDbIndex, taskListIndex, taskItemIndex ];
-	
-	console.log("createDbIndexes::indexPromises: ", indexPromises);
-
-	return indexPromises;
-}
 		
 		
 
 
 
 	
-	function addUserSeedDataToDbs(taskListDb, taskItemDb) {	
-		var seedDataPromises = []
-		var allPromises = [];
-
-		var seedTaskListPromises = taskListTableDb.map(function (taskList, index )	{
-			return taskListDb.put(taskList).then( function ( result ) {
-				console.log("addUserSeedDataToDbs::insidePromise::TaskList Items: ", result);
-				return result;
-				})
-			.catch(function (err) {
-				console.log("TaskList Index: " + index + " Error: " + err);
-			});
-		});
-					
-		var seedTaskItemPromises = taskItemsTableDb.map(function (taskItem, index) {
-			return taskItemDb.put(taskItem).then( function (result ) {
-				console.log("addUserSeedDataToDbs::inside promise:TaskItems: ", result);
-				return result;
-			})
-			.catch(function (err) {
-  				console.log("TaskItem Index: " + index + " Error: " + err);
-			});
-		})
-			
-		
-		seedDataPromises = seedTaskListPromises.concat(seedTaskItemPromises);
-		console.log("addUserSeedDataToDbs::All Seed Promises: ", seedDataPromises);
-		
-		return seedDataPromises;
-
-		
-	}
 
 	return {
 		
+		addUserSeedDataToDbs: function (taskListDb, taskItemDb) {	
+			var seedDataPromises = []
+			var allPromises = [];
+
+			var seedTaskListPromises = taskListTableDb.map(function (taskList, index )	{
+				return taskListDb.put(taskList).then( function ( result ) {
+					console.log("addUserSeedDataToDbs::insidePromise::TaskList Items: ", result);
+					return result;
+					})
+				.catch(function (err) {
+					console.log("TaskList Index: " + index + " Error: " + err);
+				});
+			});
+
+			var seedTaskItemPromises = taskItemsTableDb.map(function (taskItem, index) {
+				return taskItemDb.put(taskItem).then( function (result ) {
+					console.log("addUserSeedDataToDbs::inside promise:TaskItems: ", result);
+					return result;
+				})
+				.catch(function (err) {
+					console.log("TaskItem Index: " + index + " Error: " + err);
+				});
+			})
+
+
+			seedDataPromises = seedTaskListPromises.concat(seedTaskItemPromises);
+			console.log("addUserSeedDataToDbs::All Seed Promises: ", seedDataPromises);
+
+			return seedDataPromises;
+			
+		},
+
+		
+		createDbIndexes: function (userDb, taskListDb, taskItemDb, taskNotificationDb) {
+			var indexPromises = []
+
+			var userDbIndex = userDb.createIndex({
+
+					index: {
+						fields: ['user_name']
+					}
+				})
+			console.log("createDbIndexes::userDbIndex: ", userDbIndex);
+
+			var taskListIndex =	taskListDb.createIndex({
+
+					index: {
+						fields: ['taskList_name']
+					}
+				})
+
+			console.log("createDbIndexes::taskListIndex: ", taskListIndex);
+
+			var taskItemIndex =	taskItemDb.createIndex({
+
+					index: {
+						fields: ['taskList_id', 'taskItem_name']
+					}
+				})
+
+			console.log("createDbIndexes::taskItemIndex: ", taskItemIndex);
+
+			indexPromises = [userDbIndex, taskListIndex, taskItemIndex ];
+
+			console.log("createDbIndexes::indexPromises: ", indexPromises);
+
+			return indexPromises;
+		},
+			
+		initializeSystemDBs: function ( userDb, taskListDb ) {
+			console.log(" Start initializeUserDb");
+			var promises = [];
+			var promises1 = [];
+			var dbInitializations = [];
+
+			var userDbInitialization = userTableDb.map( function (user, index){
+				return userDb.put(user).then( function ( users ) {
+					console.log("initializeSystemDBs::inside promise = Users: ", users);
+					return users;
+				})
+				.catch(function (err) {
+					console.log("Error: " + err);
+				});
+
+			});	
+
+			console.log("initializeSystemDBs::UserDbInitialization: ", userDbInitialization);
+
+			var systemTaskListDbInitialization = systemDefinedTaskListTableDb.map(function (taskList, index )	{
+				return taskListDb.put(taskList).then( function ( systemDefinedTaskList ) {
+					console.log("initializeSystemDBs::inside promise = System Defined Task Lists: ", systemDefinedTaskList);
+					return systemDefinedTaskList;
+				})
+				.catch(function (err) {
+					console.log("Error: " + err);
+				});
+
+			});
+
+			console.log("initializeSystemDBs::SystemTaskListDbInitialization ", systemTaskListDbInitialization);
+
+
+			console.log("initializeSystemDBs::userDbInitializations: ",  userDbInitialization);
+
+			console.log(" initializeSystemDBs::End initializeUserDb");
+			dbInitializations = userDbInitialization.concat(systemTaskListDbInitialization);
+
+			console.log ("initializeSystemDBs::dbInitializations:::", dbInitializations);
+			return dbInitializations; 
+
+	},
 		
 		
 		initializeDBs: function (addUserSeedData) {
@@ -2168,7 +2182,7 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 						console.log('initializeDBs::created new databases');
 						
 						// Create indexes for Db and add system data to DBs
-						var initializeSystemDbPromises = initializeSystemDBs(userDb, taskListDb);
+						var initializeSystemDbPromises = appModelController.initializeSystemDBs(userDb, taskListDb);
 						
 						console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
 						
@@ -2180,7 +2194,7 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 						
 						// Adds user seed data 
 						if (addUserSeedData) {						
-							userSeedPromises = addUserSeedDataToDbs(taskListDb, taskItemDb);
+							userSeedPromises = appModelController.addUserSeedDataToDbs(taskListDb, taskItemDb);
 						}
 	
 						
@@ -2272,7 +2286,7 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 		deleteTaskItem: function (taskItemId) {
 			var taskItems = appModelController.getTaskItemsTable();
 			taskItems.splice(taskItems.findIndex(function (item) {
-				return item.taskItem_id === taskItemId;
+				return item._id === taskItemId;
 			}), 1);
 		},
 
@@ -2328,8 +2342,8 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 			return coreTaskItemRecord = {
 				taskDueDate: fullTaskItemRecord.taskItem_due_date,
 				taskCompletedDate: fullTaskItemRecord.taskItem_completedDate,
-				taskId: fullTaskItemRecord.taskItem_id,
-				taskList: appModelController.lookUpTaskListName(fullTaskItemRecord.taskList_id),
+				taskId: fullTaskItemRecord._id,
+				taskList: appModelController.lookUpTaskListName(fullTaskItemRecord._id),
 				taskRepeat: fullTaskItemRecord.taskItem_repeat,
 				taskTitle: fullTaskItemRecord.taskItem_title,
 				taskNotifications: fullTaskItemRecord.taskItem_notifications
@@ -2542,7 +2556,7 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 		lookUpTaskItemRecord: function (taskItemId) {
 			var taskItemsTable = appModelController.getTaskItemsTable();
 			var matchingTaskItemRecord = taskItemsTable.filter(function (taskItem) {
-				return taskItem.taskItem_id === taskItemId;
+				return taskItem._id === taskItemId;
 			})
 			return matchingTaskItemRecord[0];
 		},
@@ -2570,6 +2584,7 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 		createNewTaskItem: function (taskItemInput) {
 			console.log("*************** createNewTaskItem()");
 			console.log("TaskItemInput", taskItemInput);
+			var newTaskItem;
 
 			var notificationsPresent = false;
 
@@ -2590,8 +2605,7 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 				notificationsPresent = true;
 			}
 
-
-			return newTaskItem = new TaskItem(
+			newTaskItem = new TaskItem(
 				taskItemId,
 				taskListId,
 				taskItemInput.newTaskTitle,
@@ -2601,6 +2615,33 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 				createTime,
 				notificationsPresent
 			)
+			
+			appModelController.taskItemDb.put({
+				"_id": taskItemId,
+				"taskList_id":taskListId,
+				"taskItem_title":taskItemInput.newTaskTitle,
+				"taskItem_description": "",
+				"taskItem_due_date":taskItemInput.newTaskDueDate,
+				"taskItem_completedDate": "",
+				"taskItem_priority": "",
+				"taskItem_status": "",
+				"taskItem_isCompleted": "",
+				"taskItem_repeat": taskItemInput.newTaskRepeateOptionTxt,
+				"taskItem_isArchived": "",
+				"taskItem_notifications": false,
+				"taskItem_calendar": "",
+				"taskItem_completedDate": "",
+				"taskItem_createTime": ""
+				
+				
+			}).then(function (response) {
+				console.log("TaskItemPut response: ", response)
+			}).catch(function (err) {
+				console.log(err);
+			});
+			
+			return newTaskItem;
+
 
 
 			//			
@@ -2629,6 +2670,8 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 				newTaskNotification.notificationUnitType,
 				createTime
 			)
+			
+			
 		},
 
 		/****************************************************************************************
@@ -2646,6 +2689,7 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 			var overDueCount = 0;
 			var totalListCount = 0;
 			var completedCount = 0;
+			var newTaskList;
 			console.log("*************** createNewTaskList()");
 			console.log("TaskListInput", taskListInput);
 
@@ -2662,8 +2706,9 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 
 			// 4. Task list userId
 			var userId = null;
+			
 
-			return newTaskList = new TaskList(
+			newTaskList = new TaskList(
 				taskListId,
 				taskListInput,
 				userId,
@@ -2673,6 +2718,25 @@ function createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb) {
 				createTime,
 				taskListIsArchived
 			);
+			
+			appModelController.taskListDb.put({
+				"_id": taskListId,
+				taskList_completedCount: completedCount, 
+				taskList_createTime: createTime,
+				taskList_isArchived: taskListIsArchived, 
+				taskList_name: taskListInput,
+				taskList_overDueCount: overDueCount,
+				taskList_totalCount: totalListCount, 
+				user_id: userId
+
+				
+			}).then(function (response) {
+				console.log("TaskList Put response: ", response);
+			}).catch(function (err) {
+				console.log(err);
+			});
+			
+			return newTaskList;
 
 		},
 
@@ -3286,7 +3350,7 @@ var appUIController = (function () {
 			var taskItemsAssociatedWithTaskList = appModelController.getAllTaskItemsForTaskList(taskListId);
 
 			taskItemsAssociatedWithTaskList.forEach(function (taskItemRecord) {
-				appModelController.deleteTaskItem(taskItemRecord.taskItem_id);
+				appModelController.deleteTaskItem(taskItemRecord._id);
 			});
 
 
@@ -4931,7 +4995,7 @@ var appUIController = (function () {
 			for (var i = 0; i < taskItemList.length; i++) {
 
 				// Insert the record ID in the special data attribute data-id="recordId"
-				specificTaskItemHtml = genericTaskItemHtml.replace(/%taskItemId%/g, taskItemList[i].taskItem_id);
+				specificTaskItemHtml = genericTaskItemHtml.replace(/%taskItemId%/g, taskItemList[i]._id);
 
 
 				/* Determines whether task is completed & if so it shows the completed date otherwise div is hidden */
@@ -5122,7 +5186,7 @@ var appUIController = (function () {
 					if (containsObject(taskItem, listItemsLeftToCategorize)) {
 						// Remove the taskItem by filtering out the taskItem by it's id. 
 						listItemsLeftToCategorize = listItemsLeftToCategorize.filter(function (el) {
-							return el.taskItem_id != taskItem.taskItem_id;
+							return el._id != taskItem._id;
 						});
 					}
 
@@ -5893,7 +5957,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				newTaskItemInput.newTaskNotifications.forEach(function (newTaskNotification) {
 
-					newNotificationObject = appModelController.createNewNotificationObject(newTaskNotification, newTaskItemObject.taskItem_id);
+					newNotificationObject = appModelController.createNewNotificationObject(newTaskNotification, newTaskItemObject._id);
 
 					appModelController.getTaskItemNotificationsTable().push(newNotificationObject);
 
@@ -6306,7 +6370,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			var currActiveListNode = getActiveTaskList();
 			var currActiveListName = appUIController.getActiveTaskListName();
 			var userDb, taskListDb, taskItemDb;
-			var addSeedData = true;
+			var addUserSeedData = true;
 			var dbInitializationResults;			
 			var initializeDbs, createIndexes, seedUserData, allPromises = []; 
 			
@@ -6343,11 +6407,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					console.log('initializeDBs::created new databases');
 
 					// Create indexes for Db and add system data to DBs
-					var initializeSystemDbPromises = initializeSystemDBs(userDb, taskListDb);
+					var initializeSystemDbPromises = appModelController.initializeSystemDBs(userDb, taskListDb);
 
 					console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
 
-					var createIndexPromises = createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb)
+					var createIndexPromises = appModelController.createDbIndexes(userDb, taskListDb, taskItemDb, taskNotificationDb)
 
 
 					console.log("initializeDBs::$$$createIndexPromises: ", createIndexPromises);
@@ -6355,7 +6419,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 					// Adds user seed data 
 					if (addUserSeedData) {						
-						userSeedPromises = addUserSeedDataToDbs(taskListDb, taskItemDb);
+						userSeedPromises = appModelController.addUserSeedDataToDbs(taskListDb, taskItemDb);
 					}
 
 
@@ -6380,15 +6444,17 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					console.log('database already exists');
 					
 					// Create/get pointers to Databases 
-					userDb = new PouchDB('userDb');
+					appModelController.userDb = new PouchDB('userDb');
+					
 
-					taskListDb = new PouchDB('taskListDb');
+					appModelController.taskListDb = new PouchDB('taskListDb');
+					
 
-					taskItemDb = new PouchDB('taskItemDb');
+					appModelController.taskItemDb = new PouchDB('taskItemDb');
 
-					taskNotificationDb = new PouchDB ('taskNotificationDb')
+					appModelController.taskNotificationDb = new PouchDB ('taskNotificationDb')
 
-					appController.loadAndDisplayDataOnStartup(taskListDb, taskItemDb);
+					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb);
 					
 				}
 			})
