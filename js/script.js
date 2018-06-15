@@ -2567,14 +2567,7 @@ var appModelController = (function () {
 			});
 			
 			return newTaskItem;
-
-
-
-			//			
-			//			// Return the new taskItem
-			//			
-			//			return newTaskItem; 
-
+	
 		},
 
 		createNewNotificationObject: function (newTaskNotification, taskItemId) {
@@ -2593,8 +2586,6 @@ var appModelController = (function () {
 				"notification_units": newTaskNotification.notificationUnits,
 				"notification_unitType": newTaskNotification.notificationUnitType,
 				"notification_createTime": createTime
-
-				
 				
 			}).then(function (response) {
 				console.log("TaskItemNotification response: ", response)
@@ -5703,9 +5694,26 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 					// Retrieve the existing notification record that we need to change
 					taskNotificationRecord = appModelController.lookupTaskItemNotification(taskNotification.notificationId)
+					
+					// Now update the taskNotification record 
 					taskNotificationRecord.notification_type = taskNotification.notificationType;
 					taskNotificationRecord.notification_units = taskNotification.notificationUnits;
 					taskNotificationRecord.notification_unitType = taskNotification.notificationUnitType;
+					
+					// Update taskItemNotification in Database
+					appModelController.taskItemNotificationDb.get(taskNotification.notificationId).then(function(doc) {
+  						return appModelController.taskItemNotificationDb.put({
+							_id: taskNotification.notificationId,
+							_rev: doc._rev,
+							notification_units: taskNotification.notificationUnits,
+							notification_type: taskNotification.notificationType,
+							notification_unitType: taskNotification.notificationUnits					
+						});
+					}).then(function(response) {
+						console.log("Update notification: ", response)
+					}).catch(function (err) {
+  						console.log(err);
+					});
 				}
 
 			})
@@ -5734,9 +5742,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		// If all input was valid (e.g., formError = false)
 		if (!formValidationObj[0].formError) {
+		
 
 			// Find the taskItem in memory object (using Id in hidden input field) and update it with values	
-			var taskItemRecord = appModelController.lookUpTaskItemRecord(appUIController.getUIVars().inputEditFormTaskItemId.value);
+			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
 
 			var coreTaskItemRecordValues = appModelController.extractCoreTaskItemValues(taskItemRecord);
 
@@ -5750,6 +5759,24 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				utilMethods.equateTaskItemObjects(taskItemRecord, taskItemInputRecord);
 
 				// Save the updated taskItem record to the DB (or local storage)
+				
+				appModelController.taskItemDb.get(appUIController.getUIVars().inputEditFormTaskItemId.value)
+				.then(function(doc) {
+					return appModelController.taskItemDb.put({
+						_id: taskItemId,
+						_rev: doc._rev,
+						taskItem_title: taskItemRecord.taskItem_title,
+						taskList_id: taskItemRecord.taskList_id,
+						taskItem_completedDate: taskItemRecord.taskItem_completedDate,
+						taskItem_due_date: taskItemRecord.taskItem_due_date,
+						taskItem_notifications: taskItemRecord.taskItem_notifications,
+						taskItem_repeat: taskItemRecord.taskItem_repeat
+					});
+				}).then(function(response) {
+					console.log("Update taskItem: ", response)
+				}).catch(function (err) {
+					console.log(err);
+				});
 
 				// Set saveToPermStorageWasSuccessful based on return code from save operation
 
