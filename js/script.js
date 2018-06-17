@@ -2171,6 +2171,17 @@ var appModelController = (function () {
 
 		deleteTaskItem: function (taskItemId) {
 			var taskItems = appModelController.getTaskItemsTable();
+			
+			appModelController.taskItemDb.get(taskItemId).then(function(doc) {
+				return appModelController.taskItemDb.remove(doc._id, doc._rev);
+			}).then(function (result) {
+				// handle result
+				console.log("Delete TaskItem Result: ", result);
+			}).catch(function (err) {
+			  console.log(err);
+			});
+			
+			
 			taskItems.splice(taskItems.findIndex(function (item) {
 				return item._id === taskItemId;
 			}), 1);
@@ -2178,6 +2189,17 @@ var appModelController = (function () {
 
 		deleteTaskItemNotificationRecord: function (taskItemNotificationId) {
 			var taskItemNotifications = appModelController.getTaskItemNotificationsTable();
+			
+			appModelController.taskItemNotificationDb.get(taskItemNotificationId).then(function(doc) {
+				return appModelController.taskItemNotificationDb.remove(doc._id, doc._rev);
+			}).then(function (result) {
+				// handle result
+				console.log("Delete TaskNotification Result: ", result);
+			}).catch(function (err) {
+			  console.log(err);
+			});
+	
+			
 			taskItemNotifications.splice(taskItemNotifications.findIndex(function (notification) {
 				return notification.notification_id === taskItemNotificationId;
 			}), 1);
@@ -2185,6 +2207,16 @@ var appModelController = (function () {
 
 		deleteTaskList: function (taskListId) {
 			var taskLists = appModelController.getTaskListTable();
+			
+			appModelController.taskListDb.get(taskListId).then(function(doc) {
+  				return taskListDb.remove(doc._id, doc._rev);
+			}).then(function (result) {
+				console.log("TaskList Delete: ", result);
+			}).catch(function (err) {
+				console.log(err);
+			});
+			
+			
 			taskLists.splice(taskLists.findIndex(function (list) {
 				return list.taskList_id === taskListId;
 			}), 1);
@@ -2308,14 +2340,14 @@ var appModelController = (function () {
 							
 							listId = taskList.doc._id;
 							listName = taskList.doc.taskList_name;
-							totalItemCount = taskList.doc.taskList_completedCount;
+							totalItemCount = taskList.doc.taskList_totalCount;
 							overDueItemCount = taskList.doc.taskList_overDueCount
 							completedCount = taskList.doc.taskList_completedCount;	
 							listCreateTime = getTimeStamp();
 							userId = taskList.doc.user_id;
 							taskListIsArchived = false;
-							
-							taskListAttributes = new TaskList(listId, listName, totalItemCount, overDueItemCount, completedCount, listCreateTime, userId, taskListIsArchived);
+//							listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived
+							taskListAttributes = new TaskList(listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived);
 							taskListTable.push(taskListAttributes);
 						}
 					})
@@ -2621,6 +2653,7 @@ var appModelController = (function () {
 			var totalListCount = 0;
 			var completedCount = 0;
 			var newTaskList;
+			var taskListIsArchived;
 			console.log("*************** createNewTaskList()");
 			console.log("TaskListInput", taskListInput);
 
@@ -2643,15 +2676,17 @@ var appModelController = (function () {
 				taskListId,
 				taskListInput,
 				userId,
-				overDueCount,
 				totalListCount,
+				overDueCount,
 				completedCount,
 				createTime,
 				taskListIsArchived
 			);
 			
+//			listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived
+			
 			appModelController.taskListDb.put({
-				"_id": taskListId,
+				_id: taskListId,
 				taskList_completedCount: completedCount, 
 				taskList_createTime: createTime,
 				taskList_isArchived: taskListIsArchived, 
@@ -3275,12 +3310,16 @@ var appUIController = (function () {
 			console.log("deleteTaskList");
 			event.preventDefault();
 			event.stopPropagation();
+			
 			// Get taskListId stored in form tag
 			var taskListId = event.target.dataset.listid;
+					
+			
 			// Get all TaskItems associated with the taskList
 			var taskItemsAssociatedWithTaskList = appModelController.getAllTaskItemsForTaskList(taskListId);
 
 			taskItemsAssociatedWithTaskList.forEach(function (taskItemRecord) {
+
 				appModelController.deleteTaskItem(taskItemRecord._id);
 			});
 
@@ -3291,6 +3330,7 @@ var appUIController = (function () {
 			to make the new ActiveList the "All List"
 			*/
 			if (currActiveListId === taskListId) {
+				
 				// Set the active list to "All List ("1")
 				toggleClass(appUIController.getUIVars().allListsElem, "selected");
 
@@ -3924,7 +3964,20 @@ var appUIController = (function () {
 
 			// If all input was valid (e.g., formError = false)
 			if (!formValidationObj[0].formError) {
+				
 				matchedTaskListRecord.taskList_name = appUIController.getUIVars().inputEditListName.value;
+				
+				appModelController.taskListDb.get(taskListId).then(function(doc) {
+					return appModelController.taskListDb.put({
+						_id: taskListId,
+						_rev: doc._rev,
+						taskList_name: matchedTaskListRecord.taskList_name
+					});
+				}).then(function(response) {
+					console.log("Update TaskList in editTaskList(): ", response)
+				}).catch(function (err) {
+					console.log(err);
+				});
 
 				// NEED TO REVSIT THIS AS IT IS SPECIFIC TO ONLY ONE FORM
 				// Style the newly added list selection input to reflect list selection had changed (add class="filled")
@@ -5773,8 +5826,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						taskItem_repeat: taskItemRecord.taskItem_repeat
 					});
 				}).then(function(response) {
+					
 					console.log("Update taskItem: ", response)
+					
 				}).catch(function (err) {
+					
 					console.log(err);
 				});
 
