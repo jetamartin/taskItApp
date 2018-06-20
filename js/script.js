@@ -2191,21 +2191,22 @@ var appModelController = (function () {
 		},
 
 		deleteTaskItemNotificationRecord: function (taskItemNotificationId) {
-			var taskItemNotifications = appModelController.getTaskItemNotificationsTable();
-			
-			appModelController.taskItemNotificationDb.get(taskItemNotificationId).then(function(doc) {
-				return appModelController.taskItemNotificationDb.remove(doc._id, doc._rev);
+			var taskItemNotifications = appModelController.getTaskItemNotificationsTable();			
+			return appModelController.taskItemNotificationDb.get(taskItemNotificationId)
+				.then(function(doc) {
+					return appModelController.taskItemNotificationDb.remove(doc._id, doc._rev);
 			}).then(function (result) {
 				// handle result
 				console.log("Delete TaskNotification Result: ", result);
+				taskItemNotifications.splice(taskItemNotifications.findIndex(function (notification) {
+					return notification.notification_id === taskItemNotificationId;
+				}), 1);
 			}).catch(function (err) {
 			  console.log(err);
 			});
 	
 			
-			taskItemNotifications.splice(taskItemNotifications.findIndex(function (notification) {
-				return notification.notification_id === taskItemNotificationId;
-			}), 1);
+
 		},
 
 		deleteTaskList: function (taskListId) {
@@ -2267,7 +2268,8 @@ var appModelController = (function () {
 				taskDueDate: fullTaskItemRecord.taskItem_due_date,
 				taskCompletedDate: fullTaskItemRecord.taskItem_completedDate,
 				taskId: fullTaskItemRecord._id,
-				taskList: appModelController.lookUpTaskListName(fullTaskItemRecord._id),
+//				taskList: appModelController.lookUpTaskListName(fullTaskItemRecord._id),
+				taskList: appModelController.lookUpTaskListName(fullTaskItemRecord.taskList_id),
 				taskRepeat: fullTaskItemRecord.taskItem_repeat,
 				taskTitle: fullTaskItemRecord.taskItem_title,
 				taskNotifications: fullTaskItemRecord.taskItem_notifications
@@ -3281,7 +3283,10 @@ var appUIController = (function () {
 
 			// If the parentNode has an ID for the taskNotification we need to delete the notification from the table also
 			if (event.parentNode.dataset.id !== "") {
-				appModelController.deleteTaskItemNotificationRecord(event.parentNode.dataset.id);
+				appModelController.deleteTaskItemNotificationRecord(event.parentNode.dataset.id)
+				.then (function (taskItemNotification) {
+					console.log ("TaskItemNotification Deleted: ", taskItemNotification);
+				})
 			}
 			var parentNode =
 				event.parentElement;
