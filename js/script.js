@@ -2172,19 +2172,22 @@ var appModelController = (function () {
 		deleteTaskItem: function (taskItemId) {
 			var taskItems = appModelController.getTaskItemsTable();
 			
-			appModelController.taskItemDb.get(taskItemId).then(function(doc) {
+			return appModelController.taskItemDb.get(taskItemId).then(function(doc) {
 				return appModelController.taskItemDb.remove(doc._id, doc._rev);
 			}).then(function (result) {
 				// handle result
 				console.log("Delete TaskItem Result: ", result);
+				taskItems.splice(taskItems.findIndex(function (item) {
+					return item._id === taskItemId;
+				}), 1);
+
+				
 			}).catch(function (err) {
 			  console.log(err);
 			});
 			
 			
-			taskItems.splice(taskItems.findIndex(function (item) {
-				return item._id === taskItemId;
-			}), 1);
+
 		},
 
 		deleteTaskItemNotificationRecord: function (taskItemNotificationId) {
@@ -2207,19 +2210,22 @@ var appModelController = (function () {
 
 		deleteTaskList: function (taskListId) {
 			var taskLists = appModelController.getTaskListTable();
-			
-			appModelController.taskListDb.get(taskListId).then(function(doc) {
-  				return taskListDb.remove(doc._id, doc._rev);
+			return appModelController.taskListDb.get(taskListId).then(function(doc) {
+  				appModelController.taskListDb.remove(doc._id, doc._rev);
 			}).then(function (result) {
 				console.log("TaskList Delete: ", result);
+
+				taskLists.splice(taskLists.findIndex(function (list) {
+					return list.taskList_id === taskListId;
+				}), 1);
 			}).catch(function (err) {
 				console.log(err);
 			});
 			
 			
-			taskLists.splice(taskLists.findIndex(function (list) {
-				return list.taskList_id === taskListId;
-			}), 1);
+//			taskLists.splice(taskLists.findIndex(function (list) {
+//				return list.taskList_id === taskListId;
+//			}), 1);
 		},
 
 		wereChangesMadeToTaskItem: function (obj1, obj2) {
@@ -2563,18 +2569,8 @@ var appModelController = (function () {
 				notificationsPresent = true;
 			}
 
-			newTaskItem = new TaskItem(
-				taskItemId,
-				taskListId,
-				taskItemInput.newTaskTitle,
-				taskItemInput.newTaskDueDate,
-				taskItemInput.newTaskRepeateOptionTxt,
-				taskCompletedDate,
-				createTime,
-				notificationsPresent
-			)
 			
-			appModelController.taskItemDb.put({
+			return appModelController.taskItemDb.put({
 				"_id": taskItemId,
 				"taskList_id":taskListId,
 				"taskItem_title":taskItemInput.newTaskTitle,
@@ -2593,13 +2589,30 @@ var appModelController = (function () {
 				
 				
 			}).then(function (response) {
+				
 				console.log("TaskItemPut response: ", response)
+				newTaskItem = new TaskItem(
+					taskItemId,
+					taskListId,
+					taskItemInput.newTaskTitle,
+					taskItemInput.newTaskDueDate,
+					taskItemInput.newTaskRepeateOptionTxt,
+					taskCompletedDate,
+					createTime,
+					notificationsPresent
+				)
+				
+				// Add New task object to New TaskItem table
+				appModelController.getTaskItemsTable().push(newTaskItem);
+				
+				return newTaskItem;
+				
 			}).catch(function (err) {
+				
 				console.log(err);
+				
 			});
-			
-			return newTaskItem;
-	
+
 		},
 
 		createNewNotificationObject: function (newTaskNotification, taskItemId) {
@@ -2620,8 +2633,11 @@ var appModelController = (function () {
 				"notification_createTime": createTime
 				
 			}).then(function (response) {
+				
 				console.log("TaskItemNotification response: ", response)
+				
 			}).catch(function (err) {
+				
 				console.log(err);
 			});
 
@@ -2652,7 +2668,7 @@ var appModelController = (function () {
 			var overDueCount = 0;
 			var totalListCount = 0;
 			var completedCount = 0;
-			var newTaskList;
+			var newTaskList = null;
 			var taskListIsArchived;
 			console.log("*************** createNewTaskList()");
 			console.log("TaskListInput", taskListInput);
@@ -2669,23 +2685,9 @@ var appModelController = (function () {
 			var createTime = getTimeStamp();
 
 			// 4. Task list userId
-			var userId = null;
+			var userId = "01";
 			
-
-			newTaskList = new TaskList(
-				taskListId,
-				taskListInput,
-				userId,
-				totalListCount,
-				overDueCount,
-				completedCount,
-				createTime,
-				taskListIsArchived
-			);
-			
-//			listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived
-			
-			appModelController.taskListDb.put({
+			return appModelController.taskListDb.put({
 				_id: taskListId,
 				taskList_completedCount: completedCount, 
 				taskList_createTime: createTime,
@@ -2693,16 +2695,38 @@ var appModelController = (function () {
 				taskList_name: taskListInput,
 				taskList_overDueCount: overDueCount,
 				taskList_totalCount: totalListCount, 
-				user_id: userId
-
+				user_id: userId		
 				
 			}).then(function (response) {
+				
 				console.log("TaskList Put response: ", response);
-			}).catch(function (err) {
-				console.log(err);
-			});
+				newTaskList = new TaskList(
+					taskListId,
+					taskListInput,
+					userId,
+					totalListCount,
+					overDueCount,
+					completedCount,
+					createTime,
+					taskListIsArchived
+				);
+				
+				// Add New task List object to New TaskList table	
+				appModelController.getTaskListTable().push(newTaskList);
+				
+				return newTaskList;
+				
+
+			}); 
 			
-			return newTaskList;
+// Not sure if I need this catch given there is a catch in the calling method
+//				
+//			}).catch(function (err) {		
+//				console.log(err);		
+//				
+//			});
+//			
+//			return newTaskList;
 
 		},
 
@@ -3336,44 +3360,47 @@ var appUIController = (function () {
 
 			}
 
-			appModelController.deleteTaskList(taskListId);
+			appModelController.deleteTaskList(taskListId)
+			.then (function (taskList) {
+				
+				
+				// Remove existing UserDefined Task list from TaskListSubmenu
+				appUIController.clearOutExistingScreenContent(appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList');
+
+				// Update the List Task Totals in the Model
+				appModelController.updateListTaskTotals();
+
+				// Now update the UI (subMenu list dropdown) list totals
+				appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
+
+				// Now rebuild the UserDefined Task List subMenu drop down
+				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
+
+				var querySearchStrTemplate = ".card[data-listid='%taskListId%']";
+
+				var querySearchStrWithTaskItemId = querySearchStrTemplate.replace('%taskListId%', taskListId);
 
 
+				// Get the DOM node of the card that will be removed
+				var cardListNode2Remove = document.querySelector(querySearchStrWithTaskItemId);
 
-			// Remove existing UserDefined Task list from TaskListSubmenu
-			appUIController.clearOutExistingScreenContent(appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList');
+				cardListNode2Remove.classList.add("vanish");
+				var vanishPresent = cardListNode2Remove.classList.contains("vanish");
 
-			// Update the List Task Totals in the Model
-			appModelController.updateListTaskTotals();
+				$('#manageListsDeleteListModal').modal('hide');
 
-			// Now update the UI (subMenu list dropdown) list totals
-			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
+				appUIController.getUIVars().manageTaskListsMsg.innerHTML = '<i class="fa fa-thumbs-o-up"></i>&nbsp;Task List deleted';
 
-			// Now rebuild the UserDefined Task List subMenu drop down
-			appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
-
-			var querySearchStrTemplate = ".card[data-listid='%taskListId%']";
-
-			var querySearchStrWithTaskItemId = querySearchStrTemplate.replace('%taskListId%', taskListId);
+				appUIController.getUIVars().manageTaskListsMsg.classList.add("success-message");
 
 
-			// Get the DOM node of the card that will be removed
-			var cardListNode2Remove = document.querySelector(querySearchStrWithTaskItemId);
+				setTimeout(function () {
+					appUIController.getUIVars().manageTaskListsMsg.classList.remove("success-message");
 
-			cardListNode2Remove.classList.add("vanish");
-			var vanishPresent = cardListNode2Remove.classList.contains("vanish");
+				}, 3000);
 
-			$('#manageListsDeleteListModal').modal('hide');
+			});
 
-			appUIController.getUIVars().manageTaskListsMsg.innerHTML = '<i class="fa fa-thumbs-o-up"></i>&nbsp;Task List deleted';
-
-			appUIController.getUIVars().manageTaskListsMsg.classList.add("success-message");
-
-
-			setTimeout(function () {
-				appUIController.getUIVars().manageTaskListsMsg.classList.remove("success-message");
-
-			}, 3000);
 
 		},
 
@@ -3383,74 +3410,78 @@ var appUIController = (function () {
 
 			console.log("confirmDelete()");
 			var taskItemId = appUIController.getUIVars().deleteTaskItemId.value;
-			appModelController.deleteTaskItem(taskItemId);
+			
+			
+			appModelController.deleteTaskItem(taskItemId)
+			.then (function (taskitem) {
+				
+				// Update the List Task Totals in the Model
+				appModelController.updateListTaskTotals();
+
+				// Now update the UI (subMenu list dropdown) list totals
+				appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
 
 
-			// Update the List Task Totals in the Model
-			appModelController.updateListTaskTotals();
+				var querySearchStrTemplate = ".card[data-id='%taskItemId%']";
 
-			// Now update the UI (subMenu list dropdown) list totals
-			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
+				var querySearchStrWithTaskItemId = querySearchStrTemplate.replace('%taskItemId%', taskItemId);
 
 
-			var querySearchStrTemplate = ".card[data-id='%taskItemId%']";
+				// Get the DOM node of the card that will be removed
+				var cardNode2Remove = document.querySelector(querySearchStrWithTaskItemId);
 
-			var querySearchStrWithTaskItemId = querySearchStrTemplate.replace('%taskItemId%', taskItemId);
-
-
-			// Get the DOM node of the card that will be removed
-			var cardNode2Remove = document.querySelector(querySearchStrWithTaskItemId);
-
-			cardNode2Remove.classList.add("vanish");
-			// Not sure I need line below
-			var vanishPresent = cardNode2Remove.classList.contains("vanish");
+				cardNode2Remove.classList.add("vanish");
+				// Not sure I need line below
+				var vanishPresent = cardNode2Remove.classList.contains("vanish");
 
 
-			// Get the Parent Node of card that was marked as complete (i.e., the event)
-			var parentArticleNode = cardNode2Remove.closest("article");
+				// Get the Parent Node of card that was marked as complete (i.e., the event)
+				var parentArticleNode = cardNode2Remove.closest("article");
 
-			var moreActiveTaskInDueDateCategory = false;
+				var moreActiveTaskInDueDateCategory = false;
 
-			parentArticleNode.childNodes.forEach(function (childNode) {
-				// Due date category is not a card so skip it
-				if (!childNode.classList.contains("card")) {
-					return;
+				parentArticleNode.childNodes.forEach(function (childNode) {
+					// Due date category is not a card so skip it
+					if (!childNode.classList.contains("card")) {
+						return;
 
-					// The node is a task card	
-				} else if (!childNode.classList.contains("vanish")) {
-					// If the card doesn't contain "vanish" then it's still an active task
-					moreActiveTaskInDueDateCategory = true;
+						// The node is a task card	
+					} else if (!childNode.classList.contains("vanish")) {
+						// If the card doesn't contain "vanish" then it's still an active task
+						moreActiveTaskInDueDateCategory = true;
+					}
+				});
+
+				// If there are no more active task in that dueDate category (e.g., every card has class 'vanish') then delete the dueDate header 
+
+				if (!moreActiveTaskInDueDateCategory) {
+					var dueDateNode = parentArticleNode.firstChild;
+					parentArticleNode.removeChild(dueDateNode);
+
+					// Now that the page is empty display the empty taskList message
+
+					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or delete it via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
+
+					var emptyPageMsg = document.getElementById("emptyPageMessage");
+					setTimeout(function () {
+						emptyPageMsg.classList.add("fadeIn");
+					}, 1);
 				}
-			});
-
-			// If there are no more active task in that dueDate category (e.g., every card has class 'vanish') then delete the dueDate header 
-
-			if (!moreActiveTaskInDueDateCategory) {
-				var dueDateNode = parentArticleNode.firstChild;
-				parentArticleNode.removeChild(dueDateNode);
-
-				// Now that the page is empty display the empty taskList message
-
-				appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or delete it via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
-
-				var emptyPageMsg = document.getElementById("emptyPageMessage");
-				setTimeout(function () {
-					emptyPageMsg.classList.add("fadeIn");
-				}, 1);
-			}
 
 
 
-			$('#deleteTaskItemModal').modal('hide');
+				$('#deleteTaskItemModal').modal('hide');
 
-			mainPageSuccessMsg.classList.remove("success-message");
-			mainPageSuccessMsg.innerHTML = '<i class="fa fa-thumbs-up"></i>&nbsp;Task Deleted';
-			mainPageSuccessMsg.classList.add("success-message");
-			setTimeout(function () {
 				mainPageSuccessMsg.classList.remove("success-message");
-			}, 3000);
+				mainPageSuccessMsg.innerHTML = '<i class="fa fa-thumbs-up"></i>&nbsp;Task Deleted';
+				mainPageSuccessMsg.classList.add("success-message");
+				setTimeout(function () {
+					mainPageSuccessMsg.classList.remove("success-message");
+				}, 3000);				
 
 
+
+				});
 
 		},
 
@@ -5944,8 +5975,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		console.log("++++++++++++ ctrlAddTaskItem1()");
 		var newTaskItemInput, newTaskItemObject;
 		var taskListTable = appModelController.getTaskListTable();
-
-
+		var taskItemRecord; 
 
 		// ----------------- New ----------------------
 
@@ -5964,41 +5994,32 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// If all input was valid (e.g., formError = false)
 		if (!formValidationObj[0].formError) {
 
-			// ----------------- New ----------------------	
-
 			//	Get user input from newTaskForm
 			newTaskItemInput = appUIController.getNewTaskFormUserInput();
 
-			// Create New Task Object  (create required fields for object e.g., unique taskItemId, assign taskListId, etc)
-			newTaskItemObject = appModelController.createNewTaskItem(newTaskItemInput);
+			/* CreateNewTaskItem adds the newTaskItem to the pouchDB, creates a taskItem object and adds it to the taskItemTable. If successful it returns the taskItemObject
+			*/
+			appModelController.createNewTaskItem(newTaskItemInput)	
+			.then (function (newTaskItemObject) {
 
+				if (newTaskItemInput.newTaskNotifications.length > 0) {
 
-			if (newTaskItemInput.newTaskNotifications.length > 0) {
+					// Display the notification Icon on mainPage taskItem card
+					
+					taskItemRecord = appModelController.lookUpTaskItemRecord(newTaskItemObject._id);
+					
+					taskItemRecord.taskItem_notifications = true;
 
-				// Display the notification Icon on mainPage taskItem card
-				newTaskItemObject.taskItem_notifications = true;
+					newTaskItemInput.newTaskNotifications.forEach(function (newTaskNotification) {
 
-				newTaskItemInput.newTaskNotifications.forEach(function (newTaskNotification) {
+						newNotificationObject = appModelController.createNewNotificationObject(newTaskNotification, newTaskItemObject._id);
 
-					newNotificationObject = appModelController.createNewNotificationObject(newTaskNotification, newTaskItemObject._id);
+						appModelController.getTaskItemNotificationsTable().push(newNotificationObject);
 
-					appModelController.getTaskItemNotificationsTable().push(newNotificationObject);
+					})
 
-				})
+				}
 
-			}
-
-
-			// Add New task object to New TaskItem table
-			appModelController.getTaskItemsTable().push(newTaskItemObject);
-
-
-
-
-			// Save task object to local/Storage/DB			
-			// INSERT ---> DB call and or save to localStorage
-
-			if (saveToPermStorageWasSuccessful) {
 
 				// Style the success message
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
@@ -6019,37 +6040,49 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
 				appUIController.refreshTaskListSubMenuTotals(taskListTable);
 
-				//??????
-				//				appUIController.getUIVars().addTaskResetButton.click();
 				// ADDED
 				appUIController.exitNewTaskPage(event);
 
 				setTimeout(function () {
-					//							appUIController.getUIVars().editFormCancelButton.click();
-
+	
 					// Must remove the success-message class otherwise it will not appear on future saves 
 					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
 					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
-
-					//							formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
+		
 				}, 5000);
 
-			} else {
-				// Log an error message "Update could not be saved to permananent storage and try again
-				// If this is the first time it failed then
-				// -- create error message asking user to try again
-				// else if this is second or greater time this has failed
-				// -- Log an error code in system log
-				// -- Based on error code make some recommendations on how they could fix the problem
-				// -- Ask user if they would like to send their log info to app creator for diagnosis
-				// -- If they agree and user has registered app (we have their email)
-				// ---- Collect log info and send it via email
-				// ---- Confirm email has been sent and let them know I will follow up
-				// -- else (we don't have their email address)
-				// ---- present dialog to prompt them for their email & register them
-				// ---- Confirm email has been sent and let them know someone will follow up
-				// -- endIf
-			}
+				}).catch ( function (err) {
+
+					// Log an error message "Update could not be saved to permananent storage and try again
+					// If this is the first time it failed then
+					// -- create error message asking user to try again
+					// else if this is second or greater time this has failed
+					// -- Log an error code in system log
+					// -- Based on error code make some recommendations on how they could fix the problem
+					// -- Ask user if they would like to send their log info to app creator for diagnosis
+					// -- If they agree and user has registered app (we have their email)
+					// ---- Collect log info and send it via email
+					// ---- Confirm email has been sent and let them know I will follow up
+					// -- else (we don't have their email address)
+					// ---- present dialog to prompt them for their email & register them
+					// ---- Confirm email has been sent and let them know someone will follow up
+					// -- endIf
+
+					console.log("Error when creating an New Task Item: ", err)
+					//Some thing failed in Save process....either writing to DB or local storage
+
+					// Create log entry if failure
+					// TBD
+
+					// Insert Submit Error Message
+					formValidationObj[0].formSubmitErrorMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-down"></i>' + '&nbsp;' + formValidationObj[0].formSubmitErrorMsg;
+
+					// Style the errorSubmitMsg
+					formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
+
+				})							
+	
+			
 
 		} else { // Some form input was found in error formValidationObj[0].formError = true
 
@@ -6106,10 +6139,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		event.stopPropagation();
 
 		// Represents results from attempting to save Task List record to DB/local storage
-		var saveWasSuccessful = true; // Default value is true
 		var newTaskListNameInput;
 		var newTaskListObject;
 		var userDefinedList;
+		var newTaskListPromise;
 
 
 		var taskItemFormListSelect;
@@ -6120,44 +6153,28 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// ++++++ Added so I could use in buildAndDisplayUserDefinedTaskList() method
 		var currActiveListId = getListIdForActiveTaskList();
 
-
 		// Find the "root" node of the modal page so that I can get ID of which modal fired 
 		var modalPageId = utilMethods.findAncestor(event.currentTarget, 'modal').id;
 
 		// Using the modal page ID look up the form validation object
 		var formValidationObj = appModelController.getFormValidationObject(modalPageId);
 
-
 		var taskListTable = appModelController.getTaskListTable();
-
 
 		appUIController.validateFormInput(formValidationObj);
 
 		// If all input was valid (e.g., formError = false)
 		if (!formValidationObj[0].formError) {
-
-
-			// Create New Task List Object  
-			newTaskListObject = appModelController.createNewTaskList(formValidationObj[0].fieldsToValidate[0].fieldName.value);
-
-
-			// Add New task List object to New TaskList table	
-			appModelController.getTaskListTable().push(newTaskListObject);
-
+			
 			userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 
-			// Sort the userDefinedTask List === DOESNT APPEAR THIS IS NEEDED
-			//			appModelController.sortListByName(userDefinedTaskLists); 
-
-
-			// Save task object to local/Storage/DB			
-			// INSERT ---> DB call and or save to localStorage
-			// INSERT ---> SaveWasSuccessful flag needs to be set based on save results from DB/Local Storage save 
-
-
-			// Check status of saving List to DB/local storage
-			if (saveWasSuccessful) {
-
+			/*  Create new taskList object and save it to pouchDB. This method returns a promise if the write to DB
+				was successful it returns a taskListObject otherwise an erro will be returned in the catch branch
+			*/
+			appModelController.createNewTaskList(formValidationObj[0].fieldsToValidate[0].fieldName.value)
+			.then (function (taskListObject) {
+				
+				console.log("Creating Task List was successful: ", taskListObject);
 
 				// Style the newly added list selection input to reflect list selection had changed (add class="filled")
 				appUIController.getUIVars().inputEditFormListSelect.classList.add("filled");
@@ -6173,7 +6190,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
 
 				// Insert Submit Success Message
-				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' + '"' + newTaskListObject.taskList_name + '"' + ' ' + formValidationObj[0].formSubmitSuccessMsg;
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' + '"' + taskListObject.taskList_name + '"' + ' ' + formValidationObj[0].formSubmitSuccessMsg;
 
 
 				var modalWindowIndex = appModelController.getModalWindowIndex(event.target.id);
@@ -6185,43 +6202,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
 
-
-				/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
-				
-					BELOW is Logic linked to making new List active list..more specifically to setting the Nav list titel and  displaying taskItems associated with the new active list.  
-				
-				XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
-
-
-
-				//				/* Set Active task list menu title equal to the new list that was just created */
-				//				
-				//					// Get location of List menu title 
-				//					var listMenuTitle = appUIController.getUIVars().listMenuTitle.childNodes[2];
-				//
-				//					// Make the List menu title equal to submenu name selected
-				//					listMenuTitle.nodeValue = appUIController.getActiveTaskListName();
-				//				
-				//				
-				//				
-				//	
-				//				
-				//				/* Now display the task list items associated with this newly created list - note there will be no task items for a newly created task list 
-				//				*/
-				//				
-				//					// Find the listId of the "active" list
-				//					var taskListId = getListIdForActiveTaskList();
-				//
-				//					// Use taskId to gather and display all task with that ID
-				//					var taskList_id = updateTaskListDisplayed (taskListId);
-				//
-				//					var taskList2Display = getMatchingTaskItemsWithID (taskList_id); 
-				//					appUIController.groupAndDisplayTaskItems(taskList2Display);
-
-				//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
 				// Perform specific actions need based on Modal form involved 
 				// e.g., clear screen content, rebuild the list selection on the form, etc.
+				
 				switch (modalPageId) {
 
 					case "manageListsAddNewListModal":
@@ -6235,7 +6218,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						appUIController.populateFormWithListNames(taskItemFormListSelect)
 
 						// Make newly added list the "active" list selection on taskItem form
-						appUIController.setTaskListSelect(taskItemFormListSelect, newTaskListObject.taskList_name);
+						appUIController.setTaskListSelect(taskItemFormListSelect, taskListObject.taskList_name);
 						break;
 
 					case "newTaskItemListModal":
@@ -6244,7 +6227,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						appUIController.populateFormWithListNames(taskItemFormListSelect)
 
 						// Make newly added list the "active" list selection on taskItem form
-						appUIController.setTaskListSelect(taskItemFormListSelect, newTaskListObject.taskList_name);
+						appUIController.setTaskListSelect(taskItemFormListSelect, taskListObject.taskList_name);
 						break;
 
 					case "navListModal":
@@ -6258,9 +6241,34 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				}
 
+				// After fadeout animation ends we need to reset message 
+				setTimeout(function () {
+					var modalWindowIndex = appModelController.getModalWindowIndex(event.target.id);
+
+					// Close the form by virtually clicking on cancel button
+					appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
 
 
-			} else { //Some thing failed in Save process....either writing to DB or local storage
+					// Must remove the success-message class otherwise it will not appear on future saves 
+					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
+					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+					// ????
+					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");
+
+					// Rehide the success message so it doesn't obstruct input on the newTask or editTask forms
+					toggleClass(formValidationObj[0].formSubmitSuccessMsgLoc, "hideIt");
+
+
+					// Remove the 'filled' styling on exit from form.
+					formValidationObj[0].fieldsToValidate[0].fieldName.classList.remove("filled");
+				}, 3000);
+
+
+				
+			}).catch ( function (err) {
+				
+				console.log("Error when creating an New Task List: ", err)
+				//Some thing failed in Save process....either writing to DB or local storage
 
 				// Create log entry if failure
 				// TBD
@@ -6271,44 +6279,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Style the errorSubmitMsg
 				formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 
-			}
-
-
-			// After fadeout animation ends we need to reset message 
-			setTimeout(function () {
-				var modalWindowIndex = appModelController.getModalWindowIndex(event.target.id);
-
-				// Close the form by virtually clicking on cancel button
-				appUIController.getUIVars().newListCancelBtn[modalWindowIndex].click();
-
-
-				// Must remove the success-message class otherwise it will not appear on future saves 
-				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
-				formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
-				// ????
-				formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");
-
-				// Rehide the success message so it doesn't obstruct input on the newTask or editTask forms
-				toggleClass(formValidationObj[0].formSubmitSuccessMsgLoc, "hideIt");
-
-
-				// Remove the 'filled' styling on exit from form.
-				formValidationObj[0].fieldsToValidate[0].fieldName.classList.remove("filled");
-			}, 3000);
-
-			// **************************************************************
-			// --->$$$$ - Don't think call to below method (refreshTaskListSubmenuTotals) is necessary in this
-			// method given that prior call to buildAndDisplayUserDefinedTaskList() generates the
-			// DOM node for any new user defined list that was 
-			// created here and it also updates the totals for all UserDefined List..
-			// After I've confirmed I don't need call to function with more testing I will call and all comments
-			//***************************************************************
-			// Regenerate UserDefinedTaskList so it includes newly created Task List 
-			//			appUIController.refreshTaskListSubMenuTotals(taskListTable);
-
+			})				
 
 		} else { // newTaskListNameInput = null
-			console.log("Error was detected with Task List Entry ");
+			
+			console.log("Task List entered was not valid ");
 			// Create log entry if failure
 			// TBD
 
