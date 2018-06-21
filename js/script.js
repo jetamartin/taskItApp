@@ -3553,6 +3553,8 @@ var appUIController = (function () {
 			// Reset formSubmitError and formSubmit Success messages to ensure they will appear after validation completed
 			validationObject.formSubmitErrorMsgLoc.classList.remove("error-message");
 			validationObject.formSubmitSuccessMsgLoc.classList.remove("success-message");
+			validationObject.formSubmitSuccessMsgLoc.classList.remove("warning-message");
+
 
 
 			// For each field on the form validate each field's input and 
@@ -4084,6 +4086,7 @@ var appUIController = (function () {
 					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
 					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
 					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");
+					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("warning-message");
 				}, 3000);
 
 
@@ -4754,6 +4757,8 @@ var appUIController = (function () {
 			formValidationObj.formSubmitSuccessMsgLoc.innerHTML = "";
 			formValidationObj.formSubmitSuccessMsgLoc.classList.remove("success-message");
 			formValidationObj.formSubmitErrorMsgLoc.classList.remove("error-message");
+			formValidationObj.formSubmitErrorMsgLoc.classList.remove("warning-message");
+
 
 			// For each field on the form remove any error messages/styling 
 			formValidationObj.fieldsToValidate.forEach(function (field) {
@@ -5790,71 +5795,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			taskItemInputRecord.taskCompletedDate = "";
 		}
 
-		/*
-			
-		
-		*/
-		if (taskItemInputRecord.taskNotifications.length > 0) {
-			// Display the notification Icon on mainPage taskItem card
-			appUIController.displayNotificationIcon(taskItemId);
 
-			taskItemInputRecord.taskNotifications.forEach(function (taskNotificationInput, index) {
-
-				// Check to see if notification is newly added (i.e. notification_id = null)
-				if (taskNotificationInput.notificationId === null) {
-					
-					// Since a taskNotification is being added then need to mark notification changed
-					notificationHasChanged = true;
-					
-					//	taskNotificationObject = appModelController.createNewNotificationObject(taskNotification, taskItemInputRecord.taskItemId)
-					
-					// Add the newly create notification to DB and return a notification object					
-					appModelController.createNewNotificationObject(taskNotificationInput, taskItemInputRecord.taskItemId)
-					.then (function (taskNotificationObject) {		
-						appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
-					})
-					
-					// Add the new notification the taskItemNotfication table
-//					appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
-
-				} else { // Otherwise if taskNotification already exist it will have a notificationId != null
-
-					// Retrieve the existing notification record from the notification table usiing the notificationId 
-					taskNotificationRecord = appModelController.lookupTaskItemNotification(taskNotificationInput.notificationId)
-					
-					
-					if ( utilMethods.notificationChanged( taskNotificationRecord, taskNotificationInput) ) {
-						
-						notificationHasChanged = true;
-						
-						// Now update the taskNotification record in the taskItemNotification tables
-						taskNotificationRecord.notification_type = taskNotificationInput.notificationType;
-						taskNotificationRecord.notification_units = taskNotificationInput.notificationUnits;
-						taskNotificationRecord.notification_unitType = taskNotificationInput.notificationUnitType;
-
-						// Write the updated values into the Database  
-						appModelController.taskItemNotificationDb.get(taskNotificationInput.notificationId).then(function(doc) {
-							return appModelController.taskItemNotificationDb.put({
-								_id: taskNotification.notificationId,
-								_rev: doc._rev,
-								notification_units: taskNotificationInput.notificationUnits,
-								notification_type: taskNotificationInput.notificationType,
-								notification_unitType: taskNotificationInput.notificationUnits					
-							});
-						}).then(function(response) {
-							
-							console.log("ctrlUpdateTaskItem: Notification updated successfully: ", response)
-
-						}).catch(function (err) {
-							
-							console.log(err);
-							taskNotificationsUpdatedSucccessfully = false;
-							
-						});
-					}
-				}
-			})
-		}
 		
 		// Look up the page ID where this form is located so I can get associated validateObj
 		var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
@@ -5876,7 +5817,72 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
 
 			var coreTaskItemRecordValues = appModelController.extractCoreTaskItemValues(taskItemRecord);
+			
+			/*
+				Process each taskNotification 
+			*/
+			if (taskItemInputRecord.taskNotifications.length > 0) {
+				// Display the notification Icon on mainPage taskItem card
+				appUIController.displayNotificationIcon(taskItemId);
 
+				taskItemInputRecord.taskNotifications.forEach(function (taskNotificationInput) {
+
+					// Check to see if notification is newly added (i.e. notification_id = null)
+					if (taskNotificationInput.notificationId === null) {
+
+						// Since a taskNotification is being added then need to mark notification changed
+						notificationHasChanged = true;
+
+						//	taskNotificationObject = appModelController.createNewNotificationObject(taskNotification, taskItemInputRecord.taskItemId)
+
+						// Add the newly create notification to DB and return a notification object					
+						appModelController.createNewNotificationObject(taskNotificationInput, taskItemInputRecord.taskItemId)
+						.then (function (taskNotificationObject) {		
+							appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
+						})
+
+						// Add the new notification the taskItemNotfication table
+	//					appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
+
+					} else { // Otherwise if taskNotification already exist it will have a notificationId != null
+
+						// Retrieve the existing notification record from the notification table usiing the notificationId 
+						taskNotificationRecord = appModelController.lookupTaskItemNotification(taskNotificationInput.notificationId)
+
+
+						if ( utilMethods.notificationChanged( taskNotificationRecord, taskNotificationInput) ) {
+
+							notificationHasChanged = true;
+
+							// Now update the taskNotification record in the taskItemNotification tables
+							taskNotificationRecord.notification_type = taskNotificationInput.notificationType;
+							taskNotificationRecord.notification_units = taskNotificationInput.notificationUnits;
+							taskNotificationRecord.notification_unitType = taskNotificationInput.notificationUnitType;
+
+							// Write the updated values into the Database  
+							appModelController.taskItemNotificationDb.get(taskNotificationInput.notificationId).then(function(doc) {
+								return appModelController.taskItemNotificationDb.put({
+									_id: taskNotification.notificationId,
+									_rev: doc._rev,
+									notification_units: taskNotificationInput.notificationUnits,
+									notification_type: taskNotificationInput.notificationType,
+									notification_unitType: taskNotificationInput.notificationUnits					
+								});
+							}).then(function(response) {
+
+								console.log("ctrlUpdateTaskItem: Notification updated successfully: ", response)
+
+							}).catch(function (err) {
+
+								console.log(err);
+								taskNotificationsUpdatedSucccessfully = false;
+
+							});
+						}
+					}
+				})
+			}			
+			
 			/* If the data entered on the editTaskForm differs from the original taskItem record then save the updates otherwise no need to save just create a message telling user not updates were detected nor saved.
 		
 			*/
@@ -5931,17 +5937,16 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					// ADDED
 					appUIController.getUIVars().editFormCancelButton.click();
 
-					//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
 					setTimeout(function () {
 						//							appUIController.getUIVars().editFormCancelButton.click();
 
 						// Must remove the success-message class otherwise it will not appear on future saves 
 						formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
 						formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+						formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("warning-message");
 
 						//							formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");				
 					}, 5000);
-					//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&	
 
 				} else {
 					// Log an error message "Update could not be saved to permananent storage and try again
@@ -5964,10 +5969,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Update the success message to indicate "No updates detected"
 
 				// Style the success message
-				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
+				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("warning-message");
 
 				// Insert Submit Success Message
-				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' + "No updates detected";
+				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-minus-circle" aria-hidden="true"></i>' + '&nbsp;' + "No updates detected";
 
 				appUIController.getUIVars().editFormCancelButton.click();
 
@@ -6088,6 +6093,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					// Must remove the success-message class otherwise it will not appear on future saves 
 					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
 					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
+					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("warning-message");
+
 		
 				}, 5000);
 
@@ -6294,6 +6301,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
 					// ????
 					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("error-message");
+					formValidationObj[0].formSubmitErrorMsgLoc.classList.remove("warning-message");
+
 
 					// Rehide the success message so it doesn't obstruct input on the newTask or editTask forms
 					toggleClass(formValidationObj[0].formSubmitSuccessMsgLoc, "hideIt");

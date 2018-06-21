@@ -79,9 +79,9 @@
 		opacity: 0;
 		width: 90%;
 		height: 3rem;
-		color: #fff;
+/*		color: #fff;*/
 /*		background-color: #44e3ce;*/
-		background-color: #34AFA9;
+		background-color: none;
 		border-radius: 10px;
 		position: absolute;
 		text-align: center;
@@ -1171,6 +1171,23 @@ input[name=taskCompleteStatus] {
 		background: #76d6d1;
 		color: white;
 		border: solid 2px #34AFA9;
+		border-radius: .7rem;
+		padding: 10px;
+		text-align: center;
+		font-size: 1.5rem;
+		
+	}
+
+	.warning-message {
+		-webkit-animation: fadeOut 6s forwards;
+		animation: fadeOut 6s forwards;
+		-webkit-animation-delay: .5s;
+		animation-delay: .5s;
+		letter-spacing: .1rem;
+		background: #f9f775;
+		color: #9b9fa2;
+/*		border: solid 2px #34AFA9;*/
+		border: solid 2px #f9f775;
 		border-radius: .7rem;
 		padding: 10px;
 		text-align: center;
