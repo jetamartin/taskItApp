@@ -757,13 +757,24 @@ var exitSearch = function (event) {
 //
 //**************************************************************************************************************************
 
-var utilMethods = (function () {
+var utilMethods = ( function () {
 
 	return {
-
-		buildDate: function (date) {
-
-		},
+		
+		notificationChanged: function ( taskNotificationRecord, taskNotificationInput ) {
+			
+			if (( taskNotificationRecord.notification_type === taskNotificationInput.notificationType ) &&
+				( taskNotificationRecord.notification_units === taskNotificationInput.notificationUnits ) &&
+				( taskNotificationRecord.notification_unitType === taskNotificationInput.notificationUnitType ))
+				{
+					return false;
+				
+			} else {
+				
+				return true;
+			}
+			
+		}, 
 
 
 		contains: function (element) {
@@ -2182,7 +2193,7 @@ var appModelController = (function () {
 				}), 1);
 
 				
-			}).catch(function (err) {
+			}).catch( function (err) {
 			  console.log(err);
 			});
 			
@@ -2246,9 +2257,8 @@ var appModelController = (function () {
 			// Check to see if values on input match to determine whether there have been any changes and hence whether the task really needs to be save to local/remote storage
 			if ((obj1.taskDueDate === obj2.taskDueDate) &&
 				(obj1TaskCompletedDatePresent === obj2TaskCompletedDatePresent) &&
-				(obj1.taskId === obj2.taskId) &&
 				(obj1.taskList === obj2.taskList) &&
-				(obj1.taskRepeat === obj2.taskRepeat) &&
+//				(obj1.taskRepeat === obj2.taskRepeat) &&
 				(obj1.taskTitle === obj2.taskTitle) &&
 				(obj1.taskNotifications === obj2.taskNotificationsPresent)) {
 				return false;
@@ -2626,7 +2636,7 @@ var appModelController = (function () {
 			// Generate createTime
 			var createTime = getTimeStamp();
 
-			appModelController.taskItemNotificationDb.put({
+			return appModelController.taskItemNotificationDb.put({
 				"_id": notificationId,
 				"taskItem_id": taskItemId,
 				"notification_type": newTaskNotification.notificationType,
@@ -2637,20 +2647,28 @@ var appModelController = (function () {
 			}).then(function (response) {
 				
 				console.log("TaskItemNotification response: ", response)
+				return newTaskNotification = new TaskItemNotification(
+					notificationId,
+					taskItemId,
+					newTaskNotification.notificationType,
+					newTaskNotification.notificationUnits,
+					newTaskNotification.notificationUnitType,
+					createTime
+				)
 				
 			}).catch(function (err) {
 				
 				console.log(err);
 			});
 
-			return newTaskNotification = new TaskItemNotification(
-				notificationId,
-				taskItemId,
-				newTaskNotification.notificationType,
-				newTaskNotification.notificationUnits,
-				newTaskNotification.notificationUnitType,
-				createTime
-			)
+//			return newTaskNotification = new TaskItemNotification(
+//				notificationId,
+//				taskItemId,
+//				newTaskNotification.notificationType,
+//				newTaskNotification.notificationUnits,
+//				newTaskNotification.notificationUnitType,
+//				createTime
+//			)
 			
 			
 		},
@@ -3280,12 +3298,14 @@ var appUIController = (function () {
 		deleteNotification: function (event) {
 			console.log("deleteNotification");
 			var pageId = utilMethods.findAncestor(event, 'container-fluid').id
+		
 
 			// If the parentNode has an ID for the taskNotification we need to delete the notification from the table also
 			if (event.parentNode.dataset.id !== "") {
 				appModelController.deleteTaskItemNotificationRecord(event.parentNode.dataset.id)
 				.then (function (taskItemNotification) {
-					console.log ("TaskItemNotification Deleted: ", taskItemNotification);
+					console.log ("TaskItemNotification Deleted Successfully: ", taskItemNotification);
+					
 				})
 			}
 			var parentNode =
@@ -5740,6 +5760,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		console.log("*=======> ctrlUpdateTaskItem");
 		var taskNotificationObject, taskNotificationRecord;
+		var notificationHasChanged = false;
+		
+		// Indicates whether update was successfully save to perm storage. Value set based on return code from save operation
+		var coreTaskItemElementsUpdatedSuccessfully = true;
+		var taskNotificationsUpdatedSucccessfully = true; 
 
 		// Get the taskItemId that was stored in a hiddenInput field on edit form
 		var taskItemId = appUIController.getUIVars().inputEditFormTaskItemId.value
@@ -5750,73 +5775,87 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		var taskItemInputRecord = appUIController.getTaskItemEditInput(event);
 
-		// If the task has been newly marked as completed then we need to populate the taskItemInput record with a completed date
+		// If task has been newly marked as completed then we need to populate the taskItemInput record with a completed date
 		if (taskItemInputRecord.taskCompletedCheckbox && taskItemInputRecord.taskCompletedDate === "") {
 
-			//			var newCompletedDate = new Date();
 			// Create a CompletedDate
 			taskItemInputRecord.taskCompletedDate = new Date().toLocaleString();
 
 
-			// If the task is marked as not completed but it had been marked complete before then we need to change the value of the taskItemInputRecord completedDate to ""
+			// If task is marked as not completed but it had been marked complete before then we need to change the value of the taskItemInputRecord completedDate to ""
 
 		} else if (!taskItemInputRecord.taskCompletedCheckbox &&
 			taskItemInputRecord.taskCompletedDate !== "") {
+			
 			taskItemInputRecord.taskCompletedDate = "";
 		}
 
-		//=================================================
-
+		/*
+			
+		
+		*/
 		if (taskItemInputRecord.taskNotifications.length > 0) {
 			// Display the notification Icon on mainPage taskItem card
 			appUIController.displayNotificationIcon(taskItemId);
 
-			taskItemInputRecord.taskNotifications.forEach(function (taskNotification, index) {
+			taskItemInputRecord.taskNotifications.forEach(function (taskNotificationInput, index) {
 
 				// Check to see if notification is newly added (i.e. notification_id = null)
-				if (taskNotification.notificationId === null) {
-
-					taskNotificationObject = appModelController.createNewNotificationObject(taskNotification, taskItemInputRecord.taskItemId);
-					appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
+				if (taskNotificationInput.notificationId === null) {
+					
+					// Since a taskNotification is being added then need to mark notification changed
+					notificationHasChanged = true;
+					
+					//	taskNotificationObject = appModelController.createNewNotificationObject(taskNotification, taskItemInputRecord.taskItemId)
+					
+					// Add the newly create notification to DB and return a notification object					
+					appModelController.createNewNotificationObject(taskNotificationInput, taskItemInputRecord.taskItemId)
+					.then (function (taskNotificationObject) {		
+						appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
+					})
+					
+					// Add the new notification the taskItemNotfication table
+//					appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
 
 				} else { // Otherwise if taskNotification already exist it will have a notificationId != null
 
-					// Retrieve the existing notification record that we need to change
-					taskNotificationRecord = appModelController.lookupTaskItemNotification(taskNotification.notificationId)
+					// Retrieve the existing notification record from the notification table usiing the notificationId 
+					taskNotificationRecord = appModelController.lookupTaskItemNotification(taskNotificationInput.notificationId)
 					
-					// Now update the taskNotification record 
-					taskNotificationRecord.notification_type = taskNotification.notificationType;
-					taskNotificationRecord.notification_units = taskNotification.notificationUnits;
-					taskNotificationRecord.notification_unitType = taskNotification.notificationUnitType;
 					
-					// Update taskItemNotification in Database
-					appModelController.taskItemNotificationDb.get(taskNotification.notificationId).then(function(doc) {
-  						return appModelController.taskItemNotificationDb.put({
-							_id: taskNotification.notificationId,
-							_rev: doc._rev,
-							notification_units: taskNotification.notificationUnits,
-							notification_type: taskNotification.notificationType,
-							notification_unitType: taskNotification.notificationUnits					
+					if ( utilMethods.notificationChanged( taskNotificationRecord, taskNotificationInput) ) {
+						
+						notificationHasChanged = true;
+						
+						// Now update the taskNotification record in the taskItemNotification tables
+						taskNotificationRecord.notification_type = taskNotificationInput.notificationType;
+						taskNotificationRecord.notification_units = taskNotificationInput.notificationUnits;
+						taskNotificationRecord.notification_unitType = taskNotificationInput.notificationUnitType;
+
+						// Write the updated values into the Database  
+						appModelController.taskItemNotificationDb.get(taskNotificationInput.notificationId).then(function(doc) {
+							return appModelController.taskItemNotificationDb.put({
+								_id: taskNotification.notificationId,
+								_rev: doc._rev,
+								notification_units: taskNotificationInput.notificationUnits,
+								notification_type: taskNotificationInput.notificationType,
+								notification_unitType: taskNotificationInput.notificationUnits					
+							});
+						}).then(function(response) {
+							
+							console.log("ctrlUpdateTaskItem: Notification updated successfully: ", response)
+
+						}).catch(function (err) {
+							
+							console.log(err);
+							taskNotificationsUpdatedSucccessfully = false;
+							
 						});
-					}).then(function(response) {
-						console.log("Update notification: ", response)
-					}).catch(function (err) {
-  						console.log(err);
-					});
+					}
 				}
-
 			})
-
 		}
-
-
-
-
-
-		//============================
-		// Indicates whether update was successfully save to perm storage. Value set based on return code from save operation
-		var saveToPermStorageWasSuccessful = true;
-
+		
 		// Look up the page ID where this form is located so I can get associated validateObj
 		var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
 
@@ -5841,7 +5880,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			/* If the data entered on the editTaskForm differs from the original taskItem record then save the updates otherwise no need to save just create a message telling user not updates were detected nor saved.
 		
 			*/
-			if (appModelController.wereChangesMadeToTaskItem(coreTaskItemRecordValues, taskItemInputRecord)) {
+			if ( appModelController.wereChangesMadeToTaskItem(coreTaskItemRecordValues, taskItemInputRecord ) || 
+				( notificationHasChanged ) ) {
 
 
 				// Update the TaskItem record with values input on editTaskItem form
@@ -5862,23 +5902,18 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						taskItem_repeat: taskItemRecord.taskItem_repeat
 					});
 				}).then(function(response) {
-					
-					console.log("Update taskItem: ", response)
+					console.log("ctrlUpdateTaskItem: TaskItem successfully update in DB: ", response)
 					
 				}).catch(function (err) {
-					
+					coreTaskItemElementsUpdatedSuccessfully = false;
 					console.log(err);
 				});
 
-				// Set saveToPermStorageWasSuccessful based on return code from save operation
-
-				if (saveToPermStorageWasSuccessful) {
+				
+				if ( coreTaskItemElementsUpdatedSuccessfully && taskNotificationsUpdatedSucccessfully ) {
 
 					// Style the success message
 					formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
-
-					// Insert Submit Success Message
-					//				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;'+ '"' + newTaskListObject.taskList_name + '"' + ' ' +  formValidationObj[0].formSubmitSuccessMsg;
 
 					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' + formValidationObj[0].formSubmitSuccessMsg;
 
