@@ -2576,6 +2576,7 @@ var appModelController = (function () {
 			var createTime = getTimeStamp();
 
 			var taskCompletedDate = "";
+			
 			// 
 			if (taskItemInput.newTaskNotifications.length > 0) {
 				notificationsPresent = true;
@@ -2594,7 +2595,7 @@ var appModelController = (function () {
 				"taskItem_isCompleted": "",
 				"taskItem_repeat": taskItemInput.newTaskRepeateOptionTxt,
 				"taskItem_isArchived": "",
-				"taskItem_notifications": false,
+				"taskItem_notifications": notificationsPresent,
 				"taskItem_calendar": "",
 				"taskItem_completedDate": "",
 				"taskItem_createTime": createTime.toString()
@@ -3464,29 +3465,43 @@ var appUIController = (function () {
 				var vanishPresent = cardNode2Remove.classList.contains("vanish");
 
 
-				// Get the Parent Node of card that was marked as complete (i.e., the event)
+				// Get the Parent Node of card that was marked for deletion (i.e., the event)
 				var parentArticleNode = cardNode2Remove.closest("article");
 
 				var moreActiveTaskInDueDateCategory = false;
 
+				// Check childNode to see if they contain a "card" 
 				parentArticleNode.childNodes.forEach(function (childNode) {
+
 					// Due date category is not a card so skip it
 					if (!childNode.classList.contains("card")) {
+
 						return;
 
-						// The node is a task card	
+					// The node is a task card and doesn't contain "vanish	
 					} else if (!childNode.classList.contains("vanish")) {
-						// If the card doesn't contain "vanish" then it's still an active task
+
+						// If the card doesn't contain "vanish" then it's still an active task in the category
 						moreActiveTaskInDueDateCategory = true;
 					}
-				});
+
+				});					
+					
+
+
+
 
 				// If there are no more active task in that dueDate category (e.g., every card has class 'vanish') then delete the dueDate header 
 
 				if (!moreActiveTaskInDueDateCategory) {
 					var dueDateNode = parentArticleNode.firstChild;
 					parentArticleNode.removeChild(dueDateNode);
+				}
+				
+				// Now get the next node that might contain another card
+				var nextNode = parentArticleNode.nextSibling;
 
+				if (!nextNode)  {
 					// Now that the page is empty display the empty taskList message
 
 					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or delete it via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
@@ -3494,9 +3509,9 @@ var appUIController = (function () {
 					var emptyPageMsg = document.getElementById("emptyPageMessage");
 					setTimeout(function () {
 						emptyPageMsg.classList.add("fadeIn");
-					}, 1);
+					}, 1);					
+					
 				}
-
 
 
 				$('#deleteTaskItemModal').modal('hide');
@@ -5826,6 +5841,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				Process each taskNotification 
 			*/
 			if (taskItemInputRecord.taskNotifications.length > 0) {
+				
 				// Display the notification Icon on mainPage taskItem card
 				appUIController.displayNotificationIcon(taskItemId);
 
@@ -5841,8 +5857,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Add the newly create notification to DB and return a notification object					
 						appModelController.createNewNotificationObject(taskNotificationInput, taskItemInputRecord.taskItemId)
-						.then (function (taskNotificationObject) {		
+						.then (function (taskNotificationObject) {	
+							
 							appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
+							
 						})
 
 						// Add the new notification the taskItemNotfication table
@@ -5877,7 +5895,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 								console.log("ctrlUpdateTaskItem: Notification updated successfully: ", response)
 
 							}).catch(function (err) {
-
+								
 								console.log(err);
 								taskNotificationsUpdatedSucccessfully = false;
 
@@ -6025,6 +6043,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		var newTaskItemInput, newTaskItemObject;
 		var taskListTable = appModelController.getTaskListTable();
 		var taskItemRecord; 
+		var newNotificationObject;
 
 		// ----------------- New ----------------------
 
@@ -6048,28 +6067,37 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 			/* CreateNewTaskItem adds the newTaskItem to the pouchDB, creates a taskItem object and adds it to the taskItemTable. If successful it returns the taskItemObject
 			*/
-			appModelController.createNewTaskItem(newTaskItemInput)	
+			appModelController.createNewTaskItem( newTaskItemInput )	
 			.then (function (newTaskItemObject) {
-
-				if (newTaskItemInput.newTaskNotifications.length > 0) {
-
+				
+				if (newTaskItemInput.newTaskNotifications.length > 0 ) {
+					
 					// Display the notification Icon on mainPage taskItem card
 					
 					taskItemRecord = appModelController.lookUpTaskItemRecord(newTaskItemObject._id);
 					
 					taskItemRecord.taskItem_notifications = true;
 
-					newTaskItemInput.newTaskNotifications.forEach(function (newTaskNotification) {
+					newTaskItemInput.newTaskNotifications.forEach(function (newTaskNotification, index) {
 
-						newNotificationObject = appModelController.createNewNotificationObject(newTaskNotification, newTaskItemObject._id);
-
-						appModelController.getTaskItemNotificationsTable().push(newNotificationObject);
-
-					})
-
+						appModelController.createNewNotificationObject(newTaskNotification, newTaskItemObject._id)
+						.then(function ( newNotificationObject ) {
+							
+							console.log("New Notification Added to DB");
+							
+							appModelController.getTaskItemNotificationsTable().push(newNotificationObject);
+							
+							console.log("New Notification Added to TaskItemNotificationTable");
+							 
+							
+						})
+					})					
+					
 				}
-
-
+					
+					
+				console.log("%%%%%%  ctrlAddTaskItem: Continue code after DB puts ");
+			
 				// Style the success message
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
 
@@ -6093,16 +6121,17 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				appUIController.exitNewTaskPage(event);
 
 				setTimeout(function () {
-	
+
 					// Must remove the success-message class otherwise it will not appear on future saves 
 					formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = "";
 					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("success-message");
 					formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("warning-message");
 
-		
-				}, 5000);
 
-				}).catch ( function (err) {
+				}, 5000)
+
+			
+			}).catch ( function (err) {
 
 					// Log an error message "Update could not be saved to permananent storage and try again
 					// If this is the first time it failed then
@@ -6131,9 +6160,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					// Style the errorSubmitMsg
 					formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 
-				})							
-	
-			
+				})	
+
 
 		} else { // Some form input was found in error formValidationObj[0].formError = true
 
