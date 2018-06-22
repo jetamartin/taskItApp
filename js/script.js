@@ -3411,9 +3411,13 @@ var appUIController = (function () {
 
 				cardListNode2Remove.classList.add("vanish");
 				var vanishPresent = cardListNode2Remove.classList.contains("vanish");
+				
+
 
 				$('#manageListsDeleteListModal').modal('hide');
-
+				
+				appUIController.getUIVars().manageTaskListsMsg.classList.remove("hideIt");
+			
 				appUIController.getUIVars().manageTaskListsMsg.innerHTML = '<i class="fa fa-thumbs-o-up"></i>&nbsp;Task List deleted';
 
 				appUIController.getUIVars().manageTaskListsMsg.classList.add("success-message");
@@ -6230,7 +6234,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				formValidationObj[0].fieldsToValidate[0].fieldName.classList.add("filled");
 
 				// First we need to unhide the success message so it will appear
-				toggleClass(formValidationObj[0].formSubmitSuccessMsgLoc, "hideIt");
+				formValidationObj[0].formSubmitSuccessMsgLoc.classList.remove("hideIt");
 
 
 				// Style the success message
