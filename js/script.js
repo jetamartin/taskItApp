@@ -3504,7 +3504,7 @@ var appUIController = (function () {
 				if (!nextNode)  {
 					// Now that the page is empty display the empty taskList message
 
-					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no task items in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or delete it via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
+					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no tasks in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or delete list via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
 
 					var emptyPageMsg = document.getElementById("emptyPageMessage");
 					setTimeout(function () {
