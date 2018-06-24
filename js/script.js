@@ -761,6 +761,17 @@ var utilMethods = ( function () {
 
 	return {
 		
+		notficationCountChanged: function ( priorNotificationCount, currentNotificationCount ) {
+			if ( priorNotificationCount !== currentNotificationCount) {
+				
+				return true;
+				
+			} else {
+				
+				return false;
+			}
+		},
+		
 		notificationChanged: function ( taskNotificationRecord, taskNotificationInput ) {
 			
 			if (( taskNotificationRecord.notification_type === taskNotificationInput.notificationType ) &&
@@ -858,6 +869,7 @@ var utilMethods = ( function () {
 			//		taskItemObject.taskItem_repeat = inputTaskObject.taskRepeat.toLowerCase();
 			taskItemObject.taskItem_completedDate = inputTaskObject.taskCompletedDate;
 			taskItemObject.taskItem_notifications = inputTaskObject.taskNotificationsPresent;
+			taskItemObject.taskItem_notificationCount = inputTaskObject.taskNotifications.length;
 		},
 
 
@@ -897,7 +909,7 @@ var appModelController = (function () {
 		this.taskList_isArchived = taskListIsArchived;
 	}
 
-	var TaskItem = function (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent) {
+	var TaskItem = function (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount) {
 		this._id = id;
 		this.taskList_id = listId;
 		this.taskItem_title = title;
@@ -906,9 +918,10 @@ var appModelController = (function () {
 		this.taskItem_completedDate = completedDate;
 		this.taskItem_createTime = createTime;
 		this.taskItem_notifications = notificationsPresent;
+		this.taskItem_notificationCount = notificationCount;
 	}
 	
-	var TaskItemDbRecord = function (listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent) {
+	var TaskItemDbRecord = function (listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount) {
 		this.taskList_id = listId;
 		this.taskItem_title = title;
 		this.taskItem_due_date = dueDate;
@@ -916,6 +929,7 @@ var appModelController = (function () {
 		this.taskItem_completedDate = completedDate;
 		this.taskItem_createTime = createTime;
 		this.taskItem_notifications = notificationsPresent;
+		this.taskItem_notificationCount = notificationCount;
 	}
 
 	var TaskItemNotification = function (id, taskItemId, notificationType, notificationUnits, notificationUnitType, notificationCreateTime) {
@@ -1111,6 +1125,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1128,6 +1143,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1145,6 +1161,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "weekly",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1162,6 +1179,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1180,6 +1198,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1197,6 +1216,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1214,6 +1234,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "daily",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1231,6 +1252,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "monthly",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1248,6 +1270,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1265,6 +1288,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1282,6 +1306,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1299,6 +1324,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1316,6 +1342,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1333,6 +1360,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1464,6 +1492,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1481,6 +1510,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1498,6 +1528,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "weekly",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1515,6 +1546,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1533,6 +1565,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1550,6 +1583,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1567,6 +1601,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "daily",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1584,6 +1619,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "monthly",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1601,6 +1637,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1618,6 +1655,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "none",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1635,6 +1673,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1652,6 +1691,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1669,6 +1709,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -1686,6 +1727,7 @@ var appModelController = (function () {
 			"taskItem_repeat": "",
 			"taskItem_isArchived": "",
 			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
 			"taskItem_calendar": "",
 			"taskItem_completedDate": "",
 			"taskItem_createTime": ""
@@ -2394,11 +2436,12 @@ var appModelController = (function () {
 						repeat = taskItem.doc.taskItem_repeat
 						isArchived = taskItem.doc.taskItem_isArchived
 						notificationsPresent = taskItem.doc.taskItem_notifications
+						notificationCount = taskItem.doc.taskItem_notificationCount
 						calendar = taskItem.doc.taskItem_calendar
 						completedDate = taskItem.doc.taskItem_completedDate
 						createTime = getTimeStamp();
 						
-						taskItemAttributes = new TaskItem (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent);
+						taskItemAttributes = new TaskItem (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount);
 						
 						taskItemsTable.push(taskItemAttributes);
 					}
@@ -2596,6 +2639,9 @@ var appModelController = (function () {
 				"taskItem_repeat": taskItemInput.newTaskRepeateOptionTxt,
 				"taskItem_isArchived": "",
 				"taskItem_notifications": notificationsPresent,
+				
+				// *&*
+				"taskItem_notificationCount": taskItemInput.newTaskNotifications.length,
 				"taskItem_calendar": "",
 				"taskItem_completedDate": "",
 				"taskItem_createTime": createTime.toString()
@@ -2612,7 +2658,10 @@ var appModelController = (function () {
 					taskItemInput.newTaskRepeateOptionTxt,
 					taskCompletedDate,
 					createTime,
-					notificationsPresent
+					notificationsPresent,
+					
+					// *&*
+					taskItemInput.newTaskNotifications.length
 				)
 				
 				// Add New task object to New TaskItem table
@@ -2661,15 +2710,6 @@ var appModelController = (function () {
 				
 				console.log(err);
 			});
-
-//			return newTaskNotification = new TaskItemNotification(
-//				notificationId,
-//				taskItemId,
-//				newTaskNotification.notificationType,
-//				newTaskNotification.notificationUnits,
-//				newTaskNotification.notificationUnitType,
-//				createTime
-//			)
 			
 			
 		},
@@ -5782,9 +5822,19 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 	***********************************************************************************/
 	var ctrlUpdateTaskItem = function (event) {
 
-		console.log("*=======> ctrlUpdateTaskItem");
-		var taskNotificationObject, taskNotificationRecord;
-		var notificationHasChanged = false;
+		console.log("BEGIN ctrlUpdateTaskItem()");
+		
+		event.preventDefault();
+		event.stopPropagation();
+		
+		var taskNotificationObject;
+		var taskNotificationRecord;
+		
+		var taskItemInputRecord; // TaskItem values stored previously for this task
+		
+		var notificationHasChanged = false;  // Flag to track whether user had modified previously existing notification
+		
+		var priorNotificationCount; // # of notifications that were present prior to current update
 		
 		// Indicates whether update was successfully save to perm storage. Value set based on return code from save operation
 		var coreTaskItemElementsUpdatedSuccessfully = true;
@@ -5793,20 +5843,23 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Get the taskItemId that was stored in a hiddenInput field on edit form
 		var taskItemId = appUIController.getUIVars().inputEditFormTaskItemId.value
 
+		// Find the taskItem in memory object (using Id in hidden input field) and update it with values	
+		var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
+		
+		// Save the TaskItem's notification count 
+		priorNotificationCount = taskItemRecord.taskItem_notificationCount;
 
-		event.preventDefault();
-		event.stopPropagation();
+		taskItemInputRecord = appUIController.getTaskItemEditInput(event);
 
-		var taskItemInputRecord = appUIController.getTaskItemEditInput(event);
-
-		// If task has been newly marked as completed then we need to populate the taskItemInput record with a completed date
+		/* If task has been newly marked as completed (checkbox checked) then we need to populate the taskItemInput
+			record with a completed date. ELSE if task is marked as not completed but it had been marked complete 
+			previously (taskCompletedDate present) the we now need to clear the completedDate
+		*/
 		if (taskItemInputRecord.taskCompletedCheckbox && taskItemInputRecord.taskCompletedDate === "") {
 
 			// Create a CompletedDate
 			taskItemInputRecord.taskCompletedDate = new Date().toLocaleString();
 
-
-			// If task is marked as not completed but it had been marked complete before then we need to change the value of the taskItemInputRecord completedDate to ""
 
 		} else if (!taskItemInputRecord.taskCompletedCheckbox &&
 			taskItemInputRecord.taskCompletedDate !== "") {
@@ -5815,7 +5868,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		}
 
 
-		
 		// Look up the page ID where this form is located so I can get associated validateObj
 		var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
 
@@ -5833,7 +5885,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		
 
 			// Find the taskItem in memory object (using Id in hidden input field) and update it with values	
-			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
+//			var taskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
 
 			var coreTaskItemRecordValues = appModelController.extractCoreTaskItemValues(taskItemRecord);
 			
@@ -5852,8 +5904,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Since a taskNotification is being added then need to mark notification changed
 						notificationHasChanged = true;
-
-						//	taskNotificationObject = appModelController.createNewNotificationObject(taskNotification, taskItemInputRecord.taskItemId)
 
 						// Add the newly create notification to DB and return a notification object					
 						appModelController.createNewNotificationObject(taskNotificationInput, taskItemInputRecord.taskItemId)
@@ -5908,9 +5958,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			/* If the data entered on the editTaskForm differs from the original taskItem record then save the updates otherwise no need to save just create a message telling user not updates were detected nor saved.
 		
 			*/
+//			if ( appModelController.wereChangesMadeToTaskItem(coreTaskItemRecordValues, taskItemInputRecord ) || 
+//				( notificationHasChanged ) ) {	
+				
+			// *&*				
 			if ( appModelController.wereChangesMadeToTaskItem(coreTaskItemRecordValues, taskItemInputRecord ) || 
-				( notificationHasChanged ) ) {
-
+				( notificationHasChanged ) || ( utilMethods.notficationCountChanged ( priorNotificationCount, taskItemInputRecord.taskNotifications.length )) ) {
 
 				// Update the TaskItem record with values input on editTaskItem form
 				utilMethods.equateTaskItemObjects(taskItemRecord, taskItemInputRecord);
@@ -5927,6 +5980,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						taskItem_completedDate: taskItemRecord.taskItem_completedDate,
 						taskItem_due_date: taskItemRecord.taskItem_due_date,
 						taskItem_notifications: taskItemRecord.taskItem_notifications,
+						taskItem_notificationCount: taskItemInputRecord.taskNotifications.length, 
 						taskItem_repeat: taskItemRecord.taskItem_repeat
 					});
 				}).then(function(response) {
@@ -6011,6 +6065,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			// Style the errorSubmitMsg
 			formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 		}
+		
+		console.log("Exit ctrlUpdateTaskItem()");
+
 
 	}
 	/***********************************************************************************
@@ -6033,19 +6090,22 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	***********************************************************************************/
 
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 	var ctrlAddTaskItem1 = function (event) {
 
 		event.preventDefault();
 		event.stopPropagation();
 
-		console.log("++++++++++++ ctrlAddTaskItem1()");
-		var newTaskItemInput, newTaskItemObject;
+		console.log("Begin ctrlAddTaskItem1()");
+		
+		var newTaskItemInput;  // User input from newTask form
+		var newTaskItemObject;
+		
 		var taskListTable = appModelController.getTaskListTable();
-		var taskItemRecord; 
+		var taskItemRecord; // In memory taskItem object 
 		var newNotificationObject;
-
-		// ----------------- New ----------------------
+		
+		var activeTaskId; 
 
 		// Indicates whether update was successfully save to perm storage. Value set based on return code from save operation
 		var saveToPermStorageWasSuccessful = true;
@@ -6072,11 +6132,14 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				
 				if (newTaskItemInput.newTaskNotifications.length > 0 ) {
 					
-					// Display the notification Icon on mainPage taskItem card
-					
+					// Retrieve the taskItem of the existing taskItemRecord
 					taskItemRecord = appModelController.lookUpTaskItemRecord(newTaskItemObject._id);
 					
+					// Display the notification Icon on mainPage taskItem card			
 					taskItemRecord.taskItem_notifications = true;
+					
+					// Update in memory taskItemRecord object to reflect the number of taskNotfications input by the user
+					taskItemRecord.taskItem_notificationCount = newTaskItemInput.newTaskNotifications.length;
 
 					newTaskItemInput.newTaskNotifications.forEach(function (newTaskNotification, index) {
 
@@ -6095,8 +6158,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 				}
 					
-					
-				console.log("%%%%%%  ctrlAddTaskItem: Continue code after DB puts ");
 			
 				// Style the success message
 				formValidationObj[0].formSubmitSuccessMsgLoc.classList.add("success-message");
@@ -6105,7 +6166,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				formValidationObj[0].formSubmitSuccessMsgLoc.innerHTML = '<i class="fa fa-thumbs-o-up"></i>' + '&nbsp;' + formValidationObj[0].formSubmitSuccessMsg;
 
 				// Refresh the TaskItem List
-				var activeTaskId = getListIdForActiveTaskList();
+				activeTaskId = getListIdForActiveTaskList();
 				updateTaskListDisplayed(activeTaskId);
 
 				// Upadate ALL totals on all lists.  Note this method does not update the totals on the UI
@@ -6117,7 +6178,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Update UI overDue and listTotals on the taskListSubmenu (Pre-defined and UserDefined lists)
 				appUIController.refreshTaskListSubMenuTotals(taskListTable);
 
-				// ADDED
 				appUIController.exitNewTaskPage(event);
 
 				setTimeout(function () {
@@ -6176,6 +6236,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			formValidationObj[0].formSubmitErrorMsgLoc.classList.add("error-message");
 
 		}
+
+		console.log("Exit ctrlAddTaskItem1()");
 
 	}
 
