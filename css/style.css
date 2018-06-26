@@ -1075,16 +1075,18 @@ input[name=taskCompleteStatus] {
 	}
 	
 	footer {
+		z-index: 999;
 		position: fixed;
 		bottom: 0;
 		width: 100%;
-		padding: 1% 5%;
+/*		padding: 1% 2%;*/
+		padding-top: 1%;
 		background-color: #34AFA9;
 		font-family: "Open Sans", sans-serif;
 	}
 	
 	footer p {
-		padding: 10px 0px;
+/*		padding: 5px 0px;*/
 		text-align: center;
 	}
 
