@@ -249,14 +249,31 @@
 	}
 	/* Behavior (color change) when you hover on main Navbar elments */
 	
+/*
 	nav ul li:hover {
 		cursor: pointer;
 		background-color: #2cb5a3;
 		background-color: #2C9893;
 	}
+*/
+
+	/* -------Test ---------*/
+	.dropDownActive {
+		cursor: pointer;
+		background-color: #2cb5a3;
+		background-color: #2C9893;
+	}
+
+
 	/* Make Task list nav bar element same width as it's dropdown list elements */
 	
-	nav ul li#taskListDropdown:hover {
+/*
+	#taskListDropdown:hover {
+		width: 250px;
+	}
+*/
+
+	#taskListDropdown {
 		width: 250px;
 	}
 	/* Icons used on nav bar */
@@ -264,6 +281,7 @@
 	nav ul li .fa {
 		color: #fff;
 	}
+
 	/* Hide Nav bar drop down menu until clicked on  */
 	
 	nav ul li ul {
@@ -273,18 +291,29 @@
 	/* DROPDOWN MENUS */
 	/* Display drop down menu elements on hover */
 	
+	
+/*
 	nav ul li:hover ul {
-		/* Set z-index so dropdown menus appear in front of task items */
 		z-index: 1;
 		display: block;
-/*		margin-top: -45px;*/
 		width: 250px;
 		left: 0;
 		position: absolute;
-		/*	opacity: 1;*/
 		-webkit-animation: opacity 700ms ease-in-out normal;
 		animation: subMenus 1000ms ease-in-out normal;
 	}
+*/
+
+	.taskListsSubMenu {
+		z-index: 1;
+		display: block;
+		width: 250px;
+		left: 0;
+		position: absolute;
+		-webkit-animation: opacity 700ms ease-in-out normal;
+		animation: subMenus 1000ms ease-in-out normal;
+	}
+	
 	/*
   Defines animation effect for display of drop down menus.
  */
@@ -313,6 +342,14 @@
 		/*	background-color: #44e3ce;*/
 		background-color: #34AFA9;
 	}
+
+	/* -------Test ---------*/
+
+	nav ul li ul li {
+		display: block;
+		/*	background-color: #44e3ce;*/
+		background-color: #34AFA9;
+	}
 	/* Test99999*/
 	/*
 	nav ul li ul.hideIt li {
@@ -334,14 +371,41 @@
 		border-bottom: white solid 2px;
 */
 	}
+	/* -------Test ---------*/
+
+	nav ul li ul li.selected {
+		display: block;
+		/*	background-color: #44e3ce;*/
+		background-color: #34AFA9;
+		background-color: #2C9893;
+		background-color: #44e3ce;
+		background-color: #1d635f;
+		/*
+		border-top: white solid 2px;
+		border-bottom: white solid 2px;
+*/
+	}
+
 	/* Create separation line between last submenu element and other elements */
 	
 	nav ul li:hover ul li:last-child {
 		border-top: solid 1px #44e3ce;
 	}
+
+	/* -------Test ---------*/
+	nav ul li ul li:last-child {
+		border-top: solid 1px #44e3ce;
+	}
+
+
 	/* Reduce space between stacked icons on NewList and words "New List" to be more consistent */
 	
 	nav ul li:hover ul a li:last-of-type span {
+		width: 1.6rem;
+	}
+
+	/* -------Test ---------*/
+	nav ul li ul a li:last-of-type span {
 		width: 1.6rem;
 	}
 	
@@ -391,6 +455,19 @@
 		border-radius: 30%;
 	}
 
+	/* -------Test ---------*/
+	nav ul li ul li span.overDueCount {
+		font-family: 'Roboto Mono', monospace;
+		float: right;
+		color: #f9f9f9;
+/*		background-color: #e46767;*/
+		padding: 4px 8px;
+		text-align: center;
+		font-size: .8rem;
+		border-radius: 30%;
+	}
+
+
 .overDueItemsPresent {
 	background-color: #e46767;
 	
@@ -418,10 +495,37 @@
 		border-radius: 3px;
 		margin-left: .3rem;
 	}
+
+	/* -------Test ---------*/
+	nav ul li ul li span.listTotal {
+		font-family: 'Roboto Mono', monospace;
+		float: right;
+		color: #f9f9f9;
+		padding: 1px 5px;
+		text-align: center;
+		font-size: 1.2rem;
+		border-radius: 3px;
+		margin-left: .3rem;
+	}
+
+
+
+
 	/* Add space after task totals to sep from overdue counts */
 	/*	Test adding plus after listtotal */
 	
 	nav ul li:hover ul li span.listTotal:after {
+		font-family: "FontAwesome";
+		font-weight: 100;
+		font-size: .75rem;
+/*		content: "\00a0 \00a0 \f067 \00a0";*/
+/*		content: "\00a0";*/
+	}
+
+
+	/* -------Test ---------*/
+
+	nav ul li ul li span.listTotal:after {
 		font-family: "FontAwesome";
 		font-weight: 100;
 		font-size: .75rem;
@@ -434,7 +538,13 @@ nav ul li:hover ul li span.listTotal {
 	pointer-events: none;
 }
 
-	
+	/* -------Test ---------*/
+
+	nav ul li ul li span.overDueCount, 
+	nav ul li ul li span.listTotal {
+	pointer-events: none;
+}
+
 	nav .hideIt {
 		display: none; 
 	}

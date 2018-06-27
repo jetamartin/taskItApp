@@ -481,6 +481,10 @@ var handleSubMenuClick = function (event) {
 		// The selected list name will have the "selected" class added to darken background so when 
 		// user hovers and gets the submenu to display the previously selected list will be distinguishable 
 		toggleClass(event.target, 'selected');
+		
+		
+		// TEST 
+//		toggleClass(appUIController.getUIVars().taskListsSubMenu, 'hideIt'); 
 
 
 		// Now display the taskItems associates with the new "active" task list
@@ -2935,6 +2939,7 @@ var appUIController = (function () {
 
 	/* MainPage Elements */
 	var mainPage = document.querySelector("#mainPage");
+	var taskListsSubMenu = document.querySelector(".taskListsSubMenu");
 	var subMenuListDOMNode = document.querySelector(".taskListsSubMenu");
 	var completedDateStyling = document.querySelector(".completedDateStyling");
 	var completedDateHeader = document.querySelector(".completedDateHeader");
@@ -3020,7 +3025,6 @@ var appUIController = (function () {
 	var repeatErrorMsgDiv = document.getElementById('repeatErrorMsgDiv');
 	var editRepeatErrorMsgDiv = document.getElementById('editRepeatErrorMsgDiv');
 	var newTaskRepeatGroup = document.getElementById('newTaskRepeatGroup');
-	//	var taskListMenuTitle = document.getElementById('taskListMenuTitle');
 	var addTaskResetButton = document.getElementById("addTaskResetButton");
 	var mainPageSuccessMsg = document.getElementById("mainPageSuccessMsg");
 	var mainPageGeneralMsgLoc = document.getElementById("mainPageGeneralMsgLoc");
@@ -3138,6 +3142,14 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/
 	/****************************************************************************************************************/
 	return {
+		
+		displayTaskListSubMenu: function () {
+			console.log("Begin displayTaskListSubMenu()");
+			toggleClass(taskListsSubMenu, 'hideIt');
+			toggleClass(listMenuTitle, 'dropDownActive'); 
+			console.log("End displayTaskListSubMenu()");
+		},
+		
 		clearDueDate: function (event) {
 			console.log("clearDueDate");
 			var pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
@@ -4306,6 +4318,7 @@ var appUIController = (function () {
 			return {
 				/* Main Page Elements */
 				mainPage: mainPage,
+				taskListsSubMenu: taskListsSubMenu,
 				subMenuListDOMNode: subMenuListDOMNode,
 				completedDateHeader: completedDateHeader,
 				completedDateStyling: completedDateStyling,
@@ -5454,8 +5467,26 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	var userDefinedTaskLists = appModelController.getUserDefinedTaskList()
 	var setupEventListeners = function () {
+		
+		
+	// Close the taskListSubMenu dropdown if the user clicks outside of it
+	// Got this solution from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown	
+		window.onclick = function(event) {
+		  if (!event.target.matches('#taskListDropdown')) {
 
-
+			var dropdowns = document.getElementsByClassName("taskListsSubMenu");
+			var i;
+			for (i = 0; i < dropdowns.length; i++) {
+			  var openDropdown = dropdowns[i];
+			  if (!openDropdown.classList.contains('hideIt')) {
+				openDropdown.classList.add('hideIt');
+			  }
+			}
+			appUIController.getUIVars().listMenuTitle.classList.remove('dropDownActive');
+		  }
+		}
+		document.getElementById('taskListDropdown').addEventListener('click', appUIController.displayTaskListSubMenu); 										
+									   
 		// EventListener for List Submenu 
 		var taskList_id = document.querySelector(".taskListsSubMenu").addEventListener('click', handleSubMenuClick);
 
@@ -5783,6 +5814,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		addEventListenerByClass('deleteTaskListModalForm', 'submit', function (event) {
 			appUIController.deleteTaskList(event)
 		});
+		
 
 		// Date Time Picker from :https://www.malot.fr/bootstrap-datetimepicker/	
 		//		$(".form_datetime").datetimepicker({
