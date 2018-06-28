@@ -304,11 +304,16 @@
 	}
 */
 
+nav ul {
+	margin-bottom: 0 !important;
+}
+
 	.taskListsSubMenu {
 		z-index: 1;
 		display: block;
 		width: 250px;
 		left: 0;
+		top: 3.75rem;
 		position: absolute;
 		-webkit-animation: opacity 700ms ease-in-out normal;
 		animation: subMenus 1000ms ease-in-out normal;
@@ -604,6 +609,29 @@ nav ul li:hover ul li span.listTotal {
 		position: relative;
 		top: 5px;
 	}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 300px;
+    overflow-x: hidden;
+}
+
+.scroll-menu	{
+   min-width: 180px;
+   max-height: 70vh;
+/*   overflow: auto;*/
+	overflow-y: scroll;
+ }
+	/* Make taskSubM*/
+/*
+	.taskListsSubMenu {
+
+	   max-height:300px;
+	   overflow: auto;
+
+	}
+*/
+
 	/*------------------- TEST SEARCHIT ICON */
 
 	/*	???? searchIcon is not found in HTML so may be able to delete searchIcon related CSS*/
@@ -892,35 +920,8 @@ nav ul li:hover ul li span.listTotal {
 		margin-left: .5rem;
 		margin-right: .3rem;
 		font-size: 1.25rem;
-/*		float: right;*/
-		
+	}
 
-	}
-	/*
-	.card-text {
-		margin-left: 3rem;
-	}
-*/
-	
-/*
-	.taskDate::after {
-		font-family: "FontAwesome";
-			color: rgb(132, 226, 239);
-		color: #9a9696;
-		font-weight: 100;
-		margin-left: 10px;
-		content: " \f01e";
-	}
-*/
-/* Add if task is repeating */
-/*
-	.fa-repeat {
-		display: inline-block;
-		margin-left: 10px;
-		color: #34AFA9;
-		float: right;
-	}
-*/
 .taskDetails {
 	margin-right: .5rem;
 	color: #adaaaa;
@@ -956,19 +957,6 @@ nav ul li:hover ul li span.listTotal {
 	transition: transform .7s ease-in-out, -webkit-transform .7s ease-in-out;
 }
 
-/*
-.card a.deleteAction label:hover {
-	color: red;
-}
-*/
-
-/*
-.card a.deleteAction label .fa-trash-o:hover:before,
-.card a.deleteAction label:hover
-{
-	color: red;
-}
-*/
 
 .card .taskActionRow a.deleteAction label i.fa.fa-trash-o:hover:before,
 .card .taskActionRow a.deleteAction label:hover
@@ -1017,44 +1005,6 @@ input[name=taskCompleteStatus] {
 	100% { max-height: 0%; }
 }
 
-/*
-@-webkit-keyframes disappear {
-	0% { max-height: 0%;}
-	25% { max-height: 25%}
-    50% { max-height: 50%;}
-	75% { max-height: 75%}
-	100% {max-height: 100%;}
-}
-
-@keyframes disappear {
-	0% { max-height: 0%;}
-	25% { max-height: 25%}
-    50% { max-height: 50%;}
-	75% { max-height: 75%}
-	100% {max-height: 100%;}
-}
-*/
-
-
-/*
-@-webkit-keyframes disappear {
-	0% {opacity: 100%;}
-	25% {opacity: 75%}
-    50% {opacity: 50%;}
-	75% {opacity: 25%}
-	100% {opacity: 0%;}
-}
-
-
-
-@keyframes disappear {
-	0% {opacity: 100%;}
-	25% {opacity: 75%}
-    50% {opacity: 50%;}
-	75% {opacity: 25%}
-	100% {opacity: 0%;}
-}
-*/
 
 
 
@@ -1129,10 +1079,8 @@ input[name=taskCompleteStatus] {
 		font-size: 2rem;
 		z-index: 999;
 		/*	transform-origin: 50% 50%;*/
-		right: 10rem;
-		bottom: 10rem;
 		right: 10%;
-		bottom: 25%;
+		bottom: 10%;
 		position: fixed;
 		-webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.12), 0 6px 6px rgba(0, 0, 0, 0.24);
 		box-shadow: 0 0 6px rgba(0, 0, 0, 0.12), 0 6px 6px rgba(0, 0, 0, 0.24);
