@@ -4035,12 +4035,14 @@ var appUIController = (function () {
 			// Hide the mainPage and show the editTaksPage
 			toggleClass(homePage, "hideIt");
 			toggleClass(editTaskPage, "hideIt");
-
+			
+			
+			// **** NOTE ***** Removed focus as this causes keyboard on Mobile to be launch automatically
 			// Set the focus on TaskItem field
-			appUIController.getUIVars().inputEditFormTaskItemName.focus();
+//			appUIController.getUIVars().inputEditFormTaskItemName.focus();
 
 			// Set the cursor position within the TaskItem field to the first positions
-			appUIController.getUIVars().inputEditFormTaskItemName.setSelectionRange(0, 0);
+//			appUIController.getUIVars().inputEditFormTaskItemName.setSelectionRange(0, 0);
 		},
 
 		exitEditTaskPage: function (event) {
@@ -4616,9 +4618,11 @@ var appUIController = (function () {
 			// Now reset (clear) input fields to original values
 			formSaveNewTask.reset();
 
+			
+			// ****** NOTE ******  Commented out focus because this was causing keyboard on  mobile to automatically be shown...blocking most of the form.
 			// When form opens you want the focus to be on newTaskTitle field with cursor at position 1
-			appUIController.getUIVars().inputNewTaskTitle.focus();
-			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0, 0);
+//			appUIController.getUIVars().inputNewTaskTitle.focus();
+//			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0, 0);
 
 			// Populate List Selection dropdown on new task item for
 			appUIController.populateFormWithListNames(inputNewTaskListSelection);
@@ -4790,9 +4794,9 @@ var appUIController = (function () {
 
 			appUIController.getUIVars().inputNewTaskListSelection.value = "Default";
 
-
-			appUIController.getUIVars().inputNewTaskTitle.focus();
-			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0, 0)
+//          ***** NOTE *****: Removed focus to prevent Mobile keyboard from showing immediately			
+//			appUIController.getUIVars().inputNewTaskTitle.focus();
+//			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0, 0)
 
 			// Remove any notification nodes that may be present
 
@@ -5466,11 +5470,16 @@ var appUIController = (function () {
 var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 	var userDefinedTaskLists = appModelController.getUserDefinedTaskList()
+	
+	
 	var setupEventListeners = function () {
+//		var isAndroid = /(android)/i.test(navigator.userAgent);
+//		if( isAndroid){
+//			alert("Android Device");
+//		}
 		
-		
-	// Close the taskListSubMenu dropdown if the user clicks outside of it
-	// Got this solution from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown	
+		// Close the taskListSubMenu dropdown if the user clicks outside of it
+		// Got this solution from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown	
 		window.onclick = function(event) {
 		  if (!event.target.matches('#taskListDropdown')) {
 

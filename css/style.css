@@ -24,6 +24,14 @@
 	}
 */
 
+/* Added outer container to try and resolve issue where footer is being pushed up above virtual keyboard on mobil device  */
+	#outerContainer {
+		min-height:	100%;
+   		position: relative;
+		margin-bottom: -3.5rem;
+	}
+
+
 	input[type="text"].filled, input[type="date"].filled, input[type="number"].filled, select.filled {
 		color: #76d6d1 !important;
 		font-style: italic;
@@ -1135,16 +1143,21 @@ input[name=taskCompleteStatus] {
 	footer {
 		z-index: 999;
 		position: fixed;
-		bottom: 0;
+		/* Relative position to address issue  */
+		position: relative;
+/*		bottom: 0;*/
 		width: 100%;
 /*		padding: 1% 2%;*/
-		padding-top: 1%;
+/*		padding-top: 1rem;*/
 		background-color: #34AFA9;
-		font-family: "Open Sans", sans-serif;
+/*		font-family: "Open Sans", sans-serif;*/
 	}
+
+
 	
 	footer p {
-/*		padding: 5px 0px;*/
+		padding: 1rem 0px;
+		margin-bottom: 0 !important;
 		text-align: center;
 	}
 

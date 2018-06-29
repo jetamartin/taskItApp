@@ -21,6 +21,7 @@
 </head>
 
 <body>
+<div id="outerContainer">
   	<div id="homePage">
 		<header class="container-fluid" >
 			<nav class="navBar">
@@ -713,12 +714,15 @@
 			</div>
 		</div>
 	</section>
-</div>
-	
+	</div>
+
+	</div>	
 <!--	END MANAGE TASK SECTION-->
 	<footer>
 		<p>This is where ads will be displayed.</p>
 	</footer>
+	
+
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	
@@ -766,15 +770,22 @@
 -->
 	<script type="text/javascript">
             $(function () {
-                $('#newTaskDatePicker').datetimepicker({
+                $('#newTaskDatePicker').datetimepicker(  
+					{
 					icons: {
 							time: "fa fa-clock-o",
 							date: "fa fa-calendar-plus-o",
 							up: "fa fa-arrow-up",
 							down: "fa fa-arrow-down"
 					}
+						
+						
 				});
 				
+//               $('#newTaskDatePicker').datetimepicker( {
+//				   pickTime: false
+//			   } ); 					
+						
 		});
 	</script>
 	
@@ -782,6 +793,7 @@
 		$(function () {
 			$('#editTaskDatePicker').datetimepicker(
 				{
+				pickTime: false,
                 icons: {
                     time: "fa fa-clock-o",
                     date: "fa fa-calendar-plus-o",
@@ -789,6 +801,9 @@
                     down: "fa fa-arrow-down"
                 }
             });
+//			$('#editTaskDatePicker').datetimepicker({
+//			   pickTime: false
+//			})
 		});
 	</script>
 
