@@ -893,7 +893,10 @@ var utilMethods = ( function () {
 //**************************************************************************************************************************
 
 var appModelController = (function () {
-	var userDb, taskListDb, taskItemDb, taskItemNotificationDb;
+	var userDb = new PouchDB('userDb');
+	var taskListDb = new PouchDB('taskListDb');
+	var taskItemDb = new PouchDB('taskItemDb');
+	var taskItemNotificationDb = new PouchDB('taskItemNotificationDb');
 	var userDefinedTaskListInfo1 = [];
 	var userTable1 = [];
 	var taskListTable1 = [];
@@ -2577,11 +2580,39 @@ var appModelController = (function () {
 
 
 		lookUpTaskItemRecord: function (taskItemId) {
+			
 			var taskItemsTable = appModelController.getTaskItemsTable();
+			
+//			var promise = new Promise( function (resolve, reject) {
+//				if (taskItemsTable.length === 0) {
+//					console.log("TaskItem table object not available..must lookup in DB");
+//					return appModelController.loadTaskItemDataFromDb(taskItemDb)
+//						.then( function ( taskItemData ){ 
+//							taskItemsTable = appModelController.getTaskItemsTable();
+//							matchingTaskItemRecord = taskItemsTable.filter(function (taskItem) {
+//								return taskItem._id == taskItemId;
+//							});
+//							return (matchingTaskItemRecord[0]);
+//						})
+//						.catch (function (err) {
+//							reject(err);
+//						})
+//				
+//				} else {
+//					var matchingTaskItemRecord = taskItemsTable.filter(function (taskItem) {
+//						return taskItem._id === taskItemId;
+//					})
+//					
+//					return Promise.resolve (matchingTaskItemRecord[0])
+//				}
+//				
+//			return promise;
+//			})
+
 			var matchingTaskItemRecord = taskItemsTable.filter(function (taskItem) {
-				return taskItem._id === taskItemId;
+				return taskItem._id == taskItemId;
 			})
-			return matchingTaskItemRecord[0];
+			return matchingTaskItemRecord[0];			  
 		},
 
 		lookUpTaskListName: function (taskListId) {
@@ -3257,7 +3288,7 @@ var appUIController = (function () {
 			//				validationObj[0].fieldsToValidate[5].fieldName.classList.add("filled");
 			//			}
 
-			//			 **** COMMENTED OUT BECAUSE I ELIMINATED REPEAT OPTION 
+			//			 **** COMMENTED OUT BECAUSE I ELIMINATED REPEAT OPTION FOR NOW
 			// Now a DueDate has been added we need to clear any error messages were caused when the form was submitted without a dueDate (e.g., repeat & notifications set)
 
 			appUIController.clearFormRepeatAndNotificationErrors(validationObj);
@@ -3943,38 +3974,39 @@ var appUIController = (function () {
 			toggleClass(taskActionsRowToShowHide, "materialize");
 			//			toggleClass(nodeContainingIconToRotate, "rotateIt");
 		},
-		//		styleTaskFormFieldAsChanged: function (event) {
-		//			var pageId;
-		//			console.log("************** styleTaskFormFieldAsChanged");
-		//			switch(event.target.id) {
-		//				case "editFormTaskItemName":
-		//					inputEditFormTaskItemName.classList.add("filled");
-		//					break;
-		//				case "editFormRepeatSelect":
-		//					inputEditFormRepeatSelect.classList.add("filled");
-		//					break;
-		//				case "editTaskFormListSelect":
-		//					inputEditFormListSelect.classList.add("filled");
-		//					break;
-		//				case "datetimepicker":
-		//					console.log("DateTimePicker Event");
-		//					pageId = utilMethods.findAncestor(event.currentTarget, 'container-fluid').id;
-		//					if (pageId === "newTaskPage") {
-		//						console.log("Page where clicked: ", pageId);
-		//						inputNewTaskDateTime.classList.add("filled");
-		//						appUIController.clearOrSetRepeatFieldErrors();
-		//					} else { // "editTaskPage"
-		//						console.log("Page where clicked: ", pageId);
-		//						inputEditFormTaskItemDueDate.classList.add("filled");
-		//					}	
-		//					break;
-		//				default:
-		//					console.log("No matching event found");
-		//			}
-		//		},
+
 
 
 		displayEditTaskPage: function (event) {
+			
+			var taskItemId; 
+			
+			// Use of instanceof -> https://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+			if (event instanceof Element) {
+				
+				taskItemId = event.dataset.id; 
+				
+			} else if (event === undefined) {
+					var hash = location.hash
+					var colonLocation = hash.indexOf(":");
+					if (colonLocation !== -1 ) {
+						taskItemId = hash.substr(colonLocation+1);
+						hash = hash.substr(0, colonLocation);
+					}					
+					
+			} else {
+					// Get taskItemIIid value from state object
+					taskItemId = event.taskItemId;
+
+			}
+
+				
+			
+			if (window.history.state === null || window.history.state.taskItemId !== taskItemId) { 
+			
+				window.history.pushState({taskItemId: taskItemId}, '', 'index.html#editTask'+ ":" + taskItemId);
+			 }
+			
 
 			console.log("************** displayEditTaskPage");
 
@@ -3982,10 +4014,20 @@ var appUIController = (function () {
 
 			var formValidationObject = appModelController.getFormValidationObject("editTaskPage");
 			appUIController.resetTaskForm1(formValidationObject[0]);
+			
+//			var taskItemTable = appModelController.getTaskItemsTable()
+//			if (taskItemTable.length === 0 ) {
+//				appModelController.loadTaskItemDataFromDb(taskItemDb)
+//					.then (function (taskItemData ) {
+//					
+//				}) 
+//				
+//			}
+			
 
 			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record. Note: taskItem_id was stored in a custom attribute (data-id) of span when the taskItem card was created
-			var taskItemId = event.dataset.id;
-			var selectedTaskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId);
+
+			var selectedTaskItemRecord = appModelController.lookUpTaskItemRecord(taskItemId)
 
 			//------ Set the fields in the EditTaskForm -----
 
@@ -4032,23 +4074,23 @@ var appUIController = (function () {
 			appUIController.buildAndDisplayTaskItemNotifications(currentTaskItemNotifications);
 
 
-			// Hide the mainPage and show the editTaksPage
-			toggleClass(homePage, "hideIt");
-			toggleClass(editTaskPage, "hideIt");
-			
-			
-			// **** NOTE ***** Removed focus as this causes keyboard on Mobile to be launch automatically
-			// Set the focus on TaskItem field
-//			appUIController.getUIVars().inputEditFormTaskItemName.focus();
-
-			// Set the cursor position within the TaskItem field to the first positions
-//			appUIController.getUIVars().inputEditFormTaskItemName.setSelectionRange(0, 0);
+			// Hide the mainPage and show the editTaksPage	
+			homePage.classList.add("hideIt");
+			editTaskPage.classList.remove("hideIt");
+				
 		},
 
 		exitEditTaskPage: function (event) {
 			console.log("exitEditTaskPage()");
-			toggleClass(homePage, "hideIt");
-			toggleClass(editTaskPage, "hideIt");
+			
+			homePage.classList.remove("hideIt");
+			editTaskPage.classList.add("hideIt");
+			
+//			toggleClass(homePage, "hideIt");
+//			toggleClass(editTaskPage, "hideIt");
+			
+			window.history.pushState({}, '', 'index.html');
+
 
 			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
 			resetUI2InitialState();
@@ -4062,11 +4104,16 @@ var appUIController = (function () {
 		 *********************************************************************/
 		displayManageTaskListsPage: function (event) {
 			console.log("displayManageTaskPage()");
+			
+			window.history.pushState({}, '', '/index.html#manageTaskLists');
+
 			appUIController.clearOutExistingScreenContent(appUIController.getUIVars().manageTaskListsContent, "card");
 			appUIController.buildAndDisplayTaskListCards(appUIController.getUIVars().manageTaskListContent, "card");
 			// Hide the mainPage and show the editTaksPage
-			toggleClass(homePage, "hideIt");
-			toggleClass(manageTaskListsPage, "hideIt");
+			
+			homePage.classList.add("hideIt");
+			manageTaskListsPage.classList.remove("hideIt");
+			
 		},
 
 		editTaskList: function (event) {
@@ -4181,8 +4228,13 @@ var appUIController = (function () {
 
 		exitManageTaskListsPage: function (event) {
 			console.log("exitManageTaskListsPage()");
-			toggleClass(homePage, "hideIt");
-			toggleClass(manageTaskListsPage, "hideIt");
+			window.history.pushState({}, '', 'index.html');
+
+			homePage.classList.remove("hideIt");
+			manageTaskListsPage.classList.add("hideIt");
+			
+//			toggleClass(homePage, "hideIt");
+//			toggleClass(manageTaskListsPage, "hideIt");
 			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
 			resetUI2InitialState();
 
@@ -4534,6 +4586,8 @@ var appUIController = (function () {
 		********************************************************************************************/
 		exitNewTaskPage: function (event) {
 			console.log("********************** exitNewTaskPage");
+			
+			history.pushState({}, "", "index.html");
 
 			// IS THIS STILL NEEDED.....Get the current "active" task list Node 
 			var currActiveList = getActiveTaskList();
@@ -4598,6 +4652,9 @@ var appUIController = (function () {
 
 		displayAddNewTaskForm: function () {
 			console.log("************** appUIController.displayAddNewTaskForm()");
+			
+			// Change URL to createNewTask
+			window.history.pushState({}, "", "index.html#createNewTask");
 
 			// Reset the New Task Form when displayed to remove any residual formatting / errors
 
@@ -4610,8 +4667,12 @@ var appUIController = (function () {
 
 
 			// Hide the main page and display the addTaskForm page
-			toggleClass(homePage, "hideIt");
-			toggleClass(addNewTaskPage, "hideIt");
+			
+			homePage.classList.add('hideIt');
+			addNewTaskPage.classList.remove('hideIt');
+			
+//			toggleClass(homePage, "hideIt");
+//			toggleClass(addNewTaskPage, "hideIt");
 
 
 
@@ -5468,6 +5529,8 @@ var appUIController = (function () {
 //**************************************************************************************
 
 var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
+	
+
 
 	var userDefinedTaskLists = appModelController.getUserDefinedTaskList()
 	
@@ -5478,6 +5541,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 //			alert("Android Device");
 //		}
 		
+		
+
 		// Close the taskListSubMenu dropdown if the user clicks outside of it
 		// Got this solution from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown	
 		window.onclick = function(event) {
@@ -5755,7 +5820,23 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			appUIController.editTaskList(e);
 
 		});
+		
+		/************************************************
+		
+			DATE PICKER 
+		
+		*************************************************/
+		
+		// Allow date picker to work even though I've set the input field to "readOnly"
+		// Date Input field marked "readOnly" to force user to use datepicker controls to enter date
+		$('#newTaskDatePicker').datetimepicker({'ignoreReadonly': true});
+		$('#newTaskDateTime').datetimepicker();
 
+		$('#editTaskDatePicker').datetimepicker({'ignoreReadonly': true});
+		$('#editTaskDateTime').datetimepicker();
+		
+		
+		
 		$(function () {
 			$('#newTaskDatePicker, #newTaskTimePicker').on("change.datetimepicker", function (e) {
 				appUIController.dueDateUpdate(e);
@@ -6220,6 +6301,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				appUIController.refreshTaskListSubMenuTotals(taskListTable);
 
 				appUIController.exitNewTaskPage(event);
+				
+				// Change url back to index.html before exiting
+				window.history.pushState({}, '', 'index.html');
 
 				setTimeout(function () {
 
@@ -6508,8 +6592,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		loadAndDisplayDataOnStartup: function (taskListDb, taskItemDb, taskItemNotificationDb) {
 			
-			appModelController.loadDataFromDb(taskListDb, taskItemDb, taskItemNotificationDb)
-				.then( function ( results ){
+//			return appModelController.loadDataFromDb(taskListDb, taskItemDb, taskItemNotificationDb)
+//				.then( function ( results ){
 				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 
 				// Sort the userDefinedTask List
@@ -6542,11 +6626,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				var taskList2Display = getAllActiveMatchingTaskItemsWithId(taskList_id);
 				appUIController.groupAndDisplayTaskItems(taskList2Display);
 
-			}); 
+//			}); 
 		
 		}, 
 
-		init: function () {
+		init: function (hash) {
+			
+
 
 			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
 			var currActiveListNode = getActiveTaskList();
@@ -6556,6 +6642,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			var dbInitializationResults;			
 			var initializeDbs, createIndexes, seedUserData, allPromises = []; 
 			
+			setupEventListeners();
 			console.log('Application has started');
 
 			/* If a 'taskIt' DB already exist this will return pointer to that DB otherwise
@@ -6569,6 +6656,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				created and therefore we need to initialiaze it. */
 			
 			appModelController.userDb.info().then(function (details) {
+				
 		
 				// if there is no data in the user DB then the DB has never been started
 				if (details.doc_count === 0 && details.update_seq === 0) {	
@@ -6615,8 +6703,27 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						
 
 							// Load Data from DB and Display UI 
-							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
-
+//							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
+						
+					appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+						.then( function ( results ){
+						
+							switch(hash) {
+								case '#editTask':
+										appUIController.displayEditTaskPage();
+										break;
+								case '#createNewTask':
+										appUIController.displayAddNewTaskForm();
+										break;
+								case '#manageTaskListsPage':
+										appUIController.displayManageTaskListsPage();
+										break;
+								default:
+									appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
+							
+							}							
+						
+						})
 						})	 
 						
 					})
@@ -6636,7 +6743,31 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 					appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
 
-					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
+
+//					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+											
+					appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+						.then( function ( results ){
+						
+
+						switch(hash) {
+							case '#editTask':
+									appUIController.displayEditTaskPage();
+									break;
+							case '#createNewTask':
+									appUIController.displayAddNewTaskForm();
+									break;
+							case '#manageTaskLists':
+									appUIController.displayManageTaskListsPage();
+									break;
+							default:
+								appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
+						}					
+						
+					})
+
+					
+					
 					
 				}
 			})
@@ -6664,7 +6795,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				 These items will be inserted/sandwiched between "Pre-set" lists. 1) "All Lists" 2) "Default" ...insert here... n) "Completed
 				 Specifically they are added after the "Default" task list item, which is now .childNodes[2] node.
 				*/
-				setupEventListeners();
+//				setupEventListeners();
 //			}
 		}
 	}
@@ -6672,8 +6803,47 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 
 
+window.onload = function(event) {
+
+	var itemId, pathname, colonLocation;
+	var hash = "";
+ 	pathname = location.pathname
+	hash = location.hash
+	colonLocation = hash.indexOf(":");
+	if (colonLocation !== -1 ) {
+	 	itemId = hash.substr(colonLocation+1);
+		hash = hash.substr(0, colonLocation);
+	}
+	
+	appController.init(hash);
+	
+}
+
+
+window.onpopstate = function(event) {
+  console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+	var itemId;
+	var pathname = location.pathname;
+	var hash = location.hash;
+	var colonLocation = hash.indexOf(":");
+	if (colonLocation !== -1 ) {
+		itemId = hash.substr(colonLocation+1);
+		hash = hash.substr(0, colonLocation);
+	}
+	switch(hash) {
+    case '#editTask':
+			appUIController.displayEditTaskPage(event.state);
+        break;
+    case 'index.html/editTask':
+//        code block
+        break;
+    default:
+			appUIController.exitEditTaskPage();
+	}
+};
+
 // Main App flow
-appController.init();
+//appController.init();
 
 
 // Notes: TODOS for App
