@@ -20,11 +20,7 @@
 
 	@font-face { font-family: roboto-mono; 
 			 src: url('../font/RobotoMono-Regular.ttf'); } 
-/*
-	formControl.filled {
-		color: blue !important; 
-	}
-*/
+
 
 /* Added outer container to try and resolve issue where footer is being pushed up above virtual keyboard on mobil device. Also made some changes to footer to full implement solution. Soution was found on: https://stackoverflow.com/questions/22627646/how-to-prevent-mobile-keyboard-from-rising-footer-over-the-text-fields  */
 	#outerContainer {
