@@ -18,6 +18,8 @@
 		/*	color: #9a9696;*/
 	}
 
+	@font-face { font-family: roboto-mono; 
+			 src: url('../font/RobotoMono-Regular.ttf'); } 
 /*
 	formControl.filled {
 		color: blue !important; 
