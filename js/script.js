@@ -6592,8 +6592,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		loadAndDisplayDataOnStartup: function (taskListDb, taskItemDb, taskItemNotificationDb) {
 			
-//			return appModelController.loadDataFromDb(taskListDb, taskItemDb, taskItemNotificationDb)
-//				.then( function ( results ){
+
 				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 
 				// Sort the userDefinedTask List
@@ -6626,7 +6625,6 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				var taskList2Display = getAllActiveMatchingTaskItemsWithId(taskList_id);
 				appUIController.groupAndDisplayTaskItems(taskList2Display);
 
-//			}); 
 		
 		}, 
 
@@ -6719,10 +6717,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 										appUIController.displayManageTaskListsPage();
 										break;
 								default:
-									appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
+//									appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
 							
 							}							
-						
+							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
 						})
 						})	 
 						
@@ -6761,8 +6759,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 									appUIController.displayManageTaskListsPage();
 									break;
 							default:
-								appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
-						}					
+
+						}
+						// Need to run this to ensure all JS objects are loaded with data 
+						appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 						
 					})
 
