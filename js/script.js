@@ -3859,7 +3859,36 @@ var appUIController = (function () {
 
 				completeDate = new Date().toLocaleString('en-US', options);
 
-				// Update the completed total count for the current list
+				// Update DB values for the completed Date and total count for the current list
+				
+				
+				appModelController.taskItemDb.get( taskItemId ).then ( function ( doc ) {				
+					doc.taskItem_completedDate = completeDate;
+					return appModelController.taskItemDb.put(doc);
+					
+				}).then ( function ( response ) {
+					console.log ("Result of taskItemDb update: ", response);
+
+					taskItemRecord.taskItem_completedDate = completeDate;
+					
+					appModelController.taskListDb.get( taskListId ).then ( function ( doc ) {
+						doc.taskList_completedCount = taskListRecord.taskList_completedCount++;
+						return appModelController.taskListDb.put( doc )
+						
+				}).then ( function ( doc ) {
+					console.log ("Result of taskListDb update: ", doc);
+				})
+
+				
+				}).catch( function ( err ) {
+						
+					console.log(err);
+						
+				});
+				
+
+				
+				// Update JS object for the completed Date and total count for the current list
 
 				taskItemRecord.taskItem_completedDate = completeDate;
 				taskListRecord.taskList_completedCount++;
@@ -3917,6 +3946,30 @@ var appUIController = (function () {
 
 
 			} else { // User is "re-activating" the task item
+								
+				appModelController.taskItemDb.get( taskItemId ).then ( function ( doc ) {				
+					doc.taskItem_completedDate = "";
+					return appModelController.taskItemDb.put(doc);
+					
+				}).then ( function ( response ) {
+					console.log ("Result of taskItemDb update: ", response);
+					
+					appModelController.taskListDb.get( taskListId ).then ( function ( doc ) {
+//						doc.taskList_completedCount = taskListRecord.taskList_completedCount--;
+						return appModelController.taskListDb.put( doc )
+						
+				}).then ( function ( doc ) {
+					console.log ("Result of taskListDb update: ", doc);
+				})
+
+				
+				}).catch( function ( err ) {
+						
+					console.log(err);
+						
+				});			
+				
+		
 
 				completedDateLoc.innerHTML = "";
 				taskListRecord.taskList_completedCount--;
