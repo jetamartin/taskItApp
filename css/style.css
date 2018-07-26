@@ -1535,18 +1535,20 @@ input[name=taskCompleteStatus] {
 #homePage .fa-times:before {
     font-size: 1.25rem;
 	padding-top: .45rem;
-    padding-right: .65em;
+/*    padding-right: .65em;*/
     padding-left: .7rem;
     padding-bottom: .55rem;
     color: #34AFA9;
 /*	margin-left: 4.2rem;*/
 	margin-left: -.5rem;
+/*
     background-color: #f2f2f2;
 	
 	border-left: 1px solid #ccd4da;
 	border-top-right-radius: .25rem;
 	border-bottom-right-radius: .25rem;
 	border: solid 1px;
+*/
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	
