@@ -3849,8 +3849,10 @@ var appUIController = (function () {
 			toggleClass(cardNode, "vanish");
 
 			// Get the taskList record so I can increment/decrement taskList_completedCount as needed
-			var taskListId = taskItemRecord.taskList_id;
-			var taskListRecord = appModelController.lookupTaskListRecordByListId(taskListId);
+			var taskListId1 = taskItemRecord.taskList_id;
+			
+			console.log("Initial value of taskListId: ", taskListId1);
+			var taskListRecord = appModelController.lookupTaskListRecordByListId(taskListId1);
 
 
 			/* If user is marking item as completed then get system time stamp and assign that value to the taskItem_completedDate value 
@@ -3858,6 +3860,10 @@ var appUIController = (function () {
 			if (event.checked) { // event is checkbox
 
 				completeDate = new Date().toLocaleString('en-US', options);
+				
+				// Update JS object for the completed Date and total count for the current list
+				taskItemRecord.taskItem_completedDate = completeDate;
+				taskListRecord.taskList_completedCount++;
 
 				// Update DB values for the completed Date and total count for the current list
 				
@@ -3871,8 +3877,8 @@ var appUIController = (function () {
 
 					taskItemRecord.taskItem_completedDate = completeDate;
 					
-					appModelController.taskListDb.get( taskListId ).then ( function ( doc ) {
-						doc.taskList_completedCount = taskListRecord.taskList_completedCount++;
+					appModelController.taskListDb.get( taskListId1 ).then ( function ( doc ) {
+						doc.taskList_completedCount = taskListRecord.taskList_completedCount;
 						return appModelController.taskListDb.put( doc )
 						
 				}).then ( function ( doc ) {
@@ -3888,10 +3894,7 @@ var appUIController = (function () {
 				
 
 				
-				// Update JS object for the completed Date and total count for the current list
 
-				taskItemRecord.taskItem_completedDate = completeDate;
-				taskListRecord.taskList_completedCount++;
 
 				completedDateLoc.innerHTML = "<i class='far fa-calendar-check'></i>" + completeDate;
 				toggleClass(completedDateHeaderLoc, "hideIt");
@@ -3946,19 +3949,28 @@ var appUIController = (function () {
 
 
 			} else { // User is "re-activating" the task item
-								
+				
+				completedDateLoc.innerHTML = "";
+				taskListRecord.taskList_completedCount--;
+				
+				console.log("Reactivate TaskItem: TaskListId prior to update taskItemDb): ", taskListId);
+				
 				appModelController.taskItemDb.get( taskItemId ).then ( function ( doc ) {				
 					doc.taskItem_completedDate = "";
+					console.log("Reactivate TaskItem: TaskListId just before update taskItemDb): ", taskListId1);
+
 					return appModelController.taskItemDb.put(doc);
 					
 				}).then ( function ( response ) {
 					console.log ("Result of taskItemDb update: ", response);
+					console.log("Reactivate TaskItem: TaskListId just before update taskItemDb): ", taskListId1);
 					
-					appModelController.taskListDb.get( taskListId ).then ( function ( doc ) {
-//						doc.taskList_completedCount = taskListRecord.taskList_completedCount--;
+					appModelController.taskListDb.get( taskListId1 ).then ( function ( doc ) {
+						doc.taskList_completedCount = taskListRecord.taskList_completedCount;
 						return appModelController.taskListDb.put( doc )
 						
 				}).then ( function ( doc ) {
+					console.log(doc.taskList_completedCount);
 					console.log ("Result of taskListDb update: ", doc);
 				})
 
@@ -3971,8 +3983,7 @@ var appUIController = (function () {
 				
 		
 
-				completedDateLoc.innerHTML = "";
-				taskListRecord.taskList_completedCount--;
+
 				taskItemRecord.taskItem_completedDate = "";
 				toggleClass(completedDateHeaderLoc, "hideIt");
 				mainPageSuccessMsg.innerHTML = "Task 'Re-activated'";
@@ -6714,67 +6725,69 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					appModelController.userDb.destroy().then(function ( results ) {
 						
 						
-					console.log('test db removed', results);
+						console.log('test db removed', results);
 
-					// Create/get pointers to Databases 
-					appModelController.userDb = new PouchDB('userDb');
+						// Create/get pointers to Databases 
+						appModelController.userDb = new PouchDB('userDb');
 
-					appModelController.taskListDb = new PouchDB('taskListDb');
+						appModelController.taskListDb = new PouchDB('taskListDb');
 
-					appModelController.taskItemDb = new PouchDB('taskItemDb');
+						appModelController.taskItemDb = new PouchDB('taskItemDb');
 
-					appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
+						appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
 
-					console.log('initializeDBs::created new databases');
+						console.log('initializeDBs::created new databases');
 
-					// Create indexes for Db and add system data to DBs
-					var initializeSystemDbPromises = appModelController.initializeSystemDBs(appModelController.userDb, appModelController.taskListDb);
+						// Create indexes for Db and add system data to DBs
+						var initializeSystemDbPromises = appModelController.initializeSystemDBs(appModelController.userDb, appModelController.taskListDb);
 
-					console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
+						console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
 
-					var createIndexPromises = appModelController.createDbIndexes(appModelController.userDb, appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
-
-
-					console.log("initializeDBs::$$$createIndexPromises: ", createIndexPromises);
+						var createIndexPromises = appModelController.createDbIndexes(appModelController.userDb, appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 
 
-					// Adds user seed data 
-					if (addUserSeedData) {						
-						userSeedPromises = appModelController.addUserSeedDataToDbs(appModelController.taskListDb, appModelController.taskItemDb);
-					}
+						console.log("initializeDBs::$$$createIndexPromises: ", createIndexPromises);
 
 
-					allPromises = initializeSystemDbPromises.concat(createIndexPromises,userSeedPromises);
+						// Adds user seed data 
+						if (addUserSeedData) {						
+							userSeedPromises = appModelController.addUserSeedDataToDbs(appModelController.taskListDb, appModelController.taskItemDb);
+						}
 
-					console.log("initializeDBs::$$$allPromises: ", allPromises);
 
-					Promise.all(allPromises)
-						.then( function (results) {	
-							console.log("!!!!!!! initializeDBs::allDBInitializePromises from then()", results);
-						
+						allPromises = initializeSystemDbPromises.concat(createIndexPromises,userSeedPromises);
 
-							// Load Data from DB and Display UI 
-//							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
-						
-					appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
-						.then( function ( results ){
-						
-							switch(hash) {
-								case '#editTask':
-										appUIController.displayEditTaskPage();
-										break;
-								case '#createNewTask':
-										appUIController.displayAddNewTaskForm();
-										break;
-								case '#manageTaskListsPage':
-										appUIController.displayManageTaskListsPage();
-										break;
-								default:
-//									appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
-							
-							}							
-							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
-						})
+						console.log("initializeDBs::$$$allPromises: ", allPromises);
+
+						Promise.all(allPromises)
+							.then( function (results) {	
+								console.log("!!!!!!! initializeDBs::allDBInitializePromises from then()", results);
+
+
+								// Load Data from DB and Display UI 
+	//							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
+
+						appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+							.then( function ( results ){
+
+								// Need to run this to ensure all JS objects are loaded with data 
+								appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
+
+								switch(hash) {
+									case '#editTask':
+											appUIController.displayEditTaskPage();
+											break;
+									case '#createNewTask':
+											appUIController.displayAddNewTaskForm();
+											break;
+									case '#manageTaskListsPage':
+											appUIController.displayManageTaskListsPage();
+											break;
+									default:
+
+								}							
+
+							})
 						})	 
 						
 					})
@@ -6800,6 +6813,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 						.then( function ( results ){
 						
+						// Need to run this to ensure all JS objects are loaded with data 
+						appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 
 						switch(hash) {
 							case '#editTask':
@@ -6814,8 +6829,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 							default:
 
 						}
-						// Need to run this to ensure all JS objects are loaded with data 
-						appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+
 						
 					})
 
