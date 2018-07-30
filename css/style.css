@@ -765,6 +765,30 @@ nav ul li:hover ul li span.listTotal {
 	nav .fa::after {
 		content: "\00a0";
 	}
+
+	/* New List Page Nav */
+
+	#newTaskPage .navBar .fa-floppy-o {
+		float: right;
+		margin-bottom: -.1rem;
+		padding-right: .25rem;
+	}
+
+	#editTaskPage .navBar span,
+	#newTaskPage .navBar span {
+		font-size: .75rem;
+		display: block;
+		margin-right: .3rem;
+	}
+
+	#editTaskPage .navBar .fa-floppy-o {
+		float: right;
+		margin-bottom: -.1rem;
+		padding-right: .6rem;
+	}
+
+
+
 	/******************************************************/
 	/* MAIN CONTENT AREA */
 	/******************************************************/
@@ -1129,7 +1153,17 @@ input[name=taskCompleteStatus] {
 		margin: 2rem;
 		margin-top: 0;
 	}
-	
+	#updateTaskButton:before,
+	#addTaskSaveButton:before {
+		font-family: FontAwesome;
+    	content: "\f0c7";
+		padding-right: .5rem;
+	}
+
+	#addTaskSaveButton span {
+		font-weight: 300;
+	}
+
 	.takeActionBtn {
 		background-color: #34AFA9;
 		font-weight: bold;
@@ -1234,13 +1268,15 @@ input[name=taskCompleteStatus] {
 		left: 50%;
 		-webkit-transform: translateX(-50%);
 		transform: translateX(-50%);
-		font-weight: bold;
+/*		font-weight: bold;*/
 /*		font-size: 1.5rem;*/
 	}
 	
 	nav .screenTitle {
 		pointer-events: none;
 		cursor: default;
+		font-weight: 100;
+    	letter-spacing: 2.5px;
 	}
 
 	/* Div that contains success/error the New/Edit Task */
