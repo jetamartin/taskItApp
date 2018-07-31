@@ -1166,13 +1166,13 @@ input[name=taskCompleteStatus] {
 
 	.takeActionBtn {
 		background-color: #34AFA9;
-		font-weight: bold;
+/*		font-weight: bold;*/
 		color: #fff;
 	}
 	
 	.takeActionBtn:hover {
 		background-color: #2C9893;
-		font-weight: bold;
+/*		font-weight: bold;*/
 		color: #fff;
 	}
 	
@@ -1275,7 +1275,7 @@ input[name=taskCompleteStatus] {
 	nav .screenTitle {
 		pointer-events: none;
 		cursor: default;
-		font-weight: 100;
+		font-weight: 400;
     	letter-spacing: 2.5px;
 	}
 
