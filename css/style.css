@@ -1694,7 +1694,7 @@ input[name=taskCompleteStatus] {
 /* Allow new list stack to fit inside list input area on newTask and editTask forms*/
 span.newList.fa-stack {
 	height: 1.9em !important;
-/*	margin-right: -.7rem;*/
+	margin-right: -.7rem;
 }
 
 /*
