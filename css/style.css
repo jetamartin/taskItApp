@@ -22,6 +22,12 @@
 			 src: url('../font/RobotoMono-Regular.ttf'); } 
 
 /***************************** TEST *****************************************/
+
+/* Solution based on:
+
+https://fabriceleven.com/design/clever-way-to-change-the-drop-down-selector-arrow-icon/
+
+*/
 .selectdiv {
   position: relative;
 } 
@@ -51,11 +57,7 @@ display: none;
   /* Add some styling */
   
   display: block;
-/*  width: 100%;*/
-/*  max-width: 320px;*/
-/*  height: 50px;*/
   float: right;
-/*  margin: 5px 0px;*/
 /*  padding: 0px 24px;*/
   font-size: 16px;
   line-height: 1.75;
@@ -1673,6 +1675,52 @@ input[name=taskCompleteStatus] {
 }
 
 
+/* Solution based on:
+
+https://fabriceleven.com/design/clever-way-to-change-the-drop-down-selector-arrow-icon/
+
+*/
+.selectdiv {
+  position: relative;
+} 
+
+.selectdiv:after {
+    content: '\f078';
+    font: normal normal normal 1rem/.7 FontAwesome;
+    color: #34AFA9;
+    right: 55px;
+/*    top: 6px;*/
+    height: 38px;
+    padding: 15px 0px 0px 15px;
+    border-left: 1px solid #34AFA9;
+    position: absolute;
+    pointer-events: none;
+}
+
+/* IE11 hide native button (thanks Matt!) */
+select::-ms-expand {
+display: none;
+}
+
+.selectdiv select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Add some styling */
+  
+  display: block;
+  float: right;
+/*  padding: 0px 24px;*/
+  font-size: 16px;
+  line-height: 1.75;
+  color: #333;
+  background-color: #ffffff;
+  background-image: none;
+/*  border: 1px solid #34AFA9;*/
+  -ms-word-break: normal;
+  word-break: normal;
+}
+
 
 	
 	#addNewFormNotifications,
@@ -1842,7 +1890,7 @@ span.newList.fa-stack {
 	 font-size: 1.5rem;
 	}
 	
-/*****************************************************************/
+	/*****************************************************************/
 	/* Manage Tasks List Page */
 	/*****************************************************************/
 	#manageTaskListsPage .card {
