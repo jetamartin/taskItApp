@@ -21,6 +21,54 @@
 	@font-face { font-family: roboto-mono; 
 			 src: url('../font/RobotoMono-Regular.ttf'); } 
 
+/***************************** TEST *****************************************/
+.selectdiv {
+  position: relative;
+} 
+
+.selectdiv:after {
+    content: '\f078';
+    font: normal normal normal 1rem/.7 FontAwesome;
+    color: #34AFA9;
+    right: 55px;
+/*    top: 6px;*/
+    height: 38px;
+    padding: 15px 0px 0px 15px;
+    border-left: 1px solid #34AFA9;
+    position: absolute;
+    pointer-events: none;
+}
+
+/* IE11 hide native button (thanks Matt!) */
+select::-ms-expand {
+display: none;
+}
+
+.selectdiv select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Add some styling */
+  
+  display: block;
+/*  width: 100%;*/
+/*  max-width: 320px;*/
+/*  height: 50px;*/
+  float: right;
+/*  margin: 5px 0px;*/
+/*  padding: 0px 24px;*/
+  font-size: 16px;
+  line-height: 1.75;
+  color: #333;
+  background-color: #ffffff;
+  background-image: none;
+/*  border: 1px solid #34AFA9;*/
+  -ms-word-break: normal;
+  word-break: normal;
+}
+
+/***************************** TEST *****************************************/
+
 
 /* Added outer container to try and resolve issue where footer is being pushed up above virtual keyboard on mobil device. Also made some changes to footer to full implement solution. Soution was found on: https://stackoverflow.com/questions/22627646/how-to-prevent-mobile-keyboard-from-rising-footer-over-the-text-fields  */
 	#outerContainer {
@@ -417,6 +465,7 @@ nav ul {
 	
 	nav ul li:hover ul a li:last-of-type span {
 		width: 1.6rem;
+		margin-right: 1px;
 	}
 
 	/* -------Test ---------*/
@@ -770,8 +819,8 @@ nav ul li:hover ul li span.listTotal {
 
 	#newTaskPage .navBar .fa-floppy-o {
 		float: right;
-		margin-bottom: -.1rem;
-		padding-right: .25rem;
+/*		margin-bottom: -.1rem;*/
+		padding-right: .35rem;
 	}
 
 	#editTaskPage .navBar span,
@@ -779,12 +828,13 @@ nav ul li:hover ul li span.listTotal {
 		font-size: .75rem;
 		display: block;
 		margin-right: .3rem;
+		letter-spacing: .5px;
 	}
 
 	#editTaskPage .navBar .fa-floppy-o {
 		float: right;
-		margin-bottom: -.1rem;
-		padding-right: .6rem;
+/*		margin-bottom: -.1rem;*/
+		padding-right: .86rem;
 	}
 
 
@@ -1162,11 +1212,12 @@ input[name=taskCompleteStatus] {
 
 	#addTaskSaveButton span {
 		font-weight: 300;
+		letter-spacing: 1.5px;
 	}
 
 	.takeActionBtn {
 		background-color: #34AFA9;
-/*		font-weight: bold;*/
+		letter-spacing: 1.5px;
 		color: #fff;
 	}
 	
@@ -1714,13 +1765,19 @@ span.newList.fa-stack {
 		border-radius: 100%;
 		background-color: #f5f2f2;
 	}
+
 	#newTaskPage .fa-list-ul,
 	#editTaskPage .fa-list-ul {
 		left: 0;
 		top: -4px;
 	}
-	
 
+	#newTaskPage select, 
+	#editTaskPage select {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+	}
 	
 	
 /* &&&&&&&& New entry of above &&&&&&&*/

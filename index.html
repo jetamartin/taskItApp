@@ -193,7 +193,7 @@
 				<li class="screenTitle">New Task</li>
 				<li class="floatRight" id="addTaskMenuSaveButton">
 					<i class="fa fa-floppy-o" aria-hidden="true"></i>
-					<span>Save</span>
+					<span>SAVE</span>
 				</li>
 
 			</ul>
@@ -311,7 +311,7 @@
 					<div class="form-group" >
 						<label for="inListNameSelection">List:</label>
 						<div class="row col-12">
-							<div class="input-group">
+							<div class="input-group selectdiv">
 								<select class="form-control" id="newTaskListNameSelect">
 									<!--	Option values populated dynamically via JS -->
 								</select>		
@@ -436,7 +436,7 @@
 				
 				<li class="floatRight" id="updateTaskNavBtn">
 					<i class="fa fa-floppy-o" aria-hidden="true"></i>
-					<span>Update</span>
+					<span>UPDATE</span>
 				</li>
 
 			</ul>
@@ -529,11 +529,12 @@
 					<div class="form-group">
 						<label for="listName">List:</label>
 						<div class="row col-12">
-							<div class="input-group">
+							<div class="input-group selectdiv ">
 								<select class="form-control" id="editTaskFormListSelect">
 									<!--	Option values populated dynamically via JS -->
 								</select>
-								<div class="listSelect input-group-append " >
+								
+								<div class="listSelect input-group-append" >
 						
 									<a data-toggle="modal" data-target="#editTaskItemListModal">
 										<label class="input-group-text" for="editTaskFormListSelect">
@@ -543,7 +544,9 @@
 											</span>
 										</label>
 									</a>
+
 								</div>
+									
 							</div>
 						
 						<!--	Results msg when creating tasklist from NewTaskItem page. Msg added via javascript					-->
