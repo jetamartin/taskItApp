@@ -223,7 +223,7 @@ var dueDateCategories = {
 	},
 	"later": {
 		"dueDate": later,
-		"categoryLabel": "Due greater than 60 days"
+		"categoryLabel": "Due in > 60 days"
 	},
 	"noDate": {
 		"dueDate": "",

@@ -881,7 +881,7 @@ nav ul li:hover ul li span.listTotal {
 	article:last-of-type {} below doesn't work for Completed list so I went with this.
 	*/
 	section .card:last-of-type {
-		margin-bottom: 8rem;
+		margin-bottom: 2rem;
 
 	}
 
@@ -1141,9 +1141,9 @@ input[name=taskCompleteStatus] {
 	.taskCategory {
 		/*	margin-top: 2rem;*/
 		padding-left: 3rem;
-		font-size: 2rem;
+		font-size: 1rem;
 		color: #34AFA9;
-		letter-spacing: .4rem;
+		letter-spacing: .3rem;
 	}
 	
 	.overDue {
