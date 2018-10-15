@@ -1790,7 +1790,7 @@ display: none;
 		border-bottom-right-radius: 5px;
 		padding-right: 2px;
 		border: solid 1px;
-		margin-top: -.4rem;
+		margin-top: -.36rem;
 		margin-left: -.25rem; 
 	}
 /* Allow new list stack to fit inside list input area on newTask and editTask forms*/
