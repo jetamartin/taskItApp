@@ -1061,6 +1061,8 @@ nav ul li:hover ul li span.listTotal {
 */
     opacity: 0;
 	max-height: 0; 
+	/*	When visibility is hidden it prevents user from clicking on hidden taskActions */
+	visibility: hidden;
 	
  	/*  Supposed to slowly reveal Task Actions However space snaps open/closed rather than slowly opening space. Note: Task actions do fade-in (with opacity) transition but max-height seems to be ignored */
 	
@@ -1105,6 +1107,8 @@ input[name=taskCompleteStatus] {
 	max-height: 100%;
     opacity: 1;
 	cursor: pointer;
+	/*	Allows user to click on taskActions */
+	visibility: visible;
 	
 	/* Tried Animate taskActionRow height going to zero BUT DIDN'T WORK */
 /*

@@ -902,9 +902,14 @@ var appModelController = (function () {
 	var taskListTable1 = [];
 	var taskItemsTable1 = [];
 	var taskItemNotificationsTable = [];
+	
+	var remoteCouchUserDb = 'http://jmartin:jammer@127.0.0.1:5984/users';
+	var remoteCouchTaskListDb = 'http://jmartin:jammer@127.0.0.1:5984/task_lists';
+	var remoteCouchTaskItemDb = 'http://jmartin:jammer@127.0.0.1:5984/task_items';
+	var remoteCouchTaskItemNotificationDb = 'http://jmartin:jammer@127.0.0.1:5984/task_item_notifications';
 
 
-
+	
 	var TaskList = function (listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived) {
 		this.taskList_id = listId;
 		this.taskList_name = listName;
@@ -2093,6 +2098,24 @@ var appModelController = (function () {
 
 	return {
 		
+		syncError: function() {
+			console.log('Error synching local and remote databases '); 
+		},
+		
+		sync: function () {
+			var opts = {live: true};
+			userDb.replicate.to(remoteCouchUserDb, opts, appModelController.syncError);
+			taskListDb.replicate.to(remoteCouchTaskListDb, opts, appModelController.syncError);
+			taskItemDb.replicate.to(remoteCouchTaskItemDb, opts, appModelController.syncError);
+			taskItemNotificationDb.replicate.to(remoteCouchTaskItemNotificationDb, opts, appModelController.syncError);
+
+			userDb.replicate.from(remoteCouchUserDb, opts, appModelController.syncError);
+			taskListDb.replicate.from(remoteCouchTaskListDb, opts, appModelController.syncError);
+			taskItemDb.replicate.from(remoteCouchTaskItemDb, opts, appModelController.syncError);
+			taskItemNotificationDb.replicate.from(remoteCouchTaskItemNotificationDb, opts, appModelController.syncError);
+
+  },
+
 		addUserSeedDataToDbs: function (taskListDb, taskItemDb) {	
 			var seedDataPromises = []
 			var allPromises = [];
@@ -6694,7 +6717,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		init: function (hash) {
 			
-
+//			appModelController.sync();
 
 			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
 			var currActiveListNode = getActiveTaskList();
@@ -6735,6 +6758,14 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						appModelController.taskItemDb = new PouchDB('taskItemDb');
 
 						appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
+						
+//						appModelController.sync();
+//						var remoteCouchUserDb = 'http://jmartin:jammer@127.0.0.1:5984/userDb';
+//						var remoteCouchTaskListDb = 'http://jmartin:jammer@127.0.0.1:5984/taskListDb';
+//						var remoteCouchTaskItemDb = 'http://jmartin:jammer@127.0.0.1:5984/taskItemDb';
+//						var remoteCouchTaskItemNotificationDb = 'http://jmartin:jammer@127.0.0.1:5984/taskItemNotificationDb';
+
+						
 
 						console.log('initializeDBs::created new databases');
 
@@ -6807,7 +6838,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 					appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
 
-
+//					appModelController.sync();
+					
 //					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 											
 					appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
@@ -6874,6 +6906,9 @@ window.onload = function(event) {
 
 	var itemId, pathname, colonLocation;
 	var hash = "";
+	
+	appModelController.sync();
+
  	pathname = location.pathname
 	hash = location.hash
 	colonLocation = hash.indexOf(":");
@@ -6883,8 +6918,10 @@ window.onload = function(event) {
 	}
 	
 	appController.init(hash);
+
 	
 }
+
 
 
 window.onpopstate = function(event) {
