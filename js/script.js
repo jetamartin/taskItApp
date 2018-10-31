@@ -413,7 +413,8 @@ function resetUI2InitialState() {
 ****************************************************************************/
 function getListIdForActiveTaskList() {
 	var activeTaskNode = document.querySelector(".selected");
-	return activeTaskNode.getAttribute('data-id');
+//	return activeTaskNode.getAttribute('data-id');
+	return activeTaskNode.parentElement.parentNode.getAttribute('data-id');
 }
 
 /***************************************************************************
@@ -449,7 +450,9 @@ var handleSubMenuClick = function (event) {
 	appModelController.updateListTaskTotals();
 
 	// Get name of submenu list selected
-	var listNameSelected = event.target.childNodes[1].textContent.trim();
+//	var listNameSelected = event.target.childNodes[1].textContent.trim();
+	var listNameSelected = event.target.textContent.trim();
+
 
 	function getListId(taskList) {
 		console.log(taskList)
@@ -3488,7 +3491,8 @@ var appUIController = (function () {
 			if (currActiveListId === taskListId) {
 				
 				// Set the active list to "All List ("1")
-				toggleClass(appUIController.getUIVars().allListsElem, "selected");
+//				toggleClass(appUIController.getUIVars().allListsElem, "selected");
+				appUIController.getUIVars().allListsElem.childNodes[2].childNodes[1].classList.add('selected')
 
 			}
 
@@ -4453,7 +4457,9 @@ var appUIController = (function () {
 		},
 		/* Gets the Active List Task Name */
 		getActiveTaskListName: function () {
-			return getActiveTaskList().childNodes[1].textContent.trim();
+//			return getActiveTaskList().childNodes[1].textContent.trim();
+			return getActiveTaskList().textContent.trim();
+//			return getActiveTaskList().childNodes[2].childNodes[1].textContent.trim();
 		},
 		getUIVars: function () {
 			return {
@@ -5022,7 +5028,7 @@ var appUIController = (function () {
 
 
 			// Template to create ListName elements for nav's listSubmenu
-			var genericSubMenuHtml = '<li class="userDefinedList" data-id="%listId%"><i class="fa fa-list-ul" aria-hidden="true"></i>%listName%<span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
+			var genericSubMenuHtml = '<li class="userDefinedList" data-id="%listId%"><i class="fa fa-list-ul" aria-hidden="true"></i><div class="navTaskListWrapper"><div class="navTaskListLabel">%listName%</div></div><span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
 			var specificSubMenuHtml;
 			//*****************************************************************************************************
 			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
@@ -5092,8 +5098,10 @@ var appUIController = (function () {
 				// +++++ New Logic
 				if (userDefinedTaskList[i].taskList_id === currActiveListId &&
 					!preDefinedTaskListIds.contains(userDefinedTaskList[i].taskList_id)) {
-					toggleClass(nextNode, 'selected');
+//					toggleClass(nextNode, 'selected');
+						toggleClass(nextNode.childNodes[2].childNodes[1]);
 				}
+				
 
 			} // END FOR LOOP for building and adding UserDefined List to dropdown						
 
@@ -5158,38 +5166,38 @@ var appUIController = (function () {
 			// Get the taskListTable record for the "All List"
 			preDefinedListRecord = taskListTable.hasElement("All Lists");
 
-			allListsElem.childNodes[4].classList.remove("overDueItemsPresent");
+			allListsElem.childNodes[6].classList.remove("overDueItemsPresent");
 			if (taskListTable[preDefinedListRecord].taskList_overDueCount > 0) {
-				allListsElem.childNodes[4].classList.add("overDueItemsPresent");
+				allListsElem.childNodes[6].classList.add("overDueItemsPresent");
 				// OverDueTotal count
-				allListsElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+				allListsElem.childNodes[6].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
 			}
 
 			// TotalList count
-			allListsElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
+			allListsElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 
 
 			preDefinedListRecord = taskListTable.hasElement("Default");
 			//			defaultListElem.childNodes[4].classList.remove("overDueItemsPresent");
 			if (taskListTable[preDefinedListRecord].taskList_overDueCount > 0) {
 				// OverDueTotal count
-				defaultListElem.childNodes[4].classList.add("overDueItemsPresent");
-				defaultListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+				defaultListElem.childNodes[6].classList.add("overDueItemsPresent");
+				defaultListElem.childNodes[6].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
 			}
 
 			// TotalList count
-			defaultListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
+			defaultListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 
 			preDefinedListRecord = taskListTable.hasElement("Completed");
 			//			completedListElem.childNodes[4].classList.remove("overDueItemsPresent");
 			// OverDueTotal count
 			if (taskListTable[preDefinedListRecord].taskList_overDueCount > 0) {
-				completedListElem.childNodes[4].classList.add("overDueItemsPresent");
-				completedListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
+				completedListElem.childNodes[6].classList.add("overDueItemsPresent");
+				completedListElem.childNodes[6].innerText = taskListTable[preDefinedListRecord].taskList_overDueCount;
 			}
 
 			// TotalList count
-			completedListElem.childNodes[2].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
+			completedListElem.childNodes[4].innerText = taskListTable[preDefinedListRecord].taskList_totalCount;
 
 		},
 

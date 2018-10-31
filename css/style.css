@@ -451,6 +451,18 @@ nav ul {
 */
 	}
 
+	nav li .selected {
+		display: block;
+		/*	background-color: #44e3ce;*/
+		background-color: #34AFA9;
+		background-color: #2C9893;
+		background-color: #44e3ce;
+		background-color: #1d635f;
+		/*
+		border-top: white solid 2px;
+		border-bottom: white solid 2px;
+*/
+	}
 	/* Create separation line between last submenu element and other elements */
 	
 	nav ul li:hover ul li:last-child {
@@ -842,7 +854,17 @@ nav ul li:hover ul li span.listTotal {
 		padding-right: .86rem;
 	}
 
+	/* Needed to wrap taskList */
+	nav .navTaskListWrapper {
+		display: inline-flex;
+	}
 
+	nav ul li div.navTaskListLabel {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 8rem;
+	}
 
 	/******************************************************/
 	/* MAIN CONTENT AREA */

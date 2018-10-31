@@ -45,16 +45,25 @@
 					<i class="fa fa-angle-down" ></i> All Lists
 					<!-- like dropbtn 					-->
 					<ul class="taskListsSubMenu scroll-menu hideIt" > 
-						<li class="selected" data-id="01" id="allListsElem"><i class="fa fa-list-ul" aria-hidden="true"></i>All Lists
+						<li data-id="01" id="allListsElem"><i class="fa fa-list-ul" aria-hidden="true"></i>
+							<div class="navTaskListWrapper">
+								<div class="navTaskListLabel selected">All Lists</div>
+							</div>
 							<span class="listTotal">0</span>
 							<span class="overDueCount">0</span>
 					  	</li>	
-						<li class="defaultListElem" data-id="02" id="listInsertPoint"><i class="fa fa-list-ul" aria-hidden="true"></i>Default
+						<li class="defaultListElem" data-id="02" id="listInsertPoint"><i class="fa fa-list-ul" aria-hidden="true"></i>
+							<div class="navTaskListWrapper">
+								<div class="navTaskListLabel">Default</div>
+							</div>
 							<span class="listTotal">0</span>
 							<span class="overDueCount">0</span>
 
 					  	</li>
-						<li id="completedListElem" data-id="07"><i class="fa fa-list-ul" aria-hidden="true"></i>Completed
+						<li id="completedListElem" data-id="07"><i class="fa fa-list-ul" aria-hidden="true"></i>
+							<div class="navTaskListWrapper">
+									<div class="navTaskListLabel">Completed</div>
+							</div>
 							<span class="listTotal">0</span>
 							<span class="overDueCount"></span>
 
@@ -62,9 +71,12 @@
 						<a data-toggle="modal" data-target="#navListModal" id="navNewListModalHandle">
 							<li>
 								<span class="newList fa-stack">
-							<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
-							<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
-							</span> Add New List
+								<i class="fa fa-list-ul fa-stack-1x" aria-hidden="true"></i>
+								<i class="fa fa-plus-circle fa-stack-1x newSymbol" aria-hidden="true"></i>
+								</span>
+								<div class="navTaskListWrapper">
+										<div class="navTaskListLabel">Add New List</div>
+								</div>
 							</li>
 						</a>
 					</ul>
