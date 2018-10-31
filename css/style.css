@@ -291,6 +291,7 @@ display: none;
 	nav ul {
 		font-size: 0;
 		list-style-type: none;
+		position: relative;
 	}
 	/* Navbar Menu headings */
 	
@@ -303,7 +304,7 @@ display: none;
 		color: #fff;
 		display: inline-block;
 		padding: 15px;
-		position: relative;
+/*		position: relative;*/
 		-webkit-transition: background-color .5s;
 		transition: background-color .5s;
 	}
@@ -335,6 +336,10 @@ display: none;
 
 	#taskListDropdown {
 		width: 250px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		margin-bottom: -1.4rem;
 	}
 	/* Icons used on nav bar */
 	
@@ -697,6 +702,7 @@ nav ul li:hover ul li span.listTotal {
    overflow: hidden;
 /*	overflow-y: scroll;*/
 	overflow-y: auto;
+	margin-left: 3.4rem;
  }
 	/* Make taskSubM*/
 /*
