@@ -339,7 +339,7 @@ display: none;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		margin-bottom: -1.4rem;
+		margin-bottom: -1.42rem;
 	}
 	/* Icons used on nav bar */
 	
@@ -702,7 +702,7 @@ nav ul li:hover ul li span.listTotal {
    overflow: hidden;
 /*	overflow-y: scroll;*/
 	overflow-y: auto;
-	margin-left: 3.4rem;
+	margin-left: 3.31rem;
  }
 	/* Make taskSubM*/
 /*
