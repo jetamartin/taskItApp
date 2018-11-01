@@ -662,6 +662,7 @@ nav ul li:hover ul li span.listTotal {
 	.sysMenu {
 		margin-right: 0;
 		float: right;
+		position: relative; /* Needed to force menu to appear under menu selector */
 	}
 	/* Control display of System menu submenu */
 	
