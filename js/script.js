@@ -414,7 +414,7 @@ function resetUI2InitialState() {
 function getListIdForActiveTaskList() {
 	var activeTaskNode = document.querySelector(".selected");
 //	return activeTaskNode.getAttribute('data-id');
-	return activeTaskNode.parentElement.parentNode.getAttribute('data-id');
+	return activeTaskNode.getAttribute('data-id');
 }
 
 /***************************************************************************
@@ -447,6 +447,7 @@ var handleSubMenuClick = function (event) {
 	// Get the current "active" task list Node 
 	var currActiveList = getActiveTaskList();
 
+	// ???? Why am I updatingListTaskTotals here
 	appModelController.updateListTaskTotals();
 
 	// Get name of submenu list selected
@@ -483,7 +484,7 @@ var handleSubMenuClick = function (event) {
 
 		// The selected list name will have the "selected" class added to darken background so when 
 		// user hovers and gets the submenu to display the previously selected list will be distinguishable 
-		toggleClass(event.target, 'selected');
+		toggleClass(event.target.closest('.taskListItem'), 'selected');
 		
 		
 		// TEST 
@@ -3491,8 +3492,8 @@ var appUIController = (function () {
 			if (currActiveListId === taskListId) {
 				
 				// Set the active list to "All List ("1")
-//				toggleClass(appUIController.getUIVars().allListsElem, "selected");
-				appUIController.getUIVars().allListsElem.childNodes[2].childNodes[1].classList.add('selected')
+				toggleClass(appUIController.getUIVars().allListsElem, "selected");
+//				appUIController.getUIVars().allListsElem.childNodes[2].childNodes[1].classList.add('selected')
 
 			}
 
@@ -4273,10 +4274,12 @@ var appUIController = (function () {
 
 				var currActiveListName = appUIController.getActiveTaskListName();
 
-
-				// Remove existing UserDefined Task list from TaskListSubmenu
+				// Remove existing UserDefined Task list from TaskListSubmenu. Note this will remove selected class if a UserDefined TaskList
+				// was the active list.
 				appUIController.clearOutExistingScreenContent(appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList');
-
+				
+				// ??? May need to reapply "selected" class here and reset listMenuTitle to new title (i.e.,matchedTaskListRecord.taskList_name)
+				
 				// Regenerate UserDefined Task List on taskListSubmenu and make new list the active task list 
 				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
 
@@ -4458,8 +4461,8 @@ var appUIController = (function () {
 		/* Gets the Active List Task Name */
 		getActiveTaskListName: function () {
 //			return getActiveTaskList().childNodes[1].textContent.trim();
-			return getActiveTaskList().textContent.trim();
-//			return getActiveTaskList().childNodes[2].childNodes[1].textContent.trim();
+//			return getActiveTaskList().textContent.trim();
+			return getActiveTaskList().children[1].children[0].textContent.trim();
 		},
 		getUIVars: function () {
 			return {
@@ -5028,7 +5031,7 @@ var appUIController = (function () {
 
 
 			// Template to create ListName elements for nav's listSubmenu
-			var genericSubMenuHtml = '<li class="userDefinedList" data-id="%listId%"><i class="fa fa-list-ul" aria-hidden="true"></i><div class="navTaskListWrapper"><div class="navTaskListLabel">%listName%</div></div><span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
+			var genericSubMenuHtml = '<li class="userDefinedList taskListItem" data-id="%listId%"><i class="fa fa-list-ul" aria-hidden="true"></i><div class="navTaskListWrapper"><div class="navTaskListLabel">%listName%</div></div><span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
 			var specificSubMenuHtml;
 			//*****************************************************************************************************
 			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
@@ -5098,8 +5101,8 @@ var appUIController = (function () {
 				// +++++ New Logic
 				if (userDefinedTaskList[i].taskList_id === currActiveListId &&
 					!preDefinedTaskListIds.contains(userDefinedTaskList[i].taskList_id)) {
-//					toggleClass(nextNode, 'selected');
-						toggleClass(nextNode.childNodes[2].childNodes[1]);
+					toggleClass(nextNode, 'selected');
+//						toggleClass(nextNode.childNodes[2].childNodes[1], "selected");
 				}
 				
 
@@ -5651,6 +5654,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				openDropdown.classList.add('hideIt');
 			  }
 			}
+			// Not sure what this line is supposed to do..need to analyze
 			appUIController.getUIVars().listMenuTitle.classList.remove('dropDownActive');
 		  }
 		}
@@ -5658,6 +5662,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 									   
 		// EventListener for List Submenu 
 		var taskList_id = document.querySelector(".taskListsSubMenu").addEventListener('click', handleSubMenuClick);
+//		var taskList_id = document.querySelector(".taskListItem").addEventListener('click', handleSubMenuClick);
 
 
 		// Event Listeners for Search 
