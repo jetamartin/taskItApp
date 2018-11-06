@@ -451,8 +451,8 @@ var handleSubMenuClick = function (event) {
 	appModelController.updateListTaskTotals();
 
 	// Get name of submenu list selected
-//	var listNameSelected = event.target.childNodes[1].textContent.trim();
-	var listNameSelected = event.target.textContent.trim();
+	// First get the TaskList item that was clicked and then get the list name
+	var listNameSelected = event.target.closest('.taskListItem').querySelector('.navTaskListLabel').textContent;
 
 
 	function getListId(taskList) {
@@ -5644,7 +5644,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Close the taskListSubMenu dropdown if the user clicks outside of it
 		// Got this solution from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown	
 		window.onclick = function(event) {
-		  if (!event.target.matches('#taskListDropdown')) {
+			if (!event.target.matches('#taskListDropdown'))  {
+
+//		  if ((!event.target.matches('#taskListDropdown')) && (!event.target.matches('.taskListItem'))) {
+//			if (!event.target.matches('#taskListItems')) {
+
 
 			var dropdowns = document.getElementsByClassName("taskListsSubMenu");
 			var i;
