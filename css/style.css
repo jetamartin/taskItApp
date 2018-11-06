@@ -287,7 +287,14 @@ display: none;
 		content: "\00a0";
 	}
 */
-	
+
+/* xyzxyz */
+	#taskListDropdown:before {
+		font-family: "FontAwesome";
+		content: "\f107";
+	}
+
+
 	nav ul {
 		font-size: 0;
 		list-style-type: none;
