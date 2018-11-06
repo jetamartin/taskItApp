@@ -342,7 +342,7 @@ display: none;
 */
 
 	#taskListDropdown {
-		width: 250px;
+		width: 65vw;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
