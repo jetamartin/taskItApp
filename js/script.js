@@ -3548,6 +3548,8 @@ var appUIController = (function () {
 
 		deleteTaskItem: function (event) {
 			event.preventDefault();
+			var nodeToBeDeleted, nextNode, priorNode, parentArticle = null;
+			
 
 			console.log("confirmDelete()");
 			var taskItemId = appUIController.getUIVars().deleteTaskItemId.value;
@@ -3577,7 +3579,7 @@ var appUIController = (function () {
 
 
 				// Get the Parent Node of card that was marked for deletion (i.e., the event)
-				var parentArticleNode = cardNode2Remove.closest("article");
+				parentArticleNode = cardNode2Remove.closest("article");
 
 				var moreActiveTaskInDueDateCategory = false;
 
@@ -3589,30 +3591,47 @@ var appUIController = (function () {
 
 						return;
 
-					// The node is a task card and doesn't contain "vanish	
-					} else if (!childNode.classList.contains("vanish")) {
-
-						// If the card doesn't contain "vanish" then it's still an active task in the category
-						moreActiveTaskInDueDateCategory = true;
+					// if The node is a task card and doesn't contain "vanish	then you don't want to delete the DueDateCategory name
+					} 
+					if (!childNode.classList.contains("vanish")) {
+						
+							// If the card doesn't contain "vanish" then it's still an active task in the category
+							moreActiveTaskInDueDateCategory = true;
+					} else {  // it contains "vanish" and should be marked for delete..but must be deleted outside of this loop to maintain integrity of loop
+						nodeToBeDeleted = childNode;
 					}
 
 				});					
 					
+				// Delete the taskItem marked for deletion 
+				if (nodeToBeDeleted) {
+					setTimeout(function () {
+							parentArticleNode.removeChild(nodeToBeDeleted);
+					}, 1500);
+				}
 
 
-
-
-				// If there are no more active task in that dueDate category (e.g., every card has class 'vanish') then delete the dueDate header 
+				// If there are no more active task in that dueDate category then delete the dueDate header 
 
 				if (!moreActiveTaskInDueDateCategory) {
 					var dueDateNode = parentArticleNode.firstChild;
 					parentArticleNode.removeChild(dueDateNode);
 				}
 				
-				// Now get the next node that might contain another card
-				var nextNode = parentArticleNode.nextSibling;
+				/* Check if any other taskItem exist in the list by checking if sibling exist. Need to make sure any sibling node name is
+					"Article" as a sibling could exist but it might be a "white space" sibling (nodeName = #Text). 
+				*/
+				if (parentArticleNode.nextSibling) {  // Need this check in case parentArticleNode is not null..this would cause an error
+					nextNode = (parentArticleNode.nextSibling.nodeName === "ARTICLE") ? parentArticleNode.nextSibling : null;
+				}
+				if (parentArticleNode.previousSibling) { // Need this check in case parentArticleNode is not null..this would cause an error
+					priorNode = (parentArticleNode.previousSibling.nodeName === "ARTICLE") ? parentArticleNode.previousSibling : null;
+				}
 
-				if (!nextNode)  {
+				/* If there are not more active task remaining in the dueDateCategory and there are no valid siblings then there are 
+					no more taskItems in the taskList and we should display a message reflecting that.
+				*/
+				if (!nextNode && !priorNode && !moreActiveTaskInDueDateCategory)  {
 					// Now that the page is empty display the empty taskList message
 
 					appUIController.getUIVars().mainPageGeneralMsgLoc.innerHTML = '<div id="emptyPageMessage"><i class="fa fa-info-circle"></i>&nbsp;Currently there are no tasks in this list<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Click the Plus symbol below to add some now.<br /><br /><i class="fa fa-bullseye"></i>&nbsp;Or delete list via "Manage Lists" feature (see NavBar menu) if you don\'t need it anymore.</div>';
