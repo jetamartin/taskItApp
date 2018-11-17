@@ -6754,7 +6754,19 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		init: function (hash) {
 			
 //			appModelController.sync();
+			
+			function connectToServer() {
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET','http://127.0.0.1:5000');
+				xhr.onload = function() {
+					if(this.status === 200) {
+						console.log(this.responseText)
+					}
+				}
+				xhr.send();
+			}
 
+			connectToServer();
 			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
 			var currActiveListNode = getActiveTaskList();
 			var currActiveListName = appUIController.getActiveTaskListName();
