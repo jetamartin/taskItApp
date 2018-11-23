@@ -2628,9 +2628,13 @@ var appModelController = (function () {
 
 		deleteTaskItemNotificationRecord: function (taskItemNotificationId) {
 			var taskItemNotifications = appModelController.getTaskItemNotificationsTable();			
-			return appModelController.taskItemNotificationDb.get(taskItemNotificationId)
+//			return appModelController.taskItemNotificationDb.get(taskItemNotificationId)
+			return appModelController.userDb.get(taskItemNotificationId)
+
 				.then(function(doc) {
-					return appModelController.taskItemNotificationDb.remove(doc._id, doc._rev);
+//					return appModelController.taskItemNotificationDb.remove(doc._id, doc._rev);
+					return appModelController.userDb.remove(doc._id, doc._rev);
+
 			}).then(function (result) {
 				// handle result
 				console.log("Delete TaskNotification Result: ", result);
@@ -2833,28 +2837,39 @@ var appModelController = (function () {
 			});
 		}, 
 	
-		loadTaskItemNotificationsDataFromDb: function (taskItemNotificationDb) {
-			var taskItemNotificationAttributes;
-			var notificationId, taskItemId, notificationType, notificationUnits, notificationUnitType, createTime;
+		loadTaskItemNotificationsDataFromDb: function (userDb) {
+			var taskItemNotificationAttributes, taskItemNotificationPromise;
+			var type, notificationId, taskItemId, notificationType, notificationUnits, notificationUnitType, createTime;
 			
 			
-			return taskItemNotificationPromise = taskItemNotificationDb.allDocs({include_docs: true})
+//			return taskItemNotificationPromise = taskItemNotificationDb.allDocs({include_docs: true})
+			return taskItemNotificationPromise = userDb.find({selector: { type: {$eq: 'notification'}}})
 				.then(function (results) {
 				
-				var taskItemNotificationsTable = appModelController.getTaskItemNotificationsTable();
 				
-				results.rows.map(function (taskItemNotification) {
+				if (results.docs.length > 0) {
+					var taskItemNotificationsTable = appModelController.getTaskItemNotificationsTable();
+//									results.rows.map(function (taskItemNotification) {
+					results.docs.map(function (taskItemNotification) {
 					
-					if (taskItemNotification.doc.notification_type != undefined) {
-						
-						createTime = taskItemNotification.doc.notification_createTime;
-						notificationType = taskItemNotification.doc.notification_type;
-						notificationUnitType = taskItemNotification.doc.notification_unitType;
-						notificationUnits = taskItemNotification.doc.notification_units;
-						taskItemId = taskItemNotification.doc.taskItem_id;
-						notificationId = taskItemNotification.doc._id;
+					if (taskItemNotification.notification_type != undefined) {
+//						type = taskItemNotification.doc.type;
+//						createTime = taskItemNotification.doc.notification_createTime;
+//						notificationType = taskItemNotification.doc.notification_type;
+//						notificationUnitType = taskItemNotification.doc.notification_unitType;
+//						notificationUnits = taskItemNotification.doc.notification_units;
+//						taskItemId = taskItemNotification.doc.taskItem_id;
+//						notificationId = taskItemNotification.doc._id;
+						type = taskItemNotification.type;
+						createTime = taskItemNotification.notification_createTime;
+						notificationType = taskItemNotification.notification_type;
+						notificationUnitType = taskItemNotification.notification_unitType;
+						notificationUnits = taskItemNotification.notification_units;
+						taskItemId = taskItemNotification.taskItem_id;
+						notificationId = taskItemNotification._id;
 
 						taskItemNotificationAttributes = new TaskItemNotification (
+							type, 
 							notificationId,
 							taskItemId,
 							notificationType,
@@ -2865,6 +2880,8 @@ var appModelController = (function () {
 						taskItemNotificationsTable.push(taskItemNotificationAttributes);
 					}
 				})
+				}
+
 				return results;
 			});
 		}, 		
@@ -2874,7 +2891,9 @@ var appModelController = (function () {
 		loadDataFromDb: function (taskListDb, taskItemDb, taskItemNotificationDb) {
 			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(taskListDb);
 			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(taskItemDb);
-			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(taskItemNotificationDb); 
+//			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(taskItemNotificationDb); 
+			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(userDb); 
+
 			return Promise.all([loadTaskListPromises, loadTaskItemPromises, loadTaskItemNotificationsPromises]).then( function ( updateResults ){
 				console.log(">>>>>>>Update Results from loadDataFromDb: ", updateResults);
 				return updateResults;
@@ -3097,7 +3116,9 @@ var appModelController = (function () {
 			// Generate createTime
 			var createTime = getTimeStamp();
 
-			return appModelController.taskItemNotificationDb.put({
+//			return appModelController.taskItemNotificationDb.put({
+			return appModelController.userDb.put({
+
 				"type": notificationType,
 				"_id": notificationId,
 				"taskItem_id": taskItemId,
@@ -6528,8 +6549,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 							taskNotificationRecord.notification_unitType = taskNotificationInput.notificationUnitType;
 
 							// Write the updated values into the Database  
-							appModelController.taskItemNotificationDb.get(taskNotificationInput.notificationId).then(function(doc) {
-								return appModelController.taskItemNotificationDb.put({
+//							appModelController.taskItemNotificationDb.get(taskNotificationInput.notificationId).then(function(doc) {
+							appModelController.userDb.get(taskNotificationInput.notificationId).then(function(doc) {
+
+								return appModelController.userDb.put({
 									_id: taskNotification.notificationId,
 									_rev: doc._rev,
 									notification_units: taskNotificationInput.notificationUnits,
