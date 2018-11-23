@@ -1272,7 +1272,8 @@ var appModelController = (function () {
 		this.taskItem_notificationCount = notificationCount;
 	}
 
-	var TaskItemNotification = function (id, taskItemId, notificationType, notificationUnits, notificationUnitType, notificationCreateTime) {
+	var TaskItemNotification = function (type, id, taskItemId, notificationType, notificationUnits, notificationUnitType, notificationCreateTime) {
+		this.type = type;
 		this.notification_id = id;
 		this.taskItem_id = taskItemId;
 		this.notification_type = notificationType;
@@ -2505,7 +2506,9 @@ var appModelController = (function () {
 			var userDbIndex = userDb.createIndex({
 
 					index: {
-						fields: ['user_name']
+//						fields: ['user_name']
+						fields: ['type']
+
 					}
 				})
 			console.log("createDbIndexes::userDbIndex: ", userDbIndex);
@@ -3089,12 +3092,13 @@ var appModelController = (function () {
 			console.log("createNewNotificationObject");
 			// Generate a uniqued Id for the notification
 			var notificationId = getUniqueId();
-
+			var notificationType = "notification";
 
 			// Generate createTime
 			var createTime = getTimeStamp();
 
 			return appModelController.taskItemNotificationDb.put({
+				"type": notificationType,
 				"_id": notificationId,
 				"taskItem_id": taskItemId,
 				"notification_type": newTaskNotification.notificationType,
@@ -3106,6 +3110,7 @@ var appModelController = (function () {
 				
 				console.log("TaskItemNotification response: ", response)
 				return newTaskNotification = new TaskItemNotification(
+					notificationType,
 					notificationId,
 					taskItemId,
 					newTaskNotification.notificationType,
