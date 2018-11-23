@@ -2888,7 +2888,7 @@ var appModelController = (function () {
 		
 
 
-		loadDataFromDb: function (taskListDb, taskItemDb, taskItemNotificationDb) {
+		loadDataFromDb: function (taskListDb, taskItemDb, userDb) {
 			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(taskListDb);
 			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(taskItemDb);
 //			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(taskItemNotificationDb); 
@@ -7220,11 +7220,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 								// Load Data from DB and Display UI 
 	//							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
 
-						appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+						appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.userDb)
 							.then( function ( results ){
 
 								// Need to run this to ensure all JS objects are loaded with data 
-								appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
+								appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.userDb);
 
 								switch(hash) {
 									case '#editTask':
@@ -7264,11 +7264,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 //					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 											
-					appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+					appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.userDb)
 						.then( function ( results ){
 						
 						// Need to run this to ensure all JS objects are loaded with data 
-						appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+						appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.userDb)
 
 						switch(hash) {
 							case '#editTask':
