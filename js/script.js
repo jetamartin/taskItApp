@@ -907,6 +907,330 @@ var appModelController = (function () {
 	var taskItemsTable1 = [];
 	var taskItemNotificationsTable = [];
 	
+	/************************ 	TASKIT SEED DATA	***************************/
+	
+	var taskItSeedData = [
+		
+			//********* TASK LIST ***************
+
+		{
+			"type": "taskList",
+			"_id": "03",
+			"user_id": "01",
+			"taskList_name": "XSchool",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		{
+			"type": "taskList",
+			"_id": "04",
+			"user_id": "01",
+			"taskList_name": "Shopping",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		{
+			"type": "taskList",
+			"_id": "05",
+			"user_id": "01",
+			"taskList_name": "Wish List",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		{
+			"type": "taskList",
+			"_id": "06",
+			"user_id": "01",
+			"taskList_name": "Work",
+			"taskList_totalCount": 0,
+			"taskList_overDueCount": 0,
+			"taskList_completedCount": 0,
+			"taskList_createTime": "",
+			"taskList_isArchived": ""
+		},
+		
+		//********* TASK ITEMS *****************
+		{
+			"type": "taskItem",
+			"_id": "08",
+			"taskList_id": "06",
+			"taskItem_title": "Task item 1.0",
+			"taskItem_description": "",
+			"taskItem_due_date": "2018-03-01 15:30",
+			"taskItem_due_time": "5:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "09",
+			"taskList_id": "03",
+			"taskItem_title": "Task item 2",
+			"taskItem_description": "",
+			"taskItem_due_date": "",
+			"taskItem_due_time": "12:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "10",
+			"taskList_id": "04",
+			"taskItem_title": "Task item 2.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-21 23:55",
+			"taskItem_due_time": "5:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "weekly",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "11",
+			"taskList_id": "03",
+			"taskItem_title": "Task item 2.2",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-25 11:00",
+			"taskItem_due_time": "9:00am",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+
+		},
+		{
+			"type": "taskItem",
+			"_id": "12",
+			"taskList_id": "05",
+			"taskItem_title": "Task item 3",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-14 12:00",
+			"taskItem_due_time": "2:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "13",
+			"taskList_id": "06",
+			"taskItem_title": "Task item 3.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-17 14:00",
+			"taskItem_due_time": "4:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "14",
+			"taskList_id": "06",
+			"taskItem_title": "Task item 4",
+			"taskItem_description": "",
+			"taskItem_due_date": "2018-01-12 17:00",
+			"taskItem_due_time": "12:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "daily",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "15",
+			"taskList_id": "06",
+			"taskItem_title": "Task item 4.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-12-12 17:00",
+			"taskItem_due_time": "7:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "monthly",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "16",
+			"taskList_id": "02",
+			"taskItem_title": "Task item 5",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-12-15 17:00",
+			"taskItem_due_time": "6:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "17",
+			"taskList_id": "05",
+			"taskItem_title": "Task item 5.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-16 17:00",
+			"taskItem_due_time": "3:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "none",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "18",
+			"taskList_id": "03",
+			"taskItem_title": "Task item 6",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-17 17:00",
+			"taskItem_due_time": "5:00pm",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "19",
+			"taskList_id": "05",
+			"taskItem_title": "Task item 6.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-22 17:30",
+			"taskItem_due_time": "",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "20",
+			"taskList_id": "02",
+			"taskItem_title": "Task item 7",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-23 17:30",
+			"taskItem_due_time": "",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		},
+		{
+			"type": "taskItem",
+			"_id": "21",
+			"taskList_id": "02",
+			"taskItem_title": "Task item 7.1",
+			"taskItem_description": "",
+			"taskItem_due_date": "2017-11-30 10:30",
+			"taskItem_due_time": "",
+			"taskItem_priority": "",
+			"taskItem_status": "",
+			"taskItem_isCompleted": "",
+			"taskItem_repeat": "",
+			"taskItem_isArchived": "",
+			"taskItem_notifications": false,
+			"taskItem_notificationCount": 0,
+			"taskItem_calendar": "",
+			"taskItem_completedDate": "",
+			"taskItem_createTime": ""
+		}
+		
+	]
+	
+/************************ 	END TASKIT SEED DATA	***************************/
+	
 //	var remoteCouchUserDb = 'http://jmartin:jammer@127.0.0.1:5984/users';
 //	var remoteCouchTaskListDb = 'http://jmartin:jammer@127.0.0.1:5984/task_lists';
 //	var remoteCouchTaskItemDb = 'http://jmartin:jammer@127.0.0.1:5984/task_items';
@@ -1397,7 +1721,8 @@ var appModelController = (function () {
 	
 	var userTableDb = [
 		{
-			"_id": "01",
+			"type": "user",
+			"_id": "00",
 			"user_id": "Jet Martin",
 			"user_password": "123"
 		}
@@ -1406,6 +1731,7 @@ var appModelController = (function () {
 	
 	var systemDefinedTaskListTableDb = [
 		{
+			"type": "taskList",
 			"_id": "01",
 			"user_id": "01",
 			"taskList_name": "All Lists",
@@ -1416,6 +1742,7 @@ var appModelController = (function () {
 			"taskList_isArchived": ""
 		},
 		{
+			"type": "taskList",
 			"_id": "02",
 			"user_id": "01",
 			"taskList_name": "Default",
@@ -1427,6 +1754,7 @@ var appModelController = (function () {
 		},
 		
 		{
+			"type": "taskList",
 			"_id": "07",
 			"user_id": "01",
 			"taskList_name": "Completed",
@@ -1442,6 +1770,7 @@ var appModelController = (function () {
 	var taskListTableDb = [
 
 		{
+			"type": "taskList",
 			"_id": "03",
 			"user_id": "01",
 			"taskList_name": "School",
@@ -1452,6 +1781,7 @@ var appModelController = (function () {
 			"taskList_isArchived": ""
 		},
 		{
+			"type": "taskList",
 			"_id": "04",
 			"user_id": "01",
 			"taskList_name": "Shopping",
@@ -1462,6 +1792,7 @@ var appModelController = (function () {
 			"taskList_isArchived": ""
 		},
 		{
+			"type": "taskList",
 			"_id": "05",
 			"user_id": "01",
 			"taskList_name": "Wish List",
@@ -1472,6 +1803,7 @@ var appModelController = (function () {
 			"taskList_isArchived": ""
 		},
 		{
+			"type": "taskList",
 			"_id": "06",
 			"user_id": "01",
 			"taskList_name": "Work",
@@ -1496,7 +1828,8 @@ var appModelController = (function () {
 	];
 	var taskItemsTableDb = [
 		{
-			"_id": "01",
+			"type": "taskItem",
+			"_id": "08",
 			"taskList_id": "06",
 			"taskItem_title": "Task item 1.0",
 			"taskItem_description": "",
@@ -1514,7 +1847,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "02",
+			"type": "taskItem",
+			"_id": "09",
 			"taskList_id": "03",
 			"taskItem_title": "Task item 2",
 			"taskItem_description": "",
@@ -1532,7 +1866,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "03",
+			"type": "taskItem",
+			"_id": "10",
 			"taskList_id": "04",
 			"taskItem_title": "Task item 2.1",
 			"taskItem_description": "",
@@ -1550,7 +1885,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "04",
+			"type": "taskItem",
+			"_id": "11",
 			"taskList_id": "03",
 			"taskItem_title": "Task item 2.2",
 			"taskItem_description": "",
@@ -1569,7 +1905,8 @@ var appModelController = (function () {
 
 		},
 		{
-			"_id": "05",
+			"type": "taskItem",
+			"_id": "12",
 			"taskList_id": "05",
 			"taskItem_title": "Task item 3",
 			"taskItem_description": "",
@@ -1587,7 +1924,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "06",
+			"type": "taskItem",
+			"_id": "13",
 			"taskList_id": "06",
 			"taskItem_title": "Task item 3.1",
 			"taskItem_description": "",
@@ -1605,7 +1943,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "07",
+			"type": "taskItem",
+			"_id": "14",
 			"taskList_id": "06",
 			"taskItem_title": "Task item 4",
 			"taskItem_description": "",
@@ -1623,7 +1962,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "08",
+			"type": "taskItem",
+			"_id": "15",
 			"taskList_id": "06",
 			"taskItem_title": "Task item 4.1",
 			"taskItem_description": "",
@@ -1641,7 +1981,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "09",
+			"type": "taskItem",
+			"_id": "16",
 			"taskList_id": "02",
 			"taskItem_title": "Task item 5",
 			"taskItem_description": "",
@@ -1659,7 +2000,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "10",
+			"type": "taskItem",
+			"_id": "17",
 			"taskList_id": "05",
 			"taskItem_title": "Task item 5.1",
 			"taskItem_description": "",
@@ -1677,7 +2019,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "11",
+			"type": "taskItem",
+			"_id": "18",
 			"taskList_id": "03",
 			"taskItem_title": "Task item 6",
 			"taskItem_description": "",
@@ -1695,7 +2038,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "12",
+			"type": "taskItem",
+			"_id": "19",
 			"taskList_id": "05",
 			"taskItem_title": "Task item 6.1",
 			"taskItem_description": "",
@@ -1713,7 +2057,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "13",
+			"type": "taskItem",
+			"_id": "20",
 			"taskList_id": "02",
 			"taskItem_title": "Task item 7",
 			"taskItem_description": "",
@@ -1731,7 +2076,8 @@ var appModelController = (function () {
 			"taskItem_createTime": ""
 		},
 		{
-			"_id": "14",
+			"type": "taskItem",
+			"_id": "21",
 			"taskList_id": "02",
 			"taskItem_title": "Task item 7.1",
 			"taskItem_description": "",
