@@ -4323,9 +4323,9 @@ var appUIController = (function () {
 
 					taskItemRecord.taskItem_completedDate = completeDate;
 					
-					appModelController.taskListDb.get( taskListId1 ).then ( function ( doc ) {
+					appModelController.userDb.get( taskListId1 ).then ( function ( doc ) {
 						doc.taskList_completedCount = taskListRecord.taskList_completedCount;
-						return appModelController.taskListDb.put( doc )
+						return appModelController.userDb.put( doc )
 						
 				}).then ( function ( doc ) {
 					console.log ("Result of taskListDb update: ", doc);
@@ -4411,9 +4411,9 @@ var appUIController = (function () {
 					console.log ("Result of taskItemDb update: ", response);
 					console.log("Reactivate TaskItem: TaskListId just before update taskItemDb): ", taskListId1);
 					
-					appModelController.taskListDb.get( taskListId1 ).then ( function ( doc ) {
+					appModelController.userDb.get( taskListId1 ).then ( function ( doc ) {
 						doc.taskList_completedCount = taskListRecord.taskList_completedCount;
-						return appModelController.taskListDb.put( doc )
+						return appModelController.userDb.put( doc )
 						
 				}).then ( function ( doc ) {
 					console.log(doc.taskList_completedCount);
