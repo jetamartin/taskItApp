@@ -2655,8 +2655,8 @@ var appModelController = (function () {
 
 		deleteTaskList: function (taskListId) {
 			var taskLists = appModelController.getTaskListTable();
-			return appModelController.taskListDb.get(taskListId).then(function(doc) {
-  				appModelController.taskListDb.remove(doc._id, doc._rev);
+			return appModelController.userDb.get(taskListId).then(function(doc) {
+  				appModelController.userDb.remove(doc._id, doc._rev);
 			}).then(function (result) {
 				console.log("TaskList Delete: ", result);
 
