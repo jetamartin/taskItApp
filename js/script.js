@@ -1238,7 +1238,8 @@ var appModelController = (function () {
 
 
 	
-	var TaskList = function (listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived) {
+	var TaskList = function (type, listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived) {
+		this.type = type;
 		this.taskList_id = listId;
 		this.taskList_name = listName;
 		this.user_id = userId;
@@ -1248,7 +1249,7 @@ var appModelController = (function () {
 		this.taskList_createTime = listCreateTime;
 		this.taskList_isArchived = taskListIsArchived;
 	}
-
+	
 	var TaskItem = function (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount) {
 		this._id = id;
 		this.taskList_id = listId;
@@ -2467,12 +2468,12 @@ var appModelController = (function () {
 //
 //  },
 
-		addUserSeedDataToDbs: function (taskListDb, taskItemDb) {	
+		addUserSeedDataToDbs: function (userDb, taskItemDb) {	
 			var seedDataPromises = []
 			var allPromises = [];
 
 			var seedTaskListPromises = taskListTableDb.map(function (taskList, index )	{
-				return taskListDb.put(taskList).then( function ( result ) {
+				return userDb.put(taskList).then( function ( result ) {
 					console.log("addUserSeedDataToDbs::insidePromise::TaskList Items: ", result);
 					return result;
 					})
@@ -2544,7 +2545,7 @@ var appModelController = (function () {
 			return indexPromises;
 		},
 			
-		initializeSystemDBs: function ( userDb, taskListDb ) {
+		initializeSystemDBs: function ( userDb ) {
 			console.log(" Start initializeUserDb");
 			var promises = [];
 			var promises1 = [];
@@ -2564,7 +2565,7 @@ var appModelController = (function () {
 			console.log("initializeSystemDBs::UserDbInitialization: ", userDbInitialization);
 
 			var systemTaskListDbInitialization = systemDefinedTaskListTableDb.map(function (taskList, index )	{
-				return taskListDb.put(taskList).then( function ( systemDefinedTaskList ) {
+				return userDb.put(taskList).then( function ( systemDefinedTaskList ) {
 					console.log("initializeSystemDBs::inside promise = System Defined Task Lists: ", systemDefinedTaskList);
 					return systemDefinedTaskList;
 				})
@@ -2775,31 +2776,34 @@ var appModelController = (function () {
 			return taskListTable;
 		},
 		
-		loadTaskListDataFromDb: function (taskListDb) {
-			var listId, listName, totalItemCount, overDueItemCount, completedCount, listCreateTime, userId, taskListIsArchived;
+		loadTaskListDataFromDb: function (userDb) {
+			var type, listId, listName, totalItemCount, overDueItemCount, completedCount, listCreateTime, userId, taskListIsArchived;
 			var taskListAttributes;  
-			return taskListPromise = taskListDb.allDocs({include_docs: true})
+//			return taskListPromise = taskListDb.allDocs({include_docs: true})
+				return taskListPromise = userDb.find({selector: { type: {$eq: 'taskList'}}})
 				.then(function (results) {
-					var taskListTable = appModelController.getTaskListTable(); 
-					results.rows.map(function (taskList, index) {
-						if (taskList.doc.taskList_name !== undefined) {
-									
-							
-							listId = taskList.doc._id;
-							listName = taskList.doc.taskList_name;
-							totalItemCount = taskList.doc.taskList_totalCount;
-							overDueItemCount = taskList.doc.taskList_overDueCount
-							completedCount = taskList.doc.taskList_completedCount;	
+					if (results.docs.length > 0) {
+						var taskListTable = appModelController.getTaskListTable();
+						
+						results.docs.map(function (taskList) {
+						if (taskList.taskList_name !== undefined) {
+							type = taskList.type;
+							listId = taskList._id;
+							listName = taskList.taskList_name;
+							totalItemCount = taskList.taskList_totalCount;
+							overDueItemCount = taskList.taskList_overDueCount
+							completedCount = taskList.taskList_completedCount;	
 							listCreateTime = getTimeStamp();
-							userId = taskList.doc.user_id;
+							userId = taskList.user_id;
 							taskListIsArchived = false;
-//							listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived
-							taskListAttributes = new TaskList(listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived);
+							
+							taskListAttributes = new TaskList(type, listId, listName, userId, totalItemCount, overDueItemCount, completedCount, listCreateTime, taskListIsArchived);
 							taskListTable.push(taskListAttributes);
 						}
-					})
+						})
+					}
 					return results;
-			})
+			});
 		},
 		
 		loadTaskItemDataFromDb: function (taskItemDb) {
@@ -2888,8 +2892,8 @@ var appModelController = (function () {
 		
 
 
-		loadDataFromDb: function (taskListDb, taskItemDb, userDb) {
-			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(taskListDb);
+		loadDataFromDb: function (userDb, taskItemDb, userDb) {
+			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(userDb);
 			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(taskItemDb);
 //			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(taskItemNotificationDb); 
 			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(userDb); 
@@ -3181,8 +3185,10 @@ var appModelController = (function () {
 
 			// 4. Task list userId
 			var userId = "01";
+			var type = "taskList";
 			
-			return appModelController.taskListDb.put({
+			return appModelController.userDb.put({
+				type: type,
 				_id: taskListId,
 				taskList_completedCount: completedCount, 
 				taskList_createTime: createTime,
@@ -3196,6 +3202,7 @@ var appModelController = (function () {
 				
 				console.log("TaskList Put response: ", response);
 				newTaskList = new TaskList(
+					type,
 					taskListId,
 					taskListInput,
 					userId,
@@ -7192,7 +7199,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						console.log('initializeDBs::created new databases');
 
 						// Create indexes for Db and add system data to DBs
-						var initializeSystemDbPromises = appModelController.initializeSystemDBs(appModelController.userDb, appModelController.taskListDb);
+						var initializeSystemDbPromises = appModelController.initializeSystemDBs(appModelController.userDb);
 
 						console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
 
@@ -7204,7 +7211,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Adds user seed data 
 						if (addUserSeedData) {						
-							userSeedPromises = appModelController.addUserSeedDataToDbs(appModelController.taskListDb, appModelController.taskItemDb);
+							userSeedPromises = appModelController.addUserSeedDataToDbs( appModelController.userDb, appModelController.taskItemDb);
 						}
 
 
@@ -7220,7 +7227,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 								// Load Data from DB and Display UI 
 	//							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
 
-						appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.userDb)
+						appModelController.loadDataFromDb(appModelController.userDb, appModelController.taskItemDb, appModelController.userDb)
 							.then( function ( results ){
 
 								// Need to run this to ensure all JS objects are loaded with data 
@@ -7264,7 +7271,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 //					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 											
-					appModelController.loadDataFromDb(appModelController.taskListDb, appModelController.taskItemDb, appModelController.userDb)
+					appModelController.loadDataFromDb(appModelController.userDb, appModelController.taskItemDb, appModelController.userDb)
 						.then( function ( results ){
 						
 						// Need to run this to ensure all JS objects are loaded with data 
