@@ -443,12 +443,15 @@ function getActiveTaskList() {
 // Need to find an alternative solution 
 
 var handleSubMenuClick = function (event) {
-
+	
+	
+	// ???? Why am I updatingListTaskTotals here
+	appModelController.updateListTaskTotals();
+	
 	// Get the current "active" task list Node 
 	var currActiveList = getActiveTaskList();
 
-	// ???? Why am I updatingListTaskTotals here
-	appModelController.updateListTaskTotals();
+
 
 	// Get name of submenu list selected
 	// First get the TaskList item that was clicked and then get the list name
@@ -3582,6 +3585,23 @@ var appUIController = (function () {
 		
 		displayTaskListSubMenu: function () {
 			console.log("Begin displayTaskListSubMenu()");
+			
+			var currActiveTaskListId = getListIdForActiveTaskList(); 
+			
+			// Remove existing UserDefined Task list from TaskListSubmenu
+			appUIController.clearOutExistingScreenContent(appUIController.getUIVars().subMenuListDOMNode, 'userDefinedList');
+
+			// Update the List Task Totals in the Model
+			appModelController.updateListTaskTotals();
+
+			// Now update the UI (subMenu list dropdown) list totals
+			appUIController.refreshTaskListSubMenuTotals(appModelController.getTaskListTable());
+
+	
+
+			// Now rebuild the UserDefined Task List subMenu drop down
+			appUIController.buildAndDisplayUserDefinedTaskList(currActiveTaskListId);
+
 			toggleClass(taskListsSubMenu, 'hideIt');
 			toggleClass(listMenuTitle, 'dropDownActive'); 
 			console.log("End displayTaskListSubMenu()");
