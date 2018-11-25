@@ -904,10 +904,10 @@ var appModelController = (function () {
 	var taskListDb = new PouchDB('taskListDb');
 	var taskItemDb = new PouchDB('taskItemDb');
 	var taskItemNotificationDb = new PouchDB('taskItemNotificationDb');
-	var userDefinedTaskListInfo1 = [];
-	var userTable1 = [];
-	var taskListTable1 = [];
-	var taskItemsTable1 = [];
+//	var userDefinedTaskListInfo1 = [];
+//	var userTable1 = [];
+//	var taskListTable1 = [];
+//	var taskItemsTable1 = [];
 	var taskItemNotificationsTable = [];
 	
 	/************************ 	TASKIT SEED DATA	***************************/
@@ -1266,16 +1266,16 @@ var appModelController = (function () {
 		this.taskItem_notificationCount = notificationCount;
 	}
 	
-	var TaskItemDbRecord = function (listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount) {
-		this.taskList_id = listId;
-		this.taskItem_title = title;
-		this.taskItem_due_date = dueDate;
-		this.taskItem_repeat = repeat;
-		this.taskItem_completedDate = completedDate;
-		this.taskItem_createTime = createTime;
-		this.taskItem_notifications = notificationsPresent;
-		this.taskItem_notificationCount = notificationCount;
-	}
+//	var TaskItemDbRecord = function (listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount) {
+//		this.taskList_id = listId;
+//		this.taskItem_title = title;
+//		this.taskItem_due_date = dueDate;
+//		this.taskItem_repeat = repeat;
+//		this.taskItem_completedDate = completedDate;
+//		this.taskItem_createTime = createTime;
+//		this.taskItem_notifications = notificationsPresent;
+//		this.taskItem_notificationCount = notificationCount;
+//	}
 
 	var TaskItemNotification = function (type, id, taskItemId, notificationType, notificationUnits, notificationUnitType, notificationCreateTime) {
 		this.type = type;
@@ -1358,11 +1358,7 @@ var appModelController = (function () {
 			"taskList_overDueCount": 0,
 			"taskList_completedCount": 0
 		}
-//		{
-//			"listName" : "Home Projects",
-//			"overDue"  : 3, 
-//			"totalTasks": 12			
-//		}
+
 	]
 //***********************************************************
 	
@@ -1382,339 +1378,12 @@ var appModelController = (function () {
 
 	];
 	
-	var taskListTable1 = [
-	{
-		"taskList_id": "1",
-		"user_id": "1",
-		"taskList_name": "All Lists",
-		"taskList_totalCount": 0,
-		"taskList_overDueCount": 0,
-		"taskList_completedCount": 0,
-		"taskList_createTime": "",
-		"taskList_isArchived": ""
-	},
-	{
-		"taskList_id": "2",
-		"user_id": "1",
-		"taskList_name": "Default",
-		"taskList_totalCount": 0,
-		"taskList_overDueCount": 0,
-		"taskList_completedCount": 0,
-		"taskList_createTime": "",
-		"taskList_isArchived": ""
-	},
-	{
-		"taskList_id": "3",
-		"user_id": "1",
-		"taskList_name": "School",
-		"taskList_totalCount": 0,
-		"taskList_overDueCount": 0,
-		"taskList_completedCount": 0,
-		"taskList_createTime": "",
-		"taskList_isArchived": ""
-	},
-	{
-		"taskList_id": "4",
-		"user_id": "1",
-		"taskList_name": "Shopping",
-		"taskList_totalCount": 0,
-		"taskList_overDueCount": 0,
-		"taskList_completedCount": 0,
-		"taskList_createTime": "",
-		"taskList_isArchived": ""
-	},
-	{
-		"taskList_id": "5",
-		"user_id": "1",
-		"taskList_name": "Wish List",
-		"taskList_totalCount": 0,
-		"taskList_overDueCount": 0,
-		"taskList_completedCount": 0,
-		"taskList_createTime": "",
-		"taskList_isArchived": ""
-	},
-	{
-		"taskList_id": "6",
-		"user_id": "1",
-		"taskList_name": "Work",
-		"taskList_totalCount": 0,
-		"taskList_overDueCount": 0,
-		"taskList_completedCount": 0,
-		"taskList_createTime": "",
-		"taskList_isArchived": ""
-	},
-	{
-		"taskList_id": "7",
-		"user_id": "",
-		"taskList_name": "Completed",
-		"taskList_totalCount": 0,
-		"taskList_overDueCount": 0,
-		"taskList_completedCount": 0,
-		"taskList_createTime": "",
-		"taskList_isArchived": ""
-	}
 
-];
 	var taskItemsTable = [];
 	
-	var taskItemsTable1 = [
-		{
-			"taskItem_id": "1",
-			"taskList_id": "6",
-			"taskItem_title": "Task item 1.0",
-			"taskItem_description": "",
-			"taskItem_due_date": "2018-03-01 15:30",
-			"taskItem_due_time": "5:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "none",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "2",
-			"taskList_id": "3",
-			"taskItem_title": "Task item 2",
-			"taskItem_description": "",
-			"taskItem_due_date": "",
-			"taskItem_due_time": "12:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "none",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "3",
-			"taskList_id": "4",
-			"taskItem_title": "Task item 2.1",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-21 23:55",
-			"taskItem_due_time": "5:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "weekly",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "4",
-			"taskList_id": "3",
-			"taskItem_title": "Task item 2.2",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-25 11:00",
-			"taskItem_due_time": "9:00am",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "none",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
 
-		},
-		{
-			"taskItem_id": "5",
-			"taskList_id": "5",
-			"taskItem_title": "Task item 3",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-14 12:00",
-			"taskItem_due_time": "2:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "none",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "6",
-			"taskList_id": "6",
-			"taskItem_title": "Task item 3.1",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-17 14:00",
-			"taskItem_due_time": "4:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "none",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "7",
-			"taskList_id": "6",
-			"taskItem_title": "Task item 4",
-			"taskItem_description": "",
-			"taskItem_due_date": "2018-01-12 17:00",
-			"taskItem_due_time": "12:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "daily",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "8",
-			"taskList_id": "6",
-			"taskItem_title": "Task item 4.1",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-12-12 17:00",
-			"taskItem_due_time": "7:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "monthly",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "9",
-			"taskList_id": "2",
-			"taskItem_title": "Task item 5",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-12-15 17:00",
-			"taskItem_due_time": "6:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "none",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "10",
-			"taskList_id": "5",
-			"taskItem_title": "Task item 5.1",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-16 17:00",
-			"taskItem_due_time": "3:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "none",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "11",
-			"taskList_id": "3",
-			"taskItem_title": "Task item 6",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-17 17:00",
-			"taskItem_due_time": "5:00pm",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "12",
-			"taskList_id": "5",
-			"taskItem_title": "Task item 6.1",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-22 17:30",
-			"taskItem_due_time": "",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "13",
-			"taskList_id": "2",
-			"taskItem_title": "Task item 7",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-23 17:30",
-			"taskItem_due_time": "",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		},
-		{
-			"taskItem_id": "14",
-			"taskList_id": "2",
-			"taskItem_title": "Task item 7.1",
-			"taskItem_description": "",
-			"taskItem_due_date": "2017-11-30 10:30",
-			"taskItem_due_time": "",
-			"taskItem_priority": "",
-			"taskItem_status": "",
-			"taskItem_isCompleted": "",
-			"taskItem_repeat": "",
-			"taskItem_isArchived": "",
-			"taskItem_notifications": false,
-			"taskItem_notificationCount": 0,
-			"taskItem_calendar": "",
-			"taskItem_completedDate": "",
-			"taskItem_createTime": ""
-		}
-	];
 	
-	
-	
+		
 //*******************************************
 
 // Tables used to build Pouch DB Databases 
@@ -1819,17 +1488,6 @@ var appModelController = (function () {
 			"taskList_createTime": "",
 			"taskList_isArchived": ""
 		}
-//		,
-//		{
-//			"_id": "07",
-//			"user_id": "01",
-//			"taskList_name": "Completed",
-//			"taskList_totalCount": 0,
-//			"taskList_overDueCount": 0,
-//			"taskList_completedCount": 0,
-//			"taskList_createTime": "",
-//			"taskList_isArchived": ""
-//		}
 
 	];
 	var taskItemsTableDb = [
@@ -2266,21 +1924,7 @@ var appModelController = (function () {
 					isNotValid: function (str) {}
 			},
 
-//			{	// Repeat Option
-//				fieldName: document.getElementById("newTaskRepeatOption"),
-//				fieldInError: false,
-//				fieldDefaultValue: "1",
-//				fieldErrorMsgLocation: document.getElementById("repeatErrorMsgDiv"),
-//				fieldErrMsg: "Must have a due date to make a task repeatable",
-//				isNotValid: function(str) {
-//					var dateValue = document.getElementById("newTaskDateTime").value;
-//					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
-//						return true;
-//					} else {
-//						return false;
-//					}
-//				}
-//			},
+
 				{ // List Selection Option
 					fieldName: document.getElementById("newTaskListNameSelect"),
 					fieldInError: false,
@@ -2304,24 +1948,7 @@ var appModelController = (function () {
 							return false;
 						}
 					}
-			},
-
-//			{	// Date Time Field
-//				fieldName: document.getElementById("newTaskDueTime"),
-//				fieldInError: false,
-//				fieldDefaultValue: "",
-//				fieldErrorMsgLocation: document.getElementById("newTaskDueTimeErrorMsg"),
-//				fieldErrMsg: "Must set Due Time to use Notifications",
-//				isNotValid: function(str) {
-//					var timeValue = document.getElementById("newTaskDateTime").value;
-//					var notifications = document.getElementsByClassName("notification").length;
-//					if (notifications !== 0 && !timeValue.replace(/^\s+/g, '').length) {
-//						return true;
-//					} else {
-//						return false;
-//					}
-//				}
-//			}
+			}
 
 		]
 	},
@@ -2355,19 +1982,7 @@ var appModelController = (function () {
 					fieldErrMsg: null,
 					isNotValid: function (str) {}
 			},
-//			{	// Repeat Option
-//				fieldName: document.getElementById("editFormRepeatSelect"),
-//				fieldErrorMsgLocation: document.getElementById("editRepeatErrorMsgDiv"),
-//				fieldErrMsg: "Must have a due date to make a task repeatable",
-//				isNotValid: function(str) {
-//					var dateValue = document.getElementById("editTaskDateTime").value;
-//					if (str !== "none" && !dateValue.replace(/^\s+/g, '').length) {
-//						return true;
-//					} else {
-//						return false;
-//					}
-//				}
-//			},
+
 				{ // List Selection Option
 					fieldName: document.getElementById("editTaskFormListSelect"),
 					fieldInError: false,
@@ -2416,42 +2031,7 @@ var appModelController = (function () {
 		return false;
 	}
 	
-	// 
 	
-
-		
-
-//		userTableDb.forEach( function (user, index){
-//			return userDb.put(user).then( function ( users ) {
-//				console.log("Users: ", users);
-//				return users;
-//			})
-//			.catch(function (err) {
-//				console.log("Error: " + err);
-//			});
-//
-//		});	
-
-		// System Defined TaskList 
-//		systemDefinedTaskListTableDb.forEach(function (taskList, index )	{
-//			taskListDb.put(taskList).then( function ( systemDefinedTaskList ) {
-//				console.log("System Defined Task Lists: ", systemDefinedTaskList);
-//				return systemDefinedTaskList;
-//			})
-//			.catch(function (err) {
-//				console.log("Error: " + err);
-//			});
-//
-//		});
-					
-
-		
-		
-
-
-
-	
-
 	return {
 		
 		syncError: function() {
@@ -2472,7 +2052,7 @@ var appModelController = (function () {
 //
 //  },
 
-		addUserSeedDataToDbs: function (userDb, taskItemDb) {	
+		addUserSeedDataToDbs: function (userDb) {	
 			var seedDataPromises = []
 			var allPromises = [];
 
@@ -2505,7 +2085,7 @@ var appModelController = (function () {
 		},
 
 		
-		createDbIndexes: function (userDb, taskListDb, taskItemDb, taskItemNotificationDb) {
+		createDbIndexes: function (userDb) {
 			var indexPromises = []
 
 			var userDbIndex = userDb.createIndex({
@@ -2518,31 +2098,9 @@ var appModelController = (function () {
 				})
 			console.log("createDbIndexes::userDbIndex: ", userDbIndex);
 
-			var taskListIndex =	taskListDb.createIndex({
-
-					index: {
-						fields: ['taskList_name']
-					}
-				})
-
-			console.log("createDbIndexes::taskListIndex: ", taskListIndex);
-
-			var taskItemIndex =	taskItemDb.createIndex({
-
-					index: {
-						fields: ['taskList_id', 'taskItem_name']
-					}
-				})
-			
-			var taskItemNotificationIndex = taskItemNotificationDb.createIndex({
-				
-				index: {
-					fields: ['taskItem_id']
-				}
-			})
 
 
-			indexPromises = [userDbIndex, taskListIndex, taskItemIndex, taskItemNotificationIndex ];
+			indexPromises = [userDbIndex];
 
 			console.log("createDbIndexes::indexPromises: ", indexPromises);
 
@@ -2579,15 +2137,8 @@ var appModelController = (function () {
 
 			});
 
-			console.log("initializeSystemDBs::SystemTaskListDbInitialization ", systemTaskListDbInitialization);
-
-
-			console.log("initializeSystemDBs::userDbInitializations: ",  userDbInitialization);
-
-			console.log(" initializeSystemDBs::End initializeUserDb");
 			dbInitializations = userDbInitialization.concat(systemTaskListDbInitialization);
 
-			console.log ("initializeSystemDBs::dbInitializations:::", dbInitializations);
 			return dbInitializations; 
 
 		},
@@ -2633,11 +2184,9 @@ var appModelController = (function () {
 
 		deleteTaskItemNotificationRecord: function (taskItemNotificationId) {
 			var taskItemNotifications = appModelController.getTaskItemNotificationsTable();			
-//			return appModelController.taskItemNotificationDb.get(taskItemNotificationId)
 			return appModelController.userDb.get(taskItemNotificationId)
 
 				.then(function(doc) {
-//					return appModelController.taskItemNotificationDb.remove(doc._id, doc._rev);
 					return appModelController.userDb.remove(doc._id, doc._rev);
 
 			}).then(function (result) {
@@ -2667,11 +2216,7 @@ var appModelController = (function () {
 			}).catch(function (err) {
 				console.log(err);
 			});
-			
-			
-//			taskLists.splice(taskLists.findIndex(function (list) {
-//				return list.taskList_id === taskListId;
-//			}), 1);
+
 		},
 
 		wereChangesMadeToTaskItem: function (obj1, obj2) {
@@ -2783,7 +2328,6 @@ var appModelController = (function () {
 		loadTaskListDataFromDb: function (userDb) {
 			var type, listId, listName, totalItemCount, overDueItemCount, completedCount, listCreateTime, userId, taskListIsArchived;
 			var taskListAttributes;  
-//			return taskListPromise = taskListDb.allDocs({include_docs: true})
 				return taskListPromise = userDb.find({selector: { type: {$eq: 'taskList'}}})
 				.then(function (results) {
 					if (results.docs.length > 0) {
@@ -2814,7 +2358,6 @@ var appModelController = (function () {
 			var id, listId, title, description, dueDate, dueTime, priority, status, isComplete, repeat, isArchived, notificationsPresent, calendar, completedDate, createTime;
 			var taskItemAttributes; 
 			
-//			return taskItemPromise = taskItemDb.allDocs({include_docs: true})
 			return taskItemPromise = userDb.find({selector: { type: {$eq: 'taskItem'}}})
 				.then(function (results) {
 					if (results.docs.length > 0) { 
@@ -2854,7 +2397,6 @@ var appModelController = (function () {
 			var type, notificationId, taskItemId, notificationType, notificationUnits, notificationUnitType, createTime;
 			
 			
-//			return taskItemNotificationPromise = taskItemNotificationDb.allDocs({include_docs: true})
 			return taskItemNotificationPromise = userDb.find({selector: { type: {$eq: 'notification'}}})
 				.then(function (results) {
 				
@@ -2865,13 +2407,6 @@ var appModelController = (function () {
 					results.docs.map(function (taskItemNotification) {
 					
 					if (taskItemNotification.notification_type != undefined) {
-//						type = taskItemNotification.doc.type;
-//						createTime = taskItemNotification.doc.notification_createTime;
-//						notificationType = taskItemNotification.doc.notification_type;
-//						notificationUnitType = taskItemNotification.doc.notification_unitType;
-//						notificationUnits = taskItemNotification.doc.notification_units;
-//						taskItemId = taskItemNotification.doc.taskItem_id;
-//						notificationId = taskItemNotification.doc._id;
 						type = taskItemNotification.type;
 						createTime = taskItemNotification.notification_createTime;
 						notificationType = taskItemNotification.notification_type;
@@ -2900,7 +2435,7 @@ var appModelController = (function () {
 		
 
 
-		loadDataFromDb: function (userDb, taskItemDb, userDb) {
+		loadDataFromDb: function (userDb) {
 			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(userDb);
 			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(userDb);
 //			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(taskItemNotificationDb); 
@@ -2990,32 +2525,6 @@ var appModelController = (function () {
 			
 			var taskItemsTable = appModelController.getTaskItemsTable();
 			
-//			var promise = new Promise( function (resolve, reject) {
-//				if (taskItemsTable.length === 0) {
-//					console.log("TaskItem table object not available..must lookup in DB");
-//					return appModelController.loadTaskItemDataFromDb(taskItemDb)
-//						.then( function ( taskItemData ){ 
-//							taskItemsTable = appModelController.getTaskItemsTable();
-//							matchingTaskItemRecord = taskItemsTable.filter(function (taskItem) {
-//								return taskItem._id == taskItemId;
-//							});
-//							return (matchingTaskItemRecord[0]);
-//						})
-//						.catch (function (err) {
-//							reject(err);
-//						})
-//				
-//				} else {
-//					var matchingTaskItemRecord = taskItemsTable.filter(function (taskItem) {
-//						return taskItem._id === taskItemId;
-//					})
-//					
-//					return Promise.resolve (matchingTaskItemRecord[0])
-//				}
-//				
-//			return promise;
-//			})
-
 			var matchingTaskItemRecord = taskItemsTable.filter(function (taskItem) {
 				return taskItem._id == taskItemId;
 			})
@@ -3083,9 +2592,7 @@ var appModelController = (function () {
 				"taskItem_repeat": taskItemInput.newTaskRepeateOptionTxt,
 				"taskItem_isArchived": "",
 				"taskItem_notifications": notificationsPresent,
-				
-				// *&*
-				"taskItem_notificationCount": taskItemInput.newTaskNotifications.length,
+		  	"taskItem_notificationCount": taskItemInput.newTaskNotifications.length,
 				"taskItem_calendar": "",
 				"taskItem_completedDate": "",
 				"taskItem_createTime": createTime.toString()
@@ -3104,8 +2611,6 @@ var appModelController = (function () {
 					taskCompletedDate,
 					createTime,
 					notificationsPresent,
-					
-					// *&*
 					taskItemInput.newTaskNotifications.length
 				)
 				
@@ -3578,10 +3083,6 @@ var appUIController = (function () {
 		appUIController.getUIVars().repeatErrorMsgDiv.innerHTML = '<i class="fa fa-times-circle"></i>' + " Must enter Due Date to make repeatable";
 		appUIController.getUIVars().repeatErrorMsgDiv.classList.add("errorMsg");
 		appUIController.getUIVars().formDatetimeInputBox.classList.add("formErrors");
-		//		inputNewTaskRepeat.disabled = true;
-		// Changing disabled value causes field to be changed and .filled class to be added...so I have to remove it. 
-		//		inputNewTaskRepeat.classList.remove("filled");
-
 	}
 
 
@@ -3664,26 +3165,11 @@ var appUIController = (function () {
 					console.log("Didn't click on input field")
 			}
 
-			//			event.target.classList
-			//			event.target.nodeName
-			//			event.target.value
-			//			event.target.classList.contains("notificationType")
-			//			event.target.classList.contains("notificationUnits")
-			//			event.target.classList.contains("notificationUnits")
-			//			event.target.classList.contains("notificationUnitType")
-
-
-
-
 		},
 
 		// **** COMMENTED OUT BECAUSE I REMOVED REPEAT OPTION
 		// ***** NOTE: ALSO CHANGED fieldsToValidate index from 4 to 3 given i removed 
 		clearFormRepeatAndNotificationErrors: function (validationObj) {
-
-			// Clear error styling from Repeat field
-			//			validationObj[0].fieldsToValidate[2].fieldName.classList.remove("formErrors");
-			//			validationObj[0].fieldsToValidate[2].fieldErrorMsgLocation.innerHTML = "";
 
 			// Clear error styling from Notfication area 
 			validationObj[0].fieldsToValidate[3].fieldName.classList.remove("formErrors");
@@ -3865,10 +3351,6 @@ var appUIController = (function () {
 			newNode = document.createRange().createContextualFragment(newNotificationHTML);
 
 			insertNodeLocation.append(newNode);
-
-			//			var deleteNotification = document.querySelector(".deleteNotificationIcon");
-			//			
-			//			deleteNotification.addEventListener("click", function(event) {appUIController.deleteNotification(event)});
 
 		},
 
@@ -4143,17 +3625,7 @@ var appUIController = (function () {
 						// Input box border red
 						toggleClass(field.fieldName, "formErrors");
 
-						// Error message text red
-						//					toggleClass(field.fieldErrorMsgLocation, "errorMsg");
-
-					}
-					//					field.fieldName.focus();
-					//					if (field.fieldName.tagName === "TEXT") { 
-					//						// Keep focus on error field
-					//						field.fieldName.focus();
-					//						field.fieldName.setSelectionRange(0,0);
-					//					}
-
+		
 					firstFieldInError = false;
 
 				} else { // No error was
@@ -4170,6 +3642,7 @@ var appUIController = (function () {
 
 				}
 				firstField = false;
+				}
 
 			});
 
@@ -4532,16 +4005,6 @@ var appUIController = (function () {
 
 			var formValidationObject = appModelController.getFormValidationObject("editTaskPage");
 			appUIController.resetTaskForm1(formValidationObject[0]);
-			
-//			var taskItemTable = appModelController.getTaskItemsTable()
-//			if (taskItemTable.length === 0 ) {
-//				appModelController.loadTaskItemDataFromDb(taskItemDb)
-//					.then (function (taskItemData ) {
-//					
-//				}) 
-//				
-//			}
-			
 
 			// Use the taskItem_id (event.dataset.id) to retrieve the taskItem record. Note: taskItem_id was stored in a custom attribute (data-id) of span when the taskItem card was created
 
@@ -4771,70 +4234,7 @@ var appUIController = (function () {
 
 		},
 
-		//		clearDueDateBtnClicked: function (event) {
-		//			
-		//			// If the repeat value not set to "none" (value="1") then set  
-		//			if (inputNewTaskRepeat.value !== "1" && !inputNewTaskRepeat.classList.contains("formErrors")) {
-		//				// Set Error msg & formatting on Repeat field
-		//				appUIController.clearOrSetRepeatFieldErrors(event);
-		//			} 
-		//		}, 
-
-		//%%%%%%%% NOT USED NOW --- DELETE this function
-		//		hideRepeatOption: function (event) {
-		//			console.log("-------> Hide Repeat Option"); 
-		//			var repeatOptionFormGroup = utilMethods.findAncestor(event.currentTarget, 'form-group');
-		//			if (!repeatOptionFormGroup.nextElementSibling.classList.contains("hideIt")) {
-		//				repeatOptionFormGroup.nextElementSibling.classList.add("hideIt");
-		//			}
-		//		},
-
-		//%%%%%%%
-		//		showHideDueDateField: function (event) {
-		//			console.log("-----> showHideDueDateField");
-		//			var repeatOptionFormGroup = utilMethods.findAncestor(event.currentTarget, 'form-group');
-		//			
-		//			/* If cursor in Due date field or user clicked on Calendar button then get the parent formgroup for the Due dat so that we can then get 
-		//			*/
-		//			if ((event.type === "mouseout") && (appUIController.getUIVars().inputNewTaskDateTime.value === "") ) {
-		//				console.log("====>MouseOut event", event.currentTarget);
-		//				if (!repeatOptionFormGroup.nextElementSibling.classList.contains("hideIt")) {
-		////					setTimeout(function () {
-		//					repeatOptionFormGroup.nextElementSibling.classList.add("hideIt");
-		////					}, 3000);
-		//				}
-		//			} 
-		//			
-		//			// Cursor focus on DueDate input field or clicked on Add Due Date button
-		//			else if ((event.currentTarget === appUIController.getUIVars().inputNewTaskDateTime) || (event.currentTarget === appUIController.getUIVars().addDueDateBtn) ) {
-		//				console.log("====> Input field or AddDueDateBtn");
-		//				var currTarget = event.currentTarget;
-		//				appUIController.reEnableRepeatInputAndRemoveErrors();
-		//				repeatOptionFormGroup = utilMethods.findAncestor(currTarget, 'form-group')
-		//				repeatOptionFormGroup.nextElementSibling.classList.remove("hideIt");
-		//				
-		////					setTimeout(function () {
-		////						if (inputNewTaskDateTime.value !== "") {
-		////							inputNewTaskRepeat.disabled = false;
-		////						}
-		////					}, 5000);
-		//			} 
-		//			
-		//			// User clicks on Clear Due Date Button
-		//			else if ((event.currentTarget === appUIController.getUIVars().clearDueDateBtn) && (!repeatOptionFormGroup.nextElementSibling.classList.contains("hideIt"))) {
-		//				console.log("====> ClearDueDateBtn");
-		//				// Hide repleat option if the user removes the date
-		//				repeatOptionFormGroup.nextElementSibling.classList.add("hideIt");
-		//				
-		//				/* Reset Repeat option to 'None' (value = "1") to prevent form from inadvertenally being set with wrong Repeat option
-		//				*/
-		//				appUIController.getUIVars().inputNewTaskRepeat.value = "1";
-		//				
-		//				
-		//			} else {
-		//				console.log(event, event.currentTarget)
-		//			}
-		//		}, 
+	
 
 		/* If no due date present then disable the Repeat opton field 
 			and set error messages to advise user that Due date is required
@@ -4857,9 +4257,6 @@ var appUIController = (function () {
 					console.log("Event didn't match");
 			}
 
-			//			if (inputNewTaskDateTime.value === "") {
-			//				disableRepeatInputAndSetErrors(); 
-			//			}
 
 		},
 
@@ -5193,10 +4590,6 @@ var appUIController = (function () {
 			homePage.classList.add('hideIt');
 			addNewTaskPage.classList.remove('hideIt');
 			
-//			toggleClass(homePage, "hideIt");
-//			toggleClass(addNewTaskPage, "hideIt");
-
-
 
 			// Now reset (clear) input fields to original values
 			formSaveNewTask.reset();
@@ -5377,13 +4770,6 @@ var appUIController = (function () {
 
 			appUIController.getUIVars().inputNewTaskListSelection.value = "Default";
 
-//          ***** NOTE *****: Removed focus to prevent Mobile keyboard from showing immediately			
-//			appUIController.getUIVars().inputNewTaskTitle.focus();
-//			appUIController.getUIVars().inputNewTaskTitle.setSelectionRange(0, 0)
-
-			// Remove any notification nodes that may be present
-
-
 
 		},
 
@@ -5494,37 +4880,12 @@ var appUIController = (function () {
 				// Now make the node we just inserted the nextNode so that other nodes will be inserted after it
 				nextNode = nextNode.nextElementSibling;
 
-				// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-				/* If this userDefined task list element is the new list the user just added we'll need to make it the active list element
-				 */
-
-				//				if (userDefinedTaskList[i].taskList_name === newListName) {
-				//					
-				//					/* The active list node (currActiveListNode) will  be null if the prior activelistNode had been a userdefinedTaskList. Why? because in the calling function the userDefinedList DOM nodes were removed (via removeUserDefinedTaskLists() function) so that we could re-create the userDefined DOM nodes here inclusive of the new list that user just added. However, if the
-				//					the previous Active List was a system defined task list then it will still be present
-				//					and we need to make it no longer the active list by toggling off the 'selected' class
-				//					so that we don't end up with two active lists
-				//					*/
-				//					
-				//					if (currActiveListNode) {  // not null 
-				//						toggleClass(currActiveListNode, 'selected');
-				//					}
-				//					// Make the new list the active list by adding class 'selected' 
-				//					toggleClass(nextNode, 'selected');
-				//			
-				//				}
-				// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 				/* There will not be an active list node found in userDefinedTaskList if the prior active list was a User Defined TaskList element. Why? because in the calling function the userDefinedList DOM nodes had to be removed (via removeUserDefinedTaskLists() function) so that we could re-create the userDefined DOM nodes here inclusive of the new list that user just added. However, if the the previous Active List was a System Defined task list then it will still be present so we don't want to toggle off the selected class and and end up with no active list...so hence the check to see if the previously active node was a User Defined List item (and if it was we need to make it active by toggling on 'selected' class) 
 				 */
 
-				//				if (userDefinedTaskList[i].taskList_name === currActiveListName && 
-				//					!appModelController.getPreDefinedTaskListNames().contains(userDefinedTaskList[i].taskListName) ) {
-				//						toggleClass(nextNode, 'selected');
-				//					}
 
-				// +++++ New Logic
 				if (userDefinedTaskList[i].taskList_id === currActiveListId &&
 					!preDefinedTaskListIds.contains(userDefinedTaskList[i].taskList_id)) {
 					toggleClass(nextNode, 'selected');
@@ -5631,35 +4992,6 @@ var appUIController = (function () {
 		},
 
 
-		/********************************************************************************
-			METHOD:  addListInfoToMenu()
-			
-			Summary: 
-			 - Builds the User Defined Task List HTML based on info in TaskListTable and inserts into the Nav's Task List Dropdown 
-			 Note: The Pre Defined Task List nodes are hardcoded in the HTML so no need to build their HTML and insert nodes;
-			 Note: Each list's TotalList and OverDue counts from the TaskListTable are updated in another method and simply inserted in this method  
-			
-			ARGUMENTS:
-			- userDefinedTaskList - array containing just the User Defined Task Lists (subset of TaskListTable) 
-			- nextNode: is specific DOM location within userDefinedTaskList where these user defined taskList need to be inserted. Note: Specifically userDefined list names need to be inserted starting after the system defined List name: Default. 
-			(i.e., "All List, "Default", <- userDefinedTaskListInfo, "Completed ->)
-			
-		********************************************************************************/
-
-		//		addListInfoToMenu: function (taskListTable, userDefinedTaskList) {
-		//			
-		//			
-		//			appModelController.sortListByName(userDefinedTaskList); 
-		//
-		//			// Build the HTML/DOM nodes for UserDefined Task List and insert in DOM for display on subMenuTaskList
-		//			appUIController.buildAndDisplayUserDefinedTaskList(userDefinedTaskList);
-		//
-		//			// Update task list totals and add them to DOM for display on subMenuTaskList 
-		//			appUIController.updateAndDisplayPreDefinedTaskListTotals(taskListTable);
-		//
-		//		
-		//		}, // END addListInfoToMenu
-
 
 		/********************************************************************************
 			METHOD:  buildAndDisplayTaskItemsToDisplay()
@@ -5695,7 +5027,7 @@ var appUIController = (function () {
 			//			var mainPage = document.getElementById("mainPage"); 
 			var repeatSymbol = '<i class="fa fa-repeat taskDetails" aria-hidden="true"></i>';
 
-			//			var genericTaskItemHtml = '<div class="card" data-id="%taskItemId%"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div class="taskTitleDiv"><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label></a></div><div class="col taskActionRowCompletCheckbox"><label><input onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%" class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span class="taskActionCompleteLabel">Complete</span></label></div><div class="col"><a onclick="appUIController.setUpDeleteTaskItemModal(this)" class="floatRight" data-toggle="modal" data-target="#deleteTaskItemModal" data-id="%taskItemId%"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
+
 			var genericTaskItemHtml = '<div class="card" data-id="%taskItemId%"><div class="card-block"><div class="completedDateHeader %hideIt%" ><span class="completedDateStyling">%completedDate%</span><hr></div><div class="taskTitleDiv"><a data-toggle="modal" data-target="#markCompleteConfirmModal"></a><span onclick="appUIController.displayEditTaskPage(this)" class="card-subtitle mb-2" data-id="%taskItemId%" for="">%taskTitle%</span></div><div class="%notificationsPresent% notificationIcon"><i class="notificationIconPosition floatLeft fa fa-bell-o"></i></div><h6 class="card-text taskDue">%date%</h6><h6 class="card-text">%repeatSymbol%%repeatOption%</h6><div><h6 class="taskListName floatLeft">%listName%</h6></div></div><div class="row showHideActionRow"><div class="col"><hr></div><div class="col-auto"><span class="actionTaskLabel" onclick="appUIController.showHideTaskActions(this)"><i class="fa fa-plus expandTaskActions" aria-hidden="true"></i>TASK ACTIONS</span></div><div class="col"><hr></div></div><div class="row taskActionRow"><div class="col-3"><a class="editTaskAction" onclick="appUIController.displayEditTaskPage(this)" data-id="%taskItemId%"><label><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i>Edit</label></a></div><div class="col-5 taskActionRowCompletCheckbox"><label><input onclick="appUIController.markTaskAsCompleted(this)" data-id="%taskItemId%" class="checkbox" type="checkbox" name="taskCompleteStatus" value="taskCompleteStatus" %checkedValue%><span class="taskActionCompleteLabel">Complete</span></label></div><div class="col-4"><a onclick="appUIController.setUpDeleteTaskItemModal(this)" class="floatRight deleteAction" data-toggle="modal" data-target="#deleteTaskItemModal" data-id="%taskItemId%"><label class=""><i class="fa fa-trash-o deleteTaskIcon" aria-hidden="true"></i>Delete</label></a></div></div></div>';
 
 			for (var i = 0; i < taskItemList.length; i++) {
@@ -7211,11 +6543,11 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						// Create/get pointers to Databases 
 						appModelController.userDb = new PouchDB('userDb');
 
-						appModelController.taskListDb = new PouchDB('taskListDb');
-
-						appModelController.taskItemDb = new PouchDB('taskItemDb');
-
-						appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
+//						appModelController.taskListDb = new PouchDB('taskListDb');
+//
+//						appModelController.taskItemDb = new PouchDB('taskItemDb');
+//
+//						appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
 						
 //						appModelController.sync();
 //						var remoteCouchUserDb = 'http://jmartin:jammer@127.0.0.1:5984/userDb';
@@ -7232,7 +6564,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						console.log("initializeDBs::$$$initializeSystemDbPromises: ", initializeSystemDbPromises);
 
-						var createIndexPromises = appModelController.createDbIndexes(appModelController.userDb, appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
+						var createIndexPromises = appModelController.createDbIndexes(appModelController.userDb)
 
 
 						console.log("initializeDBs::$$$createIndexPromises: ", createIndexPromises);
@@ -7240,7 +6572,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Adds user seed data 
 						if (addUserSeedData) {						
-							userSeedPromises = appModelController.addUserSeedDataToDbs( appModelController.userDb, appModelController.taskItemDb);
+							userSeedPromises = appModelController.addUserSeedDataToDbs( appModelController.userDb);
 						}
 
 
@@ -7253,10 +6585,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 								console.log("!!!!!!! initializeDBs::allDBInitializePromises from then()", results);
 
 
-								// Load Data from DB and Display UI 
-	//							appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb);
-
-						appModelController.loadDataFromDb(appModelController.userDb, appModelController.taskItemDb, appModelController.userDb)
+							appModelController.loadDataFromDb(appModelController.userDb)
 							.then( function ( results ){
 
 								// Need to run this to ensure all JS objects are loaded with data 
@@ -7289,18 +6618,18 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					appModelController.userDb = new PouchDB('userDb');
 					
 
-					appModelController.taskListDb = new PouchDB('taskListDb');
-					
-
-					appModelController.taskItemDb = new PouchDB('taskItemDb');
-
-					appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
+//					appModelController.taskListDb = new PouchDB('taskListDb');
+//					
+//
+//					appModelController.taskItemDb = new PouchDB('taskItemDb');
+//
+//					appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
 
 //					appModelController.sync();
 					
 //					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
 											
-					appModelController.loadDataFromDb(appModelController.userDb, appModelController.taskItemDb, appModelController.userDb)
+					appModelController.loadDataFromDb(appModelController.userDb)
 						.then( function ( results ){
 						
 						// Need to run this to ensure all JS objects are loaded with data 
