@@ -1253,7 +1253,8 @@ var appModelController = (function () {
 		this.taskList_isArchived = taskListIsArchived;
 	}
 	
-	var TaskItem = function (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount) {
+	var TaskItem = function (type, id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount) {
+		this.type = type;
 		this._id = id;
 		this.taskList_id = listId;
 		this.taskItem_title = title;
@@ -2486,7 +2487,7 @@ var appModelController = (function () {
 			});
 
 			var seedTaskItemPromises = taskItemsTableDb.map(function (taskItem, index) {
-				return taskItemDb.put(taskItem).then( function (result ) {
+				return userDb.put(taskItem).then( function (result ) {
 					console.log("addUserSeedDataToDbs::inside promise:TaskItems: ", result);
 					return result;
 				})
@@ -2612,8 +2613,8 @@ var appModelController = (function () {
 		deleteTaskItem: function (taskItemId) {
 			var taskItems = appModelController.getTaskItemsTable();
 			
-			return appModelController.taskItemDb.get(taskItemId).then(function(doc) {
-				return appModelController.taskItemDb.remove(doc._id, doc._rev);
+			return appModelController.userDb.get(taskItemId).then(function(doc) {
+				return appModelController.userDb.remove(doc._id, doc._rev);
 			}).then(function (result) {
 				// handle result
 				console.log("Delete TaskItem Result: ", result);
@@ -2813,33 +2814,37 @@ var appModelController = (function () {
 			var id, listId, title, description, dueDate, dueTime, priority, status, isComplete, repeat, isArchived, notificationsPresent, calendar, completedDate, createTime;
 			var taskItemAttributes; 
 			
-			return taskItemPromise = taskItemDb.allDocs({include_docs: true})
+//			return taskItemPromise = taskItemDb.allDocs({include_docs: true})
+			return taskItemPromise = userDb.find({selector: { type: {$eq: 'taskItem'}}})
 				.then(function (results) {
-				var taskItemsTable = appModelController.getTaskItemsTable();
-				results.rows.map(function (taskItem, index ) {
-					if (taskItem.doc.taskItem_title != undefined) {
-						id = taskItem.doc._id
-						listId = taskItem.doc.taskList_id
-						title = taskItem.doc.taskItem_title 
-						description = taskItem.doc.taskItem_description
-						dueDate = taskItem.doc.taskItem_due_date
-						dueTime = taskItem.doc.taskItem_due_time
-						priority = taskItem.doc.taskItem_priority
-						status = taskItem.doc.taskItem_status
-						isComplete = taskItem.doc.taskItem_isCompleted
-						repeat = taskItem.doc.taskItem_repeat
-						isArchived = taskItem.doc.taskItem_isArchived
-						notificationsPresent = taskItem.doc.taskItem_notifications
-						notificationCount = taskItem.doc.taskItem_notificationCount
-						calendar = taskItem.doc.taskItem_calendar
-						completedDate = taskItem.doc.taskItem_completedDate
-						createTime = getTimeStamp();
-						
-						taskItemAttributes = new TaskItem (id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount);
-						
-						taskItemsTable.push(taskItemAttributes);
+					if (results.docs.length > 0) { 
+						var taskItemsTable = appModelController.getTaskItemsTable();
+						results.docs.map(function (taskItem) {
+							if (taskItem.taskItem_title != undefined) {
+								type = taskItem.type;
+								id = taskItem._id;
+								listId = taskItem.taskList_id;
+								title = taskItem.taskItem_title; 
+								description = taskItem.taskItem_description;
+								dueDate = taskItem.taskItem_due_date;
+								dueTime = taskItem.taskItem_due_time;
+								priority = taskItem.taskItem_priority;
+								status = taskItem.taskItem_status;
+								isComplete = taskItem.taskItem_isCompleted;
+								repeat = taskItem.taskItem_repeat;
+								isArchived = taskItem.taskItem_isArchived;
+								notificationsPresent = taskItem.taskItem_notifications;
+								notificationCount = taskItem.taskItem_notificationCount;
+								calendar = taskItem.taskItem_calendar;
+								completedDate = taskItem.taskItem_completedDate;
+								createTime = getTimeStamp();
+
+								taskItemAttributes = new TaskItem (type, id, listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount);
+
+								taskItemsTable.push(taskItemAttributes);
+							}
+						})
 					}
-				})
 				return results;
 			});
 		}, 
@@ -2897,7 +2902,7 @@ var appModelController = (function () {
 
 		loadDataFromDb: function (userDb, taskItemDb, userDb) {
 			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(userDb);
-			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(taskItemDb);
+			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(userDb);
 //			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(taskItemNotificationDb); 
 			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(userDb); 
 
@@ -3056,6 +3061,7 @@ var appModelController = (function () {
 			var createTime = getTimeStamp();
 
 			var taskCompletedDate = "";
+			var type = "taskItem";
 			
 			// 
 			if (taskItemInput.newTaskNotifications.length > 0) {
@@ -3063,7 +3069,8 @@ var appModelController = (function () {
 			}
 
 			
-			return appModelController.taskItemDb.put({
+			return appModelController.userDb.put({
+				"type": type,
 				"_id": taskItemId,
 				"taskList_id":taskListId,
 				"taskItem_title":taskItemInput.newTaskTitle,
@@ -3088,6 +3095,7 @@ var appModelController = (function () {
 				
 				console.log("TaskItemPut response: ", response)
 				newTaskItem = new TaskItem(
+					type,
 					taskItemId,
 					taskListId,
 					taskItemInput.newTaskTitle,
@@ -4314,9 +4322,9 @@ var appUIController = (function () {
 				// Update DB values for the completed Date and total count for the current list
 				
 				
-				appModelController.taskItemDb.get( taskItemId ).then ( function ( doc ) {				
+				appModelController.userDb.get( taskItemId ).then ( function ( doc ) {				
 					doc.taskItem_completedDate = completeDate;
-					return appModelController.taskItemDb.put(doc);
+					return appModelController.userDb.put(doc);
 					
 				}).then ( function ( response ) {
 					console.log ("Result of taskItemDb update: ", response);
@@ -4401,11 +4409,11 @@ var appUIController = (function () {
 				
 				console.log("Reactivate TaskItem: TaskListId prior to update taskItemDb): ", taskListId);
 				
-				appModelController.taskItemDb.get( taskItemId ).then ( function ( doc ) {				
+				appModelController.userDb.get( taskItemId ).then ( function ( doc ) {				
 					doc.taskItem_completedDate = "";
 					console.log("Reactivate TaskItem: TaskListId just before update taskItemDb): ", taskListId1);
 
-					return appModelController.taskItemDb.put(doc);
+					return appModelController.userDb.put(doc);
 					
 				}).then ( function ( response ) {
 					console.log ("Result of taskItemDb update: ", response);
@@ -4655,8 +4663,8 @@ var appUIController = (function () {
 				
 				matchedTaskListRecord.taskList_name = appUIController.getUIVars().inputEditListName.value;
 				
-				appModelController.taskListDb.get(taskListId).then(function(doc) {
-					return appModelController.taskListDb.put({
+				appModelController.userDb.get(taskListId).then(function(doc) {
+					return appModelController.userDb.put({
 						_id: taskListId,
 						_rev: doc._rev,
 						taskList_name: matchedTaskListRecord.taskList_name
@@ -6616,9 +6624,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				// Save the updated taskItem record to the DB (or local storage)
 				
-				appModelController.taskItemDb.get(appUIController.getUIVars().inputEditFormTaskItemId.value)
+				appModelController.userDb.get(appUIController.getUIVars().inputEditFormTaskItemId.value)
 				.then(function(doc) {
-					return appModelController.taskItemDb.put({
+					return appModelController.userDb.put({
+						type: "taskItem", 
 						_id: taskItemId,
 						_rev: doc._rev,
 						taskItem_title: taskItemRecord.taskItem_title,
