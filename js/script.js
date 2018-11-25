@@ -1232,7 +1232,7 @@ var appModelController = (function () {
 	
 /************************ 	END TASKIT SEED DATA	***************************/
 	
-//	var remoteCouchUserDb = 'http://jmartin:jammer@127.0.0.1:5984/users';
+	var remoteCouchUserDb = 'http://admin:jammer@127.0.0.1:5984/user_db';
 
 
 
@@ -2024,13 +2024,16 @@ var appModelController = (function () {
 			console.log('Error synching local and remote databases '); 
 		},
 		
-//		sync: function () {
-//			var opts = {live: true};
-//			userDb.replicate.to(remoteCouchUserDb, opts, appModelController.syncError);
+		sync: function () {
+			var opts = {live: true};
+			// Performs bi-directional synching betwee local data base and remote couch db
+//			userDb.sync(appModelController.remoteCouchUserDb, opts, appModelController.syncError);
+			
+			// Below is old way to set up two way synching..now you can do same in one statement
+			userDb.replicate.to(remoteCouchUserDb, opts, appModelController.syncError);
+			userDb.replicate.from(remoteCouchUserDb, opts, appModelController.syncError);
 
-//			userDb.replicate.from(remoteCouchUserDb, opts, appModelController.syncError);
-
-//  },
+		},
 
 		addUserSeedDataToDbs: function (userDb) {	
 			var seedDataPromises = []
@@ -6470,8 +6473,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		}, 
 
 		init: function (hash) {
-			
-//			appModelController.sync();
+//				var remoteCouchUserDb = 'http://admin:jammer@127.0.0.1:5984/user_db';
 			
 			function connectToServer() {
 				var xhr = new XMLHttpRequest();
@@ -6518,10 +6520,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Create/get pointers to Databases 
 						appModelController.userDb = new PouchDB('userDb');
-
-						
-//						appModelController.sync();
-//						var remoteCouchUserDb = 'http://jmartin:jammer@127.0.0.1:5984/userDb';
+						appModelController.sync();
 
 
 						console.log('initializeDBs::created new databases');
@@ -6583,7 +6582,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 					// Create/get pointers to Databases 
 					appModelController.userDb = new PouchDB('userDb');
-					
+					appModelController.sync();
+
 
 										
 					appModelController.loadDataFromDb(appModelController.userDb)
@@ -6651,7 +6651,7 @@ window.onload = function(event) {
 	var itemId, pathname, colonLocation;
 	var hash = "";
 	
-//	appModelController.sync();
+	appModelController.sync();
 
  	pathname = location.pathname
 	hash = location.hash
