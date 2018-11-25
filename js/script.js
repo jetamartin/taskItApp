@@ -901,9 +901,7 @@ var utilMethods = ( function () {
 
 var appModelController = (function () {
 	var userDb = new PouchDB('userDb');
-	var taskListDb = new PouchDB('taskListDb');
-	var taskItemDb = new PouchDB('taskItemDb');
-	var taskItemNotificationDb = new PouchDB('taskItemNotificationDb');
+
 //	var userDefinedTaskListInfo1 = [];
 //	var userTable1 = [];
 //	var taskListTable1 = [];
@@ -1235,9 +1233,7 @@ var appModelController = (function () {
 /************************ 	END TASKIT SEED DATA	***************************/
 	
 //	var remoteCouchUserDb = 'http://jmartin:jammer@127.0.0.1:5984/users';
-//	var remoteCouchTaskListDb = 'http://jmartin:jammer@127.0.0.1:5984/task_lists';
-//	var remoteCouchTaskItemDb = 'http://jmartin:jammer@127.0.0.1:5984/task_items';
-//	var remoteCouchTaskItemNotificationDb = 'http://jmartin:jammer@127.0.0.1:5984/task_item_notifications';
+
 
 
 	
@@ -1266,16 +1262,6 @@ var appModelController = (function () {
 		this.taskItem_notificationCount = notificationCount;
 	}
 	
-//	var TaskItemDbRecord = function (listId, title, dueDate, repeat, completedDate, createTime, notificationsPresent, notificationCount) {
-//		this.taskList_id = listId;
-//		this.taskItem_title = title;
-//		this.taskItem_due_date = dueDate;
-//		this.taskItem_repeat = repeat;
-//		this.taskItem_completedDate = completedDate;
-//		this.taskItem_createTime = createTime;
-//		this.taskItem_notifications = notificationsPresent;
-//		this.taskItem_notificationCount = notificationCount;
-//	}
 
 	var TaskItemNotification = function (type, id, taskItemId, notificationType, notificationUnits, notificationUnitType, notificationCreateTime) {
 		this.type = type;
@@ -2041,15 +2027,9 @@ var appModelController = (function () {
 //		sync: function () {
 //			var opts = {live: true};
 //			userDb.replicate.to(remoteCouchUserDb, opts, appModelController.syncError);
-//			taskListDb.replicate.to(remoteCouchTaskListDb, opts, appModelController.syncError);
-//			taskItemDb.replicate.to(remoteCouchTaskItemDb, opts, appModelController.syncError);
-//			taskItemNotificationDb.replicate.to(remoteCouchTaskItemNotificationDb, opts, appModelController.syncError);
-//
+
 //			userDb.replicate.from(remoteCouchUserDb, opts, appModelController.syncError);
-//			taskListDb.replicate.from(remoteCouchTaskListDb, opts, appModelController.syncError);
-//			taskItemDb.replicate.from(remoteCouchTaskItemDb, opts, appModelController.syncError);
-//			taskItemNotificationDb.replicate.from(remoteCouchTaskItemNotificationDb, opts, appModelController.syncError);
-//
+
 //  },
 
 		addUserSeedDataToDbs: function (userDb) {	
@@ -2317,11 +2297,6 @@ var appModelController = (function () {
 		},
 
 		getTaskListTable: function () {
-//			var taskList = appModelController.taskListDb.allDocs({include_docs: true})
-//				.then(function (result) {
-//					console.log(result);
-//					return result;
-//				})
 			return taskListTable;
 		},
 		
@@ -2354,7 +2329,7 @@ var appModelController = (function () {
 			});
 		},
 		
-		loadTaskItemDataFromDb: function (taskItemDb) {
+		loadTaskItemDataFromDb: function (userDb) {
 			var id, listId, title, description, dueDate, dueTime, priority, status, isComplete, repeat, isArchived, notificationsPresent, calendar, completedDate, createTime;
 			var taskItemAttributes; 
 			
@@ -3804,7 +3779,7 @@ var appUIController = (function () {
 					return appModelController.userDb.put(doc);
 					
 				}).then ( function ( response ) {
-					console.log ("Result of taskItemDb update: ", response);
+					console.log ("Result of userDb update: ", response);
 
 					taskItemRecord.taskItem_completedDate = completeDate;
 					
@@ -3813,7 +3788,7 @@ var appUIController = (function () {
 						return appModelController.userDb.put( doc )
 						
 				}).then ( function ( doc ) {
-					console.log ("Result of taskListDb update: ", doc);
+					console.log ("Result of userDb update: ", doc);
 				})
 
 				
@@ -3883,26 +3858,23 @@ var appUIController = (function () {
 				
 				completedDateLoc.innerHTML = "";
 				taskListRecord.taskList_completedCount--;
-				
-				console.log("Reactivate TaskItem: TaskListId prior to update taskItemDb): ", taskListId);
+		
 				
 				appModelController.userDb.get( taskItemId ).then ( function ( doc ) {				
 					doc.taskItem_completedDate = "";
-					console.log("Reactivate TaskItem: TaskListId just before update taskItemDb): ", taskListId1);
-
+	
 					return appModelController.userDb.put(doc);
 					
 				}).then ( function ( response ) {
-					console.log ("Result of taskItemDb update: ", response);
-					console.log("Reactivate TaskItem: TaskListId just before update taskItemDb): ", taskListId1);
-					
+					console.log ("Result of userDb update: ", response);
+						
 					appModelController.userDb.get( taskListId1 ).then ( function ( doc ) {
 						doc.taskList_completedCount = taskListRecord.taskList_completedCount;
 						return appModelController.userDb.put( doc )
 						
 				}).then ( function ( doc ) {
 					console.log(doc.taskList_completedCount);
-					console.log ("Result of taskListDb update: ", doc);
+					console.log ("Result of userDb update: ", doc);
 				})
 
 				
@@ -6459,7 +6431,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		// Initialize data objects and set up all event listeners
 
 
-		loadAndDisplayDataOnStartup: function (taskListDb, taskItemDb, taskItemNotificationDb) {
+		loadAndDisplayDataOnStartup: function (userDb) {
 			
 
 				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
@@ -6477,7 +6449,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Build the HTML/DOM nodes for UserDefined Task List and insert in DOM for display on subMenuTaskList
 				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
 
-				var taskListTable = appModelController.getTaskListTable(taskListDb);
+				var taskListTable = appModelController.getTaskListTable();
 
 				// Update task list totals  for PreDefinedTaskListTotals and add them to DOM for display on subMenuTaskList 
 				appUIController.updateAndDisplayPreDefinedTaskListTotals(taskListTable);
@@ -6547,19 +6519,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						// Create/get pointers to Databases 
 						appModelController.userDb = new PouchDB('userDb');
 
-//						appModelController.taskListDb = new PouchDB('taskListDb');
-//
-//						appModelController.taskItemDb = new PouchDB('taskItemDb');
-//
-//						appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
 						
 //						appModelController.sync();
 //						var remoteCouchUserDb = 'http://jmartin:jammer@127.0.0.1:5984/userDb';
-//						var remoteCouchTaskListDb = 'http://jmartin:jammer@127.0.0.1:5984/taskListDb';
-//						var remoteCouchTaskItemDb = 'http://jmartin:jammer@127.0.0.1:5984/taskItemDb';
-//						var remoteCouchTaskItemNotificationDb = 'http://jmartin:jammer@127.0.0.1:5984/taskItemNotificationDb';
 
-						
 
 						console.log('initializeDBs::created new databases');
 
@@ -6593,7 +6556,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 							.then( function ( results ){
 
 								// Need to run this to ensure all JS objects are loaded with data 
-								appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.userDb);
+								appController.loadAndDisplayDataOnStartup(appModelController.userDb);
 
 								switch(hash) {
 									case '#editTask':
@@ -6622,22 +6585,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					appModelController.userDb = new PouchDB('userDb');
 					
 
-//					appModelController.taskListDb = new PouchDB('taskListDb');
-//					
-//
-//					appModelController.taskItemDb = new PouchDB('taskItemDb');
-//
-//					appModelController.taskItemNotificationDb = new PouchDB ('taskItemNotificationDb')
-
-//					appModelController.sync();
-					
-//					appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.taskItemNotificationDb)
-											
+										
 					appModelController.loadDataFromDb(appModelController.userDb)
 						.then( function ( results ){
 						
 						// Need to run this to ensure all JS objects are loaded with data 
-						appController.loadAndDisplayDataOnStartup(appModelController.taskListDb, appModelController.taskItemDb, appModelController.userDb)
+						appController.loadAndDisplayDataOnStartup(appModelController.userDb)
 
 						switch(hash) {
 							case '#editTask':
