@@ -3625,7 +3625,12 @@ var appUIController = (function () {
 						// Input box border red
 						toggleClass(field.fieldName, "formErrors");
 
-		
+						// Error message text red
+						//					toggleClass(field.fieldErrorMsgLocation, "errorMsg");
+
+					}
+
+
 					firstFieldInError = false;
 
 				} else { // No error was
@@ -3642,7 +3647,6 @@ var appUIController = (function () {
 
 				}
 				firstField = false;
-				}
 
 			});
 
