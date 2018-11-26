@@ -2024,7 +2024,7 @@ var appModelController = (function () {
 			console.log('Error synching local and remote databases '); 
 		},
 		
-		sync: function () {
+		twoWaySynchPouchDBToCouchDB: function () {
 			var opts = {live: true};
 			// Performs bi-directional synching betwee local data base and remote couch db
 //			userDb.sync(appModelController.remoteCouchUserDb, opts, appModelController.syncError);
@@ -6520,7 +6520,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Create/get pointers to Databases 
 						appModelController.userDb = new PouchDB('userDb');
-						appModelController.sync();
+						appModelController.twoWaySynchPouchDBToCouchDB();
 
 
 						console.log('initializeDBs::created new databases');
@@ -6582,7 +6582,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 					// Create/get pointers to Databases 
 					appModelController.userDb = new PouchDB('userDb');
-					appModelController.sync();
+					appModelController.twoWaySynchPouchDBToCouchDB();
 
 
 										
@@ -6651,7 +6651,7 @@ window.onload = function(event) {
 	var itemId, pathname, colonLocation;
 	var hash = "";
 	
-	appModelController.sync();
+	appModelController.twoWaySynchPouchDBToCouchDB();
 
  	pathname = location.pathname
 	hash = location.hash
