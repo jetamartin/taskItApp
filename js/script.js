@@ -373,6 +373,7 @@ function unblockUserClicks(elem) {
 // Resets the UI including navbar to original state
 function resetUI2InitialState() {
 	var taskListId;
+	
 
 	// Find the listId of the "active" list element (class = selected)
 	taskListId = getListIdForActiveTaskList();
@@ -382,21 +383,28 @@ function resetUI2InitialState() {
 	// Set taskListSubmenu dropdown title = the list name of the active list
 
 	appUIController.getUIVars().listMenuTitle.childNodes[2].textContent = appUIController.getActiveTaskListName();
+	
+	appModelController.clearTaskItTables(appModelController.getTaskListTable(), appModelController.getTaskItemsTable(), appModelController.getTaskItemNotificationsTable());
+	
+	appModelController.loadDataFromDb(appModelController.userDb)
+		.then( function ( results ){ 
+	
+		// Use taskId to gather and display all task with that ID
+		updateTaskListDisplayed(taskListId);
 
-	// Use taskId to gather and display all task with that ID
-	updateTaskListDisplayed(taskListId);
 
+		showFloatAddBtn();
+		addElement(appUIController.getUIVars().listMenuTitle);
+		addElement(sysMenuElement);
+		addElement(homeIcon);
+		removeElement(backArrowSearch);
+		removeClearSearchIcon();
+		searchInput.value = "";
 
-	showFloatAddBtn();
-	addElement(appUIController.getUIVars().listMenuTitle);
-	addElement(sysMenuElement);
-	addElement(homeIcon);
-	removeElement(backArrowSearch);
-	removeClearSearchIcon();
-	searchInput.value = "";
+		//Search bar should be out of focus ("closed") on any screen other than "search screen".  
+		searchInput.blur();
 
-	//Search bar should be out of focus ("closed") on any screen other than "search screen".  
-	searchInput.blur();
+	});
 
 }
 
@@ -2186,10 +2194,10 @@ var appModelController = (function () {
 
 		},
 
-		deleteTaskList: function (taskListId) {
+		deleteTaskList: async function (taskListId) {
 			var taskLists = appModelController.getTaskListTable();
-			return appModelController.userDb.get(taskListId).then(function(doc) {
-  				appModelController.userDb.remove(doc._id, doc._rev);
+			return await appModelController.userDb.get(taskListId).then(async function(doc) {
+  				await appModelController.userDb.remove(doc._id, doc._rev);
 			}).then(function (result) {
 				console.log("TaskList Delete: ", result);
 
@@ -2303,6 +2311,17 @@ var appModelController = (function () {
 			return taskListTable;
 		},
 		
+		clearTaskListTable: function (taskListTable) {
+			while(taskListTable.length > 0) {
+				taskListTable.pop();
+			}
+//			taskListTable.length = 0;
+		},
+		
+		clearTaskItTables: function(taskListTable, taskItemsTable, taskItemNotificationsTable) {
+			taskListTable.length = 0, taskItemsTable.length = 0, taskItemNotificationsTable.length = 0;
+		},
+		
 		loadTaskListDataFromDb: function (userDb) {
 			var type, listId, listName, totalItemCount, overDueItemCount, completedCount, listCreateTime, userId, taskListIsArchived;
 			var taskListAttributes;  
@@ -2414,11 +2433,12 @@ var appModelController = (function () {
 
 
 		loadDataFromDb: function (userDb) {
+//			appModelController.clearTaskListTable(appModelController.getTaskListTable()); 
+//			appModelController.clearTaskItTables(appModelController.getTaskListTable(), appModelController.getTaskItemsTable(), appModelController.getTaskItemNotificationsTable());
 			var loadTaskListPromises = appModelController.loadTaskListDataFromDb(userDb);
 			var loadTaskItemPromises = appModelController.loadTaskItemDataFromDb(userDb);
 //			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(taskItemNotificationDb); 
-			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(userDb); 
-
+			var loadTaskItemNotificationsPromises = appModelController.loadTaskItemNotificationsDataFromDb(userDb);
 			return Promise.all([loadTaskListPromises, loadTaskItemPromises, loadTaskItemNotificationsPromises]).then( function ( updateResults ){
 				console.log(">>>>>>>Update Results from loadDataFromDb: ", updateResults);
 				return updateResults;
@@ -2605,7 +2625,7 @@ var appModelController = (function () {
 
 		},
 
-		createNewNotificationObject: function (newTaskNotification, taskItemId) {
+		createNewNotificationObject: async function (newTaskNotification, taskItemId) {
 			console.log("createNewNotificationObject");
 			// Generate a uniqued Id for the notification
 			var notificationId = getUniqueId();
@@ -2615,7 +2635,7 @@ var appModelController = (function () {
 			var createTime = getTimeStamp();
 
 //			return appModelController.taskItemNotificationDb.put({
-			return appModelController.userDb.put({
+			return await appModelController.userDb.put({
 
 				"type": notificationType,
 				"_id": notificationId,
@@ -3333,7 +3353,7 @@ var appUIController = (function () {
 		},
 
 
-		deleteTaskList: function (event) {
+		deleteTaskList: async function (event) {
 			console.log("deleteTaskList");
 			event.preventDefault();
 			event.stopPropagation();
@@ -3345,9 +3365,9 @@ var appUIController = (function () {
 			// Get all TaskItems associated with the taskList
 			var taskItemsAssociatedWithTaskList = appModelController.getAllTaskItemsForTaskList(taskListId);
 
-			taskItemsAssociatedWithTaskList.forEach(function (taskItemRecord) {
+			taskItemsAssociatedWithTaskList.forEach(async function (taskItemRecord) {
 
-				appModelController.deleteTaskItem(taskItemRecord._id);
+				await appModelController.deleteTaskItem(taskItemRecord._id);
 			});
 
 
@@ -3364,7 +3384,7 @@ var appUIController = (function () {
 
 			}
 
-			appModelController.deleteTaskList(taskListId)
+			await appModelController.deleteTaskList(taskListId)
 			.then (function (taskList) {
 				
 				
@@ -4188,17 +4208,19 @@ var appUIController = (function () {
 		},
 
 
-		exitManageTaskListsPage: function (event) {
+		exitManageTaskListsPage: async function (event) {
 			console.log("exitManageTaskListsPage()");
 			window.history.pushState({}, '', 'index.html');
+			
+			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
+			await resetUI2InitialState();
 
 			homePage.classList.remove("hideIt");
 			manageTaskListsPage.classList.add("hideIt");
 			
 //			toggleClass(homePage, "hideIt");
 //			toggleClass(manageTaskListsPage, "hideIt");
-			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
-			resetUI2InitialState();
+
 
 		},
 
@@ -4886,6 +4908,9 @@ var appUIController = (function () {
 
 			// Sort the userDefinedTask List
 			appModelController.sortListByName(userDefinedTaskLists);
+			
+			// Added to address defect where list totals were all zero
+			appModelController.updateListTaskTotals();
 
 			// Template to build TaskList Cards for manageTaskLists page
 			var genericTaskListsCardHtml = '<div class="card card-taskList" data-listid="%taskListId%"><div class="card-block"><div><p class="card-taskList-subtitle text-muted taskListName">%taskListName%</p></div><div class="floatRight"><a onclick="appUIController.setUpEditTaskListModal(this)" data-id="%taskListId%" data-toggle="modal" data-target="#manageListsEditListModal"><i class="fa fa-pencil-square-o editTaskIcon" aria-hidden="true"></i></a><a onclick="appUIController.setUpDeleteTaskListModal(this)"data-id="%taskListId%" data-toggle="modal" data-target="#manageListsDeleteListModal"><i class="fa fa-trash-o deleteTaskIcon floatRight" aria-hidden="true"></i></a></div><p class="card-taskList-text text-muted taskListTotalsLine"><span class="taskTotalLabel">Tasks:</span><span class="taskTotalCount">%taskTotalCount%</span><span class="overDue">(<span class="taskOverDueCount">%taskOverDueCount%</span>overdue)</span></p><p class="text-muted taskListTotalsLine">Completed:  <span id="nonActiveTaskItemCount">%nonActiveTaskCount%</span></p></div></div>';
@@ -5070,6 +5095,7 @@ var appUIController = (function () {
 				/* A taskItem object doesn't include it's list's Name but instead it contains the id for the it's list name (taskList_id). But with the taskList_id you can look up the List Name in the taskListTable.  
 				 */
 				taskListId = taskItemList[i].taskList_id;
+				console.log("**===*** TaskListId", taskListId);
 
 				// Look up the taskList Name in taskListTable and insert in in the html.  
 				specificTaskItemHtml = specificTaskItemHtml.replace('%listName%', appModelController.getTaskListTable().find(getListName).taskList_name);
@@ -5783,7 +5809,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 			user to sequentially enter multiple new task without having to navigate back to the new task window between entries. 
 
 	***********************************************************************************/
-	var ctrlUpdateTaskItem = function (event) {
+	var ctrlUpdateTaskItem = async function (event) {
 
 		console.log("BEGIN ctrlUpdateTaskItem()");
 		
@@ -5860,7 +5886,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				// Display the notification Icon on mainPage taskItem card
 				appUIController.displayNotificationIcon(taskItemId);
 
-				taskItemInputRecord.taskNotifications.forEach(function (taskNotificationInput) {
+				taskItemInputRecord.taskNotifications.forEach(async function (taskNotificationInput) {
 
 					// Check to see if notification is newly added (i.e. notification_id = null)
 					if (taskNotificationInput.notificationId === null) {
@@ -5869,7 +5895,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						notificationHasChanged = true;
 
 						// Add the newly create notification to DB and return a notification object					
-						appModelController.createNewNotificationObject(taskNotificationInput, taskItemInputRecord.taskItemId)
+						await appModelController.createNewNotificationObject(taskNotificationInput, taskItemInputRecord.taskItemId)
 						.then (function (taskNotificationObject) {	
 							
 							appModelController.getTaskItemNotificationsTable().push(taskNotificationObject);
@@ -5935,7 +5961,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				// Save the updated taskItem record to the DB (or local storage)
 				
-				appModelController.userDb.get(appUIController.getUIVars().inputEditFormTaskItemId.value)
+				await appModelController.userDb.get(appUIController.getUIVars().inputEditFormTaskItemId.value)
 				.then(function(doc) {
 					return appModelController.userDb.put({
 						type: "taskItem", 
@@ -6520,7 +6546,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Create/get pointers to Databases 
 						appModelController.userDb = new PouchDB('userDb');
-						appModelController.twoWaySynchPouchDBToCouchDB();
+//						appModelController.twoWaySynchPouchDBToCouchDB();
 
 
 						console.log('initializeDBs::created new databases');
@@ -6582,7 +6608,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 					// Create/get pointers to Databases 
 					appModelController.userDb = new PouchDB('userDb');
-					appModelController.twoWaySynchPouchDBToCouchDB();
+//					appModelController.twoWaySynchPouchDBToCouchDB();
 
 
 										
@@ -6651,7 +6677,7 @@ window.onload = function(event) {
 	var itemId, pathname, colonLocation;
 	var hash = "";
 	
-	appModelController.twoWaySynchPouchDBToCouchDB();
+//	appModelController.twoWaySynchPouchDBToCouchDB();
 
  	pathname = location.pathname
 	hash = location.hash
