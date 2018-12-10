@@ -421,14 +421,18 @@ function resetUI2InitialState() {
 ****************************************************************************/
 function getListIdForActiveTaskList() {
 	var activeTaskNode = document.querySelector(".selected");
-//	return activeTaskNode.getAttribute('data-id');
+  if (!activeTaskNode) {
+			activeTaskNode = appUIController.getUIVars().allListsElem;
+	}
 	return activeTaskNode.getAttribute('data-id');
 }
 
 /***************************************************************************
 
-	Get the current "active" task list (i.e., class="selected) 
-	returns it's DOM node (<li>)  
+	Get the current "active" task list node  (i.e., class="selected) 
+	returns it's DOM node (<li>) 
+	If no taskList is marked as "active" (has '.selected' class) then make the 
+	"All Lists" the "active" task list.
 
 ****************************************************************************/
 function getActiveTaskList() {
@@ -456,7 +460,7 @@ var handleSubMenuClick = function (event) {
 	// ???? Why am I updatingListTaskTotals here
 	appModelController.updateListTaskTotals();
 	
-	// Get the current "active" task list Node 
+	// Get the current "active" task list node 
 	var currActiveList = getActiveTaskList();
 
 
@@ -495,9 +499,12 @@ var handleSubMenuClick = function (event) {
 
 		// The selected list name will have the "selected" class added to darken background so when 
 		// user hovers and gets the submenu to display the previously selected list will be distinguishable 
-		toggleClass(event.target.closest('.taskListItem'), 'selected');
 		
+		var currActiveListNode = event.target.closest('.taskListItem');
 		
+		toggleClass(currActiveListNode, 'selected');
+		
+		sessionStorage.setItem('activeTaskListId',getListIdForActiveTaskList());
 		// TEST 
 //		toggleClass(appUIController.getUIVars().taskListsSubMenu, 'hideIt'); 
 
@@ -3022,10 +3029,6 @@ var appUIController = (function () {
 
 	}
 
-	/* Gets the Active List Task Name */
-	//	function getActiveTaskListName() {
-	//		return getActiveTaskList().childNodes[1].textContent.trim();	
-	//	}
 
 	function clearOutSelectList(selectNode) {
 		var length = selectNode.options.length;
@@ -3089,6 +3092,72 @@ var appUIController = (function () {
 	/* 					           ****** APP UI CONTROLLER METHODS ********										*/
 	/****************************************************************************************************************/
 	return {
+		/* Returns the DOM node for the Active Task List by using  data-id  */
+		getDomNodeWithMatchingId: function (activeTaskListId) {
+			return activeListNode = document.querySelector(`[data-id="${sessionStorage.getItem("activeTaskListId")}"]`)
+		},
+		
+		/* Adds Active List Styling to List element in taskList submenu */
+		resetActiveListStyling: function (activeTaskListId) {
+			var activeListNode;
+			var preExistingActiveTaskListNode;
+			
+			// Remove any Active List Styling that may already exist in taskList submenu (e.g., "All List" by default has Active List Styling)
+			preExistingActiveTaskListNode = document.querySelector(".selected");
+			
+			if (preExistingActiveTaskListNode) {
+				preExistingActiveTaskListNode.classList.remove("selected"); 
+			}
+			
+			
+			// Apply Active List Styling to now current active task List element and return the activeListNode
+			activeListNode = appUIController.getDomNodeWithMatchingId(activeTaskListId);
+			
+			activeListNode.classList.add("selected");
+			
+			return activeListNode;   
+		}, 
+		
+		/* Set the Nav Bar Task List Title to List Name of the activeTaskList */
+		setNavBarActiveTaskListTitle: function (activeTaskListNode) {
+			
+			// Gets the Active Task List Name and inserts it into the TaskList title
+			appUIController.getUIVars().listMenuTitle.childNodes[2].textContent = appUIController.getActiveTaskListName();
+
+		},
+		
+	
+		
+		/* Sets Task List Nav and Task List Submenu UI to reflect the current Active Task List. This includes the following:
+			- Set the navbar Task List title to be the Active Task List Name of the current active task
+			- Remove "selected" class from the prior Active List node
+			- Apply the "selected" class to the now current Active List node
+		*/
+		setUpActiveTaskListUIElements: function (activeTaskListId) {
+			
+			var activeTaskListNode; 
+			
+			//	Clears any Active List Styling that may be present in Task List Submenu & applies styling to now current Active Task List
+			activeTaskListNode = appUIController.resetActiveListStyling(activeTaskListId);
+			
+			
+			//  Set the navbar Task List title to be the Active Task List Name of the current active task
+			// Note: This method doesn't currently use the activeTaskListNode. 
+			appUIController.setNavBarActiveTaskListTitle(activeTaskListNode);  
+	
+	
+			
+			// -----------------Sample code-----------------------------------
+			
+			//			if (sessionStorage.getItem('activeTaskListId')) {
+			//				currActiveListNode = document.querySelector(`[data-id="${sessionStorage.getItem("activeTaskListId")}"]`)
+			//				toggleClass(appUIController.getUIVars().allListsElem, "selected");
+			//				toggleClass(currActiveListNode, "selected");
+			//			} else {
+			//				currActiveListNode = getActiveTaskList();
+			//			}
+
+		},
 		
 		displayTaskListSubMenu: function () {
 			console.log("Begin displayTaskListSubMenu()");
@@ -3380,6 +3449,10 @@ var appUIController = (function () {
 				
 				// Set the active list to "All List ("1")
 				toggleClass(appUIController.getUIVars().allListsElem, "selected");
+				
+				currActiveListId = getListIdForActiveTaskList();
+				
+				sessionStorage.setItem('activeTaskListId', currActiveListId);
 //				appUIController.getUIVars().allListsElem.childNodes[2].childNodes[1].classList.add('selected')
 
 			}
@@ -4126,16 +4199,14 @@ var appUIController = (function () {
 				matchedTaskListRecord.taskList_name = appUIController.getUIVars().inputEditListName.value;
 				
 				appModelController.userDb.get(taskListId).then(function(doc) {
-					return appModelController.userDb.put({
-						_id: taskListId,
-						_rev: doc._rev,
-						taskList_name: matchedTaskListRecord.taskList_name
-					});
+					 doc.taskList_name = appUIController.getUIVars().inputEditListName.value
+					return appModelController.userDb.put(doc)
 				}).then(function(response) {
 					console.log("Update TaskList in editTaskList(): ", response)
 				}).catch(function (err) {
-					console.log(err);
+					console.error(err);
 				});
+
 
 				// NEED TO REVSIT THIS AS IT IS SPECIFIC TO ONLY ONE FORM
 				// Style the newly added list selection input to reflect list selection had changed (add class="filled")
@@ -4269,7 +4340,6 @@ var appUIController = (function () {
 		// param once I can conver newTaskForm to use form object. 
 		setTaskListSelect: function (taskItemFormListSelect, listName) {
 
-			//			var activeTaskListName = appUIController.getActiveTaskListName();
 
 			console.log("===========LIST NAME: " + listName);
 
@@ -4835,7 +4905,6 @@ var appUIController = (function () {
 			// Sort the userDefinedTask List
 			appModelController.sortListByName(userDefinedTaskLists);
 
-			//			var currActiveListId = getListIdForActiveTaskList();
 			// ++++++ 
 			var preDefinedTaskListIds = appModelController.getPreDefinedTaskListIds();
 
@@ -4847,7 +4916,7 @@ var appUIController = (function () {
 			var genericSubMenuHtml = '<li class="userDefinedList taskListItem" data-id="%listId%"><i class="fa fa-list-ul" aria-hidden="true"></i><div class="navTaskListWrapper"><div class="navTaskListLabel">%listName%</div></div><span class="listTotal">%dueCount%</span><span class="overDueCount overDueItemsPresent">%overDueCount%</span></li>';
 			var specificSubMenuHtml;
 			//*****************************************************************************************************
-			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the Nav bar
+			// Loop for building the User Defined Task Lists HTML/Nodes and inserting them into the task list dropdown
 			//*****************************************************************************************************
 
 			for (var i = 0; i < userDefinedTaskList.length; i++) {
@@ -4886,13 +4955,26 @@ var appUIController = (function () {
 				/* There will not be an active list node found in userDefinedTaskList if the prior active list was a User Defined TaskList element. Why? because in the calling function the userDefinedList DOM nodes had to be removed (via removeUserDefinedTaskLists() function) so that we could re-create the userDefined DOM nodes here inclusive of the new list that user just added. However, if the the previous Active List was a System Defined task list then it will still be present so we don't want to toggle off the selected class and and end up with no active list...so hence the check to see if the previously active node was a User Defined List item (and if it was we need to make it active by toggling on 'selected' class) 
 				 */
 
-
-				if (userDefinedTaskList[i].taskList_id === currActiveListId &&
-					!preDefinedTaskListIds.contains(userDefinedTaskList[i].taskList_id)) {
-					toggleClass(nextNode, 'selected');
-//						toggleClass(nextNode.childNodes[2].childNodes[1], "selected");
-				}
+// Old logic 
+//				if (userDefinedTaskList[i].taskList_id === currActiveListId &&
+////--					!preDefinedTaskListIds.contains(userDefinedTaskList[i].taskList_id)) {  // replaced with line below..think it was in error
+//					!preDefinedTaskListIds.contains(currActiveListId)) {
+//					toggleClass(nextNode, 'selected');
+//					
+//					sessionStorage.setItem('activeTaskListId', getListIdForActiveTaskList());
+////						toggleClass(nextNode.childNodes[2].childNodes[1], "selected");
+//				}
 				
+						if (userDefinedTaskList[i].taskList_id === currActiveListId ) {
+							var activeListNode = document.querySelector(".selected");
+							if (activeListNode) {
+								toggleClass(activeListNode, "selected");
+							}
+							toggleClass(nextNode, 'selected');
+							appUIController.getUIVars().listMenuTitle.childNodes[2].textContent = appUIController.getActiveTaskListName();
+
+						}
+		
 
 			} // END FOR LOOP for building and adding UserDefined List to dropdown						
 
@@ -6471,12 +6553,39 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				// Update the taskListTable data structure with the latest list totals (listTotal & overDue count) 
 				appModelController.updateListTaskTotals();
-
+			
+				/* If this is the first time user has started app or if user previously deleted userDb then sessionStorage
+					value will have been set to 'null'. And if it is null then use getListIdForActiveTaskList to get activeListid 
+					otherwise we will just use the activeTaskListId value stored in sessionStorage.  
+				*/
+			
+				var currActiveListId = sessionStorage.getItem('activeTaskListId');
+				if (currActiveListId === 'null') {
+					var currActiveListId = getListIdForActiveTaskList();
+				} 
+//			else {
+					// if currActiveListId is a preDefined task list && not equal to '01'
+					// then get the associated node for that listid via the following statement 
+					//					currActiveListNode = document.querySelector(`[data-id="${sessionStorage.getItem("activeTaskListId")}"]`
+					// Make it the active taskList by adding "select" task on that node
+//				}
+			
+			// Test code
+//				if (sessionStorage.getItem('activeTaskListId')) {
+//					currActiveListNode = document.querySelector(`[data-id="${sessionStorage.getItem("activeTaskListId")}"]`)
+//					toggleClass(appUIController.getUIVars().allListsElem, "selected");
+//					toggleClass(currActiveListNode, "selected");
+//				} else {
+//					currActiveListNode = getActiveTaskList();
+//				}
+			
 				// ++++++ Added so I could use in buildAndDisplayUserDefinedTaskList() method
-				var currActiveListId = getListIdForActiveTaskList();
+//				var currActiveListId = getListIdForActiveTaskList();
 
 				// Build the HTML/DOM nodes for UserDefined Task List and insert in DOM for display on subMenuTaskList
 				appUIController.buildAndDisplayUserDefinedTaskList(currActiveListId);
+			
+				
 
 				var taskListTable = appModelController.getTaskListTable();
 
@@ -6486,11 +6595,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 				// 2. Load task items
 
-				// Find the listId of the "active" list
-				var taskListId = getListIdForActiveTaskList();
+				// Find the listId of the "active" list. 
+			  //??? Don't think this is needed should just use currActiveListid from above. Will need to change call to updateTaskListDisplayed(taskListId) below to use currActiveListId
+//				var taskListId = getListIdForActiveTaskList();
 
 				// Use taskId to gather and display all task with that ID
-				var taskList_id = updateTaskListDisplayed(taskListId);
+				var taskList_id = updateTaskListDisplayed(currActiveListId);
 
 				var taskList2Display = getAllActiveMatchingTaskItemsWithId(taskList_id);
 				appUIController.groupAndDisplayTaskItems(taskList2Display);
@@ -6500,6 +6610,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		init: function (hash) {
 //				var remoteCouchUserDb = 'http://admin:jammer@127.0.0.1:5984/user_db';
+			var currActiveListNode;
 			
 			function connectToServer() {
 				var xhr = new XMLHttpRequest();
@@ -6514,7 +6625,19 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 			connectToServer();
 			var preDefinedListNames = appModelController.getPreDefinedTaskListNames();
-			var currActiveListNode = getActiveTaskList();
+
+//			if (sessionStorage.getItem('activeTaskListId')) {
+//				currActiveListNode = document.querySelector(`[data-id="${sessionStorage.getItem("activeTaskListId")}"]`)
+//				toggleClass(appUIController.getUIVars().allListsElem, "selected");
+//				toggleClass(currActiveListNode, "selected");
+//			} else {
+//				currActiveListNode = getActiveTaskList();
+//			}
+			
+			
+//			var currActiveListNode = getActiveTaskList();		
+			
+			
 			var currActiveListName = appUIController.getActiveTaskListName();
 
 			var addUserSeedData = true;
@@ -6532,7 +6655,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 			/* Determine if DB already exist and if not then initialize it */
 			/* If the DB is empty then we know this is the first time DB was
-				created and therefore we need to initialiaze it. */
+				created or the userDb was deleted by user and therefore we need to initialiaze it. */
 			
 			appModelController.userDb.info().then(function (details) {
 				
@@ -6542,6 +6665,8 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					appModelController.userDb.destroy().then(function ( results ) {
 						
 						
+						// if userDb was previously deleted or doesn't exist then set storage session value to 'null'
+						sessionStorage.setItem('activeTaskListId', '01');
 						console.log('test db removed', results);
 
 						// Create/get pointers to Databases 
@@ -6579,9 +6704,13 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 							appModelController.loadDataFromDb(appModelController.userDb)
 							.then( function ( results ){
+								
 
 								// Need to run this to ensure all JS objects are loaded with data 
 								appController.loadAndDisplayDataOnStartup(appModelController.userDb);
+								
+								// Set styling for Active Task List
+//								appUIController.setUpActiveTaskListUIElements(sessionStorage.getItem('activeTaskListId'));
 
 								switch(hash) {
 									case '#editTask':
@@ -6617,6 +6746,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 						
 						// Need to run this to ensure all JS objects are loaded with data 
 						appController.loadAndDisplayDataOnStartup(appModelController.userDb)
+						
+						appUIController.setUpActiveTaskListUIElements(sessionStorage.getItem('activeTaskListId'));
+
 
 						switch(hash) {
 							case '#editTask':
