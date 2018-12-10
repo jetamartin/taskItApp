@@ -6671,7 +6671,9 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Create/get pointers to Databases 
 						appModelController.userDb = new PouchDB('userDb');
-//						appModelController.twoWaySynchPouchDBToCouchDB();
+						
+						// Enables two way synching 
+						appModelController.twoWaySynchPouchDBToCouchDB();
 
 
 						console.log('initializeDBs::created new databases');
@@ -6737,7 +6739,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 					
 					// Create/get pointers to Databases 
 					appModelController.userDb = new PouchDB('userDb');
-//					appModelController.twoWaySynchPouchDBToCouchDB();
+					appModelController.twoWaySynchPouchDBToCouchDB();
 
 
 										
@@ -6809,7 +6811,7 @@ window.onload = function(event) {
 	var itemId, pathname, colonLocation;
 	var hash = "";
 	
-//	appModelController.twoWaySynchPouchDBToCouchDB();
+	appModelController.twoWaySynchPouchDBToCouchDB();
 
  	pathname = location.pathname
 	hash = location.hash
