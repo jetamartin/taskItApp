@@ -2952,12 +2952,15 @@ var appUIController = (function () {
 
 
 	/* Manage Task Lists Page elements */
-	var manageTaskListsMsg = document.getElementById("manageTaskListsMsg")
+	var manageTaskListsMsg = document.getElementById("manageTaskListsMsg");
 	var manageTaskListsIcon = document.getElementById("manageTaskListsIcon");
 	var manageTaskListsBackArrow = document.getElementById("manageTaskListsBackArrow");
 	var manageTaskListsContent = document.getElementById("manageTaskListsContent");
 	var manageListsEditListModalForm = document.getElementById("manageListsEditListModalForm");
 
+	/* Refresh app */
+	var refreshPageIcon = document.getElementById("refreshPageIcon");
+	
 	/* Modal Form Lists Page elements */
 	var modalFormEditTaskListId = document.getElementById("modalFormEditTaskListId");
 
@@ -4174,6 +4177,11 @@ var appUIController = (function () {
 			// Restore main page UI elements and update the list of task items to ensure that any new tasks that were added are present
 			resetUI2InitialState();
 		},
+		
+		refreshPage: function (event) {
+			// Allow mobile app user to force a page reload to cause DB resynch
+			document.location.reload();
+		}, 
 
 
 		/*******************************************************************
@@ -4430,6 +4438,9 @@ var appUIController = (function () {
 				manageTaskListsContent: manageTaskListsContent,
 				manageListsEditListModalForm: manageListsEditListModalForm,
 				inputEditListName: inputEditListName,
+				
+				// Refresh Page Option
+				refreshPageIcon: refreshPageIcon, 
 
 				listMenuTitle: listMenuTitle,
 				addDueDateBtn: addDueDateBtn,
@@ -5698,7 +5709,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 		})
 
 
-
+		//****************************************************************************		
+		// REFRESH EVENT LISTENERS		
+		//****************************************************************************
+		appUIController.getUIVars().refreshPageIcon.addEventListener("click", function (event) {
+			appUIController.refreshPage(event)
+		});
 
 
 		//****************************************************************************		

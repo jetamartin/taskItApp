@@ -1372,7 +1372,7 @@ input[name=taskCompleteStatus] {
 		pointer-events: none;
 		cursor: default;
 		font-weight: 400;
-    	letter-spacing: 2.5px;
+    	letter-spacing: 1.5px;
 	}
 
 	/* Div that contains success/error the New/Edit Task */
