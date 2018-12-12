@@ -7,6 +7,7 @@
 //**************************************************************************************
 
 // Holds the node of the previously selected list item. If value is null then previous list is "All List"
+
 var errorCount = 0;
 var appInitialized = false;
 var taskListId;
@@ -68,6 +69,8 @@ function isEmpty(str) {
 	Manages steps to display a new set of task items (e.g, user choses to display a diff task list). 
 */
 function updateTaskListDisplayed(taskListId) {
+	
+	console.log("Start updateTaskListDisplayed function");
 
 	var listName;
 	var taskList2Display;
@@ -97,10 +100,11 @@ function updateTaskListDisplayed(taskListId) {
 		}
 	}
 
-
+	console.log("==>>>UpdateTaskListDisplayed: Value of thereAreNoTaskItems2Display", thereAreNoTaskItems2Display);
+	
 	if (thereAreNoTaskItems2Display) {
 
-
+		console.log("==>>>UpdateTaskListDisplayed: listName", listName); 
 		switch (listName) {
 			case "All Lists":
 				// Display No task items in the list message
@@ -1247,7 +1251,8 @@ var appModelController = (function () {
 	
 /************************ 	END TASKIT SEED DATA	***************************/
 	
-	var remoteCouchUserDb = 'http://admin:jammer@127.0.0.1:5984/user_db';
+//	var remoteCouchUserDb = 'http://admin:jammer@127.0.0.1:5984/user_db';
+	var remoteCouchUserDb = 'https://deseasooklyfingstratinta:b12780c82df0abc4676d04e14523453de81b5781@a157de78-965b-4ed0-8b4d-ba808a2d9ded-bluemix.cloudant.com/user_db'
 
 
 
@@ -2040,13 +2045,25 @@ var appModelController = (function () {
 		},
 		
 		twoWaySynchPouchDBToCouchDB: function () {
+			console.log("Start twoWaySynchPouchDBToCouchDB");
 			var opts = {live: true};
 			// Performs bi-directional synching betwee local data base and remote couch db
 //			userDb.sync(appModelController.remoteCouchUserDb, opts, appModelController.syncError);
 			
 			// Below is old way to set up two way synching..now you can do same in one statement
-			userDb.replicate.to(remoteCouchUserDb, opts, appModelController.syncError);
-			userDb.replicate.from(remoteCouchUserDb, opts, appModelController.syncError);
+			userDb.replicate.to(remoteCouchUserDb, opts, appModelController.syncError).then(function(result){})
+				.catch(function (err) {
+				console.log("Replicate TO error", err)
+				
+			}); 
+				
+				
+			
+			userDb.replicate.from(remoteCouchUserDb, opts, appModelController.syncError).then(function(result){})
+			.catch(function (err) {
+				console.log("Replicate FROM error", err)
+
+			});
 
 		},
 
@@ -3109,7 +3126,16 @@ var appUIController = (function () {
 				preExistingActiveTaskListNode.classList.remove("selected"); 
 			}
 			
+			// ***** NEED TO REVISIT THIS LOGIC ******
+			if (activeTaskListId === null || activeTaskListId === undefined ) {
+				console.log("===>>> resetActiveListStyling: activeTaskListId: ", activeTaskListId);
+				sessionStorage.setItem('activeTaskListId', '01');
+				activeTaskListId = '01';
+				
+			}
 			
+				console.log("===>>> resetActiveListStyling: activeTaskListId: ", activeTaskListId);
+
 			// Apply Active List Styling to now current active task List element and return the activeListNode
 			activeListNode = appUIController.getDomNodeWithMatchingId(activeTaskListId);
 			
@@ -6543,7 +6569,7 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 
 		loadAndDisplayDataOnStartup: function (userDb) {
-			
+				console.log("Start loadAndDisplayDataOnStartUp method")
 
 				var userDefinedTaskLists = appModelController.getUserDefinedTaskList();
 
@@ -6560,8 +6586,10 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 				*/
 			
 				var currActiveListId = sessionStorage.getItem('activeTaskListId');
-				if (currActiveListId === 'null') {
+				console.log("===>>> currActiveListId: ", currActiveListId);
+				if (currActiveListId === null) {
 					var currActiveListId = getListIdForActiveTaskList();
+					console.log("CHECK TO SEE VALUE OF currActiveListId", currActiveListId);
 				} 
 //			else {
 					// if currActiveListId is a preDefined task list && not equal to '01'
@@ -6610,7 +6638,16 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 		init: function (hash) {
 //				var remoteCouchUserDb = 'http://admin:jammer@127.0.0.1:5984/user_db';
+			var remoteCouchUserDb = 'https://deseasooklyfingstratinta:b12780c82df0abc4676d04e14523453de81b5781@a157de78-965b-4ed0-8b4d-ba808a2d9ded-bluemix.cloudant.com/user_db'
+
+			
+
+// Key			deseasooklyfingstratinta
+//Password: b12780c82df0abc4676d04e14523453de81b5781
 			var currActiveListNode;
+//			var pouchdbDebug = require('pouchdb-debug');
+//			PouchDB.plugin(pouchdbDebug);
+			
 			
 			function connectToServer() {
 				var xhr = new XMLHttpRequest();
@@ -6671,6 +6708,12 @@ var appController = (function (appModelCtrl, appUICtrl, utilMthds) {
 
 						// Create/get pointers to Databases 
 						appModelController.userDb = new PouchDB('userDb');
+						
+					
+//						PouchDB.debug.enable('*');
+						
+
+
 						
 						// Enables two way synching 
 						appModelController.twoWaySynchPouchDBToCouchDB();
