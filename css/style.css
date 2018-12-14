@@ -166,9 +166,44 @@ display: none;
 	}
 */
 	
+/* LOGIN AND CREATE ACCOUNT */
+.pageBanner {
+	background-color: #34AFA9;
+	display: flex;
+	justify-content: center;
+}
 
+.pageTitle {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	color: white;
+	font-size: 1.5rem;
+	font-weight: 100;
+	letter-spacing: 1.25px;
+}
 
+#loginPage, #createAccountPage {
+	height: 100vh;
+}
 
+#formLogin {
+	margin-top: 5vh;
+}
+
+#orOption {
+	display: flex;
+	justify-content: center;
+}
+#createAccountLink {
+	color: #34AFA9;
+	font-size: 1rem;
+	text-decoration: underline;
+	display: flex;
+	justify-content: center;
+	margin-top: 1.5rem;
+
+	
+}
 
 
 	#mainPageGeneralMsgLoc {

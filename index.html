@@ -34,6 +34,129 @@
 
 <body>
 <div id="outerContainer">
+
+<!--*******************************************************-->
+<!--	                                                     -->
+<!--				WELCOME PAGE	  															 -->
+<!--	                                                     -->
+<!--*******************************************************-->
+	<div id="welcomePage">
+		<div></div>
+	</div>
+<!--*******************************************************-->
+<!--	                                                     -->
+<!--				LOGIN PAGE	  															   -->
+<!--	                                                     -->
+<!--*******************************************************-->
+		<div class="container-fluid hideIt" id="loginPage">
+			<div class="pageBanner">
+					<div class="pageTitle">Login</div>
+			</div>
+			<div class="container loginPage flexContainer">
+				<!--	Enter Login Information 				-->
+	
+				<form id="formLogin" class="taskForm" novalidate>
+					<fieldset>
+						<legend>Login to existing account</legend>
+						<!--	Enter User Name				-->
+						<div class="form-group">
+							<label for="loginUserName" class="form-control-label">User Name:</label>
+							<div class="row col-12">
+								<input type="text" id="loginUserName" class="form-control" placeholder="Enter your user name" autofocus required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="loginPassword" class="form-control-label">Password:</label>
+							<div class="row col-12">
+								<input type="text" id="loginPassword" class="form-control" placeholder="Enter password" autofocus required>
+							</div>
+							<div class="errorMsg" id=""></div>
+						</div>
+						<div class="button-group">
+							<button type="submit" class="btn btn-default takeActionBtn" id="loginButton">Login</button>
+					</div>
+					</fieldset>
+				</form>
+				<div class="row">
+					<div class="col"><hr></div>
+					<div class="col-auto"><span>OR</span></div>
+					<div class="col"><hr></div>
+				</div>
+
+				<a href="#createAccountPage" id="createAccountLink">Create a new Account</a>
+
+			</div>
+		</div>
+<!--*******************************************************-->
+<!--	                                                     -->
+<!--				CREATE ACCOUNT PAGE													   -->
+<!--	                                                     -->
+<!--*******************************************************-->
+		<div class="container-fluid hideIt" id="createAccountPage">
+			<div class="pageBanner flexContainer">
+				<div class="pageTitle">Create Account</div>
+			</div>
+			<div class="container loginPage flexContainer">
+				<form id="formLogin" class="taskForm" novalidate>
+					<fieldset>
+						<legend>Create a new account</legend>
+						
+						<!--	Enter Full Name				-->
+						<div class="form-group">
+							<label for="registerFullName" class="form-control-label">Full Name:</label>
+							<div class="row col-12">
+								<input type="text" id="registerFullName" class="form-control" placeholder="Enter your full name" autofocus required>
+							</div>
+						</div>
+						
+						<!--	Enter User Name				-->
+						<div class="form-group">
+							<label for="registerUserName" class="form-control-label">User Name:</label>
+							<div class="row col-12">
+								<input type="text" id="registerUserName" class="form-control" placeholder="Pick your user name" required>
+							</div>
+						</div>
+						
+						<!--	Enter Email Address				-->
+						<div class="form-group">
+							<label for="registerEmail" class="form-control-label">Email Address:</label>
+							<div class="row col-12">
+								<input type="text" id="registerEmail" class="form-control" placeholder="Enter your email address" required>
+							</div>
+						</div>
+						
+						<!--	Enter Password			-->
+						<div class="form-group">
+							<label for="registerPassword" class="form-control-label">Password:</label>
+							<div class="row col-12">
+								<input type="text" id="registerPassword" class="form-control" placeholder="Enter password" required>
+							</div>
+							<div class="errorMsg" id=""></div>
+						</div>
+						
+						<div class="form-group">
+							<label for="registerPasswordConfirm" class="form-control-label">Confirm Password:</label>
+							<div class="row col-12">
+								<input type="text" id="registerPasswordConfirm" class="form-control" placeholder="Confirm your password" required>
+							</div>
+							<div class="errorMsg" id=""></div>
+						</div>
+						<div class="button-group">
+							<button type="submit" class="btn btn-default takeActionBtn" id="loginButton">Register</button>
+					</div>
+					</fieldset>
+				</form>
+			</div>
+			
+		</div>
+
+<!--*******************************************************-->
+<!--	                                                     -->
+<!--				HOME PAGE													             -->
+<!--	                                                     -->
+<!--*******************************************************-->
+	
+	
   	<div id="homePage">
 		<header class="container-fluid" >
 			<nav class="navBar">
@@ -188,9 +311,9 @@
 
 
 <!--*******************************************************-->
-		
-<!--				NEW TASK PAGE	  					   -->
-
+<!--	                                                     -->
+<!--				NEW TASK PAGE	  														   -->
+<!--	                                                     -->
 <!--*******************************************************-->
 
 	
