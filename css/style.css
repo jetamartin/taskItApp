@@ -165,14 +165,62 @@ display: none;
 		box-shadow: 0 0 6px rgba(0, 0, 0, 0.12), 0 6px 6px rgba(0, 0, 0, 0.24);
 	}
 */
-	
+
+
+/****************************/	
 /* LOGIN AND CREATE ACCOUNT */
+/****************************/	
+
+/*---> Styling With TABS <-------*/
+
+.nav-tabs {
+/*	margin-top: 5px !important;*/
+	margin-top: 5px;
+	margin-left: 5px;
+	letter-spacing: 1.5px;
+/*	font-weight: 100;*/
+	font-size: 1.25rem;
+}
+.nav-tabs .nav-link.active {
+	color: #34AFA9;
+	background-color: #f5f2f2;
+	background-color:#EAECEE;
+/*	margin-bottom: .75px;*/
+/*	border-color: #dee2e6 #dee2e6;*/
+	border-color: #e5e8e8;
+	border-top-left-radius: .35rem;
+	border-top-right-radius: .35rem;
+}
+
+#formLogin {
+	margin-top: 10vh;
+}
+#loginPage, #createAccountPage {
+	height: 100vh;
+	margin-bottom: -3.44rem;
+}
+
+#passwordRecoveryLink {
+	color: #34AFA9;
+	font-size: 1rem;
+	text-decoration: underline;
+	display: flex;
+	justify-content: center;
+	margin-top: 1.5rem;
+}
+
+
+/*---> Styling Withot TABS <-------*/
+
+/*
 .pageBanner {
 	background-color: #34AFA9;
 	display: flex;
 	justify-content: center;
 }
+*/
 
+/*
 .pageTitle {
 	padding-top: 1rem;
 	padding-bottom: 1rem;
@@ -181,19 +229,27 @@ display: none;
 	font-weight: 100;
 	letter-spacing: 1.25px;
 }
+*/
 
+/*
 #loginPage, #createAccountPage {
 	height: 100vh;
 }
+*/
 
+/*
 #formLogin {
 	margin-top: 5vh;
 }
+*/
 
+/*
 #orOption {
 	display: flex;
 	justify-content: center;
 }
+*/
+/*
 #createAccountLink {
 	color: #34AFA9;
 	font-size: 1rem;
@@ -201,9 +257,8 @@ display: none;
 	display: flex;
 	justify-content: center;
 	margin-top: 1.5rem;
-
-	
 }
+*/
 
 
 	#mainPageGeneralMsgLoc {

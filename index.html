@@ -43,22 +43,178 @@
 	<div id="welcomePage">
 		<div></div>
 	</div>
+	
+<!--	TAB INTERFACE -->
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="nav-signin-tab" data-toggle="tab" href="#nav-signin" role="tab" aria-controls="nav-signin" aria-selected="true">SignIn</a>
+    <a class="nav-item nav-link" id="nav-signup-tab" data-toggle="tab" href="#nav-signup" role="tab" aria-controls="nav-signup" aria-selected="false">SignUp</a>
+   </div>
+</nav>
+	
+<div class="tab-content" id="nav-tabContent">
+	<div class="tab-pane fade show active" id="nav-signin" role="tabpanel" aria-labelledby="nav-signin-tab">
+		<div class="container-fluid " id="loginPage">
+<!--
+			<div class="pageBanner">
+					<div class="pageTitle">Login</div>
+			</div>
+-->
+			<div class="container loginPage flexContainer">
+
+				
+				
+				<form id="formLogin" class="taskForm" novalidate>
+					<fieldset>
+						<legend>SignIn to existing account</legend>
+						<div class="form-group">
+							<label for="loginUserName" class="form-control-label">User Name:</label>
+							<div class="row col-12">
+								<input type="text" id="loginUserName" class="form-control" placeholder="Enter your user name" autofocus required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="loginPassword" class="form-control-label">Password:</label>
+							<div class="row col-12">
+								<input type="text" id="loginPassword" class="form-control" placeholder="Enter password" autofocus required>
+							</div>
+							<div class="errorMsg" id=""></div>
+						</div>
+						<div class="button-group">
+							<button type="submit" class="btn btn-default takeActionBtn" id="loginButton">Login</button>
+<!--							<button type="submit" class="btn btn-default takeActionBtn" id="loginButton">Forgot Password</button>-->
+
+					</div>
+					</fieldset>
+				</form>
+		
+
+<!--
+				<div class="row">
+					<div class="col"><hr></div>
+					<div class="col-auto"><span>OR</span></div>
+					<div class="col"><hr></div>
+				</div>
+
+				<a href="#createAccountPage" id="createAccountLink">Create a new Account</a>
+-->
+
+			</div>
+			<a data-toggle="modal" data-target="#passwordRecoveryModal" id="passwordRecoveryLink">Forgot Password?</a>
+
+		</div>
+	</div>
+	
+	
+	<div class="tab-pane fade show" id="nav-signup" role="tabpanel" aria-labelledby="nav-signup-tab">
+		<div class="container-fluid " id="createAccountPage">
+<!--
+			<div class="pageBanner flexContainer">
+				<div class="pageTitle">Create Account</div>
+			</div>
+-->
+			<div class="container loginPage flexContainer">
+				<form id="formLogin" class="taskForm" novalidate>
+					<fieldset>
+						<legend>SignUp for new account</legend>
+						
+						<div class="form-group">
+							<label for="registerFullName" class="form-control-label">Full Name:</label>
+							<div class="row col-12">
+								<input type="text" id="registerFullName" class="form-control" placeholder="Enter your full name" autofocus required>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="registerUserName" class="form-control-label">User Name:</label>
+							<div class="row col-12">
+								<input type="text" id="registerUserName" class="form-control" placeholder="Pick your user name" required>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="registerEmail" class="form-control-label">Email Address:</label>
+							<div class="row col-12">
+								<input type="text" id="registerEmail" class="form-control" placeholder="Enter your email address" required>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="registerPassword" class="form-control-label">Password:</label>
+							<div class="row col-12">
+								<input type="text" id="registerPassword" class="form-control" placeholder="Enter password" required>
+							</div>
+							<div class="errorMsg" id=""></div>
+						</div>
+						
+						<div class="form-group">
+							<label for="registerPasswordConfirm" class="form-control-label">Confirm Password:</label>
+							<div class="row col-12">
+								<input type="text" id="registerPasswordConfirm" class="form-control" placeholder="Confirm your password" required>
+							</div>
+							<div class="errorMsg" id=""></div>
+						</div>
+						<div class="button-group">
+							<button type="submit" class="btn btn-default takeActionBtn" id="loginButton">Register</button>
+					</div>
+					</fieldset>
+				</form>
+			</div>
+			
+		</div>		
+	</div>
+</div>
+	
+		<!-- Password Recovery Modal -->
+			
+			
+		<div class="modal fade" tabindex="-1" role="dialog" id="passwordRecoveryModal">
+			<div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Password Recovery</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          				<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<!-- Success/Error message inserted via JS								-->
+
+						<div id="passwordModalMsg"></div>
+						<form id="passwordRecoveryModalForm" class="modalForm passwordRecoveryModal">
+							<div class="form-group">
+								<input type="text" class="form-control modalListInput" id="passwordRecoverEmailAddress" placeholder="Enter your email address" required autofocus>
+							</div>
+							<!-- Location of field Error Msg added via JS -->
+							<div class="errorMsg" id="navListModalListNameErrorMsg"></div>
+							<div class="modal-footer button-group">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal" >Cancel</button>
+								<button type="submit" class="btn btn-default takeActionBtn"  >Send</button>
+							</div>
+						</form>
+					</div>
+
+				</div>
+
+			</div>
+	
+	
 <!--*******************************************************-->
 <!--	                                                     -->
 <!--				LOGIN PAGE	  															   -->
 <!--	                                                     -->
 <!--*******************************************************-->
+<!--
 		<div class="container-fluid hideIt" id="loginPage">
 			<div class="pageBanner">
 					<div class="pageTitle">Login</div>
 			</div>
 			<div class="container loginPage flexContainer">
-				<!--	Enter Login Information 				-->
 	
 				<form id="formLogin" class="taskForm" novalidate>
 					<fieldset>
 						<legend>Login to existing account</legend>
-						<!--	Enter User Name				-->
 						<div class="form-group">
 							<label for="loginUserName" class="form-control-label">User Name:</label>
 							<div class="row col-12">
@@ -87,11 +243,13 @@
 
 			</div>
 		</div>
+-->
 <!--*******************************************************-->
 <!--	                                                     -->
 <!--				CREATE ACCOUNT PAGE													   -->
 <!--	                                                     -->
 <!--*******************************************************-->
+<!--
 		<div class="container-fluid hideIt" id="createAccountPage">
 			<div class="pageBanner flexContainer">
 				<div class="pageTitle">Create Account</div>
@@ -101,7 +259,6 @@
 					<fieldset>
 						<legend>Create a new account</legend>
 						
-						<!--	Enter Full Name				-->
 						<div class="form-group">
 							<label for="registerFullName" class="form-control-label">Full Name:</label>
 							<div class="row col-12">
@@ -109,7 +266,6 @@
 							</div>
 						</div>
 						
-						<!--	Enter User Name				-->
 						<div class="form-group">
 							<label for="registerUserName" class="form-control-label">User Name:</label>
 							<div class="row col-12">
@@ -117,7 +273,6 @@
 							</div>
 						</div>
 						
-						<!--	Enter Email Address				-->
 						<div class="form-group">
 							<label for="registerEmail" class="form-control-label">Email Address:</label>
 							<div class="row col-12">
@@ -125,7 +280,6 @@
 							</div>
 						</div>
 						
-						<!--	Enter Password			-->
 						<div class="form-group">
 							<label for="registerPassword" class="form-control-label">Password:</label>
 							<div class="row col-12">
@@ -149,6 +303,7 @@
 			</div>
 			
 		</div>
+-->
 
 <!--*******************************************************-->
 <!--	                                                     -->
